@@ -1,0 +1,57 @@
+#pragma once
+#include <cstdint>
+
+#define OD_OBJECTS_COUNT {{ od_objects_count }}  // Number of objects in the dictionnary
+
+struct OD_Data // Struct containing all of the raw data that can be saved and loaded
+{
+    {% for declaration in od_all_data_declarations %}
+    {{ declaration }};
+    {% endfor %}
+
+    OD_Data() : {{ od_all_data_constructors|join(', ') }}{}
+    void save();
+    void load();
+};
+
+struct OD_Object
+{
+    const int accessType;
+    const int dataType;
+    const void *valueSrc;
+
+    OD_Object(int accessType, int dataType, void *valueSrc) : accessType(accessType), dataType(dataType), valueSrc(valueSrc) {}
+};
+
+struct OD_Objects // Struct containing all of the dictionnary objects
+{
+    {% for declaration in od_all_object_declarations %}
+    {{ declaration }};
+    {% endfor %}
+
+    OD_Objects(OD_Data &data) : {{ od_all_object_constructors|join(', ') }}{}
+};
+
+struct OD_ObjectEntry // Struct representing a dictionnary entry
+{
+    const int index;
+    const int objectType;
+    const int subNumber;
+    const OD_Object *objects;
+
+    OD_ObjectEntry(int index, int objectType, int subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
+};
+
+class OD_ObjectDictionnary // Object dictionnary class that is usable for the user
+{
+private:
+    const int size;
+    OD_Data data;
+    OD_Objects objects;
+    OD_ObjectEntry entries[OD_OBJECTS_COUNT];
+
+public:
+    OD_ObjectDictionnary() : size(OD_OBJECTS_COUNT), objects(data), entries{ {{- od_all_entry_constructors|join(', ') -}} }{}
+    inline void save() { return data.save(); }
+    inline void load() { return data.load(); }
+};
