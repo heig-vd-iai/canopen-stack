@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-#define OD_OBJECTS_COUNT 1
+#define OD_OBJECTS_COUNT {{od_objects_count}}  // Auto generated
 
 struct OD_Data // Auto generated
 {
