@@ -7,8 +7,8 @@ import jinja2
 
 EDS_FILENAME = "example.eds"
 TEMPLATES_DIR = "templates"
-TEMPLATE_FILENAME = "header.jinja"
 HEADER_FILENAME = "od.hpp"
+TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
 
 
 
