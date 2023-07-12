@@ -1,43 +1,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstdio>
-#include "od.hpp"
+#include "CANopen.hpp"
 
 using namespace std;
-
-enum FunctionCodes
-{
-    FunctionCode_NMT = 0b0000,
-    FunctionCode_SYNC = 0b0001,
-    FunctionCode_EMCY = 0b0001,
-    FunctionCode_TIME = 0b0010,
-    FunctionCode_HEARTBEAT = 0b1110
-};
-
-struct CANopen_Frame
-{
-    uint8_t data[8];
-    uint8_t dlc;
-    uint8_t functionCode;
-    uint8_t nodeId;
-    uint8_t rtr;
-};
-
-class CANopen
-{
-private:
-public:
-    inline void receiveFrame(CANopen_Frame frame)
-    {
-        switch (frame.functionCode)
-        {
-        case FunctionCode_NMT:
-            break;
-        default:
-            break;
-        }
-    }
-};
 
 int main()
 {
