@@ -4,10 +4,13 @@ import logging
 import jinja2
 
 
+
 EDS_FILENAME = "example.eds"
 TEMPLATES_DIR = "templates"
 TEMPLATE_FILENAME = "header.jinja"
-HEADER_FILENAME = "test.hpp"
+HEADER_FILENAME = "od.hpp"
+
+
 
 datatype2ctype = {
     0x01: "bool",

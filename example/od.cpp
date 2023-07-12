@@ -1,6 +1,6 @@
 #include <fstream>
 #include <cstdlib>
-#include "./generator/test.hpp"
+#include "./generator/od.hpp"
 
 void OD_Data::load()
 {
