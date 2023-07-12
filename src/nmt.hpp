@@ -25,37 +25,45 @@ private:
 
 public:
     CANopen_NMT() {}
-    void receiveFrame(CANopen_Frame frame) {}
+    void receiveFrame(CANopen_Frame frame)
+    {
+        if (frame.functionCode != FunctionCode_NMT)
+            return;
+        // TODO: return if node.id != frame.data[1]
+        setTransition((NMTServiceCommands)frame.data[0]);
+    }
+
     void setTransition(NMTServiceCommands command)
     {
+        NMTStates nextState;
         if (currentState == NMTState_Initialisation)
         {
-            currentState = NMTState_PreOperational;
+            nextState = NMTState_PreOperational;
         }
         else if (currentState == NMTState_PreOperational)
         {
             if (command == NMTServiceCommands_Start)
             {
-                currentState = NMTState_Operational;
+                nextState = NMTState_Operational;
             }
             else if (command == NMTServiceCommands_Stop)
             {
-                currentState = NMTState_Stopped;
+                nextState = NMTState_Stopped;
             }
             else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
             {
-                currentState = NMTState_Initialisation;
+                nextState = NMTState_Initialisation;
             }
         }
         else if (currentState == NMTState_Operational)
         {
             if (command == NMTServiceCommands_EnterPreOperational)
             {
-                currentState = NMTState_PreOperational;
+                nextState = NMTState_PreOperational;
             }
             else if (command == NMTServiceCommands_Stop)
             {
-                currentState = NMTState_Stopped;
+                nextState = NMTState_Stopped;
             }
             else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
             {
@@ -66,16 +74,21 @@ public:
         {
             if (command == NMTServiceCommands_EnterPreOperational)
             {
-                currentState = NMTState_PreOperational;
+                nextState = NMTState_PreOperational;
             }
             else if (command == NMTServiceCommands_Start)
             {
-                currentState = NMTState_Operational;
+                nextState = NMTState_Operational;
             }
             else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
             {
-                currentState = NMTState_Initialisation;
+                nextState = NMTState_Initialisation;
             }
         }
+        if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
+        {
+            // TODO: boot-up protocol (p.77)
+        }
+        currentState = nextState;
     }
 };
