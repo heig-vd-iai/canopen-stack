@@ -54,4 +54,6 @@ public:
     OD_ObjectDictionnary() : size(OD_OBJECTS_COUNT), objects(data), entries{ {{- od_all_entry_constructors|join(', ') -}} }{}
     inline void save() { return data.save(); }
     inline void load() { return data.load(); }
+    inline OD_Objects &getObjects() { return objects; }
+    OD_ObjectEntry *findEntry(uint16_t index);
 };
