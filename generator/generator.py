@@ -1,7 +1,7 @@
-from canopen import Node, ObjectDictionary
 from canopen.objectdictionary import Record, Variable, Array
-import jinja2
+from canopen import Node, ObjectDictionary
 import logging
+import jinja2
 
 
 EDS_FILENAME = "example.eds"
@@ -78,7 +78,7 @@ class OD_VarEntry:
     
     def render_OD_Entry_constructor(self) -> str:
         return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-    
+
 
 class OD_ArrayEntry:
     """
@@ -87,7 +87,7 @@ class OD_ArrayEntry:
     def __init__(self, index: int, objects: "list[OD_Object]") -> None:
         self.index = index
         self.objectType = 0x08
-        self.dataType = objects[0].dataType
+        self.dataType = objects[1].dataType
         self.dataTypeStr = datatype2ctype[self.dataType]
         self.subNumber = len(objects)
         self.objects = objects
@@ -116,7 +116,7 @@ class OD_ArrayEntry:
     
     def render_OD_Entry_constructor(self) -> str:
         return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-    
+
 
 class OD_RecordEntry:
     """
@@ -133,7 +133,7 @@ class OD_RecordEntry:
 
     def render_OD_Data_declaration(self) -> "list[str]":
         fields = '; '.join([f"{obj.dataTypeStr} sub{i}" for i, obj in enumerate(self.objects)]) + ";"
-        return [f"struct{{{fields}}} {self.varName}"]
+        return [f"struct {{{fields}}} {self.varName}"]
     
     def render_OD_Data_constructor(self) -> "list[str]":
         defVals = ', '.join([str(obj.defaultValue) for obj in self.objects])
@@ -148,7 +148,6 @@ class OD_RecordEntry:
     
     def render_OD_Entry_constructor(self) -> str:
         return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-
 
 
 
@@ -173,14 +172,10 @@ allDataConstructors = [constructor for sublist in objectEntries for constructor 
 allObjectDeclarations = [entry.render_OD_Object_declaration() for entry in objectEntries]
 allObjectConstructors = [entry.render_OD_Object_constructor() for entry in objectEntries]
 allEntryConstructors = [entry.render_OD_Entry_constructor() for entry in objectEntries]
-# for entry in objectEntries: print(entry.render_OD_Data_declaration())
-# for entry in allObjectConstructors: print(entry)
-
-
 
 
 variables = {
-    "od_objects_count": len(od),
+    "od_objects_count": len(objectEntries),
     "od_object_entries": objectEntries,
     "od_all_data_declarations": allDataDeclarations,
     "od_all_data_constructors": allDataConstructors,
@@ -191,15 +186,3 @@ variables = {
 
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
-
-
-
-# for obj in od.values():
-#     if obj.index < 0x1000: continue
-#     if isinstance(obj, Record):
-#         print(f"{obj.name}:")
-#         for var in obj.subindices.values():
-#             var: Variable
-#             print(f"  {datatype2ctype[var.data_type]} {var.name}: {var.default}")
-#         print()
-
