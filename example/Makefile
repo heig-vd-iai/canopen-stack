@@ -11,6 +11,7 @@ INCLUDE_DIRS = \
 SOURCES = \
 	$(APP_SRC)/test.cpp \
 	$(CANOPEN_SRC)od.cpp \
+	$(CANOPEN_SRC)nmt.cpp \
 
 
 CC = g++
