@@ -1,22 +1,33 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstdio>
+#include <pthread.h>
+#include <thread>
+#include <sys/socket.h>
+#include <linux/can.h>
 #include "CANopen.hpp"
-
 using namespace std;
+
+CANopen_Node node(1);
+int sock;
+
+void func()
+{
+    while (true)
+    {
+        can_frame canFrame;
+        CANopen_Frame CANopenFrame;
+        if (recv(sock, &canFrame, sizeof(canFrame), 0))
+        {
+            CANopenFrame.dlc = canFrame.can_dlc;
+            node.receiveFrame(CANopenFrame);
+        }
+    }
+}
 
 int main()
 {
-    OD_ObjectDictionnary od;
-    od.load();
-
-    OD_ObjectEntry *entryPtr = od.findEntry(0x6040);
-    if (entryPtr == NULL)
-        return EXIT_FAILURE;
-    for (int i = 0; i < entryPtr->subNumber; i++)
-    {
-        printf("%d\n", *(int *)entryPtr->objects[i].valueSrc);
-    }
-
+    thread t(func);
+    t.join();
     return EXIT_SUCCESS;
 }

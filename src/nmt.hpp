@@ -1,94 +1,16 @@
 #pragma once
+#include "enums.hpp"
 #include "frame.hpp"
 
-enum NMTStates
-{
-    NMTState_Initialisation = 0,
-    NMTState_PreOperational = 127,
-    NMTState_Operational = 5,
-    NMTState_Stopped = 4
-};
-
-enum NMTServiceCommands
-{
-    NMTServiceCommands_Start = 1,
-    NMTServiceCommands_Stop = 2,
-    NMTServiceCommands_EnterPreOperational = 128,
-    NMTServiceCommands_ResetNode = 129,
-    NMTServiceCommands_ResetCommunication = 130
-};
 
 class CANopen_NMT
 {
 private:
     NMTStates currentState;
+    class CANopen_Node &node;
 
 public:
-    CANopen_NMT() {}
-    void receiveFrame(CANopen_Frame frame)
-    {
-        if (frame.functionCode != FunctionCode_NMT)
-            return;
-        // TODO: return if node.id != frame.data[1]
-        setTransition((NMTServiceCommands)frame.data[0]);
-    }
-
-    void setTransition(NMTServiceCommands command)
-    {
-        NMTStates nextState;
-        if (currentState == NMTState_Initialisation)
-        {
-            nextState = NMTState_PreOperational;
-        }
-        else if (currentState == NMTState_PreOperational)
-        {
-            if (command == NMTServiceCommands_Start)
-            {
-                nextState = NMTState_Operational;
-            }
-            else if (command == NMTServiceCommands_Stop)
-            {
-                nextState = NMTState_Stopped;
-            }
-            else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
-            {
-                nextState = NMTState_Initialisation;
-            }
-        }
-        else if (currentState == NMTState_Operational)
-        {
-            if (command == NMTServiceCommands_EnterPreOperational)
-            {
-                nextState = NMTState_PreOperational;
-            }
-            else if (command == NMTServiceCommands_Stop)
-            {
-                nextState = NMTState_Stopped;
-            }
-            else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
-            {
-                currentState = NMTState_Initialisation;
-            }
-        }
-        else if (currentState == NMTState_Stopped)
-        {
-            if (command == NMTServiceCommands_EnterPreOperational)
-            {
-                nextState = NMTState_PreOperational;
-            }
-            else if (command == NMTServiceCommands_Start)
-            {
-                nextState = NMTState_Operational;
-            }
-            else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
-            {
-                nextState = NMTState_Initialisation;
-            }
-        }
-        if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
-        {
-            // TODO: boot-up protocol (p.77)
-        }
-        currentState = nextState;
-    }
+    CANopen_NMT(class CANopen_Node &node);
+    void receiveFrame(CANopen_Frame frame);
+    void setTransition(NMTServiceCommands command);
 };

@@ -11,12 +11,14 @@ INCLUDE_DIRS = \
 SOURCES = \
 	$(APP_SRC)/test.cpp \
 	$(CANOPEN_SRC)od.cpp \
-	$(CANOPEN_SRC)nmt.cpp \
+	$(CANOPEN_SRC)node.cpp \
+	$(CANOPEN_SRC)nmt.cpp
 
 
 CC = g++
-FLAGS = -std=c++11 -Wall -g $(INCLUDE_DIRS)
+FLAGS = -std=c++11 -Wall -g
+FLAGS += -pthread
 
 
 $(APP_NAME):
-	$(CC) $(FLAGS) $(SOURCES) -o $@.out
+	$(CC) $(FLAGS) $(INCLUDE_DIRS) $(SOURCES) -o $@.out
