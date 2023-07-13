@@ -1,5 +1,5 @@
 APP_NAME = app
-CANOPEN_SRC = ../src/
+CANOPEN_SRC = ../src
 APP_SRC = .
 
 
