@@ -76,6 +76,11 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
     currentState = nextState;
 }
 
+NMTStates CANopen_NMT::getState()
+{
+    return currentState;
+}
+
 void CANopen_NMT::update()
 {
     setTransition((NMTServiceCommands)0);
