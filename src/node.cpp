@@ -1,6 +1,6 @@
 #include "node.hpp"
 
-CANopen_Node::CANopen_Node(int id) : nodeId(id), nmt(*this)
+CANopen_Node::CANopen_Node(int id) : nodeId(id), nmt(*this), hb(*this)
 {
 }
 

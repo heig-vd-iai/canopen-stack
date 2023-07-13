@@ -18,7 +18,6 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
     NMTStates nextState = currentState;
     if (currentState == NMTState_Initialisation)
     {
-        puts("entered Initialisation state, soing to Pre Op");
         nextState = NMTState_PreOperational;
     }
     else if (currentState == NMTState_PreOperational)
@@ -66,16 +65,10 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
             nextState = NMTState_Initialisation;
         }
     }
-    // if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
-    // {
-    //     // TODO: boot-up protocol (p.77)
-    //     CANopen_Frame frame;
-    //     frame.nodeId = node.nodeId;
-    //     frame.dlc = 1;
-    //     frame.data[0] = NMTState_Initialisation;
-    //     frame.functionCode = FunctionCode_HEARTBEAT;
-    //     node.sendFrame(frame);
-    // }
+    if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
+    {
+        node.hb.publishState(NMTState_Initialisation);
+    }
     if (currentState != nextState)
     {
         printf("[NMT] Node %d entered state 0x%02X\n\n", node.nodeId, nextState);

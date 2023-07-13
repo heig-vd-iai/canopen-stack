@@ -2,7 +2,6 @@
 #include "enums.hpp"
 #include "frame.hpp"
 
-
 class CANopen_NMT
 {
 private:
