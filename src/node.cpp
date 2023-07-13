@@ -14,6 +14,11 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
     }
 }
 
-void CANopen_Node::sendFrame(CANopen_Frame frame)
+// void CANopen_Node::sendFrame(CANopen_Frame frame)
+// {
+// }
+
+void CANopen_Node::update()
 {
+    nmt.update();
 }

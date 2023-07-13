@@ -1,7 +1,8 @@
 #include "nmt.hpp"
 #include "node.hpp"
+#include <cstdio>
 
-CANopen_NMT::CANopen_NMT(CANopen_Node &node) : node(node)
+CANopen_NMT::CANopen_NMT(CANopen_Node &node) : currentState(NMTState_Initialisation), node(node)
 {
 }
 
@@ -14,9 +15,10 @@ void CANopen_NMT::receiveFrame(CANopen_Frame frame)
 
 void CANopen_NMT::setTransition(NMTServiceCommands command)
 {
-    NMTStates nextState;
+    NMTStates nextState = currentState;
     if (currentState == NMTState_Initialisation)
     {
+        puts("entered Initialisation state, soing to Pre Op");
         nextState = NMTState_PreOperational;
     }
     else if (currentState == NMTState_PreOperational)
@@ -64,15 +66,24 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
             nextState = NMTState_Initialisation;
         }
     }
-    if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
+    // if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
+    // {
+    //     // TODO: boot-up protocol (p.77)
+    //     CANopen_Frame frame;
+    //     frame.nodeId = node.nodeId;
+    //     frame.dlc = 1;
+    //     frame.data[0] = NMTState_Initialisation;
+    //     frame.functionCode = FunctionCode_HEARTBEAT;
+    //     node.sendFrame(frame);
+    // }
+    if (currentState != nextState)
     {
-        // TODO: boot-up protocol (p.77)
-        CANopen_Frame frame;
-        frame.nodeId = node.nodeId;
-        frame.dlc = 1;
-        frame.data[0] = NMTState_Initialisation;
-        frame.functionCode = FunctionCode_HEARTBEAT;
-        node.sendFrame(frame);
+        printf("[NMT] Node %d entered state 0x%02X\n\n", node.nodeId, nextState);
     }
     currentState = nextState;
+}
+
+void CANopen_NMT::update()
+{
+    setTransition((NMTServiceCommands)0);
 }

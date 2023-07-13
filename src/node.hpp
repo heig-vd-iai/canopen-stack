@@ -13,4 +13,5 @@ public:
     CANopen_Node(int id);
     void receiveFrame(CANopen_Frame frame);
     void sendFrame(CANopen_Frame frame);
+    void update();
 };

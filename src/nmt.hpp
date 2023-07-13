@@ -13,4 +13,5 @@ public:
     CANopen_NMT(class CANopen_Node &node);
     void receiveFrame(CANopen_Frame frame);
     void setTransition(NMTServiceCommands command);
+    void update();
 };
