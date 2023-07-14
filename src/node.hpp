@@ -3,11 +3,13 @@
 #include "nmt.hpp"
 #include "heartbeat.hpp"
 #include "sdo.hpp"
+#include "od.hpp"
 
 class CANopen_Node
 {
 private:
     int nodeId;
+    OD_ObjectDictionnary od;
     CANopen_NMT nmt;
     CANopen_HB hb;
     CANopen_SDO sdo;

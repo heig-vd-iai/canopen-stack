@@ -40,6 +40,7 @@ struct OD_ObjectEntry // Struct representing a dictionnary entry
     const OD_Object *objects;
 
     OD_ObjectEntry(int index, int objectType, int subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
+    int getSize(uint8_t subIndex);
 };
 
 class OD_ObjectDictionnary // Object dictionnary class that is usable for the user

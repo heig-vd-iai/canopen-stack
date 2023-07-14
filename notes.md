@@ -66,5 +66,12 @@ This is when the client wants to write data to the server's OD.
 
 ### Transfer types:
 - expedited (data within single frame)
+    1. initiate
 - normal (segmented)
+    1. initiate
+    2. segment
 - block
+    1. initiate
+    2. sub-block
+        - segment
+    3. end

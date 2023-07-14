@@ -56,6 +56,21 @@ void CANopen_Node::sendFrame(CANopen_Frame frame)
 
 int main()
 {
+    // uint32_t a = 42;
+    // void *aPtr = &a;
+    // uint8_t arr[sizeof(a)];
+    // memcpy(arr, aPtr, sizeof(a));
+    // for (unsigned i = 0; i < sizeof(a); i++)
+    // {
+    //     printf("%02X ", arr[i]);
+    // }
+    // uint32_t b = arr[3];
+    // b = b << 8 | arr[2];
+    // b = b << 8 | arr[1];
+    // b = b << 8 | arr[0];
+    // printf("\n%d\n", b);
+    // return 0;
+
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         perror("Socket");

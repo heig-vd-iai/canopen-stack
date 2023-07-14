@@ -14,10 +14,18 @@ union SDO_CommandByte
     } bits;
 };
 
+enum SDOServerStates
+{
+    SDOServerStates_Ready,
+    SDOServerStates_Transferring
+};
+
+// create SDOClient and SDOServer sub-classes?
 class CANopen_SDO
 {
 private:
     class CANopen_Node &node;
+    SDOServerStates serverState;
 
     void receiveUpload(CANopen_Frame request);
     void receiveDownload(CANopen_Frame request);

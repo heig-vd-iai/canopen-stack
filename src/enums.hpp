@@ -46,3 +46,32 @@ enum SDOClientCommandSpecifiers
     SDOClientCommandSpecifier_BlockUpload = 0x05,
     SDOClientCommandSpecifier_BlockDownload = 0x06,
 };
+
+enum DataTypes
+{
+    DataType_BOOLEAN = 0x01,
+    DataType_INTEGER8 = 0x02,
+    DataType_INTEGER16 = 0x03,
+    DataType_INTEGER32 = 0x04,
+    DataType_UNSIGNED8 = 0x05,
+    DataType_UNSIGNED16 = 0x06,
+    DataType_UNSIGNED32 = 0x07,
+    DataType_REAL32 = 0x08,
+    // DataType_VISIBLE_STRING = 0x09,
+    // DataType_OCTET_STRING = 0x0A,
+    // DataType_UNICODE_STRING = 0x0B,
+    // DataType_TIME_OF_DAY = 0x0C,
+    // DataType_TIME_DIFFERENCE = 0x0D,
+    // DataType_DOMAIN = 0x0F,
+    DataType_INTEGER24 = 0x10,
+    DataType_REAL64 = 0x11,
+    DataType_INTEGER40 = 0x12,
+    DataType_INTEGER48 = 0x13,
+    DataType_INTEGER56 = 0x14,
+    DataType_INTEGER64 = 0x15,
+    DataType_UNSIGNED24 = 0x16,
+    DataType_UNSIGNED40 = 0x18,
+    DataType_UNSIGNED48 = 0x19,
+    DataType_UNSIGNED56 = 0x1A,
+    DataType_UNSIGNED64 = 0x1B
+};
