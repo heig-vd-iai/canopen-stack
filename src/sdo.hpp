@@ -19,6 +19,9 @@ class CANopen_SDO
 private:
     class CANopen_Node &node;
 
+    void receiveUpload(CANopen_Frame request);
+    void receiveDownload(CANopen_Frame request);
+
 public:
     CANopen_SDO(class CANopen_Node &node);
     void receiveFrame(CANopen_Frame frame);
