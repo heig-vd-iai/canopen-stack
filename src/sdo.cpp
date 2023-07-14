@@ -41,7 +41,7 @@ void CANopen_SDO::receiveUpload(CANopen_Frame request)
     {
         switch (recvCommand.bits_initiate.ccs)
         {
-        case SDOClientCommandSpecifier_InitiatingUpload:
+        case SDOCommandSpecifiers_RequestUploadInitiate:
         {
             const unsigned maxSize = 4;
             uint16_t index = request.data[2];
@@ -69,7 +69,7 @@ void CANopen_SDO::receiveUpload(CANopen_Frame request)
                 sendCommand.bits_initiate.n = maxSize - transferData.objectSize;
                 memcpy(response.data + maxSize, entry->objects[subIndex].valueSrc, transferData.objectSize);
             }
-            sendCommand.bits_initiate.ccs = SDOClientCommandSpecifier_InitiatingUpload;
+            sendCommand.bits_initiate.ccs = SDOCommandSpecifiers_ResponseUploadInitiate;
             response.functionCode = FunctionCode_TSDO;
             response.nodeId = node.nodeId;
             response.dlc = 8;
@@ -78,7 +78,7 @@ void CANopen_SDO::receiveUpload(CANopen_Frame request)
             response.data[2] = request.data[2];
             response.data[3] = request.data[3];
             node.sendFrame(response);
-            serverState = sendCommand.bits_initiate.e ? serverState : SDOServerStates_Transferring;
+            serverState = sendCommand.bits_initiate.e ? serverState : SDOServerStates_Uploading;
             break;
         }
             // case SDOClientCommandSpecifier_SegmentUpload:
@@ -88,18 +88,18 @@ void CANopen_SDO::receiveUpload(CANopen_Frame request)
         }
         break;
     }
-    case SDOServerStates_Transferring:
+    case SDOServerStates_Uploading:
     {
         switch (recvCommand.bits_segment.ccs)
         {
-        case SDOClientCommandSpecifier_SegmentUpload:
+        case SDOCommandSpecifiers_RequestUploadSegment:
         {
             const unsigned maxSize = 7;
             unsigned payloadSize = transferData.remainingBytes > maxSize ? maxSize : transferData.remainingBytes;
             unsigned bytesSent = transferData.objectSize - transferData.remainingBytes;
             memcpy(response.data + 8 - maxSize, transferData.dataSrc + bytesSent, payloadSize);
             transferData.remainingBytes -= payloadSize;
-            sendCommand.bits_segment.ccs = 0; // TODO: 0??
+            sendCommand.bits_segment.ccs = SDOCommandSpecifiers_ResponseUploadSegment;
             sendCommand.bits_segment.t = recvCommand.bits_segment.t;
             sendCommand.bits_segment.n = maxSize - payloadSize;
             sendCommand.bits_segment.c = !transferData.remainingBytes;
@@ -111,11 +111,11 @@ void CANopen_SDO::receiveUpload(CANopen_Frame request)
             serverState = sendCommand.bits_segment.c ? SDOServerStates_Ready : serverState;
             break;
         }
-        case SDOClientCommandSpecifier_BlockUpload:
-        case SDOClientCommandSpecifier_InitiatingUpload:
-        case SDOClientCommandSpecifier_AbortTransfer:
-            serverState = SDOServerStates_Ready;
-            break;
+            // case SDOClientCommandSpecifier_BlockUpload:
+            // case SDOClientCommandSpecifier_InitiatingUpload:
+            // case SDOClientCommandSpecifier_AbortTransfer:
+            //     serverState = SDOServerStates_Ready;
+            //     break;
         }
         break;
     }
