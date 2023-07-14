@@ -7,7 +7,8 @@
 
 class CANopen_Node
 {
-private:
+    // private:
+public:
     int nodeId;
     OD_ObjectDictionnary od;
     CANopen_NMT nmt;
