@@ -58,49 +58,13 @@ This is when the node receives a PDO.
 It should emit an application event (callback)
 
 ## SDO
-### Upload
+### Upload (RSDO)
 This is when the client wants to read data from the server's OD.
 
-### Download
+### Download (TSDO)
 This is when the client wants to write data to the server's OD.
 
 ### Transfer types:
 - expedited (data within single frame)
 - normal (segmented)
 - block
-
-# Cahier des charges
-- Developper stack CanOpen compatible CiA402 supportant
-  - NMT
-  - SYNC
-  - HEARTBEAT
-  - SDO
-  - PDO
-- Avoir une architecture objet en C++
-  - Driver avec D-CAN (mailbox? interuupt?)
-  - Cia 301? 
-- Gérer le OD: 
-  - Nom 
-  - ID
-  - Type
-  - Min
-  - Max
-  - Default
-  - RW
-  - ...
-- Interactiona vec le CPU1
-
-
-# A faire après
-- Nice to have !! Travail supplémentaire
-  - Stack TCP/IP
-  - Socket ouvert entre un terminal et le CM avec une interface REPL
-    > power on
-    Drive is powered
-    > move 10
-    Moving
-    Movement done
-    > axis.currentcontrol.kp
-    12.5
-
-- PAge web 
