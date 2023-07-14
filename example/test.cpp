@@ -71,6 +71,26 @@ int main()
     // printf("\n%d\n", b);
     // return 0;
 
+    // {
+    //     uint64_t a = 5000;
+    //     uint8_t *ptr = (uint8_t *)&a;
+    //     for (size_t i = 0; i < 8; i++)
+    //     {
+    //         printf("%02X ", ptr[i]);
+    //     }
+    //     puts("");
+    // }
+    // {
+    //     uint8_t *ptr = (uint8_t *)node.od.getObjects().obj_x604A[1].valueSrc;
+    //     for (size_t i = 0; i < 8; i++)
+    //     {
+    //         printf("%02X ", ptr[i]);
+    //     }
+    //     puts("");
+    // }
+    // printf("%ld\n%ld\n", node.od.data.x604A.sub1, *(uint64_t *)node.od.getObjects().obj_x604A[1].valueSrc);
+    // return 0;
+
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         perror("Socket");
