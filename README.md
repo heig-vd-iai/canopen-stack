@@ -10,4 +10,5 @@ CANopen library
 - [ ] implement HB master
 - [ ] implement TPDO
 - [ ] implement RPDO
-- [ ] implement SDO
+- [ ] implement TSDO
+- [ ] implement RSDO
