@@ -6,7 +6,17 @@ enum FunctionCodes
     FunctionCode_SYNC = 0b0001,
     FunctionCode_EMCY = 0b0001,
     FunctionCode_TIME = 0b0010,
-    FunctionCode_HEARTBEAT = 0b1110
+    FunctionCode_TPDO1 = 0b0011,
+    FunctionCode_RPDO1 = 0b0100,
+    FunctionCode_TPDO2 = 0b0101,
+    FunctionCode_RPDO2 = 0b0110,
+    FunctionCode_TPDO3 = 0b0111,
+    FunctionCode_RPDO3 = 0b1000,
+    FunctionCode_TPDO4 = 0b1001,
+    FunctionCode_RPDO4 = 0b1010,
+    FunctionCode_TSDO = 0b1011,
+    FunctionCode_RSDO = 0b1100,
+    FunctionCode_HEARTBEAT = 0b1110,
 };
 
 enum NMTStates
