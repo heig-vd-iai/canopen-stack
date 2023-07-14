@@ -13,7 +13,8 @@ SOURCES = \
 	$(CANOPEN_SRC)/od.cpp \
 	$(CANOPEN_SRC)/node.cpp \
 	$(CANOPEN_SRC)/nmt.cpp \
-	$(CANOPEN_SRC)/heartbeat.cpp
+	$(CANOPEN_SRC)/heartbeat.cpp \
+	$(CANOPEN_SRC)/sdo.cpp
 
 
 CC = g++
