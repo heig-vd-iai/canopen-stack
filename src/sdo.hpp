@@ -24,7 +24,8 @@ union SDO_CommandByte
 enum SDOServerStates
 {
     SDOServerStates_Ready,
-    SDOServerStates_Transferring
+    SDOServerStates_Uploading,
+    SDOServerStates_Downloading
 };
 
 // create SDOClient and SDOServer sub-classes?
