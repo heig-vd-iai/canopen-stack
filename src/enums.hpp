@@ -36,7 +36,7 @@ enum NMTServiceCommands
     NMTServiceCommands_ResetCommunication = 0x82
 };
 
-enum SDOClientCommandSpecifiers
+enum SDOClientCommandSpecifiers //TODO: some are missing? segment vs initiate
 {
     SDOClientCommandSpecifier_SegmentDownload = 0x00,
     SDOClientCommandSpecifier_InitiatingDownload = 0x01,
