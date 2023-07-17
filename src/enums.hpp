@@ -36,17 +36,6 @@ enum NMTServiceCommands
     NMTServiceCommands_ResetCommunication = 0x82
 };
 
-// enum SDOClientCommandSpecifiers
-// {
-//     SDOClientCommandSpecifier_SegmentDownload = 0x00,
-//     SDOClientCommandSpecifier_InitiatingDownload = 0x01,
-//     SDOClientCommandSpecifier_InitiatingUpload = 0x02,
-//     SDOClientCommandSpecifier_SegmentUpload = 0x03,
-//     SDOClientCommandSpecifier_AbortTransfer = 0x04,
-//     SDOClientCommandSpecifier_BlockUpload = 0x05,
-//     SDOClientCommandSpecifier_BlockDownload = 0x06,
-// };
-
 enum SDOCommandSpecifiers
 {
     SDOCommandSpecifiers_RequestDownloadInitiate = 0x01,
