@@ -11,7 +11,6 @@ class CANopen_Node
     // private:
 public:
     uint8_t nodeId;
-    uint64_t receptionTimestamp;
     OD_ObjectDictionnary od;
     CANopen_NMT nmt;
     CANopen_HB hb;
@@ -24,5 +23,5 @@ public:
     CANopen_Node(uint8_t id);
     void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
     void sendFrame(CANopen_Frame frame);
-    void update(uint64_t timer_us);
+    void update(uint64_t timestamp_us);
 };

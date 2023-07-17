@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "enums.hpp"
 #include "frame.hpp"
 
@@ -10,8 +11,8 @@ private:
 
 public:
     CANopen_NMT(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
+    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
     void setTransition(NMTServiceCommands command);
     NMTStates getState();
-    void update();
+    void update(uint64_t timestamp_us);
 };

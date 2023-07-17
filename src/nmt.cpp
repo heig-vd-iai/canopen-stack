@@ -6,7 +6,7 @@ CANopen_NMT::CANopen_NMT(CANopen_Node &node) : currentState(NMTState_Initialisat
 {
 }
 
-void CANopen_NMT::receiveFrame(CANopen_Frame frame)
+void CANopen_NMT::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
 {
     if (frame.functionCode != FunctionCode_NMT || (frame.data[1] != node.nodeId && frame.data[1] != 0))
         return;
@@ -81,7 +81,7 @@ NMTStates CANopen_NMT::getState()
     return currentState;
 }
 
-void CANopen_NMT::update()
+void CANopen_NMT::update(uint64_t timestamp_us)
 {
     setTransition((NMTServiceCommands)0);
 }

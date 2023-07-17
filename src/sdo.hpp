@@ -47,13 +47,13 @@ private:
     } transferData;
 
     void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
-    void uploadInitiate(CANopen_Frame request);
-    void uploadSegment(CANopen_Frame request);
-    void downloadInitiate(CANopen_Frame request);
-    void downloadSegment(CANopen_Frame request);
+    void uploadInitiate(CANopen_Frame request, uint64_t timestamp_us);
+    void uploadSegment(CANopen_Frame request, uint64_t timestamp_us);
+    void downloadInitiate(CANopen_Frame request, uint64_t timestamp_us);
+    void downloadSegment(CANopen_Frame request, uint64_t timestamp_us);
 
 public:
     CANopen_SDO(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
-    void update(uint64_t timer_us);
+    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
+    void update(uint64_t timestamp_us);
 };

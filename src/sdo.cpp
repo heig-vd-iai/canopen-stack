@@ -8,13 +8,13 @@ CANopen_SDO::CANopen_SDO(CANopen_Node &node) : node(node)
 {
 }
 
-void CANopen_SDO::update(uint64_t timer_us)
+void CANopen_SDO::update(uint64_t timestamp_us)
 {
     switch (serverState)
     {
     case SDOServerState_Uploading:
     case SDOServerState_Downloading:
-        if (timer_us - transferData.timestamp >= SDO_TIMEOUT_US)
+        if (timestamp_us - transferData.timestamp >= SDO_TIMEOUT_US)
         {
             sendAbort(transferData.index, transferData.subIndex, 0x05040000);
         }
@@ -24,7 +24,7 @@ void CANopen_SDO::update(uint64_t timer_us)
     }
 }
 
-void CANopen_SDO::receiveFrame(CANopen_Frame frame)
+void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
 {
     if (frame.nodeId != node.nodeId)
         return;
@@ -35,10 +35,10 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
         switch (recvCommand.bits_initiate.ccs)
         {
         case SDOCommandSpecifier_RequestUploadInitiate:
-            uploadInitiate(frame);
+            uploadInitiate(frame, timestamp_us);
             break;
         case SDOCommandSpecifier_RequestDownloadInitiate:
-            downloadInitiate(frame);
+            downloadInitiate(frame, timestamp_us);
             break;
         default:
             sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], 0x05040001);
@@ -49,7 +49,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
         switch (recvCommand.bits_segment.ccs)
         {
         case SDOCommandSpecifier_RequestUploadSegment:
-            uploadSegment(frame);
+            uploadSegment(frame, timestamp_us);
             break;
         case SDOCommandSpecifier_AbortTransfer:
             serverState = SDOServerState_Ready;
@@ -63,7 +63,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
         switch (recvCommand.bits_segment.ccs)
         {
         case SDOCommandSpecifier_RequestDownloadSegment:
-            downloadSegment(frame);
+            downloadSegment(frame, timestamp_us);
             break;
         case SDOCommandSpecifier_AbortTransfer:
             serverState = SDOServerState_Ready;
@@ -96,7 +96,7 @@ void CANopen_SDO::sendAbort(uint16_t index, uint8_t subIndex, uint32_t error)
     serverState = SDOServerState_Ready;
 }
 
-void CANopen_SDO::uploadInitiate(CANopen_Frame request)
+void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint64_t timestamp_us)
 {
     const unsigned maxSize = 4;
     CANopen_Frame response;
@@ -152,10 +152,10 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request)
     node.sendFrame(response);
     if (!sendCommand.bits_initiate.e)
         serverState = SDOServerState_Uploading;
-    transferData.timestamp = node.receptionTimestamp;
+    transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::uploadSegment(CANopen_Frame request)
+void CANopen_SDO::uploadSegment(CANopen_Frame request, uint64_t timestamp_us)
 {
     const unsigned maxSize = 7;
     CANopen_Frame response;
@@ -179,10 +179,10 @@ void CANopen_SDO::uploadSegment(CANopen_Frame request)
     node.sendFrame(response);
     if (sendCommand.bits_segment.c)
         serverState = SDOServerState_Ready;
-    transferData.timestamp = node.receptionTimestamp;
+    transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadInitiate(CANopen_Frame request)
+void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint64_t timestamp_us)
 {
     const unsigned maxSize = 4;
     CANopen_Frame response;
@@ -248,10 +248,10 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request)
     node.sendFrame(response);
     if (!recvCommand.bits_initiate.e)
         serverState = SDOServerState_Downloading;
-    transferData.timestamp = node.receptionTimestamp;
+    transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadSegment(CANopen_Frame request)
+void CANopen_SDO::downloadSegment(CANopen_Frame request, uint64_t timestamp_us)
 {
     const unsigned maxSize = 7;
     CANopen_Frame response;
@@ -288,5 +288,5 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request)
     node.sendFrame(response);
     if (recvCommand.bits_segment.c)
         serverState = SDOServerState_Ready;
-    transferData.timestamp = node.receptionTimestamp;
+    transferData.timestamp = timestamp_us;
 }
