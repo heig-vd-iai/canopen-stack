@@ -22,7 +22,7 @@ network.connect(channel='vcan0', bustype='socketcan')
 #     node.nmt.state = state
 #     sleep(0.1)
 
-try: print(int.from_bytes(node.sdo.upload(0x604A, 1), 'little'))
+try: print(int.from_bytes(node.sdo.upload(0x6049, 1), 'little'))
 except (canopen.SdoCommunicationError, canopen.SdoAbortedError)  as e: print(e)
 
 
