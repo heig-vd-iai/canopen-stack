@@ -31,6 +31,7 @@ try:
     print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
     node.sdo.download(index, subIndex, value.to_bytes(bytelen, 'little'))
     print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
+    # network.send_message(0x604, bytes([0x40, 0x4A, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00]))
 except (canopen.SdoCommunicationError, canopen.SdoAbortedError)  as e: print(e)
 
 
