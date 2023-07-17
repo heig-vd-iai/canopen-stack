@@ -28,7 +28,6 @@ enum SDOServerStates
     SDOServerStates_Downloading
 };
 
-// create SDOClient and SDOServer sub-classes?
 class CANopen_SDO
 {
 private:

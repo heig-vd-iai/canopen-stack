@@ -22,7 +22,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
             uploadInitiate(frame);
             break;
         case SDOCommandSpecifiers_RequestDownloadInitiate:
-            // code...
+            downloadInitiate(frame);
             break;
         default:
             sendAbort(0, 0, 0x05040001);
@@ -47,7 +47,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
         switch (recvCommand.bits_segment.ccs)
         {
         case SDOCommandSpecifiers_RequestDownloadSegment:
-            // code...
+            downloadSegment(frame);
             break;
         case SDOCommandSpecifiers_AbortTransfer:
             serverState = SDOServerStates_Ready;
@@ -237,7 +237,7 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request)
     const unsigned maxSize = 7;
     CANopen_Frame response;
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
-    unsigned payloadSize = recvCommand.bits_segment.n;
+    unsigned payloadSize = maxSize - recvCommand.bits_segment.n;
     unsigned bytesReceived = transferData.objectSize - transferData.remainingBytes;
     if (bytesReceived + payloadSize > transferData.objectSize)
     {
@@ -247,13 +247,12 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request)
     // Download request data
     if (transferData.objectSize > sizeof(transferData.buffer)) // Download to OD directly
     {
-        printf("[SDO] Warning: downloading directly to OD data (exceeding buffer size of %d)\n", sizeof(transferData.buffer));
         memcpy(transferData.dataSrc + bytesReceived, request.data + 8 - maxSize, payloadSize);
     }
     else // Use download buffer instead
     {
         memcpy(transferData.buffer + bytesReceived, request.data + 8 - maxSize, payloadSize);
-        if (sendCommand.bits_segment.c)
+        if (recvCommand.bits_segment.c)
             memcpy(transferData.dataSrc, transferData.buffer, transferData.objectSize);
     }
     transferData.remainingBytes -= payloadSize;
@@ -268,6 +267,6 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request)
     response.data[0] = sendCommand.value;
     // Send response
     node.sendFrame(response);
-    if (sendCommand.bits_segment.c)
+    if (recvCommand.bits_segment.c)
         serverState = SDOServerStates_Ready;
 }
