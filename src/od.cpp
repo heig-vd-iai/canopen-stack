@@ -23,13 +23,13 @@ void OD_Data::save()
 
 OD_ObjectEntry *OD_ObjectDictionnary::findEntry(uint16_t index)
 {
-    for (int i = 0; i < size; i++)
+    for (unsigned i = 0; i < size; i++)
         if (entries[i].index == index)
             return &entries[i];
     return NULL;
 }
 
-int OD_ObjectEntry::getSize(uint8_t subIndex)
+unsigned OD_ObjectEntry::getSize(uint8_t subIndex)
 {
     OD_Object obj = objects[subIndex];
     switch (obj.dataType)
