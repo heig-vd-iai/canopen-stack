@@ -1,5 +1,6 @@
-import canopen
 from time import sleep
+import canopen
+import struct
 
 
 
@@ -22,16 +23,21 @@ network.connect(channel='vcan0', bustype='socketcan')
 #     node.nmt.state = state
 #     sleep(0.5)
 
-index = 0x604A
+index = 0x6048
 subIndex = 1
-value = 650
+value = 3.1415
 bytelen = 8
 
 try: 
-    print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
-    node.sdo.download(index, subIndex, value.to_bytes(bytelen, 'little'))
-    print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
+    # print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
+    # node.sdo.download(index, subIndex, value.to_bytes(bytelen, 'little'))
+    # print(int.from_bytes(node.sdo.upload(index, subIndex), 'little'))
+
     # network.send_message(0x604, bytes([0x40, 0x4A, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00]))
+
+    print(struct.unpack("<d", node.sdo.upload(index, subIndex))[0])
+    node.sdo.download(index, subIndex, struct.pack("<d", value))
+    print(struct.unpack("<d", node.sdo.upload(index, subIndex))[0])
 except (canopen.SdoCommunicationError, canopen.SdoAbortedError)  as e: print(e)
 
 
