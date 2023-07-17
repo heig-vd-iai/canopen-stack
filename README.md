@@ -7,3 +7,4 @@ CANopen library
 - update loop for components (timeout, send PDO, etc.)
 - PDO block transfer
 - quick search algorithm for OD entries
+- NMT state machine: if chain to switch?
