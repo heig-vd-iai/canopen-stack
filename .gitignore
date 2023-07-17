@@ -38,3 +38,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# OD save file
+*.dat
