@@ -41,8 +41,11 @@ private:
         uint8_t *dataSrc;
     } transferData;
 
-    void receiveUpload(CANopen_Frame request);
-    void receiveDownload(CANopen_Frame request);
+    void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
+    void uploadInitiate(CANopen_Frame request);
+    void uploadSegment(CANopen_Frame request);
+    void downloadInitiate(CANopen_Frame request);
+    void downloadSegment(CANopen_Frame request);
 
 public:
     CANopen_SDO(class CANopen_Node &node);
