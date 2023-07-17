@@ -69,10 +69,10 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
     {
         node.hb.publishState(NMTState_Initialisation);
     }
-    if (currentState != nextState)
-    {
-        printf("[NMT] Node %d entered state 0x%02X\n\n", node.nodeId, nextState);
-    }
+    // if (currentState != nextState)
+    // {
+    //     printf("[NMT] Node %d entered state 0x%02X\n\n", node.nodeId, nextState);
+    // }
     currentState = nextState;
 }
 
