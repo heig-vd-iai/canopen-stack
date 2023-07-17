@@ -13,3 +13,6 @@ CANopen library
 - [ ] implement TSDO
 - [ ] implement RSDO
 - [ ] implement quick search algorithm for OD entries
+
+## Remarks
+- use buffer for SDO upload? currently writing directly in OD
