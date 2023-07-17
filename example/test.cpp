@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <pthread.h>
 #include <thread>
+#include <chrono>
 #include <mutex>
 #include <cstring>
 #include <sys/socket.h>
@@ -10,6 +11,8 @@
 #include <net/if.h>
 #include "CANopen.hpp"
 using namespace std;
+
+#define PRINT 0
 
 CANopen_Node node(4);
 mutex mtx;
@@ -28,13 +31,14 @@ void func()
             CANopenFrame.nodeId = canFrame.can_id & 0x7F;
             CANopenFrame.functionCode = (canFrame.can_id & 0x780) >> 7;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
-#if 0
-            printf("Received CAN frame\nID: %d\nData [%d]: ", canFrame.can_id, canFrame.can_dlc);
-            for (int i = 0; i < canFrame.can_dlc; i++)
-                printf("%02X ", canFrame.data[i]);
-            printf("\nCANopen function code (0x%X) and node ID (%d)\n\n", CANopenFrame.functionCode, CANopenFrame.nodeId);
+#if PRINT
+            auto start = chrono::steady_clock::now();
 #endif
             node.receiveFrame(CANopenFrame);
+#if PRINT
+            auto end = chrono::steady_clock::now();
+            printf("[main] message processing took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+#endif
             mtx.unlock();
         }
     }
@@ -56,50 +60,6 @@ void CANopen_Node::sendFrame(CANopen_Frame frame)
 
 int main()
 {
-    // uint32_t a = 42;
-    // void *aPtr = &a;
-    // uint8_t arr[sizeof(a)];
-    // memcpy(arr, aPtr, sizeof(a));
-    // for (unsigned i = 0; i < sizeof(a); i++)
-    // {
-    //     printf("%02X ", arr[i]);
-    // }
-    // uint32_t b = arr[3];
-    // b = b << 8 | arr[2];
-    // b = b << 8 | arr[1];
-    // b = b << 8 | arr[0];
-    // printf("\n%d\n", b);
-    // return 0;
-
-    // {
-    //     uint64_t a = 5000;
-    //     uint8_t *ptr = (uint8_t *)&a;
-    //     for (size_t i = 0; i < 8; i++)
-    //     {
-    //         printf("%02X ", ptr[i]);
-    //     }
-    //     puts("");
-    // }
-    // {
-    //     uint8_t *ptr = (uint8_t *)node.od.getObjects().obj_x604A[1].valueSrc;
-    //     for (size_t i = 0; i < 8; i++)
-    //     {
-    //         printf("%02X ", ptr[i]);
-    //     }
-    //     puts("");
-    // }
-    // printf("%ld\n%ld\n", node.od.data.x604A.sub1, *(uint64_t *)node.od.getObjects().obj_x604A[1].valueSrc);
-    // return 0;
-
-    // uint8_t arr[8] = {0};
-    // uint16_t index = 0x6040;
-    // // memcpy(arr + 1, &index, sizeof(index));
-    // *(uint16_t *)(arr + 1) = index;
-    // for (size_t i = 0; i < sizeof(arr); i++)
-    //     printf("%X ", arr[i]);
-    // puts("");
-    // return 0;
-
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         perror("Socket");
@@ -117,11 +77,19 @@ int main()
     thread t(func);
     while (true)
     {
+#if PRINT
+        auto start = chrono::steady_clock::now();
+#endif
         if (mtx.try_lock())
         {
             node.update();
             mtx.unlock();
         }
+#if PRINT
+        auto end = chrono::steady_clock::now();
+        printf("[main] update took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+#endif
+        this_thread::sleep_for(chrono::milliseconds(1));
     }
 
     t.join();
