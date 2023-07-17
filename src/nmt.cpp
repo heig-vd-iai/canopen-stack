@@ -22,45 +22,45 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
     }
     else if (currentState == NMTState_PreOperational)
     {
-        if (command == NMTServiceCommands_Start)
+        if (command == NMTServiceCommand_Start)
         {
             nextState = NMTState_Operational;
         }
-        else if (command == NMTServiceCommands_Stop)
+        else if (command == NMTServiceCommand_Stop)
         {
             nextState = NMTState_Stopped;
         }
-        else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
+        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
         {
             nextState = NMTState_Initialisation;
         }
     }
     else if (currentState == NMTState_Operational)
     {
-        if (command == NMTServiceCommands_EnterPreOperational)
+        if (command == NMTServiceCommand_EnterPreOperational)
         {
             nextState = NMTState_PreOperational;
         }
-        else if (command == NMTServiceCommands_Stop)
+        else if (command == NMTServiceCommand_Stop)
         {
             nextState = NMTState_Stopped;
         }
-        else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
+        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
         {
             currentState = NMTState_Initialisation;
         }
     }
     else if (currentState == NMTState_Stopped)
     {
-        if (command == NMTServiceCommands_EnterPreOperational)
+        if (command == NMTServiceCommand_EnterPreOperational)
         {
             nextState = NMTState_PreOperational;
         }
-        else if (command == NMTServiceCommands_Start)
+        else if (command == NMTServiceCommand_Start)
         {
             nextState = NMTState_Operational;
         }
-        else if (command == NMTServiceCommands_ResetNode || command == NMTServiceCommands_ResetCommunication)
+        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
         {
             nextState = NMTState_Initialisation;
         }

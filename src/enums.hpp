@@ -29,24 +29,24 @@ enum NMTStates
 
 enum NMTServiceCommands
 {
-    NMTServiceCommands_Start = 0x01,
-    NMTServiceCommands_Stop = 0x02,
-    NMTServiceCommands_EnterPreOperational = 0x80,
-    NMTServiceCommands_ResetNode = 0x81,
-    NMTServiceCommands_ResetCommunication = 0x82
+    NMTServiceCommand_Start = 0x01,
+    NMTServiceCommand_Stop = 0x02,
+    NMTServiceCommand_EnterPreOperational = 0x80,
+    NMTServiceCommand_ResetNode = 0x81,
+    NMTServiceCommand_ResetCommunication = 0x82
 };
 
 enum SDOCommandSpecifiers
 {
-    SDOCommandSpecifiers_RequestDownloadInitiate = 0x01,
-    SDOCommandSpecifiers_ResponseDownloadInitiate = 0x03,
-    SDOCommandSpecifiers_RequestDownloadSegment = 0x00,
-    SDOCommandSpecifiers_ResponseDownloadSegment = 0x01,
-    SDOCommandSpecifiers_RequestUploadInitiate = 0x02,
-    SDOCommandSpecifiers_ResponseUploadInitiate = 0x02,
-    SDOCommandSpecifiers_RequestUploadSegment = 0x03,
-    SDOCommandSpecifiers_ResponseUploadSegment = 0x00,
-    SDOCommandSpecifiers_AbortTransfer = 0x04
+    SDOCommandSpecifier_RequestDownloadInitiate = 0x01,
+    SDOCommandSpecifier_ResponseDownloadInitiate = 0x03,
+    SDOCommandSpecifier_RequestDownloadSegment = 0x00,
+    SDOCommandSpecifier_ResponseDownloadSegment = 0x01,
+    SDOCommandSpecifier_RequestUploadInitiate = 0x02,
+    SDOCommandSpecifier_ResponseUploadInitiate = 0x02,
+    SDOCommandSpecifier_RequestUploadSegment = 0x03,
+    SDOCommandSpecifier_ResponseUploadSegment = 0x00,
+    SDOCommandSpecifier_AbortTransfer = 0x04
     // TODO: block transfer specifiers
 };
 
