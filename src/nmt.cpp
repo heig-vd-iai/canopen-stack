@@ -16,54 +16,63 @@ void CANopen_NMT::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
 void CANopen_NMT::setTransition(NMTServiceCommands command)
 {
     NMTStates nextState = currentState;
-    if (currentState == NMTState_Initialisation)
+
+    switch (currentState)
     {
+    case NMTState_Initialisation:
         nextState = NMTState_PreOperational;
-    }
-    else if (currentState == NMTState_PreOperational)
-    {
-        if (command == NMTServiceCommand_Start)
+        break;
+    case NMTState_PreOperational:
+        switch (command)
         {
+        case NMTServiceCommand_Start:
             nextState = NMTState_Operational;
-        }
-        else if (command == NMTServiceCommand_Stop)
-        {
+            break;
+        case NMTServiceCommand_Stop:
             nextState = NMTState_Stopped;
-        }
-        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
-        {
+            break;
+        case NMTServiceCommand_ResetNode:
+        case NMTServiceCommand_ResetCommunication:
             nextState = NMTState_Initialisation;
+            break;
+        default:
+            break;
         }
-    }
-    else if (currentState == NMTState_Operational)
-    {
-        if (command == NMTServiceCommand_EnterPreOperational)
+        break;
+    case NMTState_Operational:
+        switch (command)
         {
+        case NMTServiceCommand_EnterPreOperational:
             nextState = NMTState_PreOperational;
-        }
-        else if (command == NMTServiceCommand_Stop)
-        {
+            break;
+        case NMTServiceCommand_Stop:
             nextState = NMTState_Stopped;
+            break;
+        case NMTServiceCommand_ResetNode:
+        case NMTServiceCommand_ResetCommunication:
+            nextState = NMTState_Initialisation;
+            break;
+        default:
+            break;
         }
-        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
+        break;
+    case NMTState_Stopped:
+        switch (command)
         {
-            currentState = NMTState_Initialisation;
-        }
-    }
-    else if (currentState == NMTState_Stopped)
-    {
-        if (command == NMTServiceCommand_EnterPreOperational)
-        {
+        case NMTServiceCommand_EnterPreOperational:
             nextState = NMTState_PreOperational;
-        }
-        else if (command == NMTServiceCommand_Start)
-        {
+            break;
+        case NMTServiceCommand_Start:
             nextState = NMTState_Operational;
-        }
-        else if (command == NMTServiceCommand_ResetNode || command == NMTServiceCommand_ResetCommunication)
-        {
+            break;
+        case NMTServiceCommand_ResetNode:
+        case NMTServiceCommand_ResetCommunication:
             nextState = NMTState_Initialisation;
+            break;
+        default:
+            break;
         }
+        break;
     }
     if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
     {
