@@ -20,7 +20,7 @@ network.connect(channel='vcan0', bustype='socketcan')
 
 # for state in states:
 #     node.nmt.state = state
-#     sleep(0.1)
+#     sleep(0.5)
 
 index = 0x604A
 subIndex = 1
