@@ -12,3 +12,4 @@ CANopen library
 - [ ] implement RPDO
 - [ ] implement TSDO
 - [ ] implement RSDO
+- [ ] implement quick search algorithm for OD entries
