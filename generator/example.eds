@@ -2890,7 +2890,7 @@ PDOMapping=0
 ParameterName=DeltaSpeed
 ObjectType=0x7
 DataType=0x0007
-AccessType=rww
+AccessType=ro
 DefaultValue=500
 PDOMapping=1
 
@@ -2898,7 +2898,7 @@ PDOMapping=1
 ParameterName=DeltaTime
 ObjectType=0x7
 DataType=0x0006
-AccessType=rww
+AccessType=wo
 DefaultValue=1
 PDOMapping=1
 
