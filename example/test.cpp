@@ -34,7 +34,7 @@ void func()
 #if PRINT
             auto start = chrono::steady_clock::now();
 #endif
-            node.receiveFrame(CANopenFrame);
+            node.receiveFrame(CANopenFrame, chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count());
 #if PRINT
             auto end = chrono::steady_clock::now();
             printf("[main] message processing took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -77,12 +77,10 @@ int main()
     thread t(func);
     while (true)
     {
-#if PRINT
         auto start = chrono::steady_clock::now();
-#endif
         if (mtx.try_lock())
         {
-            node.update();
+            node.update(chrono::duration_cast<chrono::microseconds>(start.time_since_epoch()).count());
             mtx.unlock();
         }
 #if PRINT

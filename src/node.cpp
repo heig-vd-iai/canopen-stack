@@ -1,11 +1,12 @@
 #include "node.hpp"
 
-CANopen_Node::CANopen_Node(int id) : nodeId(id), nmt(*this), hb(*this), sdo(*this)
+CANopen_Node::CANopen_Node(uint8_t id) : nodeId(id), receptionTimestamp(0), nmt(*this), hb(*this), sdo(*this)
 {
 }
 
-void CANopen_Node::receiveFrame(CANopen_Frame frame)
+void CANopen_Node::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
 {
+    receptionTimestamp = timestamp_us;
     switch (frame.functionCode)
     {
     case FunctionCode_NMT:
@@ -38,7 +39,8 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
 // {
 // }
 
-void CANopen_Node::update()
+void CANopen_Node::update(uint64_t timer_us)
 {
     nmt.update();
+    sdo.update(timer_us);
 }

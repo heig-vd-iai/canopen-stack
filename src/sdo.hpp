@@ -1,6 +1,8 @@
 #pragma once
 #include "frame.hpp"
 
+#define SDO_TIMEOUT_US 1000
+
 union SDO_CommandByte
 {
     uint8_t value;
@@ -23,9 +25,9 @@ union SDO_CommandByte
 
 enum SDOServerStates
 {
-    SDOServerStates_Ready,
-    SDOServerStates_Uploading,
-    SDOServerStates_Downloading
+    SDOServerState_Ready,
+    SDOServerState_Uploading,
+    SDOServerState_Downloading
 };
 
 class CANopen_SDO
@@ -41,6 +43,7 @@ private:
         uint32_t remainingBytes;
         uint8_t *dataSrc;
         uint8_t buffer[64];
+        uint64_t timestamp;
     } transferData;
 
     void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
@@ -52,4 +55,5 @@ private:
 public:
     CANopen_SDO(class CANopen_Node &node);
     void receiveFrame(CANopen_Frame frame);
+    void update(uint64_t timer_us);
 };

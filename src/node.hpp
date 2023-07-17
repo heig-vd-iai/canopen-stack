@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "frame.hpp"
 #include "nmt.hpp"
 #include "heartbeat.hpp"
@@ -9,7 +10,8 @@ class CANopen_Node
 {
     // private:
 public:
-    int nodeId;
+    uint8_t nodeId;
+    uint64_t receptionTimestamp;
     OD_ObjectDictionnary od;
     CANopen_NMT nmt;
     CANopen_HB hb;
@@ -19,8 +21,8 @@ public:
     friend CANopen_NMT;
     friend CANopen_HB;
     friend CANopen_SDO;
-    CANopen_Node(int id);
-    void receiveFrame(CANopen_Frame frame);
+    CANopen_Node(uint8_t id);
+    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
     void sendFrame(CANopen_Frame frame);
-    void update();
+    void update(uint64_t timer_us);
 };
