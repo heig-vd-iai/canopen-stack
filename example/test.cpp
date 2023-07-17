@@ -91,6 +91,15 @@ int main()
     // printf("%ld\n%ld\n", node.od.data.x604A.sub1, *(uint64_t *)node.od.getObjects().obj_x604A[1].valueSrc);
     // return 0;
 
+    // uint8_t arr[8] = {0};
+    // uint16_t index = 0x6040;
+    // // memcpy(arr + 1, &index, sizeof(index));
+    // *(uint16_t *)(arr + 1) = index;
+    // for (size_t i = 0; i < sizeof(arr); i++)
+    //     printf("%X ", arr[i]);
+    // puts("");
+    // return 0;
+
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         perror("Socket");
