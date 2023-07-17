@@ -1,6 +1,17 @@
 #pragma once
 #include <cstdint>
 
+union AccessType
+{
+    uint8_t value;
+    struct 
+    {
+        uint8_t r: 1; 
+        uint8_t w: 1; 
+        uint8_t constant: 1; 
+    } bits;
+};
+
 #define OD_OBJECTS_COUNT {{ od_objects_count }}  // Number of objects in the dictionnary
 
 struct OD_Data // Struct containing all of the raw data that can be saved and loaded
@@ -16,11 +27,11 @@ struct OD_Data // Struct containing all of the raw data that can be saved and lo
 
 struct OD_Object
 {
-    const int accessType;
-    const int dataType;
+    const AccessType accessType;
+    const uint8_t dataType;
     const void *valueSrc;
 
-    OD_Object(int accessType, int dataType, void *valueSrc) : accessType(accessType), dataType(dataType), valueSrc(valueSrc) {}
+    OD_Object(uint8_t accessType, uint8_t dataType, void *valueSrc) : accessType{accessType}, dataType(dataType), valueSrc(valueSrc) {}
 };
 
 struct OD_Objects // Struct containing all of the dictionnary objects
@@ -34,19 +45,19 @@ struct OD_Objects // Struct containing all of the dictionnary objects
 
 struct OD_ObjectEntry // Struct representing a dictionnary entry
 {
-    const int index;
-    const int objectType;
-    const int subNumber;
+    const uint16_t index;
+    const uint16_t objectType;
+    const uint8_t subNumber;
     const OD_Object *objects;
 
-    OD_ObjectEntry(int index, int objectType, int subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
-    int getSize(uint8_t subIndex);
+    OD_ObjectEntry(uint16_t index, uint16_t objectType, uint8_t subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
+    unsigned getSize(uint8_t subIndex);
 };
 
 class OD_ObjectDictionnary // Object dictionnary class that is usable for the user
 {
 private:
-    const int size;
+    const unsigned size;
     OD_Data data;
     OD_Objects objects;
     OD_ObjectEntry entries[OD_OBJECTS_COUNT];
