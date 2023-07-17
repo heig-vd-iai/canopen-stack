@@ -36,9 +36,12 @@ private:
     SDOServerStates serverState;
     struct
     {
+        uint16_t index;
+        uint8_t subIndex;
         uint32_t objectSize;
         uint32_t remainingBytes;
         uint8_t *dataSrc;
+        uint8_t buffer[64];
     } transferData;
 
     void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
