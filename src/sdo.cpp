@@ -16,29 +16,46 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame)
     switch (serverState)
     {
     case SDOServerStates_Ready:
-    {
         switch (recvCommand.bits_initiate.ccs)
         {
         case SDOCommandSpecifiers_RequestUploadInitiate:
             uploadInitiate(frame);
+            break;
+        case SDOCommandSpecifiers_RequestDownloadInitiate:
+            // code...
             break;
         default:
             sendAbort(0, 0, 0x05040001);
             break;
         }
         break;
-    }
     case SDOServerStates_Uploading:
-    {
         switch (recvCommand.bits_segment.ccs)
         {
         case SDOCommandSpecifiers_RequestUploadSegment:
             uploadSegment(frame);
             break;
+        case SDOCommandSpecifiers_AbortTransfer:
+            serverState = SDOServerStates_Ready;
+            break;
+        default:
+            sendAbort(0, 0, 0x05040001);
+            break;
         }
         break;
-    }
-    default:
+    case SDOServerStates_Downloading:
+        switch (recvCommand.bits_segment.ccs)
+        {
+        case SDOCommandSpecifiers_RequestDownloadSegment:
+            // code...
+            break;
+        case SDOCommandSpecifiers_AbortTransfer:
+            serverState = SDOServerStates_Ready;
+            break;
+        default:
+            sendAbort(0, 0, 0x05040001);
+            break;
+        }
         break;
     }
 }
@@ -86,6 +103,8 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request)
         sendAbort(index, subIndex, 0x06010001);
         return;
     }
+    transferData.index = index;
+    transferData.subIndex = subIndex;
     transferData.objectSize = transferData.remainingBytes = entry->getSize(subIndex);
     transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
     // Fill command byte and frame data
@@ -115,7 +134,8 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request)
     response.data[3] = request.data[3];
     // Send response
     node.sendFrame(response);
-    serverState = sendCommand.bits_initiate.e ? serverState : SDOServerStates_Uploading;
+    if (!sendCommand.bits_initiate.e)
+        serverState = SDOServerStates_Uploading;
 }
 
 void CANopen_SDO::uploadSegment(CANopen_Frame request)
@@ -134,11 +154,120 @@ void CANopen_SDO::uploadSegment(CANopen_Frame request)
     response.functionCode = FunctionCode_TSDO;
     response.nodeId = node.nodeId;
     response.dlc = 8;
-    // Fill response frame data
+    // Upload response data
     response.data[0] = sendCommand.value;
     memcpy(response.data + 8 - maxSize, transferData.dataSrc + bytesSent, payloadSize);
     transferData.remainingBytes -= payloadSize;
     // Send response
     node.sendFrame(response);
-    serverState = sendCommand.bits_segment.c ? SDOServerStates_Ready : serverState;
+    if (sendCommand.bits_segment.c)
+        serverState = SDOServerStates_Ready;
+}
+
+void CANopen_SDO::downloadInitiate(CANopen_Frame request)
+{
+    const unsigned maxSize = 4;
+    CANopen_Frame response;
+    SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    uint16_t index = *(uint16_t *)(request.data + 1);
+    uint8_t subIndex = request.data[3];
+    OD_ObjectEntry *entry = node.od.findEntry(index);
+    if (entry == NULL)
+    {
+        sendAbort(index, subIndex, 0x06020000);
+        return;
+    }
+    if (subIndex >= entry->subNumber)
+    {
+        sendAbort(index, subIndex, 0x06090011);
+        return;
+    }
+    if (!entry->objects[subIndex].accessType.bits.w)
+    {
+        sendAbort(index, subIndex, 0x06010002);
+        return;
+    }
+    transferData.index = index;
+    transferData.subIndex = subIndex;
+    transferData.objectSize = entry->getSize(subIndex);
+    transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
+    // Fill command byte and write data
+    if (recvCommand.bits_initiate.e) // Expedited transfer
+    {
+        transferData.remainingBytes = recvCommand.bits_initiate.s ? maxSize - recvCommand.bits_initiate.n : transferData.objectSize;
+        if (transferData.remainingBytes > maxSize)
+        {
+            sendAbort(index, subIndex, 0x06070012);
+            return;
+        }
+        memcpy(transferData.dataSrc, request.data + 8 - maxSize, transferData.remainingBytes);
+    }
+    else // Segment transfer
+    {
+        if (!recvCommand.bits_initiate.s)
+        {
+            sendAbort(index, subIndex, 0x06040043);
+            return;
+        }
+        transferData.remainingBytes = *(uint32_t *)(request.data + 4);
+        if (transferData.remainingBytes != transferData.objectSize)
+        {
+            sendAbort(index, subIndex, 0x06070010);
+            return;
+        }
+    }
+    sendCommand.bits_initiate.ccs = SDOCommandSpecifiers_ResponseDownloadInitiate;
+    // Fill response frame fields
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
+    response.dlc = 8;
+    // Fill response frame data
+    response.data[0] = sendCommand.value;
+    response.data[1] = request.data[1];
+    response.data[2] = request.data[2];
+    response.data[3] = request.data[3];
+    // Send response
+    node.sendFrame(response);
+    if (!recvCommand.bits_initiate.e)
+        serverState = SDOServerStates_Downloading;
+}
+
+void CANopen_SDO::downloadSegment(CANopen_Frame request)
+{
+    const unsigned maxSize = 7;
+    CANopen_Frame response;
+    SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    unsigned payloadSize = recvCommand.bits_segment.n;
+    unsigned bytesReceived = transferData.objectSize - transferData.remainingBytes;
+    if (bytesReceived + payloadSize > transferData.objectSize)
+    {
+        sendAbort(transferData.index, transferData.subIndex, 0x06070012);
+        return;
+    }
+    // Download request data
+    if (transferData.objectSize > sizeof(transferData.buffer)) // Download to OD directly
+    {
+        printf("[SDO] Warning: downloading directly to OD data (exceeding buffer size of %d)\n", sizeof(transferData.buffer));
+        memcpy(transferData.dataSrc + bytesReceived, request.data + 8 - maxSize, payloadSize);
+    }
+    else // Use download buffer instead
+    {
+        memcpy(transferData.buffer + bytesReceived, request.data + 8 - maxSize, payloadSize);
+        if (sendCommand.bits_segment.c)
+            memcpy(transferData.dataSrc, transferData.buffer, transferData.objectSize);
+    }
+    transferData.remainingBytes -= payloadSize;
+    // Fill command byte
+    sendCommand.bits_segment.ccs = SDOCommandSpecifiers_ResponseDownloadSegment;
+    sendCommand.bits_segment.t = recvCommand.bits_segment.t;
+    // Fill response frame fields
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
+    response.dlc = 8;
+    // Fill response frame data
+    response.data[0] = sendCommand.value;
+    // Send response
+    node.sendFrame(response);
+    if (sendCommand.bits_segment.c)
+        serverState = SDOServerStates_Ready;
 }
