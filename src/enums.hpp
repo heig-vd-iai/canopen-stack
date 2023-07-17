@@ -56,7 +56,8 @@ enum SDOCommandSpecifiers
     SDOCommandSpecifiers_RequestUploadInitiate = 0x02,
     SDOCommandSpecifiers_ResponseUploadInitiate = 0x02,
     SDOCommandSpecifiers_RequestUploadSegment = 0x03,
-    SDOCommandSpecifiers_ResponseUploadSegment = 0x00
+    SDOCommandSpecifiers_ResponseUploadSegment = 0x00,
+    SDOCommandSpecifiers_AbortTransfer = 0x04
     // TODO: block transfer specifiers
 };
 
