@@ -9,6 +9,7 @@ CANopen library
 - quick search algorithm for OD entries
 - node guarding?
 - constantes sauvages
+- NMT state and communication objects (p.80)
 
 ## Tasks (OD generator)
 - make sure mandatory objects exist
