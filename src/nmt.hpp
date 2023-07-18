@@ -11,8 +11,8 @@ private:
 
 public:
     CANopen_NMT(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
+    void receiveFrame(CANopen_Frame frame);
     void setTransition(NMTServiceCommands command);
     NMTStates getState();
-    void update(uint64_t timestamp_us);
+    void update();
 };

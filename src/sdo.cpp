@@ -8,7 +8,7 @@ CANopen_SDO::CANopen_SDO(CANopen_Node &node) : node(node)
 {
 }
 
-void CANopen_SDO::update(uint64_t timestamp_us)
+void CANopen_SDO::update(uint32_t timestamp_us)
 {
     switch (serverState)
     {
@@ -24,7 +24,7 @@ void CANopen_SDO::update(uint64_t timestamp_us)
     }
 }
 
-void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
+void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
 {
     if (frame.nodeId != node.nodeId)
         return;
@@ -96,7 +96,7 @@ void CANopen_SDO::sendAbort(uint16_t index, uint8_t subIndex, uint32_t error)
     serverState = SDOServerState_Ready;
 }
 
-void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint64_t timestamp_us)
+void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
 {
     const unsigned maxSize = 4;
     CANopen_Frame response;
@@ -155,7 +155,7 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint64_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::uploadSegment(CANopen_Frame request, uint64_t timestamp_us)
+void CANopen_SDO::uploadSegment(CANopen_Frame request, uint32_t timestamp_us)
 {
     const unsigned maxSize = 7;
     CANopen_Frame response;
@@ -182,7 +182,7 @@ void CANopen_SDO::uploadSegment(CANopen_Frame request, uint64_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint64_t timestamp_us)
+void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
 {
     const unsigned maxSize = 4;
     CANopen_Frame response;
@@ -251,7 +251,7 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint64_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadSegment(CANopen_Frame request, uint64_t timestamp_us)
+void CANopen_SDO::downloadSegment(CANopen_Frame request, uint32_t timestamp_us)
 {
     const unsigned maxSize = 7;
     CANopen_Frame response;

@@ -43,17 +43,17 @@ private:
         uint32_t remainingBytes;
         uint8_t *dataSrc;
         uint8_t buffer[64];
-        uint64_t timestamp;
+        uint32_t timestamp;
     } transferData;
 
     void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
-    void uploadInitiate(CANopen_Frame request, uint64_t timestamp_us);
-    void uploadSegment(CANopen_Frame request, uint64_t timestamp_us);
-    void downloadInitiate(CANopen_Frame request, uint64_t timestamp_us);
-    void downloadSegment(CANopen_Frame request, uint64_t timestamp_us);
+    void uploadInitiate(CANopen_Frame request, uint32_t timestamp_us);
+    void uploadSegment(CANopen_Frame request, uint32_t timestamp_us);
+    void downloadInitiate(CANopen_Frame request, uint32_t timestamp_us);
+    void downloadSegment(CANopen_Frame request, uint32_t timestamp_us);
 
 public:
     CANopen_SDO(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
-    void update(uint64_t timestamp_us);
+    void receiveFrame(CANopen_Frame frame, uint32_t timestamp_us);
+    void update(uint32_t timestamp_us);
 };
