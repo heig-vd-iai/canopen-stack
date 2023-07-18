@@ -1,6 +1,6 @@
 #include "nmt.hpp"
 #include "node.hpp"
-#include <cstdio>
+// #include <cstdio>
 
 CANopen_NMT::CANopen_NMT(CANopen_Node &node) : currentState(NMTState_Initialisation), node(node)
 {
