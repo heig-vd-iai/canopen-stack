@@ -21,7 +21,8 @@ public:
     friend CANopen_HB;
     friend CANopen_SDO;
     CANopen_Node(uint8_t id);
-    void receiveFrame(CANopen_Frame frame, uint64_t timestamp_us);
+    void receiveFrame(CANopen_Frame frame);
     void sendFrame(CANopen_Frame frame);
-    void update(uint64_t timestamp_us);
+    void update();
+    uint32_t getTime_us();
 };

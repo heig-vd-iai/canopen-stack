@@ -34,7 +34,7 @@ void func()
 #if PRINT
             auto start = chrono::steady_clock::now();
 #endif
-            node.receiveFrame(CANopenFrame, chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count());
+            node.receiveFrame(CANopenFrame);
 #if PRINT
             auto end = chrono::steady_clock::now();
             printf("[main] message processing took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -58,6 +58,11 @@ void CANopen_Node::sendFrame(CANopen_Frame frame)
     }
 }
 
+uint32_t CANopen_Node::getTime_us()
+{
+    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+}
+
 int main()
 {
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
@@ -77,10 +82,12 @@ int main()
     thread t(func);
     while (true)
     {
+#if PRINT
         auto start = chrono::steady_clock::now();
+#endif
         if (mtx.try_lock())
         {
-            node.update(chrono::duration_cast<chrono::microseconds>(start.time_since_epoch()).count());
+            node.update();
             mtx.unlock();
         }
 #if PRINT

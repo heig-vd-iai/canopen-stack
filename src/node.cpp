@@ -4,12 +4,13 @@ CANopen_Node::CANopen_Node(uint8_t id) : nodeId(id), nmt(*this), hb(*this), sdo(
 {
 }
 
-void CANopen_Node::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
+void CANopen_Node::receiveFrame(CANopen_Frame frame)
 {
+    uint32_t timestamp = getTime_us();
     switch (frame.functionCode)
     {
     case FunctionCode_NMT:
-        nmt.receiveFrame(frame, timestamp_us);
+        nmt.receiveFrame(frame);
         break;
     case FunctionCode_SYNC: // Also FunctionCode_EMCY
         break;
@@ -27,7 +28,7 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
         break;
     case FunctionCode_TSDO:
     case FunctionCode_RSDO:
-        sdo.receiveFrame(frame, timestamp_us);
+        sdo.receiveFrame(frame, timestamp);
         break;
     case FunctionCode_HEARTBEAT:
         break;
@@ -38,8 +39,10 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame, uint64_t timestamp_us)
 // {
 // }
 
-void CANopen_Node::update(uint64_t timestamp_us)
+void CANopen_Node::update()
 {
-    nmt.update(timestamp_us);
-    sdo.update(timestamp_us);
+    uint32_t timestamp = getTime_us();
+    nmt.update();
+    sdo.update(timestamp);
+    hb.update(timestamp);
 }
