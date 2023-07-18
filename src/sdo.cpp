@@ -121,7 +121,7 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     }
     transferData.index = index;
     transferData.subIndex = subIndex;
-    transferData.objectSize = transferData.remainingBytes = entry->getSize(subIndex);
+    transferData.objectSize = transferData.remainingBytes = entry->objects[subIndex].size;
     transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
     // Fill command byte and frame data
     if (transferData.objectSize > maxSize) // Segment transfer
@@ -207,7 +207,7 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     }
     transferData.index = index;
     transferData.subIndex = subIndex;
-    transferData.objectSize = entry->getSize(subIndex);
+    transferData.objectSize = entry->objects[subIndex].size;
     transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
     // Fill command byte and write data
     if (recvCommand.bits_initiate.e) // Expedited transfer

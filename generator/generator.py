@@ -77,7 +77,7 @@ class OD_VarEntry:
         return f"OD_Object {self.objName}[1]"
     
     def render_OD_Object_constructor(self) -> str:
-        return f"{self.objName}{{OD_Object({self.accessType}, {self.dataType}, &data.{self.varName})}}"
+        return f"{self.objName}{{OD_Object({self.accessType}, {self.dataType}, sizeof(data.{self.varName}), &data.{self.varName})}}"
     
     def render_OD_Entry_constructor(self) -> str:
         return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
@@ -113,8 +113,8 @@ class OD_ArrayEntry:
         return f"OD_Object {self.objName}[{self.subNumber}]"
     
     def render_OD_Object_constructor(self) -> str:
-        sub0 = f"OD_Object({self.objects[0].accessType}, {self.objects[0].dataType}, &data.{self.sub0Name})"
-        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, &data.{self.varName}[{i}])" for i, obj in enumerate(self.objects[1:])])
+        sub0 = f"OD_Object({self.objects[0].accessType}, {self.objects[0].dataType}, sizeof(data.{self.sub0Name}), &data.{self.sub0Name})"
+        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, sizeof(data.{self.varName}[{i}]), &data.{self.varName}[{i}])" for i, obj in enumerate(self.objects[1:])])
         return f"{self.objName}{{{sub0}, {arr}}}"
     
     def render_OD_Entry_constructor(self) -> str:
@@ -146,7 +146,7 @@ class OD_RecordEntry:
         return f"OD_Object {self.objName}[{self.subNumber}]"
     
     def render_OD_Object_constructor(self) -> str:
-        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, &data.{self.varName}.sub{i})" for i, obj in enumerate(self.objects)])
+        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, sizeof(data.{self.varName}.sub{i}), &data.{self.varName}.sub{i})" for i, obj in enumerate(self.objects)])
         return f"{self.objName}{{{arr}}}"
     
     def render_OD_Entry_constructor(self) -> str:
@@ -186,17 +186,27 @@ allDataConstructors = [constructor for sublist in objectEntries for constructor 
 allObjectDeclarations = [entry.render_OD_Object_declaration() for entry in objectEntries]
 allObjectConstructors = [entry.render_OD_Object_constructor() for entry in objectEntries]
 allEntryConstructors = [entry.render_OD_Entry_constructor() for entry in objectEntries]
-
-
+rpdoMappings = [entry for entry in objectEntries if 0x1600 <= entry.index <= 0x17FF]
+tpdoMappings = [entry for entry in objectEntries if 0x1A00 <= entry.index <= 0x1BFF]
+tpdoLongestMapping = max([entry.objects[0].defaultValue for entry in tpdoMappings])
+defines = [
+    f"OD_OBJECT_COUNT {len(objectEntries)}",
+    f"OD_RPDO_COUNT {len(rpdoMappings)}",
+    f"OD_TPDO_COUNT {len(tpdoMappings)}",
+    f"OD_TPDO_LONGEST_MAP {tpdoLongestMapping}",
+    "OD_RPDO_COMMUNICATION_INDEX 0x1400",
+    "OD_RPDO_MAPPING_INDEX 0x1600",
+    "OD_TPDO_COMMUNICATION_INDEX 0x1800",
+    "OD_TPDO_MAPPING_INDEX 0x1A00"
+]
 variables = {
-    "od_objects_count": len(objectEntries),
-    "od_object_entries": objectEntries,
-    "od_all_data_declarations": allDataDeclarations,
-    "od_all_data_constructors": allDataConstructors,
-    "od_all_object_declarations": allObjectDeclarations,
-    "od_all_object_constructors": allObjectConstructors,
-    "od_all_entry_constructors": allEntryConstructors
+    "object_entries": objectEntries,
+    "all_data_declarations": allDataDeclarations,
+    "all_data_constructors": allDataConstructors,
+    "all_object_declarations": allObjectDeclarations,
+    "all_object_constructors": allObjectConstructors,
+    "all_entry_constructors": allEntryConstructors,
+    "defines": defines
 }
-
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
