@@ -3,6 +3,12 @@ from canopen import Node, ObjectDictionary
 import logging
 import jinja2
 
+## Steps for strict parsing:
+# 1. load from .eds file into canopen.ObjectDictionnary
+# 2. for each entry, check if object type is supported (VAR, ARRAY, RECORD, ...)
+# 3. for each entry, check if data type is supported (BOOLEAN, INTEGER8, ...)
+# 4. for communication profile specific objects, check if they are valid (TPDO mapping, ...)
+
 
 
 EDS_FILENAME = "example.eds"
