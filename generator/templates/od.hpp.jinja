@@ -12,15 +12,18 @@ union AccessType
     } bits;
 };
 
-#define OD_OBJECTS_COUNT {{ od_objects_count }}  // Number of objects in the dictionnary
+{% for define in defines %}
+#define {{ define }}
+{% endfor %}
+
 
 struct OD_Data // Struct containing all of the raw data that can be saved and loaded
 {
-    {% for declaration in od_all_data_declarations %}
+    {% for declaration in all_data_declarations %}
     {{ declaration }};
     {% endfor %}
 
-    OD_Data() : {{ od_all_data_constructors|join(', ') }}{}
+    OD_Data() : {{ all_data_constructors|join(', ') }}{}
     void save();
     void load();
 };
@@ -29,18 +32,19 @@ struct OD_Object
 {
     const AccessType accessType;
     const uint8_t dataType;
+    const uint8_t size;
     const void *valueSrc;
 
-    OD_Object(uint8_t accessType, uint8_t dataType, void *valueSrc) : accessType{accessType}, dataType(dataType), valueSrc(valueSrc) {}
+    OD_Object(uint8_t accessType, uint8_t dataType, uint8_t size, void *valueSrc) : accessType{accessType}, dataType(dataType), size(size), valueSrc(valueSrc) {}
 };
 
 struct OD_Objects // Struct containing all of the dictionnary objects
 {
-    {% for declaration in od_all_object_declarations %}
+    {% for declaration in all_object_declarations %}
     {{ declaration }};
     {% endfor %}
 
-    OD_Objects(OD_Data &data) : {{ od_all_object_constructors|join(', ') }}{}
+    OD_Objects(OD_Data &data) : {{ all_object_constructors|join(', ') }}{}
 };
 
 struct OD_ObjectEntry // Struct representing a dictionnary entry
@@ -51,7 +55,6 @@ struct OD_ObjectEntry // Struct representing a dictionnary entry
     const OD_Object *objects;
 
     OD_ObjectEntry(uint16_t index, uint16_t objectType, uint8_t subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
-    unsigned getSize(uint8_t subIndex);
 };
 
 class OD_ObjectDictionnary // Object dictionnary class that is usable for the user
@@ -60,10 +63,10 @@ private:
     const unsigned size;
     OD_Data data;
     OD_Objects objects;
-    OD_ObjectEntry entries[OD_OBJECTS_COUNT];
+    OD_ObjectEntry entries[OD_OBJECT_COUNT];
 
 public:
-    OD_ObjectDictionnary() : size(OD_OBJECTS_COUNT), objects(data), entries{ {{- od_all_entry_constructors|join(', ') -}} }{}
+    OD_ObjectDictionnary() : size(OD_OBJECT_COUNT), objects(data), entries{ {{- all_entry_constructors|join(', ') -}} }{}
     inline void save() { return data.save(); }
     inline void load() { return data.load(); }
     inline OD_Objects &getObjects() { return objects; }
