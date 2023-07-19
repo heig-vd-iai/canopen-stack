@@ -6,24 +6,12 @@ import struct
 
 network = canopen.Network()
 node = canopen.Node(4, "../generator/example.eds")
-
-
-entries = [entry for entry in node.object_dictionary.items() if 0x1000 <= entry[0] <= 0x1FFF]
-
-
-for index, entry in entries:
-    print(f"[%X] {entry.name}" % index)
-
-
-exit()
-
-
-
-
+# entries = [entry for entry in node.object_dictionary.items() if 0x1000 <= entry[0] <= 0x1FFF]
+# for index, entry in entries: print(f"[%X] {entry.name}" % index)
 network.add_node(node)
 network.connect(channel='vcan0', bustype='socketcan')
 try:
-    pass
+    node.tpdo.read()
 
 
 

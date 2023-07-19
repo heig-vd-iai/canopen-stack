@@ -10,6 +10,7 @@ CANopen library
 - constantes sauvages
 - NMT state and communication objects (p.80)
 - PDO
+- PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - variable PDO mapping? 
 - replace getSize() of object by a size field (useful for string)
 - implement missing data types
@@ -24,3 +25,6 @@ CANopen library
     3. 0x1800 to 0x19FF: TPDO communication parameter
     3. 0x1A00 to 0x1BFF: TPDO mapping parameter
 - skip unsupported entries and tell why
+
+## Remarks
+- PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
