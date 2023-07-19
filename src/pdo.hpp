@@ -4,20 +4,27 @@
 #include "frame.hpp"
 #include "od.hpp"
 
-struct PDOMap
-{
-    uint8_t count;
-    OD_Object *sources[8];
-};
-
 class CANopen_PDO
 {
+    struct CANopen_TPDO
+    {
+        uint32_t *cobId;
+        uint8_t *transmissionType;
+        uint16_t *inhibitTime;
+        uint16_t *eventTimer;
+        uint8_t *syncStartValue;
+        uint8_t mappedObjectsCount;
+        OD_Object *mappedObjectsSources[8];
+        CANopen_TPDO();
+    };
+
 private:
     class CANopen_Node &node;
+    CANopen_TPDO tpdos[OD_TPDO_COUNT];
 
-    PDOMap tpdos[OD_TPDO_COUNT];
-
-    void build(PDOMap tpdo, uint8_t *buffer);
+    void initTPDO(unsigned num);
+    void remapTPDO(unsigned num);
+    void bufferizeTPDO(unsigned num, uint8_t buffer[0]);
 
 public:
     CANopen_PDO(class CANopen_Node &node);
