@@ -1,22 +1,13 @@
 from canopen.objectdictionary import Record, Variable, Array
 from canopen import Node, ObjectDictionary
+from typing import Union
 import logging
 import jinja2
-
-## Steps for strict parsing:
-# 1. load from .eds file into canopen.ObjectDictionnary
-# 2. for each entry, check if object type is supported (VAR, ARRAY, RECORD, ...)
-# 3. for each entry, check if data type is supported (BOOLEAN, INTEGER8, ...)
-# 4. for communication profile specific objects, check if they are valid (TPDO mapping, ...)
-
-
 
 EDS_FILENAME = "example.eds"
 TEMPLATES_DIR = "templates"
 HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
-
-
 
 datatype2ctype = {
     0x01: "bool",
@@ -171,22 +162,53 @@ def getAccessType(value: str) -> int:
     if value == "const": return const_bit | read_bit
     raise Exception(f"Access type not supported: '{value}'")
 
-def toEntry(entry):
-    try:
-        if isinstance(entry, Variable):
-            return OD_VarEntry(entry.index, getAccessType(entry.access_type), entry.data_type, entry.name, entry.default)
-        if isinstance(entry, Array):
-            objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
-            return OD_ArrayEntry(entry.index, objs)
-        if isinstance(entry, Record):
-            objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
-            return OD_RecordEntry(entry.index, objs)
-    except KeyError: logging.warning(f"Skipping entry [{'0x%X' % entry.index}]")
-    return None
-    
+def toEntry(entry: Union[Variable, Array, Record]):
+    if isinstance(entry, Variable):
+        return OD_VarEntry(entry.index, getAccessType(entry.access_type), entry.data_type, entry.name, entry.default)
+    if isinstance(entry, Array):
+        objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
+        return OD_ArrayEntry(entry.index, objs)
+    if isinstance(entry, Record):
+        objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
+        return OD_RecordEntry(entry.index, objs)
+
+def toHex(value: int) -> str:
+    return "%X" % value
+
+
 
 od: ObjectDictionary = Node(1, EDS_FILENAME).object_dictionary
-objectEntries = [toEntry(entry) for entry in od.values() if toEntry(entry) is not None]
+errors = 0
+indices = set(od.keys())
+objectEntries: list[OD_Object] = []
+for entry in od.values():
+    if isinstance(entry, Variable):
+        variables = [entry]
+    elif isinstance(entry, (Array, Record)):
+        variables = list(entry.subindices.values())
+
+    valid = True
+    ## Check data type
+    for var in variables:
+            if var.data_type not in datatype2ctype:
+                logging.warning(f"Skipping entry [{toHex(entry.index)}]: unsupported data type '{toHex(var.data_type)}'")
+                valid = False
+
+    ## Check for specific objects
+    if 0x1600 <= entry.index <= 0x17FF or 0x1A00 <= entry.index <= 0x1BFF:  # PDO mapping parameter
+        count = variables[0].default
+        mappedIndices = set([var.default >> 16 for var in variables[1:count + 1]])
+        missing = mappedIndices - indices
+        if(len(missing)):
+            logging.error(f"PDO mapping [{toHex(entry.index)}]: missing objects {', '.join([toHex(s) for s in missing])}")
+            errors += 1
+
+    ## Append to valid entries list
+    if valid: objectEntries.append(toEntry(entry))
+
+if errors > 0:
+    print("Could not generate source file due to errors")
+    exit(1)
 allDataDeclarations = [declaration for sublist in objectEntries for declaration in sublist.render_OD_Data_declaration()]
 allDataConstructors = [constructor for sublist in objectEntries for constructor in sublist.render_OD_Data_constructor()]
 allObjectDeclarations = [entry.render_OD_Object_declaration() for entry in objectEntries]
