@@ -6,7 +6,18 @@
 
 class CANopen_PDO
 {
-    struct CANopen_TPDO
+    union CobId
+    {
+        uint32_t value;
+        struct
+        {
+            uint32_t canId : 29;
+            uint32_t frame : 1;
+            uint32_t rtr : 1;
+            uint32_t valid : 1;
+        } bits;
+    };
+    struct TPDO
     {
         uint32_t *cobId;
         uint8_t *transmissionType;
@@ -14,13 +25,14 @@ class CANopen_PDO
         uint16_t *eventTimer;
         uint8_t *syncStartValue;
         uint8_t mappedObjectsCount;
-        OD_Object *mappedObjectsSources[8];
-        CANopen_TPDO();
+        OD_Object **mappedObjects;
+        uint32_t timestamp;
+        TPDO();
     };
 
 private:
     class CANopen_Node &node;
-    CANopen_TPDO tpdos[OD_TPDO_COUNT];
+    TPDO tpdos[OD_TPDO_COUNT];
 
     void initTPDO(unsigned num);
     void remapTPDO(unsigned num);
