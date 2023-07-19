@@ -7,8 +7,6 @@ CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node), lastPublish(0), produce
     OD_ObjectEntry *entry = node.od.findEntry(0x1017);
     if (entry == NULL)
         return;
-    if (entry->objects[0].dataType != DataType_UNSIGNED16)  //TODO: really necessary to check type? Should be done in OD generation
-        return;
     producerHeartbeatTime = (uint16_t *)entry->objects[0].valueSrc;
 }
 
