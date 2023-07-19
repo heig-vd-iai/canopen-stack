@@ -177,7 +177,7 @@ def toHex(value: int) -> str:
 
 
 
-od: ObjectDictionary = Node(1, EDS_FILENAME).object_dictionary
+od: ObjectDictionary = Node(4, EDS_FILENAME).object_dictionary
 errors = 0
 indices = set(od.keys())
 objectEntries: list[OD_Object] = []
