@@ -3,35 +3,34 @@
 
 #define SDO_TIMEOUT_US 1000
 
-union SDO_CommandByte
-{
-    uint8_t value;
-    struct
-    {
-        uint8_t s : 1;
-        uint8_t e : 1;
-        uint8_t n : 2;
-        uint8_t reserved : 1;
-        uint8_t ccs : 3;
-    } bits_initiate;
-    struct
-    {
-        uint8_t c : 1;
-        uint8_t n : 3;
-        uint8_t t : 1;
-        uint8_t ccs : 3;
-    } bits_segment;
-};
-
-enum SDOServerStates
-{
-    SDOServerState_Ready,
-    SDOServerState_Uploading,
-    SDOServerState_Downloading
-};
-
 class CANopen_SDO
 {
+    union SDO_CommandByte
+    {
+        uint8_t value;
+        struct
+        {
+            uint8_t s : 1;
+            uint8_t e : 1;
+            uint8_t n : 2;
+            uint8_t reserved : 1;
+            uint8_t ccs : 3;
+        } bits_initiate;
+        struct
+        {
+            uint8_t c : 1;
+            uint8_t n : 3;
+            uint8_t t : 1;
+            uint8_t ccs : 3;
+        } bits_segment;
+    };
+    enum SDOServerStates
+    {
+        SDOServerState_Ready,
+        SDOServerState_Uploading,
+        SDOServerState_Downloading
+    };
+
 private:
     class CANopen_Node &node;
     SDOServerStates serverState;
