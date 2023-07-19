@@ -43,6 +43,7 @@ void CANopen_Node::update()
 {
     uint32_t timestamp = getTime_us();
     nmt.update();
-    sdo.update(timestamp);
     hb.update(timestamp);
+    sdo.update(timestamp);
+    pdo.update(timestamp);
 }
