@@ -1955,6 +1955,14 @@ AccessType=rww
 DefaultValue=1
 PDOMapping=1
 
+[6060]
+ParameterName=Modes of operation
+ObjectType=0x7
+DataType=0x0002
+AccessType=rww
+DefaultValue=0x00
+PDOMapping=1
+
 [6061]
 ParameterName=Modes of operation display
 ObjectType=0x7
@@ -1973,6 +1981,22 @@ DefaultValue=
 PDOMapping=1
 ObjFlags=1
 
+[607A]
+ParameterName=Target Position
+ObjectType=0x7
+DataType=0x0004
+AccessType=rww
+DefaultValue=4000
+PDOMapping=1
+
+[6081]
+ParameterName=Profile velocity
+ObjectType=0x7
+DataType=0x0007
+AccessType=rww
+DefaultValue=500
+PDOMapping=1
+
 [60FD]
 ParameterName=Digital Inputs
 ObjectType=0x7
@@ -1981,3 +2005,24 @@ AccessType=ro
 DefaultValue=0x00000000
 PDOMapping=1
 ObjFlags=1
+
+[60FE]
+ParameterName=Digital Outputs
+ObjectType=0x8
+SubNumber=0x02
+
+[60FEsub0]
+ParameterName=Number of entries
+ObjectType=0x7
+DataType=0x0005
+AccessType=const
+DefaultValue=0x01
+PDOMapping=0
+
+[60FEsub1]
+ParameterName=Physical outputs
+ObjectType=0x7
+DataType=0x0007
+AccessType=rww
+DefaultValue=0x00000000
+PDOMapping=1
