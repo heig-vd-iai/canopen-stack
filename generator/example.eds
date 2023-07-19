@@ -1977,7 +1977,7 @@ ParameterName=Position actual value
 ObjectType=0x7
 DataType=0x0004
 AccessType=ro
-DefaultValue=
+DefaultValue=0x1A4
 PDOMapping=1
 ObjFlags=1
 
