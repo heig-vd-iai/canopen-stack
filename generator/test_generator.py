@@ -35,19 +35,30 @@ datatype2ctype = {
     0x1B: "uint64_t"
 }
 
+def getAccessType(value: str) -> int:
+    value = value.lower()
+    read_bit = 1 << 0
+    write_bit = 1 << 1
+    const_bit = 1 << 2
+    if value in ["rw", "rww", "rwr"]: return write_bit | read_bit
+    if value == "wo": return write_bit
+    if value == "ro": return read_bit
+    if value == "const": return const_bit | read_bit
+    raise Exception(f"Access type not supported: '{value}'")
+
 def toEntry(entry: Union[Variable, Array, Record]):
     try:
         if isinstance(entry, Variable):
-            return VarObject(entry.index, 0, entry.data_type, datatype2ctype[entry.data_type], entry.name, entry.default)
+            return VarObject(entry.index, getAccessType(entry.access_type), entry.data_type, datatype2ctype[entry.data_type], entry.name, entry.default)
         if isinstance(entry, Array):
-            objs = [ObjectEntry(0, obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
+            objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
             return ArrayObject(entry.index, objs)
         if isinstance(entry, Record):
-            objs = [ObjectEntry(0, obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
+            objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
             if 0x1800 <= entry.index <= 0x19FF: return TPDOCommunicationObject(entry.index, objs)
             elif 0x1A00 <= entry.index <= 0x1BFF: return TPDOMappingObject(entry.index, objs)
             else: return RecordObject(entry.index, objs)
-    except KeyError: pass
+    except: pass
     return None
 
 od: ObjectDictionary = Node(4, "example.eds").object_dictionary
