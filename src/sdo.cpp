@@ -16,7 +16,7 @@ void CANopen_SDO::update(uint32_t timestamp_us)
     case SDOServerState_Downloading:
         if (timestamp_us - transferData.timestamp >= SDO_TIMEOUT_US)
         {
-            sendAbort(transferData.index, transferData.subIndex, 0x05040000);
+            sendAbort(transferData.index, transferData.subIndex, SDOAbortCode_TimedOut);
         }
         break;
     default:
@@ -41,7 +41,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
             downloadInitiate(frame, timestamp_us);
             break;
         default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], 0x05040001);
+            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
             break;
         }
         break;
@@ -55,7 +55,7 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
             serverState = SDOServerState_Ready;
             break;
         default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], 0x05040001);
+            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
             break;
         }
         break;
@@ -69,14 +69,14 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
             serverState = SDOServerState_Ready;
             break;
         default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], 0x05040001);
+            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
             break;
         }
         break;
     }
 }
 
-void CANopen_SDO::sendAbort(uint16_t index, uint8_t subIndex, uint32_t error)
+void CANopen_SDO::sendAbort(uint16_t index, uint8_t subIndex, uint32_t errorCode)
 {
     CANopen_Frame response;
     SDO_CommandByte sendCommand = {0};
@@ -90,7 +90,7 @@ void CANopen_SDO::sendAbort(uint16_t index, uint8_t subIndex, uint32_t error)
     response.data[0] = sendCommand.value;
     *(uint16_t *)(response.data + 1) = index;
     response.data[3] = subIndex;
-    *(uint32_t *)(response.data + 4) = error;
+    *(uint32_t *)(response.data + 4) = errorCode;
     // Send response
     node.sendFrame(response);
     serverState = SDOServerState_Ready;
@@ -103,26 +103,26 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     SDO_CommandByte sendCommand = {0};
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subIndex = request.data[3];
-    OD_ObjectEntry *entry = node.od.findEntry(index);
-    if (entry == NULL)
+    Object *object = node.od.findObject(index);
+    if (object == NULL)
     {
-        sendAbort(index, subIndex, 0x06020000);
+        sendAbort(index, subIndex, SDOAbortCode_ObjectNonExistent);
         return;
     }
-    if (subIndex >= entry->subNumber)
+    if (subIndex >= object->subNumber)
     {
-        sendAbort(index, subIndex, 0x06090011);
+        sendAbort(index, subIndex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!entry->objects[subIndex].accessType.bits.r)
+    if (!object->entries[subIndex].accessType.bits.r)
     {
-        sendAbort(index, subIndex, 0x06010001);
+        sendAbort(index, subIndex, SDOAbortCode_AttemptReadOnWriteOnly);
         return;
     }
     transferData.index = index;
     transferData.subIndex = subIndex;
-    transferData.objectSize = transferData.remainingBytes = entry->objects[subIndex].size;
-    transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
+    transferData.objectSize = transferData.remainingBytes = object->entries[subIndex].size;
+    transferData.dataSrc = (uint8_t *)object->entries[subIndex].dataSrc;
     // Fill command byte and frame data
     if (transferData.objectSize > maxSize) // Segment transfer
     {
@@ -136,7 +136,7 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
         sendCommand.bits_initiate.e = 1;
         sendCommand.bits_initiate.s = 1;
         sendCommand.bits_initiate.n = maxSize - transferData.objectSize;
-        memcpy(response.data + maxSize, entry->objects[subIndex].valueSrc, transferData.objectSize);
+        memcpy(response.data + maxSize, object->entries[subIndex].dataSrc, transferData.objectSize);
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ResponseUploadInitiate;
     // Fill response frame fields
@@ -189,33 +189,33 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subIndex = request.data[3];
-    OD_ObjectEntry *entry = node.od.findEntry(index);
-    if (entry == NULL)
+    Object *object = node.od.findObject(index);
+    if (object == NULL)
     {
-        sendAbort(index, subIndex, 0x06020000);
+        sendAbort(index, subIndex, SDOAbortCode_ObjectNonExistent);
         return;
     }
-    if (subIndex >= entry->subNumber)
+    if (subIndex >= object->subNumber)
     {
-        sendAbort(index, subIndex, 0x06090011);
+        sendAbort(index, subIndex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!entry->objects[subIndex].accessType.bits.w)
+    if (!object->entries[subIndex].accessType.bits.w)
     {
-        sendAbort(index, subIndex, 0x06010002);
+        sendAbort(index, subIndex, SDOAbortCode_AttemptWriteOnReadOnly);
         return;
     }
     transferData.index = index;
     transferData.subIndex = subIndex;
-    transferData.objectSize = entry->objects[subIndex].size;
-    transferData.dataSrc = (uint8_t *)entry->objects[subIndex].valueSrc;
+    transferData.objectSize = object->entries[subIndex].size;
+    transferData.dataSrc = (uint8_t *)object->entries[subIndex].dataSrc;
     // Fill command byte and write data
     if (recvCommand.bits_initiate.e) // Expedited transfer
     {
         transferData.remainingBytes = recvCommand.bits_initiate.s ? maxSize - recvCommand.bits_initiate.n : transferData.objectSize;
         if (transferData.remainingBytes > maxSize)
         {
-            sendAbort(index, subIndex, 0x06070012);
+            sendAbort(index, subIndex, SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
             return;
         }
         memcpy(transferData.dataSrc, request.data + 8 - maxSize, transferData.remainingBytes);
@@ -224,13 +224,13 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     {
         if (!recvCommand.bits_initiate.s)
         {
-            sendAbort(index, subIndex, 0x06040043);
+            sendAbort(index, subIndex, SDOAbortCode_GeneralParameterIncompatibility);
             return;
         }
         transferData.remainingBytes = *(uint32_t *)(request.data + 4);
         if (transferData.remainingBytes != transferData.objectSize)
         {
-            sendAbort(index, subIndex, 0x06070010);
+            sendAbort(index, subIndex, SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
             return;
         }
     }
@@ -260,7 +260,7 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request, uint32_t timestamp_us)
     unsigned bytesReceived = transferData.objectSize - transferData.remainingBytes;
     if (bytesReceived + payloadSize > transferData.objectSize)
     {
-        sendAbort(transferData.index, transferData.subIndex, 0x06070012);
+        sendAbort(transferData.index, transferData.subIndex, SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
         return;
     }
     // Download request data

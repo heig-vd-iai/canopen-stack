@@ -45,7 +45,7 @@ private:
         uint32_t timestamp;
     } transferData;
 
-    void sendAbort(uint16_t index, uint8_t subIndex, uint32_t error);
+    void sendAbort(uint16_t index, uint8_t subIndex, uint32_t errorCode);
     void uploadInitiate(CANopen_Frame request, uint32_t timestamp_us);
     void uploadSegment(CANopen_Frame request, uint32_t timestamp_us);
     void downloadInitiate(CANopen_Frame request, uint32_t timestamp_us);
