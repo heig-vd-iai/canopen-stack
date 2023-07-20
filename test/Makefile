@@ -1,7 +1,7 @@
 APP_NAME = app
 
 
-SOURCES = test.cpp od_classes.cpp
+SOURCES = test.cpp od.cpp
 CC = g++
 FLAGS = -std=c++14 -Wall -g
 

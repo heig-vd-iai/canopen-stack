@@ -1,0 +1,38 @@
+#pragma once
+#include <cstdint>
+#include "od_classes.hpp"
+#define OD_OBJECTS_COUNT {{objects|length}}
+
+namespace od
+{
+    class ObjectDictionnary
+    {
+    private:
+        struct 
+        {
+            struct
+            {
+                struct
+                {
+                {% for object in objects %}
+                {% for declaration in object.renderData() %}
+                {{declaration}};
+                {% endfor %}
+                {% endfor %}
+                } data;
+                {% for object in objects %}
+                {{object.renderEntry()}};
+                {% endfor %}
+            } entries;
+            {% for object in objects %}
+            {{object.renderObject()}};
+            {% endfor %}
+        } objects;
+        const unsigned length = OD_OBJECTS_COUNT;
+        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
+    public:
+        Object *findObject(uint16_t index);
+        void saveData();
+        void loadData();
+    };
+}
