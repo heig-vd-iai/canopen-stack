@@ -4,11 +4,11 @@
 union AccessType
 {
     uint8_t value;
-    struct 
+    struct
     {
-        uint8_t r: 1; 
-        uint8_t w: 1; 
-        uint8_t constant: 1; 
+        uint8_t r : 1;
+        uint8_t w : 1;
+        uint8_t constant : 1;
     } bits;
 };
 
@@ -30,13 +30,14 @@ struct Object
     const ObjectEntry *entries;
 
     Object(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : index(index), subNumber(subNumber), objectType(objectType), entries(entries) {}
-    virtual bool writeBytes(uint8_t subindex, uint8_t bytes[], unsigned size);
-    virtual bool readBytes(uint8_t subindex, uint8_t bytes[], unsigned size);
+    virtual bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode);
+    virtual bool readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset, uint32_t *errorCode);
 };
 
 struct TPDOCommunicationObject : public Object
 {
     TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+    bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode);
 };
 
 struct TPDOMappingObject : public Object

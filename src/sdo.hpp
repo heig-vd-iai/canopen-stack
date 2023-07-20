@@ -1,5 +1,6 @@
 #pragma once
 #include "frame.hpp"
+#include "od_classes.hpp"
 
 #define SDO_TIMEOUT_US 1000
 
@@ -36,16 +37,14 @@ private:
     SDOServerStates serverState;
     struct
     {
-        uint16_t index;
-        uint8_t subIndex;
-        uint32_t objectSize;
+        Object *object;
+        uint8_t subindex;
         uint32_t remainingBytes;
-        uint8_t *dataSrc;
         uint8_t buffer[64];
         uint32_t timestamp;
     } transferData;
 
-    void sendAbort(uint16_t index, uint8_t subIndex, uint32_t errorCode);
+    void sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode);
     void uploadInitiate(CANopen_Frame request, uint32_t timestamp_us);
     void uploadSegment(CANopen_Frame request, uint32_t timestamp_us);
     void downloadInitiate(CANopen_Frame request, uint32_t timestamp_us);
