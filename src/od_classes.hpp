@@ -1,14 +1,25 @@
 #pragma once
 #include <cstdint>
 
+union AccessType
+{
+    uint8_t value;
+    struct 
+    {
+        uint8_t r: 1; 
+        uint8_t w: 1; 
+        uint8_t constant: 1; 
+    } bits;
+};
+
 struct ObjectEntry
 {
     const void *dataSrc;
-    const uint8_t accessType;
+    const AccessType accessType;
     const uint8_t dataType;
     const uint8_t size;
 
-    ObjectEntry(void *dataSrc, uint8_t accessType, uint8_t dataType, uint8_t size) : dataSrc(dataSrc), accessType(accessType), dataType(dataType), size(size) {}
+    ObjectEntry(void *dataSrc, uint8_t accessType, uint8_t dataType, uint8_t size) : dataSrc(dataSrc), accessType{accessType}, dataType(dataType), size(size) {}
 };
 
 struct Object
@@ -20,6 +31,7 @@ struct Object
 
     Object(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : index(index), subNumber(subNumber), objectType(objectType), entries(entries) {}
     virtual bool writeBytes(uint8_t subindex, uint8_t bytes[], unsigned size);
+    virtual bool readBytes(uint8_t subindex, uint8_t bytes[], unsigned size);
 };
 
 struct TPDOCommunicationObject : public Object
