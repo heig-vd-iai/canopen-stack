@@ -17,20 +17,26 @@ node = canopen.Node(4, "../generator/example.eds")
 # a = node.object_dictionary[0x1800].subindices[1].default
 # print(a)
 # exit()
+index = 0x1800
+subindex = 5
 
 network.add_node(node)
 network.connect(channel='vcan0', bustype='socketcan')
 try:
-    node.tpdo.read()
-    # node.sdo.download(0x1800, 5, (0).to_bytes(2, 'little'))
-    node.tpdo[2].add_callback(callback)
-    node.tpdo[2].event_timer = 1000
-    node.tpdo.save()
-    network.nmt.state = "OPERATIONAL"
-    sleep(3)
+    val = int.from_bytes(node.sdo.upload(index, subindex), 'little')
+    print(val)
+    node.sdo.download(index, subindex, (val + 1).to_bytes(2, 'little'))
+    val = int.from_bytes(node.sdo.upload(index, subindex), 'little')
+    print(val)
 
 
-
+    # node.tpdo.read()
+    # # node.sdo.download(0x1800, 5, (0).to_bytes(2, 'little'))
+    # node.tpdo[2].add_callback(callback)
+    # node.tpdo[2].event_timer = 1000
+    # node.tpdo.save()
+    # network.nmt.state = "OPERATIONAL"
+    # sleep(3)
 
     # network.scanner.search()
     # sleep(0.05)
