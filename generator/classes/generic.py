@@ -21,7 +21,7 @@ class ObjectBase(ABC):
         self.varName = "x%X" % self.index
 
     def renderObject(self) -> str:
-        return f"{self.cppObjectName} object_{self.varName}({self.index}, {self.subNumber}, {self.objectType}, entries.entries_{self.varName})"
+        return f"{self.cppObjectName} object_{self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.entries_{self.varName})"
     
     @abstractmethod
     def renderData(self) -> list[str]:
@@ -64,8 +64,8 @@ class ArrayObject(ObjectBase):
 
 
 class RecordObject(ObjectBase):
-    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
-        super().__init__(index, len(entries), 0x08)
+    def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
+        super().__init__(index, len(entries), 0x08, cppObjectName=cppObjectName)
         self.entries = entries
         self.sub0Name = self.varName + "sub0"
 
