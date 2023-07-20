@@ -22,6 +22,14 @@ struct Object
     virtual bool writeBytes(uint8_t subindex, uint8_t bytes[], unsigned size);
 };
 
+class IObjectDictionnary
+{
+public:
+    virtual Object *findObject(uint16_t index) = 0;
+    virtual void saveData() = 0;
+    virtual void loadData() = 0;
+};
+
 struct TPDOCommunicationObject : public Object
 {
 };
