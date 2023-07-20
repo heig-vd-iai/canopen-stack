@@ -4,10 +4,10 @@
 
 CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node), lastPublish(0), producerHeartbeatTime(NULL)
 {
-    OD_ObjectEntry *entry = node.od.findEntry(0x1017);
-    if (entry == NULL)
+    Object *object = node.od.findObject(0x1017); // TODO
+    if (object == NULL)
         return;
-    producerHeartbeatTime = (uint16_t *)entry->objects[0].valueSrc;
+    producerHeartbeatTime = (uint16_t *)object->entries[0].dataSrc;
 }
 
 void CANopen_HB::receiveFrame(CANopen_Frame frame)

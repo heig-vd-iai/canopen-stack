@@ -12,7 +12,7 @@ class CANopen_Node
     // private:
 public:
     uint8_t nodeId;
-    OD_ObjectDictionnary od;
+    ObjectDictionnary od;
     CANopen_NMT nmt;
     CANopen_HB hb;
     CANopen_SDO sdo;
