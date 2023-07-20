@@ -17,6 +17,7 @@ CANopen library
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
 - group bits together for access type, PDO mapping, and others ?
 - OD object value range and all other properties (p.91)
+- namespaces
 
 ## Tasks (OD generator)
 - perform strict parsing for mandatory or standard entries (like PDO)
