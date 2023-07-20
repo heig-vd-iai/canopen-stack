@@ -3,36 +3,34 @@
 #include "od_classes.hpp"
 #define OD_OBJECTS_COUNT {{objects|length}}
 
-namespace od
+
+class ObjectDictionnary
 {
-    class ObjectDictionnary
+private:
+    struct 
     {
-    private:
-        struct 
+        struct
         {
             struct
             {
-                struct
-                {
-                {% for object in objects %}
-                {% for declaration in object.renderData() %}
-                {{declaration}};
-                {% endfor %}
-                {% endfor %}
-                } data;
-                {% for object in objects %}
-                {{object.renderEntry()}};
-                {% endfor %}
-            } entries;
             {% for object in objects %}
-            {{object.renderObject()}};
+            {% for declaration in object.renderData() %}
+            {{declaration}};
             {% endfor %}
-        } objects;
-        const unsigned length = OD_OBJECTS_COUNT;
-        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
-    public:
-        Object *findObject(uint16_t index);
-        void saveData();
-        void loadData();
-    };
-}
+            {% endfor %}
+            } data;
+            {% for object in objects %}
+            {{object.renderEntry()}};
+            {% endfor %}
+        } entries;
+        {% for object in objects %}
+        {{object.renderObject()}};
+        {% endfor %}
+    } objects;
+    const unsigned length = OD_OBJECTS_COUNT;
+    Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
+public:
+    Object *findObject(uint16_t index);
+    void saveData();
+    void loadData();
+};

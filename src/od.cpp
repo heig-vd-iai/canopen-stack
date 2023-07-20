@@ -1,18 +1,19 @@
 #include <fstream>
 #include <cstdlib>
+#include <cstring>
 #include "od.hpp"
 #include "enums.hpp"
 
-void OD_Data::load()
+Object *ObjectDictionnary::findObject(uint16_t index)
 {
-    std::ifstream f("file.dat", std::ios::in | std::ios::binary);
-    if (!f)
-        return;
-    f.read((char *)this, sizeof(*this));
-    f.close();
+    for (unsigned i = 0; i < length; i++)
+        if (objectsArray[i]->index == index)
+            return objectsArray[i];
+    printf("[OD] entry 0x%04X not found\n", index);
+    return NULL;
 }
 
-void OD_Data::save()
+void ObjectDictionnary::saveData()
 {
     std::ofstream f("file.dat", std::ios::out | std::ios::binary);
     if (!f)
@@ -21,44 +22,22 @@ void OD_Data::save()
     f.close();
 }
 
-OD_ObjectEntry *OD_ObjectDictionnary::findEntry(uint16_t index)
+void ObjectDictionnary::loadData()
 {
-    for (unsigned i = 0; i < size; i++)
-        if (entries[i].index == index)
-            return &entries[i];
-    printf("[OD] entry 0x%04X not found\n", index);
-    return NULL;
+    std::ifstream f("file.dat", std::ios::in | std::ios::binary);
+    if (!f)
+        return;
+    f.read((char *)this, sizeof(*this));
+    f.close();
 }
 
-// unsigned OD_ObjectEntry::getSize(uint8_t subIndex)
-// {
-//     OD_Object obj = objects[subIndex];
-//     switch (obj.dataType)
-//     {
-//     case DataType_BOOLEAN:
-//     case DataType_INTEGER8:
-//     case DataType_UNSIGNED8:
-//         return 1;
-//     case DataType_INTEGER16:
-//     case DataType_UNSIGNED16:
-//         return 2;
-//     case DataType_INTEGER32:
-//     case DataType_UNSIGNED32:
-//     case DataType_REAL32:
-//     case DataType_INTEGER24:
-//     case DataType_UNSIGNED24:
-//         return 4;
-//     case DataType_REAL64:
-//     case DataType_INTEGER40:
-//     case DataType_INTEGER48:
-//     case DataType_INTEGER56:
-//     case DataType_INTEGER64:
-//     case DataType_UNSIGNED40:
-//     case DataType_UNSIGNED48:
-//     case DataType_UNSIGNED56:
-//     case DataType_UNSIGNED64:
-//         return 8;
-//     default:
-//         return 0;
-//     }
-// }
+bool Object::writeBytes(uint8_t subindex, uint8_t bytes[], unsigned size)
+{
+    if (subindex > subNumber)
+        return false;
+    ObjectEntry entry = entries[subindex];
+    if (size > entry.size)
+        return false;
+    memcpy((void *)entry.dataSrc, bytes, size);
+    return true;
+}

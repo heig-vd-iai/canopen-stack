@@ -1,203 +1,215 @@
 #pragma once
 #include <cstdint>
-
-union AccessType
-{
-    uint8_t value;
-    struct 
-    {
-        uint8_t r: 1; 
-        uint8_t w: 1; 
-        uint8_t constant: 1; 
-    } bits;
-};
-
-#define OD_OBJECT_COUNT 60
-#define OD_RPDO_COUNT 4
-#define OD_TPDO_COUNT 4
-#define OD_TPDO_LONGEST_MAP 2
-#define OD_RPDO_COMMUNICATION_INDEX 0x1400
-#define OD_RPDO_MAPPING_INDEX 0x1600
-#define OD_TPDO_COMMUNICATION_INDEX 0x1800
-#define OD_TPDO_MAPPING_INDEX 0x1A00
+#include "od_classes.hpp"
+#define OD_OBJECTS_COUNT 60
 
 
-struct OD_Data // Struct containing all of the raw data that can be saved and loaded
-{
-    int8_t x2;
-    int16_t x3;
-    int32_t x4;
-    uint8_t x5;
-    uint16_t x6;
-    uint32_t x7;
-    uint32_t x1000;
-    uint8_t x1001;
-    uint8_t x1003sub0;
-    uint32_t x1003[8];
-    uint32_t x1005;
-    uint32_t x1006;
-    uint32_t x1007;
-    uint16_t x100C;
-    uint8_t x100D;
-    uint8_t x1010sub0;
-    uint32_t x1010[13];
-    uint8_t x1011sub0;
-    uint32_t x1011[13];
-    uint32_t x1014;
-    uint8_t x1016sub0;
-    uint32_t x1016[1];
-    uint16_t x1017;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4;} x1018;
-    uint8_t x1019;
-    uint8_t x1020sub0;
-    uint32_t x1020[2];
-    uint8_t x1029sub0;
-    uint8_t x1029[2];
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2;} x1400;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2;} x1401;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2;} x1402;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2;} x1403;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1600;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1601;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1602;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1603;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2; uint16_t sub3; uint8_t sub4; uint16_t sub5; uint8_t sub6;} x1800;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2; uint16_t sub3; uint8_t sub4; uint16_t sub5; uint8_t sub6;} x1801;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2; uint16_t sub3; uint8_t sub4; uint16_t sub5; uint8_t sub6;} x1802;
-    struct {uint8_t sub0; uint32_t sub1; uint8_t sub2; uint16_t sub3; uint8_t sub4; uint16_t sub5; uint8_t sub6;} x1803;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1A00;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1A01;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1A02;
-    struct {uint8_t sub0; uint32_t sub1; uint32_t sub2; uint32_t sub3; uint32_t sub4; uint32_t sub5; uint32_t sub6; uint32_t sub7; uint32_t sub8;} x1A03;
-    uint8_t x1F51sub0;
-    uint8_t x1F51[2];
-    uint8_t x1F57sub0;
-    uint32_t x1F57[2];
-    uint32_t x1F80;
-    int16_t x6007;
-    uint16_t x603F;
-    uint16_t x6040;
-    uint16_t x6041;
-    int16_t x6042;
-    int16_t x6043;
-    int16_t x6044;
-    uint8_t x6046sub0;
-    uint32_t x6046[2];
-    struct {uint8_t sub0; double sub1; float sub2;} x6048;
-    struct {uint8_t sub0; uint32_t sub1; uint16_t sub2;} x6049;
-    struct {uint8_t sub0; uint64_t sub1; uint64_t sub2;} x604A;
-    int8_t x6060;
-    int8_t x6061;
-    int32_t x6064;
-    int32_t x607A;
-    uint32_t x6081;
-    uint32_t x60FD;
-    uint8_t x60FEsub0;
-    uint32_t x60FE[1];
-
-    OD_Data() : x2(0), x3(0), x4(0), x5(0), x6(0), x7(0), x1000(131474), x1001(0), x1003sub0(9), x1003{0, 0, 0, 0, 0, 0, 0, 0}, x1005(128), x1006(0), x1007(0), x100C(0), x100D(0), x1010sub0(14), x1010{1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, x1011sub0(14), x1011{1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, x1014(132), x1016sub0(2), x1016{0}, x1017(0), x1018{4, 620, 70, 145031168, 0}, x1019(0), x1020sub0(3), x1020{0, 0}, x1029sub0(3), x1029{0, 1}, x1400{2, 516, 255}, x1401{2, 772, 255}, x1402{2, 1028, 255}, x1403{2, 1284, 255}, x1600{2, 1614807056, 1616904200, 0, 0, 0, 0, 0, 0}, x1601{2, 1618608160, 1619066912, 0, 0, 0, 0, 0, 0}, x1602{1, 1614938128, 0, 0, 0, 0, 0, 0, 0}, x1603{1, 1627259168, 0, 0, 0, 0, 0, 0, 0}, x1800{6, 388, 255, 100, 0, 0, 0}, x1801{6, 644, 255, 100, 0, 0, 0}, x1802{6, 900, 255, 100, 0, 0, 0}, x1803{6, 1156, 255, 100, 0, 0, 0}, x1A00{2, 1614872592, 1616969736, 0, 0, 0, 0, 0, 0}, x1A01{1, 1617166368, 0, 0, 0, 0, 0, 0, 0}, x1A02{1, 1615069200, 0, 0, 0, 0, 0, 0, 0}, x1A03{1, 1627193376, 0, 0, 0, 0, 0, 0, 0}, x1F51sub0(3), x1F51{0, 0}, x1F57sub0(3), x1F57{0, 0}, x1F80(0), x6007(1), x603F(0), x6040(0), x6041(0), x6042(200), x6043(0), x6044(0), x6046sub0(3), x6046{0, 30000}, x6048{2, 500.0, 1.0}, x6049{2, 500, 1}, x604A{2, 5000, 1}, x6060(0), x6061(0), x6064(420), x607A(4000), x6081(500), x60FD(0), x60FEsub0(2), x60FE{0}{}
-    void save();
-    void load();
-};
-
-struct OD_Object
-{
-    const AccessType accessType;
-    const uint8_t dataType;
-    const uint8_t size;
-    const void *valueSrc;
-
-    OD_Object(uint8_t accessType, uint8_t dataType, uint8_t size, void *valueSrc) : accessType{accessType}, dataType(dataType), size(size), valueSrc(valueSrc) {}
-};
-
-struct OD_Objects // Struct containing all of the dictionnary objects
-{
-    OD_Object obj_x2[1];
-    OD_Object obj_x3[1];
-    OD_Object obj_x4[1];
-    OD_Object obj_x5[1];
-    OD_Object obj_x6[1];
-    OD_Object obj_x7[1];
-    OD_Object obj_x1000[1];
-    OD_Object obj_x1001[1];
-    OD_Object obj_x1003[9];
-    OD_Object obj_x1005[1];
-    OD_Object obj_x1006[1];
-    OD_Object obj_x1007[1];
-    OD_Object obj_x100C[1];
-    OD_Object obj_x100D[1];
-    OD_Object obj_x1010[14];
-    OD_Object obj_x1011[14];
-    OD_Object obj_x1014[1];
-    OD_Object obj_x1016[2];
-    OD_Object obj_x1017[1];
-    OD_Object obj_x1018[5];
-    OD_Object obj_x1019[1];
-    OD_Object obj_x1020[3];
-    OD_Object obj_x1029[3];
-    OD_Object obj_x1400[3];
-    OD_Object obj_x1401[3];
-    OD_Object obj_x1402[3];
-    OD_Object obj_x1403[3];
-    OD_Object obj_x1600[9];
-    OD_Object obj_x1601[9];
-    OD_Object obj_x1602[9];
-    OD_Object obj_x1603[9];
-    OD_Object obj_x1800[7];
-    OD_Object obj_x1801[7];
-    OD_Object obj_x1802[7];
-    OD_Object obj_x1803[7];
-    OD_Object obj_x1A00[9];
-    OD_Object obj_x1A01[9];
-    OD_Object obj_x1A02[9];
-    OD_Object obj_x1A03[9];
-    OD_Object obj_x1F51[3];
-    OD_Object obj_x1F57[3];
-    OD_Object obj_x1F80[1];
-    OD_Object obj_x6007[1];
-    OD_Object obj_x603F[1];
-    OD_Object obj_x6040[1];
-    OD_Object obj_x6041[1];
-    OD_Object obj_x6042[1];
-    OD_Object obj_x6043[1];
-    OD_Object obj_x6044[1];
-    OD_Object obj_x6046[3];
-    OD_Object obj_x6048[3];
-    OD_Object obj_x6049[3];
-    OD_Object obj_x604A[3];
-    OD_Object obj_x6060[1];
-    OD_Object obj_x6061[1];
-    OD_Object obj_x6064[1];
-    OD_Object obj_x607A[1];
-    OD_Object obj_x6081[1];
-    OD_Object obj_x60FD[1];
-    OD_Object obj_x60FE[2];
-
-    OD_Objects(OD_Data &data) : obj_x2{OD_Object(5, 2, sizeof(data.x2), &data.x2)}, obj_x3{OD_Object(5, 3, sizeof(data.x3), &data.x3)}, obj_x4{OD_Object(5, 4, sizeof(data.x4), &data.x4)}, obj_x5{OD_Object(5, 5, sizeof(data.x5), &data.x5)}, obj_x6{OD_Object(5, 6, sizeof(data.x6), &data.x6)}, obj_x7{OD_Object(5, 7, sizeof(data.x7), &data.x7)}, obj_x1000{OD_Object(1, 7, sizeof(data.x1000), &data.x1000)}, obj_x1001{OD_Object(1, 5, sizeof(data.x1001), &data.x1001)}, obj_x1003{OD_Object(3, 5, sizeof(data.x1003sub0), &data.x1003sub0), OD_Object(1, 7, sizeof(data.x1003[0]), &data.x1003[0]), OD_Object(1, 7, sizeof(data.x1003[1]), &data.x1003[1]), OD_Object(1, 7, sizeof(data.x1003[2]), &data.x1003[2]), OD_Object(1, 7, sizeof(data.x1003[3]), &data.x1003[3]), OD_Object(1, 7, sizeof(data.x1003[4]), &data.x1003[4]), OD_Object(1, 7, sizeof(data.x1003[5]), &data.x1003[5]), OD_Object(1, 7, sizeof(data.x1003[6]), &data.x1003[6]), OD_Object(1, 7, sizeof(data.x1003[7]), &data.x1003[7])}, obj_x1005{OD_Object(3, 7, sizeof(data.x1005), &data.x1005)}, obj_x1006{OD_Object(3, 7, sizeof(data.x1006), &data.x1006)}, obj_x1007{OD_Object(3, 7, sizeof(data.x1007), &data.x1007)}, obj_x100C{OD_Object(3, 6, sizeof(data.x100C), &data.x100C)}, obj_x100D{OD_Object(3, 5, sizeof(data.x100D), &data.x100D)}, obj_x1010{OD_Object(1, 5, sizeof(data.x1010sub0), &data.x1010sub0), OD_Object(3, 7, sizeof(data.x1010[0]), &data.x1010[0]), OD_Object(3, 7, sizeof(data.x1010[1]), &data.x1010[1]), OD_Object(3, 7, sizeof(data.x1010[2]), &data.x1010[2]), OD_Object(3, 7, sizeof(data.x1010[3]), &data.x1010[3]), OD_Object(3, 7, sizeof(data.x1010[4]), &data.x1010[4]), OD_Object(3, 7, sizeof(data.x1010[5]), &data.x1010[5]), OD_Object(3, 7, sizeof(data.x1010[6]), &data.x1010[6]), OD_Object(3, 7, sizeof(data.x1010[7]), &data.x1010[7]), OD_Object(3, 7, sizeof(data.x1010[8]), &data.x1010[8]), OD_Object(3, 7, sizeof(data.x1010[9]), &data.x1010[9]), OD_Object(3, 7, sizeof(data.x1010[10]), &data.x1010[10]), OD_Object(3, 7, sizeof(data.x1010[11]), &data.x1010[11]), OD_Object(3, 7, sizeof(data.x1010[12]), &data.x1010[12])}, obj_x1011{OD_Object(1, 5, sizeof(data.x1011sub0), &data.x1011sub0), OD_Object(3, 7, sizeof(data.x1011[0]), &data.x1011[0]), OD_Object(3, 7, sizeof(data.x1011[1]), &data.x1011[1]), OD_Object(3, 7, sizeof(data.x1011[2]), &data.x1011[2]), OD_Object(3, 7, sizeof(data.x1011[3]), &data.x1011[3]), OD_Object(3, 7, sizeof(data.x1011[4]), &data.x1011[4]), OD_Object(3, 7, sizeof(data.x1011[5]), &data.x1011[5]), OD_Object(3, 7, sizeof(data.x1011[6]), &data.x1011[6]), OD_Object(3, 7, sizeof(data.x1011[7]), &data.x1011[7]), OD_Object(3, 7, sizeof(data.x1011[8]), &data.x1011[8]), OD_Object(3, 7, sizeof(data.x1011[9]), &data.x1011[9]), OD_Object(3, 7, sizeof(data.x1011[10]), &data.x1011[10]), OD_Object(3, 7, sizeof(data.x1011[11]), &data.x1011[11]), OD_Object(3, 7, sizeof(data.x1011[12]), &data.x1011[12])}, obj_x1014{OD_Object(3, 7, sizeof(data.x1014), &data.x1014)}, obj_x1016{OD_Object(1, 5, sizeof(data.x1016sub0), &data.x1016sub0), OD_Object(3, 7, sizeof(data.x1016[0]), &data.x1016[0])}, obj_x1017{OD_Object(3, 6, sizeof(data.x1017), &data.x1017)}, obj_x1018{OD_Object(1, 5, sizeof(data.x1018.sub0), &data.x1018.sub0), OD_Object(1, 7, sizeof(data.x1018.sub1), &data.x1018.sub1), OD_Object(1, 7, sizeof(data.x1018.sub2), &data.x1018.sub2), OD_Object(1, 7, sizeof(data.x1018.sub3), &data.x1018.sub3), OD_Object(1, 7, sizeof(data.x1018.sub4), &data.x1018.sub4)}, obj_x1019{OD_Object(3, 5, sizeof(data.x1019), &data.x1019)}, obj_x1020{OD_Object(1, 5, sizeof(data.x1020sub0), &data.x1020sub0), OD_Object(3, 7, sizeof(data.x1020[0]), &data.x1020[0]), OD_Object(3, 7, sizeof(data.x1020[1]), &data.x1020[1])}, obj_x1029{OD_Object(1, 5, sizeof(data.x1029sub0), &data.x1029sub0), OD_Object(3, 5, sizeof(data.x1029[0]), &data.x1029[0]), OD_Object(3, 5, sizeof(data.x1029[1]), &data.x1029[1])}, obj_x1400{OD_Object(1, 5, sizeof(data.x1400.sub0), &data.x1400.sub0), OD_Object(3, 7, sizeof(data.x1400.sub1), &data.x1400.sub1), OD_Object(3, 5, sizeof(data.x1400.sub2), &data.x1400.sub2)}, obj_x1401{OD_Object(1, 5, sizeof(data.x1401.sub0), &data.x1401.sub0), OD_Object(3, 7, sizeof(data.x1401.sub1), &data.x1401.sub1), OD_Object(3, 5, sizeof(data.x1401.sub2), &data.x1401.sub2)}, obj_x1402{OD_Object(1, 5, sizeof(data.x1402.sub0), &data.x1402.sub0), OD_Object(3, 7, sizeof(data.x1402.sub1), &data.x1402.sub1), OD_Object(3, 5, sizeof(data.x1402.sub2), &data.x1402.sub2)}, obj_x1403{OD_Object(1, 5, sizeof(data.x1403.sub0), &data.x1403.sub0), OD_Object(3, 7, sizeof(data.x1403.sub1), &data.x1403.sub1), OD_Object(3, 5, sizeof(data.x1403.sub2), &data.x1403.sub2)}, obj_x1600{OD_Object(3, 5, sizeof(data.x1600.sub0), &data.x1600.sub0), OD_Object(3, 7, sizeof(data.x1600.sub1), &data.x1600.sub1), OD_Object(3, 7, sizeof(data.x1600.sub2), &data.x1600.sub2), OD_Object(3, 7, sizeof(data.x1600.sub3), &data.x1600.sub3), OD_Object(3, 7, sizeof(data.x1600.sub4), &data.x1600.sub4), OD_Object(3, 7, sizeof(data.x1600.sub5), &data.x1600.sub5), OD_Object(3, 7, sizeof(data.x1600.sub6), &data.x1600.sub6), OD_Object(3, 7, sizeof(data.x1600.sub7), &data.x1600.sub7), OD_Object(3, 7, sizeof(data.x1600.sub8), &data.x1600.sub8)}, obj_x1601{OD_Object(3, 5, sizeof(data.x1601.sub0), &data.x1601.sub0), OD_Object(3, 7, sizeof(data.x1601.sub1), &data.x1601.sub1), OD_Object(3, 7, sizeof(data.x1601.sub2), &data.x1601.sub2), OD_Object(3, 7, sizeof(data.x1601.sub3), &data.x1601.sub3), OD_Object(3, 7, sizeof(data.x1601.sub4), &data.x1601.sub4), OD_Object(3, 7, sizeof(data.x1601.sub5), &data.x1601.sub5), OD_Object(3, 7, sizeof(data.x1601.sub6), &data.x1601.sub6), OD_Object(3, 7, sizeof(data.x1601.sub7), &data.x1601.sub7), OD_Object(3, 7, sizeof(data.x1601.sub8), &data.x1601.sub8)}, obj_x1602{OD_Object(3, 5, sizeof(data.x1602.sub0), &data.x1602.sub0), OD_Object(3, 7, sizeof(data.x1602.sub1), &data.x1602.sub1), OD_Object(3, 7, sizeof(data.x1602.sub2), &data.x1602.sub2), OD_Object(3, 7, sizeof(data.x1602.sub3), &data.x1602.sub3), OD_Object(3, 7, sizeof(data.x1602.sub4), &data.x1602.sub4), OD_Object(3, 7, sizeof(data.x1602.sub5), &data.x1602.sub5), OD_Object(3, 7, sizeof(data.x1602.sub6), &data.x1602.sub6), OD_Object(3, 7, sizeof(data.x1602.sub7), &data.x1602.sub7), OD_Object(3, 7, sizeof(data.x1602.sub8), &data.x1602.sub8)}, obj_x1603{OD_Object(3, 5, sizeof(data.x1603.sub0), &data.x1603.sub0), OD_Object(3, 7, sizeof(data.x1603.sub1), &data.x1603.sub1), OD_Object(3, 7, sizeof(data.x1603.sub2), &data.x1603.sub2), OD_Object(3, 7, sizeof(data.x1603.sub3), &data.x1603.sub3), OD_Object(3, 7, sizeof(data.x1603.sub4), &data.x1603.sub4), OD_Object(3, 7, sizeof(data.x1603.sub5), &data.x1603.sub5), OD_Object(3, 7, sizeof(data.x1603.sub6), &data.x1603.sub6), OD_Object(3, 7, sizeof(data.x1603.sub7), &data.x1603.sub7), OD_Object(3, 7, sizeof(data.x1603.sub8), &data.x1603.sub8)}, obj_x1800{OD_Object(1, 5, sizeof(data.x1800.sub0), &data.x1800.sub0), OD_Object(3, 7, sizeof(data.x1800.sub1), &data.x1800.sub1), OD_Object(3, 5, sizeof(data.x1800.sub2), &data.x1800.sub2), OD_Object(3, 6, sizeof(data.x1800.sub3), &data.x1800.sub3), OD_Object(3, 5, sizeof(data.x1800.sub4), &data.x1800.sub4), OD_Object(3, 6, sizeof(data.x1800.sub5), &data.x1800.sub5), OD_Object(3, 5, sizeof(data.x1800.sub6), &data.x1800.sub6)}, obj_x1801{OD_Object(1, 5, sizeof(data.x1801.sub0), &data.x1801.sub0), OD_Object(3, 7, sizeof(data.x1801.sub1), &data.x1801.sub1), OD_Object(3, 5, sizeof(data.x1801.sub2), &data.x1801.sub2), OD_Object(3, 6, sizeof(data.x1801.sub3), &data.x1801.sub3), OD_Object(3, 5, sizeof(data.x1801.sub4), &data.x1801.sub4), OD_Object(3, 6, sizeof(data.x1801.sub5), &data.x1801.sub5), OD_Object(3, 5, sizeof(data.x1801.sub6), &data.x1801.sub6)}, obj_x1802{OD_Object(1, 5, sizeof(data.x1802.sub0), &data.x1802.sub0), OD_Object(3, 7, sizeof(data.x1802.sub1), &data.x1802.sub1), OD_Object(3, 5, sizeof(data.x1802.sub2), &data.x1802.sub2), OD_Object(3, 6, sizeof(data.x1802.sub3), &data.x1802.sub3), OD_Object(3, 5, sizeof(data.x1802.sub4), &data.x1802.sub4), OD_Object(3, 6, sizeof(data.x1802.sub5), &data.x1802.sub5), OD_Object(3, 5, sizeof(data.x1802.sub6), &data.x1802.sub6)}, obj_x1803{OD_Object(1, 5, sizeof(data.x1803.sub0), &data.x1803.sub0), OD_Object(3, 7, sizeof(data.x1803.sub1), &data.x1803.sub1), OD_Object(3, 5, sizeof(data.x1803.sub2), &data.x1803.sub2), OD_Object(3, 6, sizeof(data.x1803.sub3), &data.x1803.sub3), OD_Object(3, 5, sizeof(data.x1803.sub4), &data.x1803.sub4), OD_Object(3, 6, sizeof(data.x1803.sub5), &data.x1803.sub5), OD_Object(3, 5, sizeof(data.x1803.sub6), &data.x1803.sub6)}, obj_x1A00{OD_Object(3, 5, sizeof(data.x1A00.sub0), &data.x1A00.sub0), OD_Object(3, 7, sizeof(data.x1A00.sub1), &data.x1A00.sub1), OD_Object(3, 7, sizeof(data.x1A00.sub2), &data.x1A00.sub2), OD_Object(3, 7, sizeof(data.x1A00.sub3), &data.x1A00.sub3), OD_Object(3, 7, sizeof(data.x1A00.sub4), &data.x1A00.sub4), OD_Object(3, 7, sizeof(data.x1A00.sub5), &data.x1A00.sub5), OD_Object(3, 7, sizeof(data.x1A00.sub6), &data.x1A00.sub6), OD_Object(3, 7, sizeof(data.x1A00.sub7), &data.x1A00.sub7), OD_Object(3, 7, sizeof(data.x1A00.sub8), &data.x1A00.sub8)}, obj_x1A01{OD_Object(3, 5, sizeof(data.x1A01.sub0), &data.x1A01.sub0), OD_Object(3, 7, sizeof(data.x1A01.sub1), &data.x1A01.sub1), OD_Object(3, 7, sizeof(data.x1A01.sub2), &data.x1A01.sub2), OD_Object(3, 7, sizeof(data.x1A01.sub3), &data.x1A01.sub3), OD_Object(3, 7, sizeof(data.x1A01.sub4), &data.x1A01.sub4), OD_Object(3, 7, sizeof(data.x1A01.sub5), &data.x1A01.sub5), OD_Object(3, 7, sizeof(data.x1A01.sub6), &data.x1A01.sub6), OD_Object(3, 7, sizeof(data.x1A01.sub7), &data.x1A01.sub7), OD_Object(3, 7, sizeof(data.x1A01.sub8), &data.x1A01.sub8)}, obj_x1A02{OD_Object(3, 5, sizeof(data.x1A02.sub0), &data.x1A02.sub0), OD_Object(3, 7, sizeof(data.x1A02.sub1), &data.x1A02.sub1), OD_Object(3, 7, sizeof(data.x1A02.sub2), &data.x1A02.sub2), OD_Object(3, 7, sizeof(data.x1A02.sub3), &data.x1A02.sub3), OD_Object(3, 7, sizeof(data.x1A02.sub4), &data.x1A02.sub4), OD_Object(3, 7, sizeof(data.x1A02.sub5), &data.x1A02.sub5), OD_Object(3, 7, sizeof(data.x1A02.sub6), &data.x1A02.sub6), OD_Object(3, 7, sizeof(data.x1A02.sub7), &data.x1A02.sub7), OD_Object(3, 7, sizeof(data.x1A02.sub8), &data.x1A02.sub8)}, obj_x1A03{OD_Object(3, 5, sizeof(data.x1A03.sub0), &data.x1A03.sub0), OD_Object(3, 7, sizeof(data.x1A03.sub1), &data.x1A03.sub1), OD_Object(3, 7, sizeof(data.x1A03.sub2), &data.x1A03.sub2), OD_Object(3, 7, sizeof(data.x1A03.sub3), &data.x1A03.sub3), OD_Object(3, 7, sizeof(data.x1A03.sub4), &data.x1A03.sub4), OD_Object(3, 7, sizeof(data.x1A03.sub5), &data.x1A03.sub5), OD_Object(3, 7, sizeof(data.x1A03.sub6), &data.x1A03.sub6), OD_Object(3, 7, sizeof(data.x1A03.sub7), &data.x1A03.sub7), OD_Object(3, 7, sizeof(data.x1A03.sub8), &data.x1A03.sub8)}, obj_x1F51{OD_Object(1, 5, sizeof(data.x1F51sub0), &data.x1F51sub0), OD_Object(3, 5, sizeof(data.x1F51[0]), &data.x1F51[0]), OD_Object(3, 5, sizeof(data.x1F51[1]), &data.x1F51[1])}, obj_x1F57{OD_Object(1, 5, sizeof(data.x1F57sub0), &data.x1F57sub0), OD_Object(1, 7, sizeof(data.x1F57[0]), &data.x1F57[0]), OD_Object(1, 7, sizeof(data.x1F57[1]), &data.x1F57[1])}, obj_x1F80{OD_Object(3, 7, sizeof(data.x1F80), &data.x1F80)}, obj_x6007{OD_Object(3, 3, sizeof(data.x6007), &data.x6007)}, obj_x603F{OD_Object(1, 6, sizeof(data.x603F), &data.x603F)}, obj_x6040{OD_Object(3, 6, sizeof(data.x6040), &data.x6040)}, obj_x6041{OD_Object(1, 6, sizeof(data.x6041), &data.x6041)}, obj_x6042{OD_Object(3, 3, sizeof(data.x6042), &data.x6042)}, obj_x6043{OD_Object(1, 3, sizeof(data.x6043), &data.x6043)}, obj_x6044{OD_Object(1, 3, sizeof(data.x6044), &data.x6044)}, obj_x6046{OD_Object(5, 5, sizeof(data.x6046sub0), &data.x6046sub0), OD_Object(3, 7, sizeof(data.x6046[0]), &data.x6046[0]), OD_Object(3, 7, sizeof(data.x6046[1]), &data.x6046[1])}, obj_x6048{OD_Object(5, 5, sizeof(data.x6048.sub0), &data.x6048.sub0), OD_Object(3, 17, sizeof(data.x6048.sub1), &data.x6048.sub1), OD_Object(3, 8, sizeof(data.x6048.sub2), &data.x6048.sub2)}, obj_x6049{OD_Object(5, 5, sizeof(data.x6049.sub0), &data.x6049.sub0), OD_Object(1, 7, sizeof(data.x6049.sub1), &data.x6049.sub1), OD_Object(2, 6, sizeof(data.x6049.sub2), &data.x6049.sub2)}, obj_x604A{OD_Object(5, 5, sizeof(data.x604A.sub0), &data.x604A.sub0), OD_Object(3, 27, sizeof(data.x604A.sub1), &data.x604A.sub1), OD_Object(3, 27, sizeof(data.x604A.sub2), &data.x604A.sub2)}, obj_x6060{OD_Object(3, 2, sizeof(data.x6060), &data.x6060)}, obj_x6061{OD_Object(1, 2, sizeof(data.x6061), &data.x6061)}, obj_x6064{OD_Object(1, 4, sizeof(data.x6064), &data.x6064)}, obj_x607A{OD_Object(3, 4, sizeof(data.x607A), &data.x607A)}, obj_x6081{OD_Object(3, 7, sizeof(data.x6081), &data.x6081)}, obj_x60FD{OD_Object(1, 7, sizeof(data.x60FD), &data.x60FD)}, obj_x60FE{OD_Object(5, 5, sizeof(data.x60FEsub0), &data.x60FEsub0), OD_Object(3, 7, sizeof(data.x60FE[0]), &data.x60FE[0])}{}
-};
-
-struct OD_ObjectEntry // Struct representing a dictionnary entry
-{
-    const uint16_t index;
-    const uint16_t objectType;
-    const uint8_t subNumber;
-    const OD_Object *objects;
-
-    OD_ObjectEntry(uint16_t index, uint16_t objectType, uint8_t subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
-};
-
-class OD_ObjectDictionnary // Object dictionnary class that is usable for the user
+class ObjectDictionnary
 {
 private:
-    const unsigned size;
-    OD_Data data;
-    OD_Objects objects;
-    OD_ObjectEntry entries[OD_OBJECT_COUNT];
-
+    struct 
+    {
+        struct
+        {
+            struct
+            {
+            int8_t x2 = 0;
+            int16_t x3 = 0;
+            int32_t x4 = 0;
+            uint8_t x5 = 0;
+            uint16_t x6 = 0;
+            uint32_t x7 = 0;
+            uint32_t x1000 = 131474;
+            uint8_t x1001 = 0;
+            uint8_t x1003sub0 = 0;
+            uint32_t x1003[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+            uint32_t x1005 = 128;
+            uint32_t x1006 = 0;
+            uint32_t x1007 = 0;
+            uint16_t x100C = 0;
+            uint8_t x100D = 0;
+            uint8_t x1010sub0 = 13;
+            uint32_t x1010[14] = {13, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
+            uint8_t x1011sub0 = 13;
+            uint32_t x1011[14] = {13, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
+            uint32_t x1014 = 132;
+            uint8_t x1016sub0 = 1;
+            uint32_t x1016[2] = {1, 0};
+            uint16_t x1017 = 0;
+            struct {uint8_t sub0 = 4; uint32_t sub1 = 620; uint32_t sub2 = 70; uint32_t sub3 = 145031168; uint32_t sub4 = 0;} x1018;
+            uint8_t x1019 = 0;
+            uint8_t x1020sub0 = 2;
+            uint32_t x1020[3] = {2, 0, 0};
+            uint8_t x1029sub0 = 2;
+            uint8_t x1029[3] = {2, 0, 1};
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 516; uint8_t sub2 = 255;} x1400;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 772; uint8_t sub2 = 255;} x1401;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1028; uint8_t sub2 = 255;} x1402;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1284; uint8_t sub2 = 255;} x1403;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1614807056; uint32_t sub2 = 1616904200; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1600;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1618608160; uint32_t sub2 = 1619066912; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1601;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1614938128; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1602;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1627259168; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1603;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 388; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1800;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 644; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1801;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 900; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1802;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 1156; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1803;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1614872592; uint32_t sub2 = 1616969736; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A00;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1617166368; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A01;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1615069200; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A02;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1627193376; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A03;
+            uint8_t x1F51sub0 = 2;
+            uint8_t x1F51[3] = {2, 0, 0};
+            uint8_t x1F57sub0 = 2;
+            uint32_t x1F57[3] = {2, 0, 0};
+            uint32_t x1F80 = 0;
+            int16_t x6007 = 1;
+            uint16_t x603F = 0;
+            uint16_t x6040 = 0;
+            uint16_t x6041 = 0;
+            int16_t x6042 = 200;
+            int16_t x6043 = 0;
+            int16_t x6044 = 0;
+            uint8_t x6046sub0 = 2;
+            uint32_t x6046[3] = {2, 0, 30000};
+            struct {uint8_t sub0 = 2; double sub1 = 500.0; float sub2 = 1.0;} x6048;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 500; uint16_t sub2 = 1;} x6049;
+            struct {uint8_t sub0 = 2; uint64_t sub1 = 5000; uint64_t sub2 = 1;} x604A;
+            int8_t x6060 = 0;
+            int8_t x6061 = 0;
+            int32_t x6064 = 420;
+            int32_t x607A = 4000;
+            uint32_t x6081 = 500;
+            uint32_t x60FD = 0;
+            uint8_t x60FEsub0 = 1;
+            uint32_t x60FE[2] = {1, 0};
+            } data;
+            ObjectEntry entries_x2[1] = {ObjectEntry(&data.x2, 0, 2, sizeof(data.x2))};
+            ObjectEntry entries_x3[1] = {ObjectEntry(&data.x3, 0, 3, sizeof(data.x3))};
+            ObjectEntry entries_x4[1] = {ObjectEntry(&data.x4, 0, 4, sizeof(data.x4))};
+            ObjectEntry entries_x5[1] = {ObjectEntry(&data.x5, 0, 5, sizeof(data.x5))};
+            ObjectEntry entries_x6[1] = {ObjectEntry(&data.x6, 0, 6, sizeof(data.x6))};
+            ObjectEntry entries_x7[1] = {ObjectEntry(&data.x7, 0, 7, sizeof(data.x7))};
+            ObjectEntry entries_x1000[1] = {ObjectEntry(&data.x1000, 0, 7, sizeof(data.x1000))};
+            ObjectEntry entries_x1001[1] = {ObjectEntry(&data.x1001, 0, 5, sizeof(data.x1001))};
+            ObjectEntry entries_x1003[9] = {ObjectEntry(&data.x1003sub0, 0, 5, sizeof(data.x1003sub0)), ObjectEntry(&data.x1003[0], 0, 7, sizeof(data.x1003[0])), ObjectEntry(&data.x1003[1], 0, 7, sizeof(data.x1003[1])), ObjectEntry(&data.x1003[2], 0, 7, sizeof(data.x1003[2])), ObjectEntry(&data.x1003[3], 0, 7, sizeof(data.x1003[3])), ObjectEntry(&data.x1003[4], 0, 7, sizeof(data.x1003[4])), ObjectEntry(&data.x1003[5], 0, 7, sizeof(data.x1003[5])), ObjectEntry(&data.x1003[6], 0, 7, sizeof(data.x1003[6])), ObjectEntry(&data.x1003[7], 0, 7, sizeof(data.x1003[7]))};
+            ObjectEntry entries_x1005[1] = {ObjectEntry(&data.x1005, 0, 7, sizeof(data.x1005))};
+            ObjectEntry entries_x1006[1] = {ObjectEntry(&data.x1006, 0, 7, sizeof(data.x1006))};
+            ObjectEntry entries_x1007[1] = {ObjectEntry(&data.x1007, 0, 7, sizeof(data.x1007))};
+            ObjectEntry entries_x100C[1] = {ObjectEntry(&data.x100C, 0, 6, sizeof(data.x100C))};
+            ObjectEntry entries_x100D[1] = {ObjectEntry(&data.x100D, 0, 5, sizeof(data.x100D))};
+            ObjectEntry entries_x1010[14] = {ObjectEntry(&data.x1010sub0, 0, 5, sizeof(data.x1010sub0)), ObjectEntry(&data.x1010[0], 0, 7, sizeof(data.x1010[0])), ObjectEntry(&data.x1010[1], 0, 7, sizeof(data.x1010[1])), ObjectEntry(&data.x1010[2], 0, 7, sizeof(data.x1010[2])), ObjectEntry(&data.x1010[3], 0, 7, sizeof(data.x1010[3])), ObjectEntry(&data.x1010[4], 0, 7, sizeof(data.x1010[4])), ObjectEntry(&data.x1010[5], 0, 7, sizeof(data.x1010[5])), ObjectEntry(&data.x1010[6], 0, 7, sizeof(data.x1010[6])), ObjectEntry(&data.x1010[7], 0, 7, sizeof(data.x1010[7])), ObjectEntry(&data.x1010[8], 0, 7, sizeof(data.x1010[8])), ObjectEntry(&data.x1010[9], 0, 7, sizeof(data.x1010[9])), ObjectEntry(&data.x1010[10], 0, 7, sizeof(data.x1010[10])), ObjectEntry(&data.x1010[11], 0, 7, sizeof(data.x1010[11])), ObjectEntry(&data.x1010[12], 0, 7, sizeof(data.x1010[12]))};
+            ObjectEntry entries_x1011[14] = {ObjectEntry(&data.x1011sub0, 0, 5, sizeof(data.x1011sub0)), ObjectEntry(&data.x1011[0], 0, 7, sizeof(data.x1011[0])), ObjectEntry(&data.x1011[1], 0, 7, sizeof(data.x1011[1])), ObjectEntry(&data.x1011[2], 0, 7, sizeof(data.x1011[2])), ObjectEntry(&data.x1011[3], 0, 7, sizeof(data.x1011[3])), ObjectEntry(&data.x1011[4], 0, 7, sizeof(data.x1011[4])), ObjectEntry(&data.x1011[5], 0, 7, sizeof(data.x1011[5])), ObjectEntry(&data.x1011[6], 0, 7, sizeof(data.x1011[6])), ObjectEntry(&data.x1011[7], 0, 7, sizeof(data.x1011[7])), ObjectEntry(&data.x1011[8], 0, 7, sizeof(data.x1011[8])), ObjectEntry(&data.x1011[9], 0, 7, sizeof(data.x1011[9])), ObjectEntry(&data.x1011[10], 0, 7, sizeof(data.x1011[10])), ObjectEntry(&data.x1011[11], 0, 7, sizeof(data.x1011[11])), ObjectEntry(&data.x1011[12], 0, 7, sizeof(data.x1011[12]))};
+            ObjectEntry entries_x1014[1] = {ObjectEntry(&data.x1014, 0, 7, sizeof(data.x1014))};
+            ObjectEntry entries_x1016[2] = {ObjectEntry(&data.x1016sub0, 0, 5, sizeof(data.x1016sub0)), ObjectEntry(&data.x1016[0], 0, 7, sizeof(data.x1016[0]))};
+            ObjectEntry entries_x1017[1] = {ObjectEntry(&data.x1017, 0, 6, sizeof(data.x1017))};
+            ObjectEntry entries_x1018[5] = {ObjectEntry(&data.x1018.sub0, 0, 5, sizeof(data.x1018.sub0)), ObjectEntry(&data.x1018.sub1, 0, 7, sizeof(data.x1018.sub1)), ObjectEntry(&data.x1018.sub2, 0, 7, sizeof(data.x1018.sub2)), ObjectEntry(&data.x1018.sub3, 0, 7, sizeof(data.x1018.sub3)), ObjectEntry(&data.x1018.sub4, 0, 7, sizeof(data.x1018.sub4))};
+            ObjectEntry entries_x1019[1] = {ObjectEntry(&data.x1019, 0, 5, sizeof(data.x1019))};
+            ObjectEntry entries_x1020[3] = {ObjectEntry(&data.x1020sub0, 0, 5, sizeof(data.x1020sub0)), ObjectEntry(&data.x1020[0], 0, 7, sizeof(data.x1020[0])), ObjectEntry(&data.x1020[1], 0, 7, sizeof(data.x1020[1]))};
+            ObjectEntry entries_x1029[3] = {ObjectEntry(&data.x1029sub0, 0, 5, sizeof(data.x1029sub0)), ObjectEntry(&data.x1029[0], 0, 5, sizeof(data.x1029[0])), ObjectEntry(&data.x1029[1], 0, 5, sizeof(data.x1029[1]))};
+            ObjectEntry entries_x1400[3] = {ObjectEntry(&data.x1400.sub0, 0, 5, sizeof(data.x1400.sub0)), ObjectEntry(&data.x1400.sub1, 0, 7, sizeof(data.x1400.sub1)), ObjectEntry(&data.x1400.sub2, 0, 5, sizeof(data.x1400.sub2))};
+            ObjectEntry entries_x1401[3] = {ObjectEntry(&data.x1401.sub0, 0, 5, sizeof(data.x1401.sub0)), ObjectEntry(&data.x1401.sub1, 0, 7, sizeof(data.x1401.sub1)), ObjectEntry(&data.x1401.sub2, 0, 5, sizeof(data.x1401.sub2))};
+            ObjectEntry entries_x1402[3] = {ObjectEntry(&data.x1402.sub0, 0, 5, sizeof(data.x1402.sub0)), ObjectEntry(&data.x1402.sub1, 0, 7, sizeof(data.x1402.sub1)), ObjectEntry(&data.x1402.sub2, 0, 5, sizeof(data.x1402.sub2))};
+            ObjectEntry entries_x1403[3] = {ObjectEntry(&data.x1403.sub0, 0, 5, sizeof(data.x1403.sub0)), ObjectEntry(&data.x1403.sub1, 0, 7, sizeof(data.x1403.sub1)), ObjectEntry(&data.x1403.sub2, 0, 5, sizeof(data.x1403.sub2))};
+            ObjectEntry entries_x1600[9] = {ObjectEntry(&data.x1600.sub0, 0, 5, sizeof(data.x1600.sub0)), ObjectEntry(&data.x1600.sub1, 0, 7, sizeof(data.x1600.sub1)), ObjectEntry(&data.x1600.sub2, 0, 7, sizeof(data.x1600.sub2)), ObjectEntry(&data.x1600.sub3, 0, 7, sizeof(data.x1600.sub3)), ObjectEntry(&data.x1600.sub4, 0, 7, sizeof(data.x1600.sub4)), ObjectEntry(&data.x1600.sub5, 0, 7, sizeof(data.x1600.sub5)), ObjectEntry(&data.x1600.sub6, 0, 7, sizeof(data.x1600.sub6)), ObjectEntry(&data.x1600.sub7, 0, 7, sizeof(data.x1600.sub7)), ObjectEntry(&data.x1600.sub8, 0, 7, sizeof(data.x1600.sub8))};
+            ObjectEntry entries_x1601[9] = {ObjectEntry(&data.x1601.sub0, 0, 5, sizeof(data.x1601.sub0)), ObjectEntry(&data.x1601.sub1, 0, 7, sizeof(data.x1601.sub1)), ObjectEntry(&data.x1601.sub2, 0, 7, sizeof(data.x1601.sub2)), ObjectEntry(&data.x1601.sub3, 0, 7, sizeof(data.x1601.sub3)), ObjectEntry(&data.x1601.sub4, 0, 7, sizeof(data.x1601.sub4)), ObjectEntry(&data.x1601.sub5, 0, 7, sizeof(data.x1601.sub5)), ObjectEntry(&data.x1601.sub6, 0, 7, sizeof(data.x1601.sub6)), ObjectEntry(&data.x1601.sub7, 0, 7, sizeof(data.x1601.sub7)), ObjectEntry(&data.x1601.sub8, 0, 7, sizeof(data.x1601.sub8))};
+            ObjectEntry entries_x1602[9] = {ObjectEntry(&data.x1602.sub0, 0, 5, sizeof(data.x1602.sub0)), ObjectEntry(&data.x1602.sub1, 0, 7, sizeof(data.x1602.sub1)), ObjectEntry(&data.x1602.sub2, 0, 7, sizeof(data.x1602.sub2)), ObjectEntry(&data.x1602.sub3, 0, 7, sizeof(data.x1602.sub3)), ObjectEntry(&data.x1602.sub4, 0, 7, sizeof(data.x1602.sub4)), ObjectEntry(&data.x1602.sub5, 0, 7, sizeof(data.x1602.sub5)), ObjectEntry(&data.x1602.sub6, 0, 7, sizeof(data.x1602.sub6)), ObjectEntry(&data.x1602.sub7, 0, 7, sizeof(data.x1602.sub7)), ObjectEntry(&data.x1602.sub8, 0, 7, sizeof(data.x1602.sub8))};
+            ObjectEntry entries_x1603[9] = {ObjectEntry(&data.x1603.sub0, 0, 5, sizeof(data.x1603.sub0)), ObjectEntry(&data.x1603.sub1, 0, 7, sizeof(data.x1603.sub1)), ObjectEntry(&data.x1603.sub2, 0, 7, sizeof(data.x1603.sub2)), ObjectEntry(&data.x1603.sub3, 0, 7, sizeof(data.x1603.sub3)), ObjectEntry(&data.x1603.sub4, 0, 7, sizeof(data.x1603.sub4)), ObjectEntry(&data.x1603.sub5, 0, 7, sizeof(data.x1603.sub5)), ObjectEntry(&data.x1603.sub6, 0, 7, sizeof(data.x1603.sub6)), ObjectEntry(&data.x1603.sub7, 0, 7, sizeof(data.x1603.sub7)), ObjectEntry(&data.x1603.sub8, 0, 7, sizeof(data.x1603.sub8))};
+            ObjectEntry entries_x1800[7] = {ObjectEntry(&data.x1800.sub0, 0, 5, sizeof(data.x1800.sub0)), ObjectEntry(&data.x1800.sub1, 0, 7, sizeof(data.x1800.sub1)), ObjectEntry(&data.x1800.sub2, 0, 5, sizeof(data.x1800.sub2)), ObjectEntry(&data.x1800.sub3, 0, 6, sizeof(data.x1800.sub3)), ObjectEntry(&data.x1800.sub4, 0, 5, sizeof(data.x1800.sub4)), ObjectEntry(&data.x1800.sub5, 0, 6, sizeof(data.x1800.sub5)), ObjectEntry(&data.x1800.sub6, 0, 5, sizeof(data.x1800.sub6))};
+            ObjectEntry entries_x1801[7] = {ObjectEntry(&data.x1801.sub0, 0, 5, sizeof(data.x1801.sub0)), ObjectEntry(&data.x1801.sub1, 0, 7, sizeof(data.x1801.sub1)), ObjectEntry(&data.x1801.sub2, 0, 5, sizeof(data.x1801.sub2)), ObjectEntry(&data.x1801.sub3, 0, 6, sizeof(data.x1801.sub3)), ObjectEntry(&data.x1801.sub4, 0, 5, sizeof(data.x1801.sub4)), ObjectEntry(&data.x1801.sub5, 0, 6, sizeof(data.x1801.sub5)), ObjectEntry(&data.x1801.sub6, 0, 5, sizeof(data.x1801.sub6))};
+            ObjectEntry entries_x1802[7] = {ObjectEntry(&data.x1802.sub0, 0, 5, sizeof(data.x1802.sub0)), ObjectEntry(&data.x1802.sub1, 0, 7, sizeof(data.x1802.sub1)), ObjectEntry(&data.x1802.sub2, 0, 5, sizeof(data.x1802.sub2)), ObjectEntry(&data.x1802.sub3, 0, 6, sizeof(data.x1802.sub3)), ObjectEntry(&data.x1802.sub4, 0, 5, sizeof(data.x1802.sub4)), ObjectEntry(&data.x1802.sub5, 0, 6, sizeof(data.x1802.sub5)), ObjectEntry(&data.x1802.sub6, 0, 5, sizeof(data.x1802.sub6))};
+            ObjectEntry entries_x1803[7] = {ObjectEntry(&data.x1803.sub0, 0, 5, sizeof(data.x1803.sub0)), ObjectEntry(&data.x1803.sub1, 0, 7, sizeof(data.x1803.sub1)), ObjectEntry(&data.x1803.sub2, 0, 5, sizeof(data.x1803.sub2)), ObjectEntry(&data.x1803.sub3, 0, 6, sizeof(data.x1803.sub3)), ObjectEntry(&data.x1803.sub4, 0, 5, sizeof(data.x1803.sub4)), ObjectEntry(&data.x1803.sub5, 0, 6, sizeof(data.x1803.sub5)), ObjectEntry(&data.x1803.sub6, 0, 5, sizeof(data.x1803.sub6))};
+            ObjectEntry entries_x1A00[9] = {ObjectEntry(&data.x1A00.sub0, 0, 5, sizeof(data.x1A00.sub0)), ObjectEntry(&data.x1A00.sub1, 0, 7, sizeof(data.x1A00.sub1)), ObjectEntry(&data.x1A00.sub2, 0, 7, sizeof(data.x1A00.sub2)), ObjectEntry(&data.x1A00.sub3, 0, 7, sizeof(data.x1A00.sub3)), ObjectEntry(&data.x1A00.sub4, 0, 7, sizeof(data.x1A00.sub4)), ObjectEntry(&data.x1A00.sub5, 0, 7, sizeof(data.x1A00.sub5)), ObjectEntry(&data.x1A00.sub6, 0, 7, sizeof(data.x1A00.sub6)), ObjectEntry(&data.x1A00.sub7, 0, 7, sizeof(data.x1A00.sub7)), ObjectEntry(&data.x1A00.sub8, 0, 7, sizeof(data.x1A00.sub8))};
+            ObjectEntry entries_x1A01[9] = {ObjectEntry(&data.x1A01.sub0, 0, 5, sizeof(data.x1A01.sub0)), ObjectEntry(&data.x1A01.sub1, 0, 7, sizeof(data.x1A01.sub1)), ObjectEntry(&data.x1A01.sub2, 0, 7, sizeof(data.x1A01.sub2)), ObjectEntry(&data.x1A01.sub3, 0, 7, sizeof(data.x1A01.sub3)), ObjectEntry(&data.x1A01.sub4, 0, 7, sizeof(data.x1A01.sub4)), ObjectEntry(&data.x1A01.sub5, 0, 7, sizeof(data.x1A01.sub5)), ObjectEntry(&data.x1A01.sub6, 0, 7, sizeof(data.x1A01.sub6)), ObjectEntry(&data.x1A01.sub7, 0, 7, sizeof(data.x1A01.sub7)), ObjectEntry(&data.x1A01.sub8, 0, 7, sizeof(data.x1A01.sub8))};
+            ObjectEntry entries_x1A02[9] = {ObjectEntry(&data.x1A02.sub0, 0, 5, sizeof(data.x1A02.sub0)), ObjectEntry(&data.x1A02.sub1, 0, 7, sizeof(data.x1A02.sub1)), ObjectEntry(&data.x1A02.sub2, 0, 7, sizeof(data.x1A02.sub2)), ObjectEntry(&data.x1A02.sub3, 0, 7, sizeof(data.x1A02.sub3)), ObjectEntry(&data.x1A02.sub4, 0, 7, sizeof(data.x1A02.sub4)), ObjectEntry(&data.x1A02.sub5, 0, 7, sizeof(data.x1A02.sub5)), ObjectEntry(&data.x1A02.sub6, 0, 7, sizeof(data.x1A02.sub6)), ObjectEntry(&data.x1A02.sub7, 0, 7, sizeof(data.x1A02.sub7)), ObjectEntry(&data.x1A02.sub8, 0, 7, sizeof(data.x1A02.sub8))};
+            ObjectEntry entries_x1A03[9] = {ObjectEntry(&data.x1A03.sub0, 0, 5, sizeof(data.x1A03.sub0)), ObjectEntry(&data.x1A03.sub1, 0, 7, sizeof(data.x1A03.sub1)), ObjectEntry(&data.x1A03.sub2, 0, 7, sizeof(data.x1A03.sub2)), ObjectEntry(&data.x1A03.sub3, 0, 7, sizeof(data.x1A03.sub3)), ObjectEntry(&data.x1A03.sub4, 0, 7, sizeof(data.x1A03.sub4)), ObjectEntry(&data.x1A03.sub5, 0, 7, sizeof(data.x1A03.sub5)), ObjectEntry(&data.x1A03.sub6, 0, 7, sizeof(data.x1A03.sub6)), ObjectEntry(&data.x1A03.sub7, 0, 7, sizeof(data.x1A03.sub7)), ObjectEntry(&data.x1A03.sub8, 0, 7, sizeof(data.x1A03.sub8))};
+            ObjectEntry entries_x1F51[3] = {ObjectEntry(&data.x1F51sub0, 0, 5, sizeof(data.x1F51sub0)), ObjectEntry(&data.x1F51[0], 0, 5, sizeof(data.x1F51[0])), ObjectEntry(&data.x1F51[1], 0, 5, sizeof(data.x1F51[1]))};
+            ObjectEntry entries_x1F57[3] = {ObjectEntry(&data.x1F57sub0, 0, 5, sizeof(data.x1F57sub0)), ObjectEntry(&data.x1F57[0], 0, 7, sizeof(data.x1F57[0])), ObjectEntry(&data.x1F57[1], 0, 7, sizeof(data.x1F57[1]))};
+            ObjectEntry entries_x1F80[1] = {ObjectEntry(&data.x1F80, 0, 7, sizeof(data.x1F80))};
+            ObjectEntry entries_x6007[1] = {ObjectEntry(&data.x6007, 0, 3, sizeof(data.x6007))};
+            ObjectEntry entries_x603F[1] = {ObjectEntry(&data.x603F, 0, 6, sizeof(data.x603F))};
+            ObjectEntry entries_x6040[1] = {ObjectEntry(&data.x6040, 0, 6, sizeof(data.x6040))};
+            ObjectEntry entries_x6041[1] = {ObjectEntry(&data.x6041, 0, 6, sizeof(data.x6041))};
+            ObjectEntry entries_x6042[1] = {ObjectEntry(&data.x6042, 0, 3, sizeof(data.x6042))};
+            ObjectEntry entries_x6043[1] = {ObjectEntry(&data.x6043, 0, 3, sizeof(data.x6043))};
+            ObjectEntry entries_x6044[1] = {ObjectEntry(&data.x6044, 0, 3, sizeof(data.x6044))};
+            ObjectEntry entries_x6046[3] = {ObjectEntry(&data.x6046sub0, 0, 5, sizeof(data.x6046sub0)), ObjectEntry(&data.x6046[0], 0, 7, sizeof(data.x6046[0])), ObjectEntry(&data.x6046[1], 0, 7, sizeof(data.x6046[1]))};
+            ObjectEntry entries_x6048[3] = {ObjectEntry(&data.x6048.sub0, 0, 5, sizeof(data.x6048.sub0)), ObjectEntry(&data.x6048.sub1, 0, 17, sizeof(data.x6048.sub1)), ObjectEntry(&data.x6048.sub2, 0, 8, sizeof(data.x6048.sub2))};
+            ObjectEntry entries_x6049[3] = {ObjectEntry(&data.x6049.sub0, 0, 5, sizeof(data.x6049.sub0)), ObjectEntry(&data.x6049.sub1, 0, 7, sizeof(data.x6049.sub1)), ObjectEntry(&data.x6049.sub2, 0, 6, sizeof(data.x6049.sub2))};
+            ObjectEntry entries_x604A[3] = {ObjectEntry(&data.x604A.sub0, 0, 5, sizeof(data.x604A.sub0)), ObjectEntry(&data.x604A.sub1, 0, 27, sizeof(data.x604A.sub1)), ObjectEntry(&data.x604A.sub2, 0, 27, sizeof(data.x604A.sub2))};
+            ObjectEntry entries_x6060[1] = {ObjectEntry(&data.x6060, 0, 2, sizeof(data.x6060))};
+            ObjectEntry entries_x6061[1] = {ObjectEntry(&data.x6061, 0, 2, sizeof(data.x6061))};
+            ObjectEntry entries_x6064[1] = {ObjectEntry(&data.x6064, 0, 4, sizeof(data.x6064))};
+            ObjectEntry entries_x607A[1] = {ObjectEntry(&data.x607A, 0, 4, sizeof(data.x607A))};
+            ObjectEntry entries_x6081[1] = {ObjectEntry(&data.x6081, 0, 7, sizeof(data.x6081))};
+            ObjectEntry entries_x60FD[1] = {ObjectEntry(&data.x60FD, 0, 7, sizeof(data.x60FD))};
+            ObjectEntry entries_x60FE[2] = {ObjectEntry(&data.x60FEsub0, 0, 5, sizeof(data.x60FEsub0)), ObjectEntry(&data.x60FE[0], 0, 7, sizeof(data.x60FE[0]))};
+        } entries;
+        Object object_x2 = Object(2, 1, 7, entries.entries_x2);
+        Object object_x3 = Object(3, 1, 7, entries.entries_x3);
+        Object object_x4 = Object(4, 1, 7, entries.entries_x4);
+        Object object_x5 = Object(5, 1, 7, entries.entries_x5);
+        Object object_x6 = Object(6, 1, 7, entries.entries_x6);
+        Object object_x7 = Object(7, 1, 7, entries.entries_x7);
+        Object object_x1000 = Object(4096, 1, 7, entries.entries_x1000);
+        Object object_x1001 = Object(4097, 1, 7, entries.entries_x1001);
+        Object object_x1003 = Object(4099, 9, 8, entries.entries_x1003);
+        Object object_x1005 = Object(4101, 1, 7, entries.entries_x1005);
+        Object object_x1006 = Object(4102, 1, 7, entries.entries_x1006);
+        Object object_x1007 = Object(4103, 1, 7, entries.entries_x1007);
+        Object object_x100C = Object(4108, 1, 7, entries.entries_x100C);
+        Object object_x100D = Object(4109, 1, 7, entries.entries_x100D);
+        Object object_x1010 = Object(4112, 14, 8, entries.entries_x1010);
+        Object object_x1011 = Object(4113, 14, 8, entries.entries_x1011);
+        Object object_x1014 = Object(4116, 1, 7, entries.entries_x1014);
+        Object object_x1016 = Object(4118, 2, 8, entries.entries_x1016);
+        Object object_x1017 = Object(4119, 1, 7, entries.entries_x1017);
+        Object object_x1018 = Object(4120, 5, 8, entries.entries_x1018);
+        Object object_x1019 = Object(4121, 1, 7, entries.entries_x1019);
+        Object object_x1020 = Object(4128, 3, 8, entries.entries_x1020);
+        Object object_x1029 = Object(4137, 3, 8, entries.entries_x1029);
+        Object object_x1400 = Object(5120, 3, 8, entries.entries_x1400);
+        Object object_x1401 = Object(5121, 3, 8, entries.entries_x1401);
+        Object object_x1402 = Object(5122, 3, 8, entries.entries_x1402);
+        Object object_x1403 = Object(5123, 3, 8, entries.entries_x1403);
+        Object object_x1600 = Object(5632, 9, 8, entries.entries_x1600);
+        Object object_x1601 = Object(5633, 9, 8, entries.entries_x1601);
+        Object object_x1602 = Object(5634, 9, 8, entries.entries_x1602);
+        Object object_x1603 = Object(5635, 9, 8, entries.entries_x1603);
+        TPDOCommunicationObject object_x1800 = TPDOCommunicationObject(6144, 7, 8, entries.entries_x1800);
+        TPDOCommunicationObject object_x1801 = TPDOCommunicationObject(6145, 7, 8, entries.entries_x1801);
+        TPDOCommunicationObject object_x1802 = TPDOCommunicationObject(6146, 7, 8, entries.entries_x1802);
+        TPDOCommunicationObject object_x1803 = TPDOCommunicationObject(6147, 7, 8, entries.entries_x1803);
+        TPDOMappingObject object_x1A00 = TPDOMappingObject(6656, 9, 8, entries.entries_x1A00);
+        TPDOMappingObject object_x1A01 = TPDOMappingObject(6657, 9, 8, entries.entries_x1A01);
+        TPDOMappingObject object_x1A02 = TPDOMappingObject(6658, 9, 8, entries.entries_x1A02);
+        TPDOMappingObject object_x1A03 = TPDOMappingObject(6659, 9, 8, entries.entries_x1A03);
+        Object object_x1F51 = Object(8017, 3, 8, entries.entries_x1F51);
+        Object object_x1F57 = Object(8023, 3, 8, entries.entries_x1F57);
+        Object object_x1F80 = Object(8064, 1, 7, entries.entries_x1F80);
+        Object object_x6007 = Object(24583, 1, 7, entries.entries_x6007);
+        Object object_x603F = Object(24639, 1, 7, entries.entries_x603F);
+        Object object_x6040 = Object(24640, 1, 7, entries.entries_x6040);
+        Object object_x6041 = Object(24641, 1, 7, entries.entries_x6041);
+        Object object_x6042 = Object(24642, 1, 7, entries.entries_x6042);
+        Object object_x6043 = Object(24643, 1, 7, entries.entries_x6043);
+        Object object_x6044 = Object(24644, 1, 7, entries.entries_x6044);
+        Object object_x6046 = Object(24646, 3, 8, entries.entries_x6046);
+        Object object_x6048 = Object(24648, 3, 8, entries.entries_x6048);
+        Object object_x6049 = Object(24649, 3, 8, entries.entries_x6049);
+        Object object_x604A = Object(24650, 3, 8, entries.entries_x604A);
+        Object object_x6060 = Object(24672, 1, 7, entries.entries_x6060);
+        Object object_x6061 = Object(24673, 1, 7, entries.entries_x6061);
+        Object object_x6064 = Object(24676, 1, 7, entries.entries_x6064);
+        Object object_x607A = Object(24698, 1, 7, entries.entries_x607A);
+        Object object_x6081 = Object(24705, 1, 7, entries.entries_x6081);
+        Object object_x60FD = Object(24829, 1, 7, entries.entries_x60FD);
+        Object object_x60FE = Object(24830, 2, 8, entries.entries_x60FE);
+    } objects;
+    const unsigned length = OD_OBJECTS_COUNT;
+    Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_x2, &objects.object_x3, &objects.object_x4, &objects.object_x5, &objects.object_x6, &objects.object_x7, &objects.object_x1000, &objects.object_x1001, &objects.object_x1003, &objects.object_x1005, &objects.object_x1006, &objects.object_x1007, &objects.object_x100C, &objects.object_x100D, &objects.object_x1010, &objects.object_x1011, &objects.object_x1014, &objects.object_x1016, &objects.object_x1017, &objects.object_x1018, &objects.object_x1019, &objects.object_x1020, &objects.object_x1029, &objects.object_x1400, &objects.object_x1401, &objects.object_x1402, &objects.object_x1403, &objects.object_x1600, &objects.object_x1601, &objects.object_x1602, &objects.object_x1603, &objects.object_x1800, &objects.object_x1801, &objects.object_x1802, &objects.object_x1803, &objects.object_x1A00, &objects.object_x1A01, &objects.object_x1A02, &objects.object_x1A03, &objects.object_x1F51, &objects.object_x1F57, &objects.object_x1F80, &objects.object_x6007, &objects.object_x603F, &objects.object_x6040, &objects.object_x6041, &objects.object_x6042, &objects.object_x6043, &objects.object_x6044, &objects.object_x6046, &objects.object_x6048, &objects.object_x6049, &objects.object_x604A, &objects.object_x6060, &objects.object_x6061, &objects.object_x6064, &objects.object_x607A, &objects.object_x6081, &objects.object_x60FD, &objects.object_x60FE};
 public:
-    OD_ObjectDictionnary() : size(OD_OBJECT_COUNT), objects(data), entries{OD_ObjectEntry(2, 7, 1, objects.obj_x2), OD_ObjectEntry(3, 7, 1, objects.obj_x3), OD_ObjectEntry(4, 7, 1, objects.obj_x4), OD_ObjectEntry(5, 7, 1, objects.obj_x5), OD_ObjectEntry(6, 7, 1, objects.obj_x6), OD_ObjectEntry(7, 7, 1, objects.obj_x7), OD_ObjectEntry(4096, 7, 1, objects.obj_x1000), OD_ObjectEntry(4097, 7, 1, objects.obj_x1001), OD_ObjectEntry(4099, 8, 9, objects.obj_x1003), OD_ObjectEntry(4101, 7, 1, objects.obj_x1005), OD_ObjectEntry(4102, 7, 1, objects.obj_x1006), OD_ObjectEntry(4103, 7, 1, objects.obj_x1007), OD_ObjectEntry(4108, 7, 1, objects.obj_x100C), OD_ObjectEntry(4109, 7, 1, objects.obj_x100D), OD_ObjectEntry(4112, 8, 14, objects.obj_x1010), OD_ObjectEntry(4113, 8, 14, objects.obj_x1011), OD_ObjectEntry(4116, 7, 1, objects.obj_x1014), OD_ObjectEntry(4118, 8, 2, objects.obj_x1016), OD_ObjectEntry(4119, 7, 1, objects.obj_x1017), OD_ObjectEntry(4120, 9, 5, objects.obj_x1018), OD_ObjectEntry(4121, 7, 1, objects.obj_x1019), OD_ObjectEntry(4128, 8, 3, objects.obj_x1020), OD_ObjectEntry(4137, 8, 3, objects.obj_x1029), OD_ObjectEntry(5120, 9, 3, objects.obj_x1400), OD_ObjectEntry(5121, 9, 3, objects.obj_x1401), OD_ObjectEntry(5122, 9, 3, objects.obj_x1402), OD_ObjectEntry(5123, 9, 3, objects.obj_x1403), OD_ObjectEntry(5632, 9, 9, objects.obj_x1600), OD_ObjectEntry(5633, 9, 9, objects.obj_x1601), OD_ObjectEntry(5634, 9, 9, objects.obj_x1602), OD_ObjectEntry(5635, 9, 9, objects.obj_x1603), OD_ObjectEntry(6144, 9, 7, objects.obj_x1800), OD_ObjectEntry(6145, 9, 7, objects.obj_x1801), OD_ObjectEntry(6146, 9, 7, objects.obj_x1802), OD_ObjectEntry(6147, 9, 7, objects.obj_x1803), OD_ObjectEntry(6656, 9, 9, objects.obj_x1A00), OD_ObjectEntry(6657, 9, 9, objects.obj_x1A01), OD_ObjectEntry(6658, 9, 9, objects.obj_x1A02), OD_ObjectEntry(6659, 9, 9, objects.obj_x1A03), OD_ObjectEntry(8017, 8, 3, objects.obj_x1F51), OD_ObjectEntry(8023, 8, 3, objects.obj_x1F57), OD_ObjectEntry(8064, 7, 1, objects.obj_x1F80), OD_ObjectEntry(24583, 7, 1, objects.obj_x6007), OD_ObjectEntry(24639, 7, 1, objects.obj_x603F), OD_ObjectEntry(24640, 7, 1, objects.obj_x6040), OD_ObjectEntry(24641, 7, 1, objects.obj_x6041), OD_ObjectEntry(24642, 7, 1, objects.obj_x6042), OD_ObjectEntry(24643, 7, 1, objects.obj_x6043), OD_ObjectEntry(24644, 7, 1, objects.obj_x6044), OD_ObjectEntry(24646, 8, 3, objects.obj_x6046), OD_ObjectEntry(24648, 9, 3, objects.obj_x6048), OD_ObjectEntry(24649, 9, 3, objects.obj_x6049), OD_ObjectEntry(24650, 9, 3, objects.obj_x604A), OD_ObjectEntry(24672, 7, 1, objects.obj_x6060), OD_ObjectEntry(24673, 7, 1, objects.obj_x6061), OD_ObjectEntry(24676, 7, 1, objects.obj_x6064), OD_ObjectEntry(24698, 7, 1, objects.obj_x607A), OD_ObjectEntry(24705, 7, 1, objects.obj_x6081), OD_ObjectEntry(24829, 7, 1, objects.obj_x60FD), OD_ObjectEntry(24830, 8, 2, objects.obj_x60FE)}{}
-    inline void save() { return data.save(); }
-    inline void load() { return data.load(); }
-    inline OD_Objects &getObjects() { return objects; }
-    OD_ObjectEntry *findEntry(uint16_t index);
+    Object *findObject(uint16_t index);
+    void saveData();
+    void loadData();
 };
