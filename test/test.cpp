@@ -1,24 +1,20 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
-#include "od_classes.hpp"
-#include "od_test.hpp"
+#include "od.hpp"
 using namespace std;
+using namespace od;
 
-Object *ObjectDictionnary::findObject(uint16_t index)
-{
-}
 
-void ObjectDictionnary::saveData()
-{
-}
-
-void ObjectDictionnary::loadData()
-{
-}
 
 int main()
 {
-    printf("sizeof(ObjectDictionnary) = %d\n", sizeof(od));
+    uint8_t buffer[8] = {0};
+    ObjectDictionnary od;
+    printf("sizeof(ObjectDictionnary) = %ld bytes\n", sizeof(od));
+
+    Object *object = od.findObject(0x1800);
+    object->writeBytes(0, buffer, 1);
+
     return 0;
 }
