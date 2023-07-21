@@ -11,7 +11,9 @@ CANopen library
 - NMT state and communication objects (p.80)
 - PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
-- variable PDO mapping? 
+- PDO: other transmission types
+- PDO: object_1A00::writeBytes()
+- PDO: mapping during NMT Operational? 
 - implement missing data types
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
 - group bits together for access type, PDO mapping, and others ?
