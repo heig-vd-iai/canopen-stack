@@ -9,10 +9,9 @@ CANopen library
 - node guarding?
 - constantes sauvages
 - NMT state and communication objects (p.80)
-- PDO
+- PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - variable PDO mapping? 
-- replace getSize() of object by a size field (useful for string)
 - implement missing data types
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
 - group bits together for access type, PDO mapping, and others ?
