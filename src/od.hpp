@@ -1,8 +1,7 @@
 #pragma once
-#include <cstdint>
 #include "od_include.hpp"
 #define OD_OBJECTS_COUNT 60
-
+#define OD_TPDO_COUNT 4
 
 class ObjectDictionnary
 {
