@@ -32,6 +32,11 @@ void ObjectDictionnary::loadData()
     f.close();
 }
 
+void ObjectEntry::readBytes(uint8_t *bytes, unsigned size, unsigned offset)
+{
+    memcpy(bytes, (uint8_t *)dataSrc + offset, size);
+}
+
 bool Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode)
 {
     if (subindex > subNumber)
@@ -62,6 +67,6 @@ bool Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned
         *errorCode = SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
         return false;
     }
-    memcpy(bytes, (uint8_t *)entry.dataSrc + offset, size);
+    entry.readBytes(bytes, size, offset);
     return true;
 }
