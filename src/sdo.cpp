@@ -101,6 +101,7 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     const unsigned maxSize = 4; // TODO: be more precise
     CANopen_Frame response;
     SDO_CommandByte sendCommand = {0};
+    uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subindex = request.data[3];
     Object *object = node.od.findObject(index);
@@ -124,7 +125,6 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     uint32_t size = object->entries[subindex].size;
     transferData.remainingBytes = size;
     // Fill command byte and frame data
-    uint32_t errorCode = 0;
     if (size > maxSize) // Segment transfer
     {
         sendCommand.bits_initiate.e = 0;
@@ -179,7 +179,6 @@ void CANopen_SDO::uploadSegment(CANopen_Frame request, uint32_t timestamp_us)
     response.dlc = 8;
     // Upload response data
     response.data[0] = sendCommand.value;
-    // memcpy(response.data + 8 - maxSize, transferData.dataSrc + bytesSent, payloadSize);
     if (!transferData.object->readBytes(transferData.subindex, response.data + 8 - maxSize, payloadSize, bytesSent, &errorCode))
     {
         sendAbort(transferData.object->index, transferData.subindex, errorCode);
@@ -198,6 +197,7 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     const unsigned maxSize = 4; // TODO: be more precise
     CANopen_Frame response;
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subindex = request.data[3];
     Object *object = node.od.findObject(index);
@@ -220,7 +220,6 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     transferData.object = object;
     uint32_t size = object->entries[subindex].size;
     // Fill command byte and write data
-    uint32_t errorCode = 0;
     if (recvCommand.bits_initiate.e) // Expedited transfer
     {
         transferData.remainingBytes = recvCommand.bits_initiate.s ? maxSize - recvCommand.bits_initiate.n : size;
@@ -242,7 +241,7 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
             sendAbort(index, subindex, SDOAbortCode_GeneralParameterIncompatibility);
             return;
         }
-        transferData.remainingBytes = *(uint32_t *)(request.data + 4);
+        transferData.remainingBytes = *(uint32_t *)(request.data + 4); // TODO
         if (transferData.remainingBytes != size)
         {
             sendAbort(index, subindex, SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
@@ -286,14 +285,11 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request, uint32_t timestamp_us)
         sendAbort(transferData.object->index, transferData.subindex, SDOAbortCode_OutOfMemory);
         return;
     }
-    else // Use download buffer instead
+    memcpy(transferData.buffer + bytesReceived, request.data + 8 - maxSize, payloadSize);
+    if (recvCommand.bits_segment.c && !transferData.object->writeBytes(transferData.subindex, transferData.buffer, size, &errorCode))
     {
-        memcpy(transferData.buffer + bytesReceived, request.data + 8 - maxSize, payloadSize);
-        if (recvCommand.bits_segment.c && !transferData.object->writeBytes(transferData.subindex, transferData.buffer, size, &errorCode))
-        {
-            sendAbort(transferData.object->index, transferData.subindex, errorCode);
-            return;
-        }
+        sendAbort(transferData.object->index, transferData.subindex, errorCode);
+        return;
     }
     transferData.remainingBytes -= payloadSize;
     // Fill command byte
