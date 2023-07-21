@@ -16,6 +16,9 @@
 
 class TPDOCommunicationObject : public Object
 {
+private:
+    bool enabledFlag = false;
+
 public:
     TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
 
@@ -28,6 +31,8 @@ public:
     bool isEnabled() { return ~getCobId() & 0x80000000; }
     bool isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
     bool isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
+    bool getEnableFlag() { return enabledFlag; }
+    void clearEnableFlag() { enabledFlag = false; }
 
     bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode)
     {
@@ -47,12 +52,17 @@ public:
         {
         case X1800_INDEX_COBID: // TPDO COB-ID
         {
-            uint32_t value = *(uint32_t *)bytes;
-            if (enabled && (getCobId() ^ value) & ~0x80000000)
+            TPDOCobidEntry current = {getCobId()};
+            TPDOCobidEntry recent = {*(uint32_t *)bytes};
+            // Check if bits 0 to 30 are modified
+            if (enabled && (current.value ^ recent.value) & ~0x80000000)
             {
                 *errorCode = SDOAbortCode_InvalidDownloadParameterValue;
                 return false;
             }
+            // If a PDO was enabled
+            if (current.bits.valid && !recent.bits.valid)
+                enabledFlag = true;
             break;
         }
         case X1800_INDEX_TRANSMISSION: // transmission type
