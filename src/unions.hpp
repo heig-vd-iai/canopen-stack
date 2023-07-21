@@ -12,7 +12,7 @@ union AccessType
     } bits;
 };
 
-union TPDOCobId
+union TPDOCobidEntry
 {
     uint32_t value;
     struct
@@ -21,5 +21,16 @@ union TPDOCobId
         uint32_t frame : 1;
         uint32_t rtr : 1;
         uint32_t valid : 1;
+    } bits;
+};
+
+union TPDOMapEntry
+{
+    uint32_t value;
+    struct
+    {
+        uint32_t length : 8;
+        uint32_t subindex : 8;
+        uint32_t index : 16;
     } bits;
 };
