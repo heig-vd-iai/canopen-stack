@@ -3,10 +3,9 @@
 
 struct CANopen_Frame
 {
-    uint8_t data[8];
-    uint8_t dlc;
-    uint8_t functionCode;
-    uint8_t nodeId;
-    uint8_t rtr;
-    CANopen_Frame() : data{0}, dlc(0), functionCode(0), nodeId(0), rtr(0) {}
+    uint8_t data[8] = {0};
+    uint8_t dlc = 0;
+    uint8_t functionCode = 0;
+    uint8_t nodeId = 0;
+    uint8_t rtr = 0;
 };
