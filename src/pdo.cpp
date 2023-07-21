@@ -6,62 +6,72 @@
 
 CANopen_PDO::CANopen_PDO(CANopen_Node &node) : node(node)
 {
-    // for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
-    // {
-    //     initTPDO(i);
-    // }
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+        initTPDO(i);
 }
 
-// void CANopen_PDO::initTPDO(unsigned num)
-// {
-//     OD_ObjectEntry *communicationParameterEntry = node.od.findEntry(OD_TPDO_COMMUNICATION_INDEX + num);
-//     tpdos[num].cobId = (uint32_t *)communicationParameterEntry->objects[1].valueSrc;
-//     tpdos[num].transmissionType = (uint8_t *)communicationParameterEntry->objects[2].valueSrc;
-//     tpdos[num].inhibitTime = (uint16_t *)communicationParameterEntry->objects[3].valueSrc;
-//     tpdos[num].eventTimer = (uint16_t *)communicationParameterEntry->objects[5].valueSrc;
-//     tpdos[num].syncStartValue = (uint8_t *)communicationParameterEntry->objects[6].valueSrc;
-//     remapTPDO(num);
-// }
+void CANopen_PDO::initTPDO(unsigned index)
+{
+    tpdos[index].commObject = (TPDOCommunicationObject *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapObject = (TPDOMappingObject *)node.od.findObject(TPDO_MAPPING_INDEX + index);
+    remapTPDO(index);
+}
 
-// void CANopen_PDO::remapTPDO(unsigned num)
-// {
-//     const unsigned maxMappedObjects = 8; // This CANopen implementation does not support bit-level PDO mapping
-//     OD_ObjectEntry *mappingParameterEntry = node.od.findEntry(OD_TPDO_MAPPING_INDEX + num);
-//     uint8_t declaredObjectsCount = *(uint8_t *)mappingParameterEntry->objects[0].valueSrc;
-//     declaredObjectsCount = declaredObjectsCount > maxMappedObjects ? maxMappedObjects : declaredObjectsCount;
-//     tpdos[num].mappedObjectsCount = declaredObjectsCount;
-//     if (tpdos[num].mappedObjects != NULL)
-//         delete[] tpdos[num].mappedObjects;
-//     tpdos[num].mappedObjects = new OD_Object *[declaredObjectsCount];
-//     // printf("[PDO] TPDO[%d]\n", num + 1);
-//     for (unsigned i = 0; i < declaredObjectsCount; i++)
-//     {
-//         uint32_t content = *(uint32_t *)mappingParameterEntry->objects[i + 1].valueSrc;
-//         uint16_t index = content >> 16;
-//         uint8_t subIndex = content >> 8;
-//         // uint8_t bitSize = content;
-//         tpdos[num].mappedObjects[i] = (OD_Object *)node.od.findEntry(index)->objects + subIndex;
-//         // printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", index, subIndex, bitSize);
-//     }
-//     // puts("");
-// }
+void CANopen_PDO::remapTPDO(unsigned index)
+{
+    TPDO *tpdo = tpdos + index;
+    tpdo->count = tpdo->mapObject->getCount();
+    tpdo->count = tpdo->count > TPDO_MAX_MAPPED_OBJECTS ? TPDO_MAX_MAPPED_OBJECTS : tpdo->count;
+    if (tpdo->mappedEntries != NULL)
+        delete[] tpdo->mappedEntries;
+    tpdo->mappedEntries = new ObjectEntry *[tpdo->count]; // TODO: check for NULL?
+    printf("[PDO] TPDO[%d]\n", index + 1);
+    for (unsigned i = 0; i < tpdo->count; i++)
+    {
+        TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
+        tpdo->mappedEntries[i] = (ObjectEntry *)node.od.findObject(content.bits.index)->entries + content.bits.subindex;
+        printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", content.bits.index, content.bits.subindex, content.bits.length);
+    }
+    puts("");
+}
 
-// void CANopen_PDO::bufferizeTPDO(unsigned num, uint8_t buffer[8])
-// {
-//     unsigned bytesWritten = 0;
-//     for (unsigned i = 0; i < tpdos[num].mappedObjectsCount; i++)
-//     {
-//         OD_Object *obj = tpdos[num].mappedObjects[i];
-//         memcpy(buffer + bytesWritten, obj->valueSrc, obj->size);
-//         bytesWritten += obj->size;
-//     }
-// }
+void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
+{
+    TPDO *tpdo = tpdos + index;
+    unsigned bytesTransferred = 0;
+    for (unsigned i = 0; i < tpdo->count; i++)
+    {
+        ObjectEntry *entry = tpdo->mappedEntries[i];
+        entry->readBytes(buffer, entry->size, bytesTransferred);
+        bytesTransferred += entry->size;
+    }
+}
 
 void CANopen_PDO::update(uint32_t timestamp_us)
 {
     NMTStates state = node.nmt.getState();
     if (state != NMTState_Operational)
         return;
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+    {
+        TPDO *tpdo = tpdos + i;
+        uint8_t transmission = tpdo->commObject->getTransmissionType();
+        uint16_t timer_ms = tpdo->commObject->getEventTimer();
+        // Only event-driven PDOs can be sent periodically
+        if (!(timer_ms != 0 && (transmission == X1800_EVENT1 || transmission == X1800_EVENT2)))
+            continue;
+        if (timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
+            continue;
+        CANopen_Frame frame;
+        TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
+        frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
+        frame.nodeId = cobid.bits.canId & 0x7F;
+        frame.dlc = 8;
+        bufferizeTPDO(i, frame.data);
+        node.sendFrame(frame);
+        tpdo->timestamp_us = timestamp_us;
+    }
+
     // for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     // {
     //     uint8_t transmission = *tpdos[i].transmissionType;
@@ -88,7 +98,3 @@ void CANopen_PDO::update(uint32_t timestamp_us)
 void CANopen_PDO::receiveFrame(CANopen_Frame frame)
 {
 }
-
-// CANopen_PDO::TPDO::TPDO() : mappedObjectsCount(0), mappedObjects{NULL}, timestamp(0)
-// {
-// }
