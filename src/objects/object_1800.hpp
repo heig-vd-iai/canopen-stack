@@ -12,15 +12,15 @@
 
 class TPDOCommunicationObject : public Object
 {
-private:
+public:
+    TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+
     uint32_t getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID].dataSrc; }
     uint8_t getTransmissionType() { return *(uint8_t *)entries[X1800_INDEX_TRANSMISSION].dataSrc; }
     uint16_t getInhibitTime() { return *(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc; }
     uint16_t getEventTimer() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
     uint8_t getSyncStart() { return *(uint8_t *)entries[X1800_INDEX_SYNC].dataSrc; }
-
-public:
-    TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+    bool isEnabled() { return ~getCobId() & 0x80000000; }
 
     bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode)
     {
@@ -35,14 +35,13 @@ public:
             *errorCode = SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
             return false;
         }
-        TPDOCobId currentCobid = {getCobId()};
-        bool enabled = !currentCobid.bits.valid;
+        bool enabled = isEnabled();
         switch (subindex)
         {
         case X1800_INDEX_COBID: // TPDO COB-ID
         {
-            TPDOCobId newCobid = {*(uint32_t *)bytes};
-            if (enabled && (currentCobid.value ^ newCobid.value) & 0x7FFFFFFF)
+            uint32_t value = *(uint32_t *)bytes;
+            if (enabled && (getCobId() ^ value) & ~0x80000000)
             {
                 *errorCode = SDOAbortCode_InvalidDownloadParameterValue;
                 return false;
