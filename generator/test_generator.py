@@ -69,7 +69,11 @@ objects = [toEntry(obj) for obj in od.values() if toEntry(obj) is not None]
 #     print(object.renderObject())
 #     print()
 
+defines = [
+    f"OD_TPDO_COUNT {len([obj for obj in objects if isinstance(obj, TPDOCommunicationObject)])}"
+]
 variables = {
+    "defines": defines,
     "objects": objects,
     "objectNames": [obj.varName for obj in objects]
 }

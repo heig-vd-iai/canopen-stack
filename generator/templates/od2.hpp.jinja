@@ -1,6 +1,9 @@
 #pragma once
 #include "od_include.hpp"
 #define OD_OBJECTS_COUNT {{objects|length}}
+{% for define in defines %}
+#define {{define}}
+{% endfor %}
 
 class ObjectDictionnary
 {
