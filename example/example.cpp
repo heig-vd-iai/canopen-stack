@@ -6,6 +6,7 @@
 #include <chrono>
 #include <mutex>
 #include <cstring>
+#include <cmath>
 #include <sys/socket.h>
 #include <linux/can.h>
 #include <net/if.h>
@@ -79,7 +80,16 @@ int main()
         return EXIT_FAILURE;
     }
 
-    thread t(func);
+    double t = 0.0;
+    double x = 0.0;
+    // double y = 0.0;
+    const double dt = 0.001;
+    const double a = 120.0;
+    const double f = 0.1;
+    const double w = 2.0 * M_PI * f;
+    Object *object = node.od.findObject(0x6048);
+    uint32_t errorCode = 0;
+    thread listenThread(func);
     while (true)
     {
 #if PRINT
@@ -87,9 +97,14 @@ int main()
 #endif
         if (mtx.try_lock())
         {
+            object->writeBytes(1, (uint8_t *)&x, sizeof(x), &errorCode);
+            // object->readBytes(1, (uint8_t *)&y, sizeof(y), 0, &errorCode);
             node.update();
             mtx.unlock();
         }
+        t += dt;
+        x = a * sin(w * t);
+        // printf("[main] x = %lf, y = %lf\n", x, y);
 #if PRINT
         auto end = chrono::steady_clock::now();
         printf("[main] update took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -97,6 +112,6 @@ int main()
         this_thread::sleep_for(chrono::milliseconds(1));
     }
 
-    t.join();
+    listenThread.join();
     return EXIT_SUCCESS;
 }
