@@ -11,6 +11,7 @@ struct ObjectEntry
     const uint8_t size;
 
     ObjectEntry(void *dataSrc, uint8_t accessType, uint8_t dataType, uint8_t size) : dataSrc(dataSrc), accessType{accessType}, dataType(dataType), size(size) {}
+    void readBytes(uint8_t *bytes, unsigned size, unsigned offset = 0);
 };
 
 struct Object
