@@ -25,9 +25,11 @@ private:
     void initTPDO(unsigned index);
     void remapTPDO(unsigned index);
     void bufferizeTPDO(unsigned index, uint8_t *buffer);
+    void sendTPDO(unsigned index, uint32_t timestamp_us);
 
 public:
     CANopen_PDO(class CANopen_Node &node);
     void receiveFrame(CANopen_Frame frame);
     void update(uint32_t timestamp_us);
+    void onSync(uint8_t counter, uint32_t timestamp_us);
 };

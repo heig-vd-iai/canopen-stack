@@ -13,6 +13,7 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
         nmt.receiveFrame(frame);
         break;
     case FunctionCode_SYNC: // Also FunctionCode_EMCY
+        sync.receiveFrame(frame, timestamp);
         break;
     case FunctionCode_TIME:
         break;
@@ -31,6 +32,8 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
         sdo.receiveFrame(frame, timestamp);
         break;
     case FunctionCode_HEARTBEAT:
+        break;
+    default:
         break;
     }
 }

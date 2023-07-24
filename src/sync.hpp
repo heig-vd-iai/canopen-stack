@@ -10,5 +10,5 @@ private:
 
 public:
     CANopen_SYNC(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
+    void receiveFrame(CANopen_Frame frame, uint32_t timestamp_us);
 };
