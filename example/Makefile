@@ -1,5 +1,6 @@
 APP_NAME = app
 CANOPEN_SRC = ../src
+OBJECTS_SRC = $(CANOPEN_SRC)/objects
 APP_SRC = .
 
 
@@ -15,7 +16,9 @@ SOURCES = \
 	$(CANOPEN_SRC)/nmt.cpp \
 	$(CANOPEN_SRC)/heartbeat.cpp \
 	$(CANOPEN_SRC)/sdo.cpp \
-	$(CANOPEN_SRC)/pdo.cpp
+	$(CANOPEN_SRC)/pdo.cpp \
+	$(OBJECTS_SRC)/object_1A00.cpp \
+	$(OBJECTS_SRC)/object_1800.cpp
 
 
 CC = g++
