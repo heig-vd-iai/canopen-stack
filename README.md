@@ -13,6 +13,8 @@ CANopen library
 - NMT state and communication objects (p.80)
 - PDO: give correct behaviour to acyclic transmission type
 - PDO: RTR
+- PDO: TPDO inhibit time
+- PDO: SYNC counter
 - PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - PDO: other transmission types
