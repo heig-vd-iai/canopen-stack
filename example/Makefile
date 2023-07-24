@@ -17,6 +17,7 @@ SOURCES = \
 	$(CANOPEN_SRC)/heartbeat.cpp \
 	$(CANOPEN_SRC)/sdo.cpp \
 	$(CANOPEN_SRC)/pdo.cpp \
+	$(CANOPEN_SRC)/sync.cpp \
 	$(OBJECTS_SRC)/object_1A00.cpp \
 	$(OBJECTS_SRC)/object_1800.cpp
 
