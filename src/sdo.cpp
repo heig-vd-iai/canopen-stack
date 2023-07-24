@@ -228,7 +228,7 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
             sendAbort(index, subindex, SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
             return;
         }
-        if (!object->writeBytes(subindex, request.data + 8 - maxSize, transferData.remainingBytes, &errorCode))
+        if (!object->writeBytes(subindex, request.data + 8 - maxSize, transferData.remainingBytes, &errorCode, node))
         {
             sendAbort(index, subindex, errorCode);
             return;
@@ -286,7 +286,7 @@ void CANopen_SDO::downloadSegment(CANopen_Frame request, uint32_t timestamp_us)
         return;
     }
     memcpy(transferData.buffer + bytesReceived, request.data + 8 - maxSize, payloadSize);
-    if (recvCommand.bits_segment.c && !transferData.object->writeBytes(transferData.subindex, transferData.buffer, size, &errorCode))
+    if (recvCommand.bits_segment.c && !transferData.object->writeBytes(transferData.subindex, transferData.buffer, size, &errorCode, node))
     {
         sendAbort(transferData.object->index, transferData.subindex, errorCode);
         return;

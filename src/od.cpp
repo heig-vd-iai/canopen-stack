@@ -1,4 +1,4 @@
-#include "od.hpp"
+#include "node.hpp"
 #include "enums.hpp"
 #include "unions.hpp"
 #include <fstream>
@@ -37,7 +37,7 @@ void ObjectEntry::readBytes(uint8_t *bytes, unsigned size, unsigned offset)
     memcpy(bytes, (uint8_t *)dataSrc + offset, size);
 }
 
-bool Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode)
+bool Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode, CANopen_Node &node)
 {
     if (subindex > subNumber)
     {

@@ -34,9 +34,9 @@ public:
     bool getEnableFlag() { return enabledFlag; }
     void clearEnableFlag() { enabledFlag = false; }
 
-    bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode)
+    bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode, CANopen_Node &node)
     {
-        if (subindex > subNumber)
+        if (subindex >= subNumber)
         {
             *errorCode = SDOAbortCode_SubindexNonExistent;
             return false;

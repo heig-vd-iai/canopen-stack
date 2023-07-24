@@ -22,6 +22,7 @@ struct Object
     const ObjectEntry *entries;
 
     Object(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : index(index), subNumber(subNumber), objectType(objectType), entries(entries) {}
-    virtual bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode);
+    // virtual bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode);
+    virtual bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode, class CANopen_Node &node);
     virtual bool readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset, uint32_t *errorCode);
 };
