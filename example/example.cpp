@@ -31,6 +31,7 @@ void func()
             CANopenFrame.dlc = canFrame.can_dlc;
             CANopenFrame.nodeId = canFrame.can_id & 0x7F;
             CANopenFrame.functionCode = (canFrame.can_id & 0x780) >> 7;
+            CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
 #if PRINT
             auto start = chrono::steady_clock::now();
@@ -48,7 +49,7 @@ void func()
 void CANopen_Node::sendFrame(CANopen_Frame frame)
 {
     can_frame canFrame;
-    canFrame.can_dlc = frame.dlc;
+    canFrame.len = frame.dlc;
     canFrame.can_id = (uint32_t)frame.functionCode << 7 | frame.nodeId;
     memcpy(canFrame.data, frame.data, frame.dlc);
     int size = sizeof(canFrame);
