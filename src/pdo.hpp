@@ -1,9 +1,9 @@
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 #include "enums.hpp"
 #include "frame.hpp"
 #include "od.hpp"
-#define TPDO_MAX_MAPPED_OBJECTS 8
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
 
