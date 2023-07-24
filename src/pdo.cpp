@@ -20,16 +20,25 @@ void CANopen_PDO::initTPDO(unsigned index)
 void CANopen_PDO::remapTPDO(unsigned index)
 {
     TPDO *tpdo = tpdos + index;
-    tpdo->count = tpdo->mapObject->getCount();
-    tpdo->count = tpdo->count > TPDO_MAX_MAPPED_OBJECTS ? TPDO_MAX_MAPPED_OBJECTS : tpdo->count;
+    unsigned count = tpdo->mapObject->getCount();
+    tpdo->count = 0;
     if (tpdo->mappedEntries != NULL)
         delete[] tpdo->mappedEntries;
-    tpdo->mappedEntries = new ObjectEntry *[tpdo->count]; // TODO: check for NULL?
+    tpdo->mappedEntries = new ObjectEntry *[count]; // TODO: check for NULL?
     printf("[PDO] TPDO[%d] was remapped\n", index + 1);
-    for (unsigned i = 0; i < tpdo->count; i++)
+    unsigned sizeSum = 0;
+    for (unsigned i = 0; i < count; i++)
     {
         TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
-        tpdo->mappedEntries[i] = (ObjectEntry *)node.od.findObject(content.bits.index)->entries + content.bits.subindex;
+        ObjectEntry *entry = (ObjectEntry *)node.od.findObject(content.bits.index)->entries + content.bits.subindex;
+        sizeSum += entry->size;
+        if (sizeSum > 8) // TODO
+        {
+            printf("Exceeded PDO size! Skipping any other mapping (%d/%d)\n", tpdo->count, count);
+            break;
+        }
+        tpdo->mappedEntries[i] = entry;
+        tpdo->count++;
         printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", content.bits.index, content.bits.subindex, content.bits.length);
     }
     puts("");
@@ -50,8 +59,6 @@ void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 void CANopen_PDO::update(uint32_t timestamp_us)
 {
     NMTStates state = node.nmt.getState();
-    // if (state != NMTState_Operational)
-    //     return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
         TPDO *tpdo = tpdos + i;
@@ -79,4 +86,6 @@ void CANopen_PDO::update(uint32_t timestamp_us)
 
 void CANopen_PDO::receiveFrame(CANopen_Frame frame)
 {
+    if (node.nmt.getState() != NMTState_Operational)
+        return;
 }
