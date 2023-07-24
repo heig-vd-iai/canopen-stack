@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 import canopen
 import struct
 
@@ -10,7 +10,14 @@ def callback(message):
         print('%s = %d' % (var.name, float(var.phys)))
         print(a)
     print()
-
+    
+lastCalled = 0
+def callback2(message):
+    global lastCalled
+    t = time()
+    dt = t - lastCalled
+    lastCalled = t
+    print(round(dt / DT))
 
 
 network = canopen.Network()
@@ -35,8 +42,9 @@ try:
     node.tpdo[1].clear()
     node.tpdo[1].add_variable(0x6048, 1)
     # node.tpdo[1].add_variable(0x6048, 2)
-    node.tpdo[1].transmission_type = 0xFE
-    node.tpdo[1].event_timer = 1000
+    node.tpdo[1].trans_type  = 0xFE
+    node.tpdo[1].trans_type  = 50
+    # node.tpdo[1].event_timer = 1000
     node.tpdo[1].enabled = True
     node.tpdo[1].add_callback(callback)
     node.tpdo[1].save()
@@ -51,7 +59,18 @@ try:
     #     node.nmt.state = state
     #     sleep(3)
 
-    while True: pass
+    # network.sync.transmit()
+
+    counter = 0
+    t0 = 0
+    DT = 10e-3
+    while True:
+        t0 = time()
+        counter = 1 if counter >= 255 else counter + 1
+        network.sync.transmit(counter)
+        while time() - t0 < DT: pass
+        t1 = time()
+
 except KeyboardInterrupt: print()
 except Exception as e: print(e)
 network.disconnect()

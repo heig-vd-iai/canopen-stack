@@ -2,6 +2,7 @@
 CANopen library
 
 ## Tasks
+- node.cpp: make sure function code is supported
 - replace #pragma once by #ifndef .... for compatibility?
 - check for correct types when needed
 - SDO block transfer
@@ -10,12 +11,12 @@ CANopen library
 - constantes sauvages
 - SDO: multiple servers?
 - NMT state and communication objects (p.80)
+- PDO: give correct behaviour to acyclic transmission type
 - PDO: RTR
 - PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - PDO: other transmission types
 - PDO: object_1A00::writeBytes()
-- PDO: mapping during NMT Operational? 
 - PDO: when remapping, check for objects actual size? (find object->entry->size)
 - implement missing data types
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
