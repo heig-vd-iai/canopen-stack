@@ -1,4 +1,5 @@
 #include "node.hpp"
+#include "cstdio"
 
 CANopen_Node::CANopen_Node(uint8_t id) : nodeId(id), nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this)
 {
@@ -21,6 +22,7 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
     case FunctionCode_TPDO2:
     case FunctionCode_TPDO3:
     case FunctionCode_TPDO4:
+        pdo.receiveFrame(frame, timestamp);
         break;
     case FunctionCode_RPDO1:
     case FunctionCode_RPDO2:
