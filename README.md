@@ -27,6 +27,7 @@ CANopen library
     3. 0x1800 to 0x19FF: TPDO communication parameter
     3. 0x1A00 to 0x1BFF: TPDO mapping parameter
 - skip unsupported entries and tell why
+- PDO mapping: always allocate 8 entries?
 
 ## Remarks
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)

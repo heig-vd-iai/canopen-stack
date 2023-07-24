@@ -97,7 +97,7 @@ int main()
 #endif
         if (mtx.try_lock())
         {
-            object->writeBytes(1, (uint8_t *)&x, sizeof(x), &errorCode);
+            object->writeBytes(1, (uint8_t *)&x, sizeof(x), &errorCode, node);
             // object->readBytes(1, (uint8_t *)&y, sizeof(y), 0, &errorCode);
             node.update();
             mtx.unlock();
