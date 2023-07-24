@@ -26,7 +26,8 @@ void CANopen_SDO::update(uint32_t timestamp_us)
 
 void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
 {
-    if (frame.nodeId != node.nodeId)
+    NMTStates state = node.nmt.getState();
+    if (state != NMTState_PreOperational || state != NMTState_Operational || frame.nodeId != node.nodeId)
         return;
     SDO_CommandByte recvCommand = {frame.data[0]};
     switch (serverState)
