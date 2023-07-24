@@ -14,10 +14,11 @@ CANopen library
 - PDO: other transmission types
 - PDO: object_1A00::writeBytes()
 - PDO: mapping during NMT Operational? 
+- PDO: when remapping, check for objects actual size? (find object->entry->size)
 - implement missing data types
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
 - group bits together for access type, PDO mapping, and others ?
-- OD object value range and all other properties (p.91)
+- OD object value range and all other properties (p.91): PDO mapping, range
 - namespaces
 
 ## Tasks (OD generator)
@@ -28,6 +29,7 @@ CANopen library
     3. 0x1A00 to 0x1BFF: TPDO mapping parameter
 - skip unsupported entries and tell why
 - PDO mapping: always allocate 8 entries?
+- PDO mapping: enforce correct size
 
 ## Remarks
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
