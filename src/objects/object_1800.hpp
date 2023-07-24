@@ -7,6 +7,7 @@
 #define X1800_INDEX_RESERVED 4
 #define X1800_INDEX_EVENT 5
 #define X1800_INDEX_SYNC 6
+#define X1800_ACYCLIC 0x0
 #define X1800_SYNC_MAX 0xF0
 #define X1800_RTR_SYNC 0xFC
 #define X1800_RTR_EVENT 0xFD
@@ -25,6 +26,7 @@ public:
     uint32_t getCobId();
     uint8_t getTransmissionType();
     uint16_t getInhibitTime();
+    uint32_t getInhibitTime_us();
     uint16_t getEventTimer();
     uint8_t getSyncStart();
     bool isEnabled();

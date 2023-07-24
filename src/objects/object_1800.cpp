@@ -10,6 +10,8 @@ uint8_t TPDOCommunicationObject::getTransmissionType() { return *(uint8_t *)entr
 
 uint16_t TPDOCommunicationObject::getInhibitTime() { return *(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc; }
 
+uint32_t TPDOCommunicationObject::getInhibitTime_us() { return (uint32_t)getInhibitTime() * 100; }
+
 uint16_t TPDOCommunicationObject::getEventTimer() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
 
 uint8_t TPDOCommunicationObject::getSyncStart() { return *(uint8_t *)entries[X1800_INDEX_SYNC].dataSrc; }
