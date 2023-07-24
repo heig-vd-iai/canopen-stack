@@ -1,6 +1,7 @@
 #include "pdo.hpp"
 #include "node.hpp"
 #include "enums.hpp"
+#include "objects/object_1800.hpp"
 #include <cstring>
 #include <cstdio>
 
@@ -56,6 +57,18 @@ void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
     }
 }
 
+void CANopen_PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
+{
+    TPDOCobidEntry cobid = {tpdos[index].commObject->getCobId()};
+    CANopen_Frame frame;
+    frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
+    frame.nodeId = cobid.bits.canId & 0x7F;
+    frame.dlc = 8;
+    bufferizeTPDO(index, frame.data);
+    node.sendFrame(frame);
+    tpdos[index].timestamp_us = timestamp_us;
+}
+
 void CANopen_PDO::update(uint32_t timestamp_us)
 {
     NMTStates state = node.nmt.getState();
@@ -73,14 +86,7 @@ void CANopen_PDO::update(uint32_t timestamp_us)
         // SKip if not in NMT Operational OR PDO is disabled OR transmission type not event-driven OR event-timer unsupported OR event timer disabled OR event timer not reached yet
         if (state != NMTState_Operational || !tpdo->commObject->isEnabled() || (transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_ms == 0 || timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
             continue;
-        TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
-        CANopen_Frame frame;
-        frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
-        frame.nodeId = cobid.bits.canId & 0x7F;
-        frame.dlc = 8;
-        bufferizeTPDO(i, frame.data);
-        node.sendFrame(frame);
-        tpdo->timestamp_us = timestamp_us;
+        sendTPDO(i, timestamp_us);
     }
 }
 
@@ -88,4 +94,24 @@ void CANopen_PDO::receiveFrame(CANopen_Frame frame)
 {
     if (node.nmt.getState() != NMTState_Operational)
         return;
+}
+
+void CANopen_PDO::onSync(uint8_t counter, uint32_t timestamp_us)
+{
+    if (node.nmt.getState() != NMTState_Operational)
+        return;
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+    {
+        TPDO *tpdo = tpdos + i;
+        uint8_t transmission = tpdo->commObject->getTransmissionType();
+        if (transmission == 0) // acyclic
+        {
+            // TODO: code correct behaviour
+            sendTPDO(i, timestamp_us);
+        }
+        else if (transmission <= X1800_SYNC_MAX && counter && !(counter % transmission)) // cyclic
+        {
+            sendTPDO(i, timestamp_us);
+        }
+    }
 }
