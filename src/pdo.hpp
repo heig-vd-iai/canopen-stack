@@ -16,6 +16,7 @@ class CANopen_PDO
         ObjectEntry **mappedEntries = NULL;
         uint8_t count = 0;
         uint32_t timestamp_us = 0;
+        bool syncFlag = false;
     };
 
 private:
@@ -29,7 +30,8 @@ private:
 
 public:
     CANopen_PDO(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
+    void receiveFrame(CANopen_Frame frame, uint32_t timestamp_us);
     void update(uint32_t timestamp_us);
     void onSync(uint8_t counter, uint32_t timestamp_us);
+    void transmitTPDO(unsigned index);
 };

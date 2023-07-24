@@ -99,13 +99,12 @@ int main()
         if (mtx.try_lock())
         {
             object->writeBytes(1, (uint8_t *)&x, sizeof(x), &errorCode, node);
-            // object->readBytes(1, (uint8_t *)&y, sizeof(y), 0, &errorCode);
             node.update();
+            node.pdo.transmitTPDO(0);
             mtx.unlock();
         }
         t += dt;
         x = a * sin(w * t);
-        // printf("[main] x = %lf, y = %lf\n", x, y);
 #if PRINT
         auto end = chrono::steady_clock::now();
         printf("[main] update took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
