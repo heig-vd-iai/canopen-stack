@@ -8,7 +8,9 @@ CANopen library
 - quick search algorithm for OD entries
 - node guarding?
 - constantes sauvages
+- SDO: multiple servers?
 - NMT state and communication objects (p.80)
+- PDO: RTR
 - PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - PDO: other transmission types
@@ -30,6 +32,10 @@ CANopen library
 - skip unsupported entries and tell why
 - PDO mapping: always allocate 8 entries?
 - PDO mapping: enforce correct size
+- PDO: enforce PDOs 1 to 4 (standard) ?
+- PDO: enforce at least 4 PDOs
 
 ## Remarks
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
+- Multiple SDOs not supported
+- Multiple PDOS above 4 not supported
