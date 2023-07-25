@@ -10,9 +10,6 @@ CANopen library
 
 ### SDO
 - SDO block transfer
-- SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
-- SDO: multiple servers?
-- SDO: check toggle bit, send abort if problem
 
 ### Other
 - node.cpp: make sure function code is supported
@@ -42,9 +39,9 @@ CANopen library
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
 
-## Object & entry access
-Object access:
-- application
-- SDO
-Entry access:
-- object
+## Application available methods
+- send TPDO
+- get object, read/write to object's entries
+- NMT transition
+- emit EMCY
+- callbacks? for PDO
