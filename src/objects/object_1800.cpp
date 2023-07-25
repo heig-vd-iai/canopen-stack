@@ -17,9 +17,11 @@ void TPDOCommunicationObject::clearEnableFlag() { enabledFlag = false; }
 
 SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, CANopen_Node &node)
 {
-    if (subindex >= subNumber)
+    if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
     ObjectEntry entry = entries[subindex];
+    if (!entry.accessType.bits.w)
+        return SDOAbortCode_AttemptWriteOnReadOnly;
     if (size != entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     bool enabled = isEnabled();
