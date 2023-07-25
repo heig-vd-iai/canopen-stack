@@ -40,4 +40,5 @@ public:
     void update(uint32_t timestamp_us);
     void onSync(uint8_t counter, uint32_t timestamp_us);
     void transmitTPDO(unsigned index);
+    void reload();
 };

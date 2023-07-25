@@ -11,6 +11,12 @@ CANopen_PDO::CANopen_PDO(CANopen_Node &node) : node(node)
         initTPDO(i);
 }
 
+void CANopen_PDO::reload()
+{
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+        remapTPDO(i);
+}
+
 void CANopen_PDO::initTPDO(unsigned index)
 {
     tpdos[index].commObject = (TPDOCommunicationObject *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
@@ -82,11 +88,11 @@ void CANopen_PDO::update(uint32_t timestamp_us)
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
         TPDO *tpdo = tpdos + i;
-        if (state == NMTState_PreOperational && tpdo->commObject->getEnableFlag())
-        {
-            tpdo->commObject->clearEnableFlag();
-            remapTPDO(i);
-        }
+        // if (state == NMTState_PreOperational && tpdo->commObject->getEnableFlag())
+        // {
+        //     tpdo->commObject->clearEnableFlag();
+        //     remapTPDO(i);
+        // }
         uint8_t transmission = tpdo->commObject->getTransmissionType();
         uint16_t timer_ms = tpdo->commObject->getEventTimer();
         // Only event-driven PDOs can be sent periodically
