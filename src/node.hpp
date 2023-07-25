@@ -10,9 +10,13 @@
 
 class CANopen_Node
 {
-    // private:
-public:
-    uint8_t nodeId;
+    friend CANopen_NMT;
+    friend CANopen_HB;
+    friend CANopen_SDO;
+    friend CANopen_PDO;
+    friend CANopen_SYNC;
+
+private:
     ObjectDictionnary od;
     CANopen_NMT nmt;
     CANopen_HB hb;
@@ -20,15 +24,20 @@ public:
     CANopen_PDO pdo;
     CANopen_SYNC sync;
 
+    void sendFrame(CANopen_Frame frame);
+    uint32_t getTime_us();
+
 public:
-    friend CANopen_NMT;
-    friend CANopen_HB;
-    friend CANopen_SDO;
-    friend CANopen_PDO;
-    friend CANopen_SYNC;
+    const uint8_t nodeId;
+
     CANopen_Node(uint8_t id);
     void receiveFrame(CANopen_Frame frame);
-    void sendFrame(CANopen_Frame frame);
+    void transmitPDO(unsigned index);
+    void reloadTPDO();
     void update();
-    uint32_t getTime_us();
+    void saveOD();
+    void loadOD();
+    Object *findObject(uint16_t index);
+    void setNmtTransition(NMTServiceCommands command);
+    NMTStates getNmtState();
 };
