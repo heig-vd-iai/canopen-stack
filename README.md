@@ -2,26 +2,24 @@
 CANopen library
 
 ## Tasks
-- node.cpp: make sure function code is supported
-- replace #pragma once by #ifndef .... for compatibility?
-- check for correct types when needed
-- SDO block transfer
-- quick search algorithm for OD entries
-- node guarding?
-- constantes sauvages
-- SDO: multiple servers?
-- NMT state and communication objects (p.80)
-- PDO: give correct behaviour to acyclic transmission type
-- PDO: RTR
-- PDO: TPDO inhibit time
+### PDO
 - PDO: SYNC counter
 - PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
-- PDO: other transmission types
-- PDO: object_1A00::writeBytes()
 - PDO: when remapping, check for objects actual size? (find object->entry->size)
-- implement missing data types
+
+### SDO
+- SDO block transfer
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
+- SDO: multiple servers?
+
+### Other
+- node.cpp: make sure function code is supported
+- quick search algorithm for OD entries
+- node guarding?
+- constantes sauvages
+- NMT state and communication objects (p.80)
+- implement missing data types
 - group bits together for access type, PDO mapping, and others ?
 - OD object value range and all other properties (p.91): PDO mapping, range
 - namespaces
