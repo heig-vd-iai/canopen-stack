@@ -40,3 +40,10 @@ CANopen library
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
+
+## Object & entry access
+Object access:
+- application
+- SDO
+Entry access:
+- object
