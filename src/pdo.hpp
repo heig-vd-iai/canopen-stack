@@ -21,6 +21,7 @@ class CANopen_PDO
         TPDOMappingObject *mapObject = NULL;
         TPDOPair *mappedEntries = NULL;
         uint8_t count = 0;
+        uint8_t size = 0;
         uint32_t timestamp_us = 0;
         bool syncFlag = false;
     };

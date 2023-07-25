@@ -46,6 +46,7 @@ void CANopen_PDO::remapTPDO(unsigned index)
         }
         tpdo->mappedEntries[i].object = object;
         tpdo->mappedEntries[i].subindex = content.bits.subindex;
+        tpdo->size = sizeSum;
         tpdo->count++;
         // printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", content.bits.index, content.bits.subindex, content.bits.length);
     }
@@ -75,7 +76,7 @@ void CANopen_PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     CANopen_Frame frame;
     frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
     frame.nodeId = cobid.bits.canId & 0x7F;
-    frame.dlc = 8;
+    frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
     node.sendFrame(frame);
@@ -88,11 +89,6 @@ void CANopen_PDO::update(uint32_t timestamp_us)
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
         TPDO *tpdo = tpdos + i;
-        // if (state == NMTState_PreOperational && tpdo->commObject->getEnableFlag())
-        // {
-        //     tpdo->commObject->clearEnableFlag();
-        //     remapTPDO(i);
-        // }
         uint8_t transmission = tpdo->commObject->getTransmissionType();
         uint16_t timer_ms = tpdo->commObject->getEventTimer();
         // Only event-driven PDOs can be sent periodically

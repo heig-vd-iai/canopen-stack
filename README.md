@@ -4,9 +4,7 @@ CANopen library
 ## Tasks
 ### PDO
 - PDO: SYNC counter
-- PDO: always 8 bytes long?
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
-- PDO: when remapping, check for objects actual size? (find object->entry->size)
 
 ### SDO
 - SDO block transfer
