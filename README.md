@@ -12,6 +12,7 @@ CANopen library
 - SDO block transfer
 - SDO error checking: may vary depending on entry type (i.e PDO mapping, see p.142)
 - SDO: multiple servers?
+- SDO: check toggle bit, send abort if problem
 
 ### Other
 - node.cpp: make sure function code is supported

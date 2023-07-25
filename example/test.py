@@ -5,11 +5,7 @@ import random
 
 
 def callback(message):
-    # print("PDO received:")
-    for var in message: 
-        [a] = struct.unpack("<d", var.data)
-        print('%s = %d' % (var.name, a))
-    # print()
+    for var in message: print('%s = %f' % (var.name, var.phys))
     
 # lastCalled = 0
 # def callback2(message):
