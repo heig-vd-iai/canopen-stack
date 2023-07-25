@@ -1,7 +1,6 @@
 #pragma once
 #include "frame.hpp"
 #include "od_classes.hpp"
-
 #define SDO_TIMEOUT_US 1000
 
 class CANopen_SDO
