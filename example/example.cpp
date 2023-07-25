@@ -1,4 +1,3 @@
-#include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <pthread.h>
@@ -11,14 +10,22 @@
 #include <linux/can.h>
 #include <net/if.h>
 #include <fstream>
+#include <signal.h>
 #include "node.hpp"
 using namespace std;
-
-#define PRINT 0
 
 CANopen_Node node(4);
 mutex mtx;
 int sock;
+bool quit = false;
+uint64_t tRecv = 0, tUpdate = 0;
+double t = 0.0;
+double x = 0.0;
+// double y = 0.0;
+const double dt = 0.001;
+const double a = 120.0;
+const double f = 0.1;
+const double w = 2.0 * M_PI * f;
 
 void func()
 {
@@ -34,17 +41,62 @@ void func()
             CANopenFrame.functionCode = (canFrame.can_id & 0x780) >> 7;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
-#if PRINT
             auto start = chrono::steady_clock::now();
-#endif
             node.receiveFrame(CANopenFrame);
-#if PRINT
             auto end = chrono::steady_clock::now();
-            printf("[main] message processing took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
-#endif
+            tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
             mtx.unlock();
         }
     }
+}
+
+void signal_callback_handler(int signum)
+{
+    quit = true;
+}
+
+int main()
+{
+    signal(SIGINT, signal_callback_handler);
+    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+    {
+        perror("Socket");
+        return EXIT_FAILURE;
+    }
+    sockaddr_can addr;
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = if_nametoindex("vcan0");
+    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    {
+        perror("Bind");
+        return EXIT_FAILURE;
+    }
+
+    node.loadOD();
+    Object *object = node.findObject(0x6048);
+    thread listenThread(func);
+    listenThread.detach();
+    while (!quit)
+    {
+        if (mtx.try_lock())
+        {
+            if (node.getNmtState() == NMTState_PreOperational)
+                node.setNmtTransition(NMTServiceCommand_Start);
+            object->setValue(1, x);
+            auto start = chrono::steady_clock::now();
+            node.update();
+            auto end = chrono::steady_clock::now();
+            tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
+            // node.transmitPDO(0);
+            mtx.unlock();
+            // printf("[main] update: %ld µs, receive: %ld µs\n", tUpdate, tRecv);
+        }
+        t += dt;
+        x = a * sin(w * t);
+        this_thread::sleep_for(chrono::milliseconds(1));
+    }
+    node.saveOD();
+    return EXIT_SUCCESS;
 }
 
 void CANopen_Node::sendFrame(CANopen_Frame frame)
@@ -66,7 +118,7 @@ void ObjectDictionnary::saveData()
     std::ofstream f("file.dat", std::ios::out | std::ios::binary);
     if (!f)
         return;
-    f.write((char *)this, sizeof(*this));
+    f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
 }
 
@@ -75,61 +127,11 @@ void ObjectDictionnary::loadData()
     std::ifstream f("file.dat", std::ios::in | std::ios::binary);
     if (!f)
         return;
-    f.read((char *)this, sizeof(*this));
+    f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
 }
 
 uint32_t CANopen_Node::getTime_us()
 {
     return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
-}
-
-int main()
-{
-    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
-    {
-        perror("Socket");
-        return EXIT_FAILURE;
-    }
-    sockaddr_can addr;
-    addr.can_family = AF_CAN;
-    addr.can_ifindex = if_nametoindex("vcan0");
-    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
-    {
-        perror("Bind");
-        return EXIT_FAILURE;
-    }
-
-    double t = 0.0;
-    double x = 0.0;
-    // double y = 0.0;
-    const double dt = 0.001;
-    const double a = 120.0;
-    const double f = 0.1;
-    const double w = 2.0 * M_PI * f;
-    Object *object = node.od.findObject(0x6048);
-    thread listenThread(func);
-    while (true)
-    {
-#if PRINT
-        auto start = chrono::steady_clock::now();
-#endif
-        if (mtx.try_lock())
-        {
-            object->setValue(1, x);
-            node.update();
-            // node.pdo.transmitTPDO(0);
-            mtx.unlock();
-        }
-        t += dt;
-        x = a * sin(w * t);
-#if PRINT
-        auto end = chrono::steady_clock::now();
-        printf("[main] update took %ld µs\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
-#endif
-        this_thread::sleep_for(chrono::milliseconds(1));
-    }
-
-    listenThread.join();
-    return EXIT_SUCCESS;
 }
