@@ -25,20 +25,21 @@ void CANopen_PDO::remapTPDO(unsigned index)
     tpdo->count = 0;
     if (tpdo->mappedEntries != NULL)
         delete[] tpdo->mappedEntries;
-    tpdo->mappedEntries = new ObjectEntry *[count];
+    tpdo->mappedEntries = new TPDOPair[count];
     // printf("[PDO] TPDO[%d] was remapped\n", index + 1);
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
         TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
-        ObjectEntry *entry = (ObjectEntry *)node.od.findObject(content.bits.index)->entries + content.bits.subindex;
-        sizeSum += entry->size;
+        Object *object = node.od.findObject(content.bits.index);
+        sizeSum += object->getSize(content.bits.subindex);
         if (sizeSum > PDO_DATA_LENGTH)
         {
             // printf("Exceeded PDO size! Skipping any other mapping (%d/%d)\n", tpdo->count, count);
             break;
         }
-        tpdo->mappedEntries[i] = entry;
+        tpdo->mappedEntries[i].object = object;
+        tpdo->mappedEntries[i].subindex = content.bits.subindex;
         tpdo->count++;
         // printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", content.bits.index, content.bits.subindex, content.bits.length);
     }
@@ -51,9 +52,11 @@ void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
     unsigned bytesTransferred = 0;
     for (unsigned i = 0; i < tpdo->count; i++)
     {
-        ObjectEntry *entry = tpdo->mappedEntries[i];
-        entry->readBytes(buffer, entry->size, bytesTransferred);
-        bytesTransferred += entry->size;
+        Object *object = tpdo->mappedEntries[i].object;
+        uint8_t subindex = tpdo->mappedEntries[i].subindex;
+        uint8_t size = object->getSize(subindex);
+        object->readBytes(subindex, buffer, size, bytesTransferred);
+        bytesTransferred += size;
     }
 }
 

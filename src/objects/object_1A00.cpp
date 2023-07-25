@@ -6,27 +6,18 @@ uint8_t TPDOMappingObject::getCount() { return *(uint8_t *)entries[X1A00_INDEX_C
 
 uint32_t TPDOMappingObject::getMappedValue(uint8_t index) { return *(uint32_t *)entries[index + 1].dataSrc; }
 
-bool TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode, CANopen_Node &node)
+SDOAbortCodes TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, CANopen_Node &node)
 {
     if (subindex >= subNumber)
-    {
-        *errorCode = SDOAbortCode_SubindexNonExistent;
-        return false;
-    }
+        return SDOAbortCode_SubindexNonExistent;
     ObjectEntry entry = entries[subindex];
     if (size != entry.size)
-    {
-        *errorCode = SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
-        return false;
-    }
+        return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     if (subindex == X1A00_INDEX_COUNT)
     {
         uint8_t value = bytes[0];
         if (value > X1A00_MAX_ENTRIES)
-        {
-            *errorCode = SDOAbortCode_DownloadValueTooHigh;
-            return false;
-        }
+            return SDOAbortCode_DownloadValueTooHigh;
         if (value > 0)
         {
             unsigned sizeSumBytes = 0;
@@ -38,8 +29,7 @@ bool TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned si
             if (sizeSumBytes > PDO_DATA_LENGTH)
             {
                 *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc = 0;
-                *errorCode = SDOAbortCode_MappedPDOLengthExceeded;
-                return false;
+                return SDOAbortCode_MappedPDOLengthExceeded;
             }
         }
     }
@@ -47,17 +37,11 @@ bool TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned si
     {
         TPDOMapEntry entry = {*(uint32_t *)bytes};
         Object *object = node.od.findObject(entry.bits.index);
-        if (object == NULL || entry.bits.subindex >= object->subNumber)
-        {
-            *errorCode = SDOAbortCode_ObjectNonExistent;
-            return false;
-        }
-        if (entry.bits.length != object->entries[entry.bits.subindex].size * 8)
-        {
-            *errorCode = SDOAbortCode_CannotMapToPDO;
-            return false;
-        }
+        if (object == NULL || !object->isSubValid(entry.bits.subindex))
+            return SDOAbortCode_ObjectNonExistent;
+        if (entry.bits.length != object->getSize(entry.bits.subindex) * 8) //TODO: uint32_t != uint8_t
+            return SDOAbortCode_CannotMapToPDO;
     }
     memcpy((void *)entry.dataSrc, bytes, size);
-    return true;
+    return SDOAbortCode_OK;
 }

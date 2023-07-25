@@ -10,11 +10,16 @@
 
 class CANopen_PDO
 {
+    struct TPDOPair
+    {
+        Object *object;
+        uint8_t subindex;
+    };
     struct TPDO
     {
         TPDOCommunicationObject *commObject = NULL;
         TPDOMappingObject *mapObject = NULL;
-        ObjectEntry **mappedEntries = NULL;
+        TPDOPair *mappedEntries = NULL;
         uint8_t count = 0;
         uint32_t timestamp_us = 0;
         bool syncFlag = false;

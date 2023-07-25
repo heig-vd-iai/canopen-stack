@@ -12,5 +12,5 @@ public:
 
     uint8_t getCount();
     uint32_t getMappedValue(uint8_t index);
-    bool writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, uint32_t *errorCode, class CANopen_Node &node);
+    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class CANopen_Node &node);
 };

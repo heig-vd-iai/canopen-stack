@@ -10,7 +10,8 @@
 #include <sys/socket.h>
 #include <linux/can.h>
 #include <net/if.h>
-#include "CANopen.hpp"
+#include <fstream>
+#include "node.hpp"
 using namespace std;
 
 #define PRINT 0
@@ -60,6 +61,24 @@ void CANopen_Node::sendFrame(CANopen_Frame frame)
     }
 }
 
+void ObjectDictionnary::saveData()
+{
+    std::ofstream f("file.dat", std::ios::out | std::ios::binary);
+    if (!f)
+        return;
+    f.write((char *)this, sizeof(*this));
+    f.close();
+}
+
+void ObjectDictionnary::loadData()
+{
+    std::ifstream f("file.dat", std::ios::in | std::ios::binary);
+    if (!f)
+        return;
+    f.read((char *)this, sizeof(*this));
+    f.close();
+}
+
 uint32_t CANopen_Node::getTime_us()
 {
     return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
@@ -89,7 +108,6 @@ int main()
     const double f = 0.1;
     const double w = 2.0 * M_PI * f;
     Object *object = node.od.findObject(0x6048);
-    uint32_t errorCode = 0;
     thread listenThread(func);
     while (true)
     {
@@ -98,9 +116,9 @@ int main()
 #endif
         if (mtx.try_lock())
         {
-            object->writeBytes(1, (uint8_t *)&x, sizeof(x), &errorCode, node);
+            object->setValue(1, x);
             node.update();
-            node.pdo.transmitTPDO(0);
+            // node.pdo.transmitTPDO(0);
             mtx.unlock();
         }
         t += dt;

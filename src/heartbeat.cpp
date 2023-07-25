@@ -2,12 +2,9 @@
 #include "node.hpp"
 #include <cstdlib>
 
-CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node), lastPublish(0), producerHeartbeatTime(NULL)
+CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node)
 {
-    Object *object = node.od.findObject(HB_OBJECT_1017);
-    if (object == NULL)
-        return;
-    producerHeartbeatTime = (uint16_t *)object->entries[0].dataSrc;
+    heartbeatTimeObject = node.od.findObject(HB_OBJECT_1017);
 }
 
 void CANopen_HB::receiveFrame(CANopen_Frame frame)
@@ -27,9 +24,11 @@ void CANopen_HB::publishState(NMTStates state)
 
 void CANopen_HB::update(uint32_t timestamp_us)
 {
-    if (producerHeartbeatTime == NULL || *producerHeartbeatTime == 0)
+    if (heartbeatTimeObject == NULL)
         return;
-    if (timestamp_us - lastPublish >= (uint32_t)(*producerHeartbeatTime) * 1000)
+    uint16_t heartbeatTime = 0;
+    heartbeatTimeObject->getValue(0, &heartbeatTime);
+    if (heartbeatTime != 0 && timestamp_us - lastPublish >= ((uint32_t)(heartbeatTime)) * 1000)
     {
         publishState(node.nmt.getState());
     }

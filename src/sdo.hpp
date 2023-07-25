@@ -3,7 +3,9 @@
 #include "od_classes.hpp"
 #define SDO_TIMEOUT_US 1000
 #define SDO_INITIATE_DATA_LENGTH 4
+#define SDO_INITIATE_DATA_OFFSET 4
 #define SDO_SEGMENT_DATA_LENGTH 7
+#define SDO_SEGMENT_DATA_OFFSET 1
 
 class CANopen_SDO
 {
