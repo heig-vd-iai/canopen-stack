@@ -41,10 +41,12 @@ private:
     struct
     {
         Object *object;
+        uint16_t index;
         uint8_t subindex;
         uint32_t remainingBytes;
         uint8_t buffer[64];
         uint32_t timestamp;
+        uint8_t toggle;
     } transferData;
 
     void sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode);
