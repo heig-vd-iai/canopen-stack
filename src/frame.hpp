@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#define FRAME_DATA_LENGTH 8
 
 struct CANopen_Frame
 {

@@ -6,6 +6,7 @@
 #include "od.hpp"
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
+#define PDO_DATA_LENGTH 8
 
 class CANopen_PDO
 {

@@ -35,7 +35,7 @@ bool TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned si
                 TPDOMapEntry entry = {getMappedValue(i)};
                 sizeSumBytes += entry.bits.length / 8;
             }
-            if (sizeSumBytes > 8) // TODO
+            if (sizeSumBytes > PDO_DATA_LENGTH)
             {
                 *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc = 0;
                 *errorCode = SDOAbortCode_MappedPDOLengthExceeded;

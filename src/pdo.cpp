@@ -25,7 +25,7 @@ void CANopen_PDO::remapTPDO(unsigned index)
     tpdo->count = 0;
     if (tpdo->mappedEntries != NULL)
         delete[] tpdo->mappedEntries;
-    tpdo->mappedEntries = new ObjectEntry *[count]; // TODO: check for NULL?
+    tpdo->mappedEntries = new ObjectEntry *[count];
     // printf("[PDO] TPDO[%d] was remapped\n", index + 1);
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
@@ -33,7 +33,7 @@ void CANopen_PDO::remapTPDO(unsigned index)
         TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
         ObjectEntry *entry = (ObjectEntry *)node.od.findObject(content.bits.index)->entries + content.bits.subindex;
         sizeSum += entry->size;
-        if (sizeSum > 8) // TODO
+        if (sizeSum > PDO_DATA_LENGTH)
         {
             // printf("Exceeded PDO size! Skipping any other mapping (%d/%d)\n", tpdo->count, count);
             break;

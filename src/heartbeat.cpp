@@ -4,7 +4,7 @@
 
 CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node), lastPublish(0), producerHeartbeatTime(NULL)
 {
-    Object *object = node.od.findObject(0x1017); // TODO
+    Object *object = node.od.findObject(HB_OBJECT_1017);
     if (object == NULL)
         return;
     producerHeartbeatTime = (uint16_t *)object->entries[0].dataSrc;
@@ -29,7 +29,7 @@ void CANopen_HB::update(uint32_t timestamp_us)
 {
     if (producerHeartbeatTime == NULL || *producerHeartbeatTime == 0)
         return;
-    if (timestamp_us - lastPublish >= *producerHeartbeatTime * 1000)
+    if (timestamp_us - lastPublish >= (uint32_t)(*producerHeartbeatTime) * 1000)
     {
         publishState(node.nmt.getState());
     }
