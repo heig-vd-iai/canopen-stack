@@ -17,7 +17,7 @@
 class TPDOCommunicationObject : public Object
 {
 private:
-    bool enabledFlag = false;
+    // bool enabledFlag = false;
 
 public:
     TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
@@ -32,7 +32,7 @@ public:
     bool isEnabled();
     bool isInhibitSupported();
     bool isTimerSupported();
-    bool getEnableFlag();
-    void clearEnableFlag();
+    // bool getEnableFlag();
+    // void clearEnableFlag();
     SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class CANopen_Node &node);
 };

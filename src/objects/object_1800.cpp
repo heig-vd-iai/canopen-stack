@@ -12,8 +12,8 @@ uint8_t TPDOCommunicationObject::getSyncStart() { return *(uint8_t *)entries[X18
 bool TPDOCommunicationObject::isEnabled() { return ~getCobId() & 0x80000000; }
 bool TPDOCommunicationObject::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
 bool TPDOCommunicationObject::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
-bool TPDOCommunicationObject::getEnableFlag() { return enabledFlag; }
-void TPDOCommunicationObject::clearEnableFlag() { enabledFlag = false; }
+// bool TPDOCommunicationObject::getEnableFlag() { return enabledFlag; }
+// void TPDOCommunicationObject::clearEnableFlag() { enabledFlag = false; }
 
 SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, CANopen_Node &node)
 {
@@ -25,6 +25,7 @@ SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *byt
     if (size != entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     bool enabled = isEnabled();
+    bool remap = false;
     switch (subindex)
     {
     case X1800_INDEX_COBID: // TPDO COB-ID
@@ -36,7 +37,7 @@ SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *byt
             return SDOAbortCode_InvalidDownloadParameterValue;
         // If a PDO was enabled
         if (current.bits.valid && !recent.bits.valid)
-            enabledFlag = true;
+            remap = true;
         break;
     }
     case X1800_INDEX_TRANSMISSION: // transmission type
@@ -64,5 +65,7 @@ SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *byt
     }
     }
     memcpy((void *)entry.dataSrc, bytes, size);
+    if (remap)
+        node.reloadTPDO();
     return SDOAbortCode_OK;
 }
