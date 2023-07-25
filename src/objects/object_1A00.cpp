@@ -1,6 +1,7 @@
 #include "object_1A00.hpp"
 #include "node.hpp"
 #include <cstring>
+#include <cstdio>
 
 uint8_t TPDOMappingObject::getCount() { return *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc; }
 
@@ -22,23 +23,20 @@ SDOAbortCodes TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, un
             return SDOAbortCode_DownloadValueTooHigh;
         if (value > 0)
         {
-            unsigned sizeSumBytes = 0;
+            unsigned sizeSum = 0;
             for (unsigned i = 0; i < value; i++)
             {
                 TPDOMapEntry entry = {getMappedValue(i)};
-                sizeSumBytes += entry.bits.length / 8;
+                sizeSum += node.findObject(entry.bits.index)->getSize(entry.bits.subindex);
             }
-            if (sizeSumBytes > PDO_DATA_LENGTH)
-            {
-                *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc = 0;
+            if (sizeSum > PDO_DATA_LENGTH)
                 return SDOAbortCode_MappedPDOLengthExceeded;
-            }
         }
     }
     else
     {
         TPDOMapEntry entry = {*(uint32_t *)bytes};
-        Object *object = node.od.findObject(entry.bits.index);
+        Object *object = node.findObject(entry.bits.index);
         if (object == NULL || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
         if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8)
