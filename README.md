@@ -1,24 +1,22 @@
 # CANopen
-CANopen library
+CANopen slave library
 
 ## Tasks
 ### PDO
-- PDO: SYNC counter
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 
 ### SDO
 - SDO block transfer
 
 ### Other
+- remove redundent/useless includes
 - node.cpp: make sure function code is supported
 - quick search algorithm for OD entries
 - node guarding?
-- constantes sauvages
 - NMT state and communication objects (p.80)
 - implement missing data types
 - group bits together for access type, PDO mapping, and others ?
 - OD object value range and all other properties (p.91): PDO mapping, range
-- namespaces
 
 ## Tasks (OD generator)
 - perform strict parsing for mandatory or standard entries (like PDO)
