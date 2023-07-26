@@ -6,6 +6,7 @@
 #include "od.hpp"
 #include "pdo.hpp"
 #include "sync.hpp"
+#include "emergency.hpp"
 #include <cstdint>
 #include <cstdio>
 
@@ -18,6 +19,7 @@ namespace CANopen
         friend SDO;
         friend PDO;
         friend SYNC;
+        friend EMCY;
 
     private:
         ObjectDictionnary od;
@@ -26,6 +28,7 @@ namespace CANopen
         SDO sdo;
         PDO pdo;
         SYNC sync;
+        EMCY emcy;
 
         void sendFrame(Frame frame);
         uint32_t getTime_us();
