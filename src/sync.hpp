@@ -3,12 +3,15 @@
 #include "enums.hpp"
 #include "frame.hpp"
 
-class CANopen_SYNC
+namespace CANopen
 {
-private:
-    class CANopen_Node &node;
+    class SYNC
+    {
+    private:
+        class Node &node;
 
-public:
-    CANopen_SYNC(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame, uint32_t timestamp_us);
-};
+    public:
+        SYNC(class Node &node);
+        void receiveFrame(Frame frame, uint32_t timestamp_us);
+    };
+}

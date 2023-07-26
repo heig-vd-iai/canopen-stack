@@ -4,27 +4,28 @@
 #include "objects/object_1800.hpp"
 #include <cstring>
 #include <cstdio>
+using namespace CANopen;
 
-CANopen_PDO::CANopen_PDO(CANopen_Node &node) : node(node)
+PDO::PDO(Node &node) : node(node)
 {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
         initTPDO(i);
 }
 
-void CANopen_PDO::reload()
+void PDO::reload()
 {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
         remapTPDO(i);
 }
 
-void CANopen_PDO::initTPDO(unsigned index)
+void PDO::initTPDO(unsigned index)
 {
     tpdos[index].commObject = (TPDOCommunicationObject *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
     tpdos[index].mapObject = (TPDOMappingObject *)node.od.findObject(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
-void CANopen_PDO::remapTPDO(unsigned index)
+void PDO::remapTPDO(unsigned index)
 {
     TPDO *tpdo = tpdos + index;
     unsigned count = tpdo->mapObject->getCount();
@@ -53,7 +54,7 @@ void CANopen_PDO::remapTPDO(unsigned index)
     // puts("");
 }
 
-void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
+void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 {
     TPDO *tpdo = tpdos + index;
     unsigned bytesTransferred = 0;
@@ -67,13 +68,13 @@ void CANopen_PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
     }
 }
 
-void CANopen_PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
+void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
 {
     TPDO *tpdo = tpdos + index;
     if (!tpdo->commObject->isEnabled())
         return;
     TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
-    CANopen_Frame frame;
+    Frame frame;
     frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
     frame.nodeId = cobid.bits.canId & 0x7F;
     frame.dlc = tpdo->size;
@@ -83,7 +84,7 @@ void CANopen_PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     tpdo->timestamp_us = timestamp_us;
 }
 
-void CANopen_PDO::update(uint32_t timestamp_us)
+void PDO::update(uint32_t timestamp_us)
 {
     NMTStates state = node.nmt.getState();
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
@@ -98,7 +99,7 @@ void CANopen_PDO::update(uint32_t timestamp_us)
     }
 }
 
-void CANopen_PDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
+void PDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
     if (node.nmt.getState() != NMTState_Operational || !frame.rtr)
         return;
@@ -117,7 +118,7 @@ void CANopen_PDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
     }
 }
 
-void CANopen_PDO::onSync(uint8_t counter, uint32_t timestamp_us)
+void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
 {
     if (node.nmt.getState() != NMTState_Operational)
         return;
@@ -143,7 +144,7 @@ void CANopen_PDO::onSync(uint8_t counter, uint32_t timestamp_us)
     }
 }
 
-void CANopen_PDO::transmitTPDO(unsigned index)
+void PDO::transmitTPDO(unsigned index)
 {
     if (index >= OD_TPDO_COUNT)
         return;

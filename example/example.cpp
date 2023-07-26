@@ -13,8 +13,9 @@
 #include <signal.h>
 #include "node.hpp"
 using namespace std;
+using namespace CANopen;
 
-CANopen_Node node(4);
+Node node(4);
 mutex mtx;
 int sock;
 bool quit = false;
@@ -32,7 +33,7 @@ void func()
     while (true)
     {
         can_frame canFrame;
-        CANopen_Frame CANopenFrame;
+        Frame CANopenFrame;
         if (recv(sock, &canFrame, sizeof(canFrame), 0))
         {
             mtx.lock();
@@ -99,7 +100,7 @@ int main()
     return EXIT_SUCCESS;
 }
 
-void CANopen_Node::sendFrame(CANopen_Frame frame)
+void Node::sendFrame(Frame frame)
 {
     can_frame canFrame;
     canFrame.len = frame.dlc;
@@ -131,7 +132,7 @@ void ObjectDictionnary::loadData()
     f.close();
 }
 
-uint32_t CANopen_Node::getTime_us()
+uint32_t Node::getTime_us()
 {
     return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
 }

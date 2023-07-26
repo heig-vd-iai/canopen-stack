@@ -1,19 +1,19 @@
 #include "nmt.hpp"
 #include "node.hpp"
-// #include <cstdio>
+using namespace CANopen;
 
-CANopen_NMT::CANopen_NMT(CANopen_Node &node) : currentState(NMTState_Initialisation), node(node)
+NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node)
 {
 }
 
-void CANopen_NMT::receiveFrame(CANopen_Frame frame)
+void NMT::receiveFrame(Frame frame)
 {
     if (frame.functionCode != FunctionCode_NMT || (frame.data[1] != node.nodeId && frame.data[1] != 0))
         return;
     setTransition((NMTServiceCommands)frame.data[0]);
 }
 
-void CANopen_NMT::setTransition(NMTServiceCommands command)
+void NMT::setTransition(NMTServiceCommands command)
 {
     NMTStates nextState = currentState;
 
@@ -85,12 +85,12 @@ void CANopen_NMT::setTransition(NMTServiceCommands command)
     currentState = nextState;
 }
 
-NMTStates CANopen_NMT::getState()
+NMTStates NMT::getState()
 {
     return currentState;
 }
 
-void CANopen_NMT::update()
+void NMT::update()
 {
     setTransition((NMTServiceCommands)0);
 }

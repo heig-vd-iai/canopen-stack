@@ -1,13 +1,16 @@
 #pragma once
 #include "frame.hpp"
 
-class CANopen_EMCY
+namespace CANopen
 {
-private:
-    class CANopen_Node &node;
+    class EMCY
+    {
+    private:
+        class Node &node;
 
-public:
-    CANopen_EMCY(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
-    void publishError(uint16_t errorCode, uint8_t errorRegister);
-};
+    public:
+        EMCY(class Node &node);
+        void receiveFrame(Frame frame);
+        void publishError(uint16_t errorCode, uint8_t errorRegister);
+    };
+}

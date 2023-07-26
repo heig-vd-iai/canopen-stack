@@ -1,19 +1,20 @@
 #include "heartbeat.hpp"
 #include "node.hpp"
 #include <cstdlib>
+using namespace CANopen;
 
-CANopen_HB::CANopen_HB(CANopen_Node &node) : node(node)
+HB::HB(Node &node) : node(node)
 {
     heartbeatTimeObject = node.od.findObject(HB_OBJECT_1017);
 }
 
-void CANopen_HB::receiveFrame(CANopen_Frame frame)
+void HB::receiveFrame(Frame frame)
 {
 }
 
-void CANopen_HB::publishState(NMTStates state)
+void HB::publishState(NMTStates state)
 {
-    CANopen_Frame frame;
+    Frame frame;
     frame.nodeId = node.nodeId;
     frame.dlc = 1;
     frame.data[0] = state;
@@ -22,7 +23,7 @@ void CANopen_HB::publishState(NMTStates state)
     lastPublish = node.getTime_us();
 }
 
-void CANopen_HB::update(uint32_t timestamp_us)
+void HB::update(uint32_t timestamp_us)
 {
     if (heartbeatTimeObject == NULL)
         return;

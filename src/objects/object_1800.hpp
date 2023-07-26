@@ -14,25 +14,28 @@
 #define X1800_EVENT1 0xFE
 #define X1800_EVENT2 0xFF
 
-class TPDOCommunicationObject : public Object
+namespace CANopen
 {
-private:
-    // bool enabledFlag = false;
+    class TPDOCommunicationObject : public Object
+    {
+    private:
+        // bool enabledFlag = false;
 
-public:
-    TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+    public:
+        TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
 
-    uint8_t getCount();
-    uint32_t getCobId();
-    uint8_t getTransmissionType();
-    uint16_t getInhibitTime();
-    uint32_t getInhibitTime_us();
-    uint16_t getEventTimer();
-    uint8_t getSyncStart();
-    bool isEnabled();
-    bool isInhibitSupported();
-    bool isTimerSupported();
-    // bool getEnableFlag();
-    // void clearEnableFlag();
-    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class CANopen_Node &node);
-};
+        uint8_t getCount();
+        uint32_t getCobId();
+        uint8_t getTransmissionType();
+        uint16_t getInhibitTime();
+        uint32_t getInhibitTime_us();
+        uint16_t getEventTimer();
+        uint8_t getSyncStart();
+        bool isEnabled();
+        bool isInhibitSupported();
+        bool isTimerSupported();
+        // bool getEnableFlag();
+        // void clearEnableFlag();
+        SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
+    };
+}

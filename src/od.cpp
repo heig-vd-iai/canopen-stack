@@ -3,6 +3,7 @@
 #include "unions.hpp"
 #include <cstdio>
 #include <cstring>
+using namespace CANopen;
 
 Object *ObjectDictionnary::findObject(uint16_t index)
 {
@@ -13,7 +14,7 @@ Object *ObjectDictionnary::findObject(uint16_t index)
     return NULL;
 }
 
-SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, CANopen_Node &node)
+SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;

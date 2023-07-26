@@ -3,16 +3,19 @@
 #include "enums.hpp"
 #include "frame.hpp"
 
-class CANopen_NMT
+namespace CANopen
 {
-private:
-    NMTStates currentState;
-    class CANopen_Node &node;
+    class NMT
+    {
+    private:
+        NMTStates currentState;
+        class Node &node;
 
-public:
-    CANopen_NMT(class CANopen_Node &node);
-    void receiveFrame(CANopen_Frame frame);
-    void setTransition(NMTServiceCommands command);
-    NMTStates getState();
-    void update();
-};
+    public:
+        NMT(class Node &node);
+        void receiveFrame(Frame frame);
+        void setTransition(NMTServiceCommands command);
+        NMTStates getState();
+        void update();
+    };
+}

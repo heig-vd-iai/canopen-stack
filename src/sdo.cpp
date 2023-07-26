@@ -3,12 +3,13 @@
 #include "enums.hpp"
 #include <cstdio>
 #include <cstring>
+using namespace CANopen;
 
-CANopen_SDO::CANopen_SDO(CANopen_Node &node) : node(node)
+SDO::SDO(Node &node) : node(node)
 {
 }
 
-void CANopen_SDO::update(uint32_t timestamp_us)
+void SDO::update(uint32_t timestamp_us)
 {
     switch (serverState)
     {
@@ -24,7 +25,7 @@ void CANopen_SDO::update(uint32_t timestamp_us)
     }
 }
 
-void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
+void SDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
     NMTStates state = node.nmt.getState();
     if ((state != NMTState_PreOperational && state != NMTState_Operational) || frame.nodeId != node.nodeId)
@@ -77,9 +78,9 @@ void CANopen_SDO::receiveFrame(CANopen_Frame frame, uint32_t timestamp_us)
     }
 }
 
-void CANopen_SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
+void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
 {
-    CANopen_Frame response;
+    Frame response;
     SDO_CommandByte sendCommand = {0};
     // Fill command byte
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_AbortTransfer;
@@ -97,9 +98,9 @@ void CANopen_SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode
     serverState = SDOServerState_Ready;
 }
 
-void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
+void SDO::uploadInitiate(Frame request, uint32_t timestamp_us)
 {
-    CANopen_Frame response;
+    Frame response;
     SDO_CommandByte sendCommand = {0};
     uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
@@ -164,9 +165,9 @@ void CANopen_SDO::uploadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::uploadSegment(CANopen_Frame request, uint32_t timestamp_us)
+void SDO::uploadSegment(Frame request, uint32_t timestamp_us)
 {
-    CANopen_Frame response;
+    Frame response;
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     if (transferData.toggle != recvCommand.bits_segment.t)
@@ -201,9 +202,9 @@ void CANopen_SDO::uploadSegment(CANopen_Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
+void SDO::downloadInitiate(Frame request, uint32_t timestamp_us)
 {
-    CANopen_Frame response;
+    Frame response;
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
@@ -277,9 +278,9 @@ void CANopen_SDO::downloadInitiate(CANopen_Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void CANopen_SDO::downloadSegment(CANopen_Frame request, uint32_t timestamp_us)
+void SDO::downloadSegment(Frame request, uint32_t timestamp_us)
 {
-    CANopen_Frame response;
+    Frame response;
     SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     unsigned size = transferData.object->getSize(transferData.subindex);

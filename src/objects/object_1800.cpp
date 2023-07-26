@@ -1,6 +1,7 @@
 #include "object_1800.hpp"
 #include "node.hpp"
 #include <cstring>
+using namespace CANopen;
 
 uint8_t TPDOCommunicationObject::getCount() { return *(uint8_t *)entries[X1800_INDEX_COUNT].dataSrc; }
 uint32_t TPDOCommunicationObject::getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID].dataSrc; }
@@ -15,7 +16,7 @@ bool TPDOCommunicationObject::isTimerSupported() { return getCount() >= X1800_IN
 // bool TPDOCommunicationObject::getEnableFlag() { return enabledFlag; }
 // void TPDOCommunicationObject::clearEnableFlag() { enabledFlag = false; }
 
-SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, CANopen_Node &node)
+SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;

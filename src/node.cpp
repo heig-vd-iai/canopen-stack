@@ -1,11 +1,11 @@
 #include "node.hpp"
-#include "cstdio"
+using namespace CANopen;
 
-CANopen_Node::CANopen_Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), nodeId(id)
+Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), nodeId(id)
 {
 }
 
-void CANopen_Node::receiveFrame(CANopen_Frame frame)
+void Node::receiveFrame(Frame frame)
 {
     uint32_t timestamp = getTime_us();
     switch (frame.functionCode)
@@ -40,7 +40,7 @@ void CANopen_Node::receiveFrame(CANopen_Frame frame)
     }
 }
 
-void CANopen_Node::update()
+void Node::update()
 {
     uint32_t timestamp = getTime_us();
     nmt.update();
@@ -49,38 +49,38 @@ void CANopen_Node::update()
     pdo.update(timestamp);
 }
 
-void CANopen_Node::transmitPDO(unsigned index)
+void Node::transmitPDO(unsigned index)
 {
     pdo.transmitTPDO(index);
 }
 
-void CANopen_Node::reloadTPDO()
+void Node::reloadTPDO()
 {
     pdo.reload();
 }
 
-void CANopen_Node::saveOD()
+void Node::saveOD()
 {
     od.saveData();
 }
 
-void CANopen_Node::loadOD()
+void Node::loadOD()
 {
     od.loadData();
     pdo.reload();
 }
 
-Object *CANopen_Node::findObject(uint16_t index)
+Object *Node::findObject(uint16_t index)
 {
     return od.findObject(index);
 }
 
-void CANopen_Node::setNmtTransition(NMTServiceCommands command)
+void Node::setNmtTransition(NMTServiceCommands command)
 {
     nmt.setTransition(command);
 }
 
-NMTStates CANopen_Node::getNmtState()
+NMTStates Node::getNmtState()
 {
     return nmt.getState();
 }
