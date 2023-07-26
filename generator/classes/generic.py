@@ -31,6 +31,7 @@ class ObjectBase(ABC):
     def renderEntry(self) -> str:
         return ""
     
+    @abstractmethod
     def verify(self, objects: dict) -> bool:
         return True
 
@@ -46,6 +47,9 @@ class VarObject(ObjectBase, ObjectEntry):
     def renderEntry(self) -> str:
         init = f"{self.cppEntryName}(&data.{self.varName}, {self.accessType}, {self.dataType}, sizeof(data.{self.varName}))"
         return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+    
+    def verify(self, objects: dict) -> bool:
+        return True
 
 
 class ArrayObject(ObjectBase):
@@ -64,6 +68,13 @@ class ArrayObject(ObjectBase):
         sub = f"{self.cppEntryName}(&data.{self.sub0Name}, {self.entries[0].accessType}, {self.entries[0].dataType}, sizeof(data.{self.sub0Name}))"
         init = ", ".join([sub, *[f"{self.cppEntryName}(&data.{self.varName}[{i}], {entry.accessType}, {entry.dataType}, sizeof(data.{self.varName}[{i}]))" for i, entry in enumerate(self.entries[1:])]])
         return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+    
+    def verify(self, objects: dict) -> bool:
+        retval = True
+        if(any([self.entries[1].dataType != entry.dataType for entry in self.entries[1:]])):
+            print(f"[Error] Entry {self.varName}: at least one entry has incorrect data type")
+            retval = False
+        return retval
 
 
 class RecordObject(ObjectBase):
@@ -79,3 +90,6 @@ class RecordObject(ObjectBase):
     def renderEntry(self) -> str:
         init = ", ".join([f"{self.cppEntryName}(&data.{self.varName}.sub{i}, {entry.accessType}, {entry.dataType}, sizeof(data.{self.varName}.sub{i}))" for i, entry in enumerate(self.entries)])
         return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+    
+    def verify(self, objects: dict) -> bool:
+        return True

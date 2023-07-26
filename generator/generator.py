@@ -92,10 +92,10 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
 
 def dataTypeFilter(object: Union[Variable, Array, Record]) -> bool:
     retval = True
-    variables = [object] if isinstance(object, Variable) else list(object.subindices.values())
-    for i, var in enumerate(variables):
+    entries = [object] if isinstance(object, Variable) else list(object.subindices.values())
+    for i, var in enumerate(entries):
         if var.data_type not in datatype2ctype:
-            print(f"[Warning] Entry x{'%X' % object.index}.{i}: unsupported data type '{hex(var.data_type).upper()}'")
+            print(f"[Warning] Entry x{'%X' % object.index}: unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
             retval = False
     return retval
 
