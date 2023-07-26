@@ -1,74 +1,40 @@
 #pragma once
-#include <cstdint>
-
-union AccessType
-{
-    uint8_t value;
-    struct 
-    {
-        uint8_t r: 1; 
-        uint8_t w: 1; 
-        uint8_t constant: 1; 
-    } bits;
-};
-
+#include "od_include.hpp"
+#define OD_OBJECTS_COUNT {{objects|length}}
 {% for define in defines %}
-#define {{ define }}
+#define {{define}}
 {% endfor %}
 
-
-struct OD_Data // Struct containing all of the raw data that can be saved and loaded
+namespace {{namespace}}
 {
-    {% for declaration in all_data_declarations %}
-    {{ declaration }};
-    {% endfor %}
-
-    OD_Data() : {{ all_data_constructors|join(', ') }}{}
-    void save();
-    void load();
-};
-
-struct OD_Object
-{
-    const AccessType accessType;
-    const uint8_t dataType;
-    const uint8_t size;
-    const void *valueSrc;
-
-    OD_Object(uint8_t accessType, uint8_t dataType, uint8_t size, void *valueSrc) : accessType{accessType}, dataType(dataType), size(size), valueSrc(valueSrc) {}
-};
-
-struct OD_Objects // Struct containing all of the dictionnary objects
-{
-    {% for declaration in all_object_declarations %}
-    {{ declaration }};
-    {% endfor %}
-
-    OD_Objects(OD_Data &data) : {{ all_object_constructors|join(', ') }}{}
-};
-
-struct OD_ObjectEntry // Struct representing a dictionnary entry
-{
-    const uint16_t index;
-    const uint16_t objectType;
-    const uint8_t subNumber;
-    const OD_Object *objects;
-
-    OD_ObjectEntry(uint16_t index, uint16_t objectType, uint8_t subNumber, OD_Object *objects) : index(index), objectType(objectType), subNumber(subNumber), objects(objects) {}
-};
-
-class OD_ObjectDictionnary // Object dictionnary class that is usable for the user
-{
-private:
-    const unsigned size;
-    OD_Data data;
-    OD_Objects objects;
-    OD_ObjectEntry entries[OD_OBJECT_COUNT];
-
-public:
-    OD_ObjectDictionnary() : size(OD_OBJECT_COUNT), objects(data), entries{ {{- all_entry_constructors|join(', ') -}} }{}
-    inline void save() { return data.save(); }
-    inline void load() { return data.load(); }
-    inline OD_Objects &getObjects() { return objects; }
-    OD_ObjectEntry *findEntry(uint16_t index);
-};
+    class ObjectDictionnary
+    {
+    private:
+        struct 
+        {
+            struct
+            {
+                struct
+                {
+                {% for object in objects %}
+                {% for declaration in object.renderData() %}
+                {{declaration}};
+                {% endfor %}
+                {% endfor %}
+                } data;
+                {% for object in objects %}
+                {{object.renderEntry()}};
+                {% endfor %}
+            } entries;
+            {% for object in objects %}
+            {{object.renderObject()}};
+            {% endfor %}
+        } objects;
+        const unsigned length = OD_OBJECTS_COUNT;
+        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
+    public:
+        Object *findObject(uint16_t index);
+        void saveData();
+        void loadData();
+    };
+}
