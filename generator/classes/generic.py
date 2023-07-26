@@ -30,6 +30,9 @@ class ObjectBase(ABC):
     @abstractmethod
     def renderEntry(self) -> str:
         return ""
+    
+    def verify(self, objects: dict) -> bool:
+        return True
 
 
 class VarObject(ObjectBase, ObjectEntry):
