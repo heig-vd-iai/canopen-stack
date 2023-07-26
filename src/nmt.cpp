@@ -2,9 +2,7 @@
 #include "node.hpp"
 using namespace CANopen;
 
-NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node)
-{
-}
+NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node) {}
 
 void NMT::receiveFrame(Frame frame)
 {

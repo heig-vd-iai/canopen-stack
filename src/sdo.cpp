@@ -5,9 +5,7 @@
 #include <cstring>
 using namespace CANopen;
 
-SDO::SDO(Node &node) : node(node)
-{
-}
+SDO::SDO(Node &node) : node(node) {}
 
 void SDO::update(uint32_t timestamp_us)
 {
