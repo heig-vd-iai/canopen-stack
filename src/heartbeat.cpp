@@ -3,7 +3,7 @@
 #include <cstdlib>
 using namespace CANopen;
 
-HB::HB(Node &node) : node(node)
+HB::HB(Node &node) : node(node), heartbeatTimeObject(NULL)
 {
     heartbeatTimeObject = node.od.findObject(HB_OBJECT_1017);
 }
