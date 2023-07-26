@@ -24,11 +24,10 @@ CANopen slave library
     2. 0x1600 to 0x17FF: RPDO mapping parameter
     3. 0x1800 to 0x19FF: TPDO communication parameter
     3. 0x1A00 to 0x1BFF: TPDO mapping parameter
-- skip unsupported entries and tell why
 - PDO mapping: always allocate 8 entries?
 - PDO mapping: enforce correct size
 - PDO: enforce PDOs 1 to 4 (standard) ?
-- PDO: enforce at least 4 PDOs
+- PDO: enforce at least 4 PDOs?
 
 ## Remarks
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
