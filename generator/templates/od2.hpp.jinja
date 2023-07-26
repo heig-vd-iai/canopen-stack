@@ -5,33 +5,36 @@
 #define {{define}}
 {% endfor %}
 
-class ObjectDictionnary
+namespace {{namespace}}
 {
-private:
-    struct 
+    class ObjectDictionnary
     {
-        struct
+    private:
+        struct 
         {
             struct
             {
+                struct
+                {
+                {% for object in objects %}
+                {% for declaration in object.renderData() %}
+                {{declaration}};
+                {% endfor %}
+                {% endfor %}
+                } data;
+                {% for object in objects %}
+                {{object.renderEntry()}};
+                {% endfor %}
+            } entries;
             {% for object in objects %}
-            {% for declaration in object.renderData() %}
-            {{declaration}};
+            {{object.renderObject()}};
             {% endfor %}
-            {% endfor %}
-            } data;
-            {% for object in objects %}
-            {{object.renderEntry()}};
-            {% endfor %}
-        } entries;
-        {% for object in objects %}
-        {{object.renderObject()}};
-        {% endfor %}
-    } objects;
-    const unsigned length = OD_OBJECTS_COUNT;
-    Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
-public:
-    Object *findObject(uint16_t index);
-    void saveData();
-    void loadData();
-};
+        } objects;
+        const unsigned length = OD_OBJECTS_COUNT;
+        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
+    public:
+        Object *findObject(uint16_t index);
+        void saveData();
+        void loadData();
+    };
+}

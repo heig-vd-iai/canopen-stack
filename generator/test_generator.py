@@ -74,6 +74,7 @@ defines = [
 ]
 variables = {
     "defines": defines,
+    "namespace": "CANopen",
     "objects": objects,
     "objectNames": [obj.varName for obj in objects]
 }
