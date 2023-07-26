@@ -6,6 +6,10 @@ from typing import Union
 import jinja2
 
 
+EDS_FILENAME = "example.eds"
+TEMPLATES_DIR = "templates"
+HEADER_FILENAME = "od.hpp"
+TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
 
 datatype2ctype = {
     0x01: "bool",
@@ -35,6 +39,34 @@ datatype2ctype = {
     0x1B: "uint64_t"
 }
 
+datatype2size = {
+    0x01: 1,
+    0x02: 1,
+    0x03: 2,
+    0x04: 4,
+    0x05: 1,
+    0x06: 2,
+    0x07: 4,
+    0x08: 4,
+    # 0x09: None,     # "VISIBLE_STRING",
+    # 0x0A: None,     # "OCTET_STRING",
+    # 0x0B: None,     # "UNICODE_STRING",
+    # 0x0C: None,     # "TIME_OF_DAY",
+    # 0x0D: None,     # "TIME_DIFFERENCE",
+    # 0x0F: None,     # "DOMAIN"
+    0x10: 4,
+    0x11: 8,
+    0x12: 8,
+    0x13: 8,
+    0x14: 8,
+    0x15: 8,
+    0x16: 4,
+    0x18: 8,
+    0x19: 8,
+    0x1A: 8,
+    0x1B: 8
+}
+
 def getAccessType(value: str) -> int:
     value = value.lower()
     read_bit = 1 << 0
@@ -46,29 +78,32 @@ def getAccessType(value: str) -> int:
     if value == "const": return const_bit | read_bit
     raise Exception(f"Access type not supported: '{value}'")
 
-def toEntry(entry: Union[Variable, Array, Record]):
-    try:
-        if isinstance(entry, Variable):
-            return VarObject(entry.index, getAccessType(entry.access_type), entry.data_type, datatype2ctype[entry.data_type], entry.name, entry.default)
-        if isinstance(entry, Array):
-            objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
-            return ArrayObject(entry.index, objs)
-        if isinstance(entry, Record):
-            objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in entry.values()]
-            if 0x1800 <= entry.index <= 0x19FF: return TPDOCommunicationObject(entry.index, objs)
-            elif 0x1A00 <= entry.index <= 0x1BFF: return TPDOMappingObject(entry.index, objs)
-            else: return RecordObject(entry.index, objs)
-    except: pass
-    return None
+def toCANopenObject(object: Union[Variable, Array, Record]):
+    if isinstance(object, Variable):
+        return VarObject(object.index, getAccessType(object.access_type), object.data_type, datatype2ctype[object.data_type], object.name, object.default)
+    if isinstance(object, Array):
+        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
+        return ArrayObject(object.index, objs)
+    if isinstance(object, Record):
+        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
+        if 0x1800 <= object.index <= 0x19FF: return TPDOCommunicationObject(object.index, objs)
+        elif 0x1A00 <= object.index <= 0x1BFF: return TPDOMappingObject(object.index, objs)
+        else: return RecordObject(object.index, objs)
 
-od: ObjectDictionary = Node(4, "example.eds").object_dictionary
-objects = [toEntry(obj) for obj in od.values() if toEntry(obj) is not None]
+def dataTypeFilter(object: Union[Variable, Array, Record]) -> bool:
+    retval = True
+    variables = [object] if isinstance(object, Variable) else list(object.subindices.values())
+    for i, var in enumerate(variables):
+        if var.data_type not in datatype2ctype:
+            print(f"[Warning] Entry x{'%X' % object.index}.{i}: unsupported data type '{hex(var.data_type).upper()}'")
+            retval = False
+    return retval
 
-# for object in objects:
-#     print("object [%X]" % object.index)
-#     print(object.renderObject())
-#     print()
 
+
+od: ObjectDictionary = Node(4, EDS_FILENAME).object_dictionary
+objects = dict([(object.index, toCANopenObject(object)) for object in od.values() if dataTypeFilter(object)])
+if(any([not object.verify(objects) for object in objects.values()])): exit(1)
 defines = [
     f"OD_TPDO_COUNT {len([obj for obj in objects if isinstance(obj, TPDOCommunicationObject)])}"
 ]
@@ -78,5 +113,5 @@ variables = {
     "objects": objects,
     "objectNames": [obj.varName for obj in objects]
 }
-env = jinja2.Environment(loader=jinja2.FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True)
-env.get_template("od2.hpp.jinja").stream(**variables).dump("od.hpp")
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)

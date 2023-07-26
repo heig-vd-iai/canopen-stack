@@ -1,8 +1,10 @@
-from canopen.objectdictionary import Record, Variable, Array
+from classes.generic import VarObject, ArrayObject, RecordObject, ObjectEntry
+from classes.pdo import TPDOCommunicationObject, TPDOMappingObject
+from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
 from typing import Union
-import logging
 import jinja2
+
 
 EDS_FILENAME = "example.eds"
 TEMPLATES_DIR = "templates"
@@ -37,119 +39,33 @@ datatype2ctype = {
     0x1B: "uint64_t"
 }
 
-
-
-class OD_Object:
-    def __init__(self, accessType: int, dataType: int, parameterName: str, defaultValue) -> None:
-        self.accessType = accessType
-        self.dataType = dataType
-        self.dataTypeStr = datatype2ctype[dataType]
-        self.parameterName = parameterName
-        self.defaultValue = 0 if defaultValue is None else defaultValue
-
-
-class OD_VarEntry:
-    """
-    The VAR entry stores its value in a single place. It has a single object.
-    """
-    def __init__(self, index: int, accessType: int, dataType: int, parameterName: str, defaultValue) -> None:
-        self.index = index
-        self.objectType = 0x07
-        self.subNumber = 1
-        self.accessType = accessType
-        self.dataType = dataType
-        self.dataTypeStr = datatype2ctype[dataType]
-        self.parameterName = parameterName
-        self.defaultValue = 0 if defaultValue is None else defaultValue
-        self.varName = 'x%X' % index
-        self.objName = 'obj_' + self.varName
-        
-    def render_OD_Data_declaration(self) -> "list[str]":
-        return [f"{self.dataTypeStr} {self.varName}"]
-    
-    def render_OD_Data_constructor(self) -> "list[str]":
-        return [f"{self.varName}({self.defaultValue})"]
-    
-    def render_OD_Object_declaration(self) -> str:
-        return f"OD_Object {self.objName}[1]"
-    
-    def render_OD_Object_constructor(self) -> str:
-        return f"{self.objName}{{OD_Object({self.accessType}, {self.dataType}, sizeof(data.{self.varName}), &data.{self.varName})}}"
-    
-    def render_OD_Entry_constructor(self) -> str:
-        return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-
-
-class OD_ArrayEntry:
-    """
-    The ARRAY entry stores an array of size subNumber - 1 for its values, plus a single value for sub0. It has subNumber objects.
-    """
-    def __init__(self, index: int, objects: "list[OD_Object]") -> None:
-        self.index = index
-        self.objectType = 0x08
-        self.dataType = objects[1].dataType
-        self.dataTypeStr = datatype2ctype[self.dataType]
-        self.subNumber = len(objects)
-        self.objects = objects
-        self.varName = 'x%X' % index
-        self.objName = 'obj_' + self.varName
-        self.sub0Name = self.varName + 'sub0'
-
-    def render_OD_Data_declaration(self) -> "list[str]":
-        sub0 = f"{datatype2ctype[0x05]} {self.sub0Name}"
-        arr = f"{self.dataTypeStr} {self.varName}[{self.subNumber - 1}]"
-        return [sub0, arr]
-    
-    def render_OD_Data_constructor(self) -> "list[str]":
-        sub0 = f"{self.sub0Name}({self.subNumber})"
-        defVals = ', '.join([str(obj.defaultValue) for obj in self.objects[1:]])
-        arr = f"{self.varName}{{{defVals}}}"
-        return [sub0, arr]
-    
-    def render_OD_Object_declaration(self) -> str:
-        return f"OD_Object {self.objName}[{self.subNumber}]"
-    
-    def render_OD_Object_constructor(self) -> str:
-        sub0 = f"OD_Object({self.objects[0].accessType}, {self.objects[0].dataType}, sizeof(data.{self.sub0Name}), &data.{self.sub0Name})"
-        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, sizeof(data.{self.varName}[{i}]), &data.{self.varName}[{i}])" for i, obj in enumerate(self.objects[1:])])
-        return f"{self.objName}{{{sub0}, {arr}}}"
-    
-    def render_OD_Entry_constructor(self) -> str:
-        return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-
-
-class OD_RecordEntry:
-    """
-    The RECORD entry stores a struct of subNumber fields for its values. It has subNumber objects. 
-    """
-    def __init__(self, index: int, objects: "list[OD_Object]") -> None:
-        self.index = index
-        self.objectType = 0x09
-        self.subNumber = len(objects)
-        self.objects = objects
-        self.varName = 'x%X' % index
-        self.objName = 'obj_' + self.varName
-        self.sub0Name = self.varName + 'sub0'
-
-    def render_OD_Data_declaration(self) -> "list[str]":
-        fields = '; '.join([f"{obj.dataTypeStr} sub{i}" for i, obj in enumerate(self.objects)]) + ";"
-        return [f"struct {{{fields}}} {self.varName}"]
-    
-    def render_OD_Data_constructor(self) -> "list[str]":
-        defVals = ', '.join([str(obj.defaultValue) for obj in self.objects])
-        return [f"{self.varName}{{{defVals}}}"]
-
-    def render_OD_Object_declaration(self) -> str:
-        return f"OD_Object {self.objName}[{self.subNumber}]"
-    
-    def render_OD_Object_constructor(self) -> str:
-        arr = ', '.join([f"OD_Object({obj.accessType}, {obj.dataType}, sizeof(data.{self.varName}.sub{i}), &data.{self.varName}.sub{i})" for i, obj in enumerate(self.objects)])
-        return f"{self.objName}{{{arr}}}"
-    
-    def render_OD_Entry_constructor(self) -> str:
-        return f"OD_ObjectEntry({self.index}, {self.objectType}, {self.subNumber}, objects.{self.objName})"
-
-
+datatype2size = {
+    0x01: 1,
+    0x02: 1,
+    0x03: 2,
+    0x04: 4,
+    0x05: 1,
+    0x06: 2,
+    0x07: 4,
+    0x08: 4,
+    # 0x09: None,     # "VISIBLE_STRING",
+    # 0x0A: None,     # "OCTET_STRING",
+    # 0x0B: None,     # "UNICODE_STRING",
+    # 0x0C: None,     # "TIME_OF_DAY",
+    # 0x0D: None,     # "TIME_DIFFERENCE",
+    # 0x0F: None,     # "DOMAIN"
+    0x10: 4,
+    0x11: 8,
+    0x12: 8,
+    0x13: 8,
+    0x14: 8,
+    0x15: 8,
+    0x16: 4,
+    0x18: 8,
+    0x19: 8,
+    0x1A: 8,
+    0x1B: 8
+}
 
 def getAccessType(value: str) -> int:
     value = value.lower()
@@ -162,79 +78,41 @@ def getAccessType(value: str) -> int:
     if value == "const": return const_bit | read_bit
     raise Exception(f"Access type not supported: '{value}'")
 
-def toEntry(entry: Union[Variable, Array, Record]):
-    if isinstance(entry, Variable):
-        return OD_VarEntry(entry.index, getAccessType(entry.access_type), entry.data_type, entry.name, entry.default)
-    if isinstance(entry, Array):
-        objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
-        return OD_ArrayEntry(entry.index, objs)
-    if isinstance(entry, Record):
-        objs = [OD_Object(getAccessType(obj.access_type), obj.data_type, obj.name, obj.default) for obj in list(entry.values())]
-        return OD_RecordEntry(entry.index, objs)
+def toCANopenObject(object: Union[Variable, Array, Record]):
+    if isinstance(object, Variable):
+        return VarObject(object.index, getAccessType(object.access_type), object.data_type, datatype2ctype[object.data_type], object.name, object.default)
+    if isinstance(object, Array):
+        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
+        return ArrayObject(object.index, objs)
+    if isinstance(object, Record):
+        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
+        if 0x1800 <= object.index <= 0x19FF: return TPDOCommunicationObject(object.index, objs)
+        elif 0x1A00 <= object.index <= 0x1BFF: return TPDOMappingObject(object.index, objs)
+        else: return RecordObject(object.index, objs)
 
-def toHex(value: int) -> str:
-    return "%X" % value
+def dataTypeFilter(object: Union[Variable, Array, Record]) -> bool:
+    retval = True
+    variables = [object] if isinstance(object, Variable) else list(object.subindices.values())
+    for i, var in enumerate(variables):
+        if var.data_type not in datatype2ctype:
+            print(f"[Warning] Entry x{'%X' % object.index}.{i}: unsupported data type '{hex(var.data_type).upper()}'")
+            retval = False
+    return retval
 
 
 
 od: ObjectDictionary = Node(4, EDS_FILENAME).object_dictionary
-errors = 0
-indices = set(od.keys())
-objectEntries: list[OD_Object] = []
-for entry in od.values():
-    if isinstance(entry, Variable):
-        variables = [entry]
-    elif isinstance(entry, (Array, Record)):
-        variables = list(entry.subindices.values())
-
-    valid = True
-    ## Check data type
-    for var in variables:
-            if var.data_type not in datatype2ctype:
-                logging.warning(f"Skipping entry [{toHex(entry.index)}]: unsupported data type '{toHex(var.data_type)}'")
-                valid = False
-
-    ## Check for specific objects
-    if 0x1600 <= entry.index <= 0x17FF or 0x1A00 <= entry.index <= 0x1BFF:  # PDO mapping parameter
-        count = variables[0].default
-        mappedIndices = set([var.default >> 16 for var in variables[1:count + 1]])
-        missing = mappedIndices - indices
-        if(len(missing)):
-            logging.error(f"PDO mapping [{toHex(entry.index)}]: missing objects {', '.join([toHex(s) for s in missing])}")
-            errors += 1
-
-    ## Append to valid entries list
-    if valid: objectEntries.append(toEntry(entry))
-
-if errors > 0:
-    print("Could not generate source file due to errors")
-    exit(1)
-allDataDeclarations = [declaration for sublist in objectEntries for declaration in sublist.render_OD_Data_declaration()]
-allDataConstructors = [constructor for sublist in objectEntries for constructor in sublist.render_OD_Data_constructor()]
-allObjectDeclarations = [entry.render_OD_Object_declaration() for entry in objectEntries]
-allObjectConstructors = [entry.render_OD_Object_constructor() for entry in objectEntries]
-allEntryConstructors = [entry.render_OD_Entry_constructor() for entry in objectEntries]
-rpdoMappings = [entry for entry in objectEntries if 0x1600 <= entry.index <= 0x17FF]
-tpdoMappings = [entry for entry in objectEntries if 0x1A00 <= entry.index <= 0x1BFF]
-tpdoLongestMapping = max([entry.objects[0].defaultValue for entry in tpdoMappings])
+objectsDict = dict([(object.index, toCANopenObject(object)) for object in od.values() if dataTypeFilter(object)])
+objectsValues = list(objectsDict.values())
+if(any([not object.verify(objectsDict) for object in objectsValues])): exit(1)
 defines = [
-    f"OD_OBJECT_COUNT {len(objectEntries)}",
-    f"OD_RPDO_COUNT {len(rpdoMappings)}",
-    f"OD_TPDO_COUNT {len(tpdoMappings)}",
-    f"OD_TPDO_LONGEST_MAP {tpdoLongestMapping}",
-    "OD_RPDO_COMMUNICATION_INDEX 0x1400",
-    "OD_RPDO_MAPPING_INDEX 0x1600",
-    "OD_TPDO_COMMUNICATION_INDEX 0x1800",
-    "OD_TPDO_MAPPING_INDEX 0x1A00"
+    f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, TPDOCommunicationObject)])}"
 ]
 variables = {
-    "object_entries": objectEntries,
-    "all_data_declarations": allDataDeclarations,
-    "all_data_constructors": allDataConstructors,
-    "all_object_declarations": allObjectDeclarations,
-    "all_object_constructors": allObjectConstructors,
-    "all_entry_constructors": allEntryConstructors,
-    "defines": defines
+    "defines": defines,
+    "namespace": "CANopen",
+    "objects": objectsValues,
+    "objectNames": [obj.varName for obj in objectsValues]
 }
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
