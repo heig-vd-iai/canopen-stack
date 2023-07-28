@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <cstdlib>
 #include "enums.hpp"
 #include "frame.hpp"
 #include "od.hpp"
@@ -19,13 +18,14 @@ namespace CANopen
         };
         struct TPDO
         {
-            TPDOCommunicationObject *commObject = NULL;
-            TPDOMappingObject *mapObject = NULL;
-            TPDOPair *mappedEntries = NULL;
+            TPDOCommunicationObject *commObject;
+            TPDOMappingObject *mapObject;
+            TPDOPair *mappedEntries;
             uint8_t count = 0;
             uint8_t size = 0;
             uint32_t timestamp_us = 0;
             bool syncFlag = false;
+            TPDO();
         };
 
     private:

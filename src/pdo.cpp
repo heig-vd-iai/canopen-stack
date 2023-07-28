@@ -3,8 +3,11 @@
 #include "enums.hpp"
 #include "objects/object_1800.hpp"
 #include <cstring>
+#include <cstdlib>
 #include <cstdio>
 using namespace CANopen;
+
+PDO::TPDO::TPDO() : mappedEntries(NULL) {}
 
 PDO::PDO(Node &node) : node(node)
 {
