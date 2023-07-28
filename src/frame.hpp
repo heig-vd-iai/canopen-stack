@@ -8,8 +8,15 @@ namespace CANopen
     {
         uint8_t data[8] = {0};
         uint8_t dlc = 0;
-        uint8_t functionCode = 0;
-        uint8_t nodeId = 0;
+        union
+        {
+            uint16_t value;
+            struct
+            {
+                uint16_t nodeId : 7;
+                uint16_t functionCode : 4;
+            } bits;
+        } cobId = {0};
         bool rtr = false;
     };
 }

@@ -78,8 +78,7 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
         return;
     TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
     Frame frame;
-    frame.functionCode = (cobid.bits.canId >> 7) & 0x0F;
-    frame.nodeId = cobid.bits.canId & 0x7F;
+    frame.cobId.value = cobid.value & 0x07FF;
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;

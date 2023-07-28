@@ -15,10 +15,10 @@ void HB::receiveFrame(Frame frame)
 void HB::publishState(NMTStates state)
 {
     Frame frame;
-    frame.nodeId = node.nodeId;
+    frame.cobId.bits.functionCode = FunctionCode_HEARTBEAT;
+    frame.cobId.bits.nodeId = node.nodeId;
     frame.dlc = 1;
     frame.data[0] = state;
-    frame.functionCode = FunctionCode_HEARTBEAT;
     node.sendFrame(frame);
     lastPublish = node.getTime_us();
 }

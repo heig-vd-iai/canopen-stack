@@ -6,7 +6,7 @@ Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*th
 void Node::receiveFrame(Frame frame)
 {
     uint32_t timestamp = getTime_us();
-    switch (frame.functionCode)
+    switch (frame.cobId.bits.functionCode)
     {
     case FunctionCode_NMT:
         nmt.receiveFrame(frame);
