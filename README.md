@@ -4,17 +4,24 @@ CANopen slave library
 ## Tasks
 ### PDO
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
+- RPDO
 
 ### SDO
 - SDO block transfer
 
+### EMCY
+- manufacturer error code
+- 1003
+- 1029
+
 ### Other
 - node.cpp: make sure function code is supported
 - quick search algorithm for OD entries
-- EMCY
 - TIME
 - implement missing data types
+- implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
+- create predefined frames inheriting from base Frame ?
 - group bits together for access type, PDO mapping, and others ?
 - node guarding ?
 - SYNC overflow ?
