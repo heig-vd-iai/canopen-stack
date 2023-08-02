@@ -20,6 +20,7 @@ CANopen slave library
 - SYNC overflow ?
 
 ## Tasks (OD generator)
+- CLI
 - perform strict parsing for mandatory or standard entries (like PDO)
     1. 0x1400 to 0x15FF: RPDO communication parameter
     2. 0x1600 to 0x17FF: RPDO mapping parameter
