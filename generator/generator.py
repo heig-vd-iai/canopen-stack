@@ -1,5 +1,6 @@
-from classes.generic import VarObject, ArrayObject, RecordObject, ObjectEntry
-from classes.pdo import TPDOCommunicationObject, TPDOMappingObject
+from objects.generic import VarObject, ArrayObject, RecordObject, ObjectEntry
+from objects.x1800 import TPDOCommunicationObject
+from objects.x1A00 import TPDOMappingObject
 from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
 from typing import Union
