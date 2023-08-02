@@ -16,12 +16,6 @@ PDO::PDO(Node &node) : node(node)
         initTPDO(i);
 }
 
-void PDO::reload()
-{
-    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
-        remapTPDO(i);
-}
-
 void PDO::initTPDO(unsigned index)
 {
     tpdos[index].commObject = (TPDOCommunicationObject *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
@@ -75,7 +69,7 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
 {
     TPDO *tpdo = tpdos + index;
-    if (!tpdo->commObject->isEnabled())
+    if (!enabled || !tpdo->commObject->isEnabled())
         return;
     TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
     Frame frame;
@@ -87,24 +81,13 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     tpdo->timestamp_us = timestamp_us;
 }
 
-void PDO::update(uint32_t timestamp_us)
-{
-    NMTStates state = node.nmt.getState();
-    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
-    {
-        TPDO *tpdo = tpdos + i;
-        uint8_t transmission = tpdo->commObject->getTransmissionType();
-        uint16_t timer_ms = tpdo->commObject->getEventTimer();
-        // Only event-driven PDOs can be sent periodically
-        if (state != NMTState_Operational || (transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_ms == 0 || timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
-            continue;
-        sendTPDO(i, timestamp_us);
-    }
-}
+void PDO::enable() { enabled = true; }
+
+void PDO::disable() { enabled = false; }
 
 void PDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
-    if (node.nmt.getState() != NMTState_Operational || !frame.rtr)
+    if (!enabled || !frame.rtr)
         return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
@@ -121,9 +104,25 @@ void PDO::receiveFrame(Frame frame, uint32_t timestamp_us)
     }
 }
 
+void PDO::update(uint32_t timestamp_us)
+{
+    if (!enabled)
+        return;
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+    {
+        TPDO *tpdo = tpdos + i;
+        uint8_t transmission = tpdo->commObject->getTransmissionType();
+        uint16_t timer_ms = tpdo->commObject->getEventTimer();
+        // Only event-driven PDOs can be sent periodically
+        if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_ms == 0 || timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
+            continue;
+        sendTPDO(i, timestamp_us);
+    }
+}
+
 void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
 {
-    if (node.nmt.getState() != NMTState_Operational)
+    if (!enabled)
         return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
@@ -149,7 +148,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
 
 void PDO::transmitTPDO(unsigned index)
 {
-    if (index >= OD_TPDO_COUNT)
+    if (!enabled || index >= OD_TPDO_COUNT)
         return;
     TPDO *tpdo = tpdos + index;
     uint8_t transmission = tpdo->commObject->getTransmissionType();
@@ -166,4 +165,10 @@ void PDO::transmitTPDO(unsigned index)
             sendTPDO(index, timestamp_us);
         }
     }
+}
+
+void PDO::reload()
+{
+    for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
+        remapTPDO(i);
 }

@@ -9,75 +9,6 @@ using namespace CANopen;
 
 SDO::SDO(Node &node) : node(node) {}
 
-void SDO::update(uint32_t timestamp_us)
-{
-    switch (serverState)
-    {
-    case SDOServerState_Uploading:
-    case SDOServerState_Downloading:
-        if (timestamp_us - transferData.timestamp >= SDO_TIMEOUT_US)
-        {
-            sendAbort(transferData.object->index, transferData.subindex, SDOAbortCode_TimedOut);
-        }
-        break;
-    default:
-        break;
-    }
-}
-
-void SDO::receiveFrame(Frame frame, uint32_t timestamp_us)
-{
-    NMTStates state = node.nmt.getState();
-    if ((state != NMTState_PreOperational && state != NMTState_Operational) || frame.cobId.bits.nodeId != node.nodeId)
-        return;
-    SDO_CommandByte recvCommand = {frame.data[0]};
-    switch (serverState)
-    {
-    case SDOServerState_Ready:
-        switch (recvCommand.bits_initiate.ccs)
-        {
-        case SDOCommandSpecifier_RequestUploadInitiate:
-            uploadInitiate(frame, timestamp_us);
-            break;
-        case SDOCommandSpecifier_RequestDownloadInitiate:
-            downloadInitiate(frame, timestamp_us);
-            break;
-        default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
-            break;
-        }
-        break;
-    case SDOServerState_Uploading:
-        switch (recvCommand.bits_segment.ccs)
-        {
-        case SDOCommandSpecifier_RequestUploadSegment:
-            uploadSegment(frame, timestamp_us);
-            break;
-        case SDOCommandSpecifier_AbortTransfer:
-            serverState = SDOServerState_Ready;
-            break;
-        default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
-            break;
-        }
-        break;
-    case SDOServerState_Downloading:
-        switch (recvCommand.bits_segment.ccs)
-        {
-        case SDOCommandSpecifier_RequestDownloadSegment:
-            downloadSegment(frame, timestamp_us);
-            break;
-        case SDOCommandSpecifier_AbortTransfer:
-            serverState = SDOServerState_Ready;
-            break;
-        default:
-            sendAbort(*(uint16_t *)(frame.data + 1), frame.data[3], SDOAbortCode_CommandSpecifierInvalid);
-            break;
-        }
-        break;
-    }
-}
-
 void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
 {
     Frame response;
@@ -326,4 +257,80 @@ void SDO::downloadSegment(Frame request, uint32_t timestamp_us)
     if (recvCommand.bits_segment.c)
         serverState = SDOServerState_Ready;
     transferData.timestamp = timestamp_us;
+}
+
+void SDO::enable() { enabled = true; }
+
+void SDO::disable() { enabled = false; }
+
+void SDO::receiveFrame(Frame frame, uint32_t timestamp_us)
+{
+    if (!enabled || frame.cobId.bits.nodeId != node.nodeId)
+        return;
+    SDO_CommandByte recvCommand = {frame.data[0]};
+    uint16_t index = *(uint16_t *)(frame.data + 1);
+    uint8_t subindex = frame.data[3];
+    switch (serverState)
+    {
+    case SDOServerState_Ready:
+        switch (recvCommand.bits_initiate.ccs)
+        {
+        case SDOCommandSpecifier_RequestUploadInitiate:
+            uploadInitiate(frame, timestamp_us);
+            break;
+        case SDOCommandSpecifier_RequestDownloadInitiate:
+            downloadInitiate(frame, timestamp_us);
+            break;
+        default:
+            sendAbort(index, subindex, SDOAbortCode_CommandSpecifierInvalid);
+            break;
+        }
+        break;
+    case SDOServerState_Uploading:
+        switch (recvCommand.bits_segment.ccs)
+        {
+        case SDOCommandSpecifier_RequestUploadSegment:
+            uploadSegment(frame, timestamp_us);
+            break;
+        case SDOCommandSpecifier_AbortTransfer:
+            serverState = SDOServerState_Ready;
+            break;
+        default:
+            sendAbort(index, subindex, SDOAbortCode_CommandSpecifierInvalid);
+            break;
+        }
+        break;
+    case SDOServerState_Downloading:
+        switch (recvCommand.bits_segment.ccs)
+        {
+        case SDOCommandSpecifier_RequestDownloadSegment:
+            downloadSegment(frame, timestamp_us);
+            break;
+        case SDOCommandSpecifier_AbortTransfer:
+            serverState = SDOServerState_Ready;
+            break;
+        default:
+            sendAbort(index, subindex, SDOAbortCode_CommandSpecifierInvalid);
+            break;
+        }
+        break;
+    }
+}
+
+void SDO::update(uint32_t timestamp_us)
+{
+    if (!enabled)
+        return;
+    switch (serverState)
+    {
+    case SDOServerState_Uploading:
+    case SDOServerState_Downloading:
+        if (timestamp_us - transferData.timestamp >= SDO_TIMEOUT_US)
+        {
+            sendAbort(transferData.object->index, transferData.subindex, SDOAbortCode_TimedOut);
+        }
+        break;
+    default:
+        break;
+    }
 }

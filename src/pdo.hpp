@@ -27,6 +27,7 @@ namespace CANopen
         };
 
     private:
+        bool enabled = false;
         class Node &node;
         TPDO tpdos[OD_TPDO_COUNT];
 
@@ -37,6 +38,8 @@ namespace CANopen
 
     public:
         PDO(class Node &node);
+        void enable();
+        void disable();
         void receiveFrame(class Frame frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
         void onSync(uint8_t counter, uint32_t timestamp_us);

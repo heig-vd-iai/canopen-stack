@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#define SDO_TIMEOUT_US 1000
+#define SDO_TIMEOUT_US 5000
 #define SDO_INITIATE_DATA_LENGTH 4
 #define SDO_INITIATE_DATA_OFFSET 4
 #define SDO_SEGMENT_DATA_LENGTH 7
@@ -37,6 +37,7 @@ namespace CANopen
         };
 
     private:
+        bool enabled = false;
         class Node &node;
         SDOServerStates serverState;
         struct
@@ -58,6 +59,8 @@ namespace CANopen
 
     public:
         SDO(class Node &node);
+        void enable();
+        void disable();
         void receiveFrame(class Frame frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
     };

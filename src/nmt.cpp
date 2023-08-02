@@ -19,9 +19,19 @@ void NMT::setTransition(NMTServiceCommands command)
     switch (currentState)
     {
     case NMTState_Initialisation:
+        node.pdo.disable();
+        node.sdo.disable();
+        node.sync.disable();
+        node.time.disable();
+        node.emcy.disable();
         nextState = NMTState_PreOperational;
         break;
     case NMTState_PreOperational:
+        node.pdo.disable();
+        node.sdo.enable();
+        node.sync.enable();
+        node.time.enable();
+        node.emcy.enable();
         switch (command)
         {
         case NMTServiceCommand_Start:
@@ -39,6 +49,11 @@ void NMT::setTransition(NMTServiceCommands command)
         }
         break;
     case NMTState_Operational:
+        node.pdo.enable();
+        node.sdo.enable();
+        node.sync.enable();
+        node.time.enable();
+        node.emcy.enable();
         switch (command)
         {
         case NMTServiceCommand_EnterPreOperational:
@@ -56,6 +71,11 @@ void NMT::setTransition(NMTServiceCommands command)
         }
         break;
     case NMTState_Stopped:
+        node.pdo.disable();
+        node.sdo.disable();
+        node.sync.disable();
+        node.time.disable();
+        node.emcy.disable();
         switch (command)
         {
         case NMTServiceCommand_EnterPreOperational:
@@ -77,19 +97,9 @@ void NMT::setTransition(NMTServiceCommands command)
     {
         node.hb.publishState(NMTState_Initialisation);
     }
-    // if (currentState != nextState)
-    // {
-    //     printf("[NMT] Node %d entered state 0x%02X\n\n", node.nodeId, nextState);
-    // }
     currentState = nextState;
 }
 
-NMTStates NMT::getState()
-{
-    return currentState;
-}
+NMTStates NMT::getState() { return currentState; }
 
-void NMT::update()
-{
-    setTransition((NMTServiceCommands)0);
-}
+void NMT::update() { setTransition((NMTServiceCommands)0); }

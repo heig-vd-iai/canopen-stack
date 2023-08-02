@@ -2,7 +2,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), nodeId(id) {}
+Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), time(*this), nodeId(id) {}
 
 void Node::receiveFrame(Frame frame)
 {
