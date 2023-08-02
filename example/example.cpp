@@ -11,8 +11,7 @@
 #include <net/if.h>
 #include <fstream>
 #include <signal.h>
-#include "node.hpp"
-#include "frame.hpp"
+#include "CANopen.hpp"
 using namespace std;
 using namespace CANopen;
 
