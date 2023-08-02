@@ -13,7 +13,6 @@ CANopen slave library
 - quick search algorithm for OD entries
 - EMCY
 - TIME
-- NMT state and communication objects (p.80)
 - implement missing data types
 - OD object value range and all other properties (p.91): PDO mapping, range
 - group bits together for access type, PDO mapping, and others ?
