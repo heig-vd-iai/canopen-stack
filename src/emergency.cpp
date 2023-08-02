@@ -19,4 +19,18 @@ void EMCY::publishError(uint16_t errorCode, uint8_t errorRegister)
 {
     if (!enabled)
         return;
+    Frame frame;
+    frame.cobId.bits.functionCode = FunctionCode_EMCY;
+    frame.cobId.bits.nodeId = node.nodeId;
+    frame.dlc = 8;
+    *(uint16_t *)frame.data = errorCode;
+    frame.data[2] = errorRegister;
+    node.sendFrame(frame);
+}
+
+void EMCY::publishResetError()
+{
+    // if (!enabled)
+    //     return;
+    publishError(0, 0);
 }
