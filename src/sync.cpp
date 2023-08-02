@@ -1,5 +1,7 @@
 #include "sync.hpp"
 #include "node.hpp"
+#include "frame.hpp"
+#include "enums.hpp"
 #include <cstdlib>
 using namespace CANopen;
 

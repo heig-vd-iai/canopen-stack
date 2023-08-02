@@ -1,5 +1,5 @@
 #pragma once
-#include "od_classes.hpp"
+#include "../od_classes.hpp"
 #define X1800_INDEX_COUNT 0
 #define X1800_INDEX_COBID 1
 #define X1800_INDEX_TRANSMISSION 2

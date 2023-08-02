@@ -1,7 +1,5 @@
 #pragma once
 #include <cstdint>
-#include "enums.hpp"
-#include "frame.hpp"
 #define SYNC_OBJECT_1019 0x1019
 #define SYNC_MAX_COUNTER 240
 
@@ -16,6 +14,6 @@ namespace CANopen
 
     public:
         SYNC(class Node &node);
-        void receiveFrame(Frame frame, uint32_t timestamp_us);
+        void receiveFrame(class Frame frame, uint32_t timestamp_us);
     };
 }

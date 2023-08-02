@@ -1,4 +1,5 @@
 #include "node.hpp"
+#include "frame.hpp"
 using namespace CANopen;
 
 Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), nodeId(id) {}

@@ -1,5 +1,6 @@
 #include "emergency.hpp"
 #include "node.hpp"
+#include "frame.hpp"
 using namespace CANopen;
 
 EMCY::EMCY(Node &node) : node(node) {}

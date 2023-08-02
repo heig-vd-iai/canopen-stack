@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include "enums.hpp"
-#include "frame.hpp"
 #define HB_OBJECT_1017 0x1017
 
 namespace CANopen
@@ -15,7 +14,7 @@ namespace CANopen
 
     public:
         HB(class Node &node);
-        void receiveFrame(Frame frame);
+        void receiveFrame(class Frame frame);
         void publishState(NMTStates state);
         void update(uint32_t timestamp_us);
     };

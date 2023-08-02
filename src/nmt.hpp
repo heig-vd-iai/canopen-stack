@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include "enums.hpp"
-#include "frame.hpp"
 
 namespace CANopen
 {
@@ -13,7 +12,7 @@ namespace CANopen
 
     public:
         NMT(class Node &node);
-        void receiveFrame(Frame frame);
+        void receiveFrame(class Frame frame);
         void setTransition(NMTServiceCommands command);
         NMTStates getState();
         void update();

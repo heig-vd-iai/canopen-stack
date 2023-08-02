@@ -1,5 +1,6 @@
 #include "nmt.hpp"
 #include "node.hpp"
+#include "frame.hpp"
 using namespace CANopen;
 
 NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node) {}

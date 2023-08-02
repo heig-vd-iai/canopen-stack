@@ -1,5 +1,5 @@
 #pragma once
-#include "frame.hpp"
+#include <cstdint>
 
 namespace CANopen
 {
@@ -10,7 +10,7 @@ namespace CANopen
 
     public:
         EMCY(class Node &node);
-        void receiveFrame(Frame frame);
+        void receiveFrame(class Frame frame);
         void publishError(uint16_t errorCode, uint8_t errorRegister);
     };
 }

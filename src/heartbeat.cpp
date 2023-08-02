@@ -1,5 +1,6 @@
 #include "heartbeat.hpp"
 #include "node.hpp"
+#include "frame.hpp"
 #include <cstdlib>
 using namespace CANopen;
 

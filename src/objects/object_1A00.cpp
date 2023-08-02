@@ -1,5 +1,5 @@
 #include "object_1A00.hpp"
-#include "node.hpp"
+#include "../node.hpp"
 #include <cstring>
 #include <cstdio>
 using namespace CANopen;

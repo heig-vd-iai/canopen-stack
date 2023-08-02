@@ -1,6 +1,5 @@
 #pragma once
-#include "frame.hpp"
-#include "od_classes.hpp"
+#include <cstdint>
 #define SDO_TIMEOUT_US 1000
 #define SDO_INITIATE_DATA_LENGTH 4
 #define SDO_INITIATE_DATA_OFFSET 4
@@ -42,7 +41,7 @@ namespace CANopen
         SDOServerStates serverState;
         struct
         {
-            Object *object;
+            class Object *object;
             uint16_t index;
             uint8_t subindex;
             uint32_t remainingBytes;
@@ -52,14 +51,14 @@ namespace CANopen
         } transferData;
 
         void sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode);
-        void uploadInitiate(Frame request, uint32_t timestamp_us);
-        void uploadSegment(Frame request, uint32_t timestamp_us);
-        void downloadInitiate(Frame request, uint32_t timestamp_us);
-        void downloadSegment(Frame request, uint32_t timestamp_us);
+        void uploadInitiate(class Frame request, uint32_t timestamp_us);
+        void uploadSegment(class Frame request, uint32_t timestamp_us);
+        void downloadInitiate(class Frame request, uint32_t timestamp_us);
+        void downloadSegment(class Frame request, uint32_t timestamp_us);
 
     public:
         SDO(class Node &node);
-        void receiveFrame(Frame frame, uint32_t timestamp_us);
+        void receiveFrame(class Frame frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
     };
 }

@@ -12,6 +12,7 @@
 #include <fstream>
 #include <signal.h>
 #include "node.hpp"
+#include "frame.hpp"
 using namespace std;
 using namespace CANopen;
 

@@ -1,5 +1,6 @@
 #include "pdo.hpp"
 #include "node.hpp"
+#include "frame.hpp"
 #include "enums.hpp"
 #include "objects/object_1800.hpp"
 #include <cstring>
