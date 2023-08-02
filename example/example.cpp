@@ -57,7 +57,7 @@ void signal_callback_handler(int signum)
     quit = true;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     signal(SIGINT, signal_callback_handler);
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
@@ -82,8 +82,8 @@ int main()
     {
         if (mtx.try_lock())
         {
-            if (node.getNmtState() == NMTState_PreOperational)
-                node.setNmtTransition(NMTServiceCommand_Start);
+            // if (node.getNmtState() == NMTState_PreOperational)
+            //     node.setNmtTransition(NMTServiceCommand_Start);
             object->setValue(1, x);
             auto start = chrono::steady_clock::now();
             node.update();
