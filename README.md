@@ -9,7 +9,6 @@ CANopen slave library
 - SDO block transfer
 
 ### Other
-- remove redundent/useless includes
 - node.cpp: make sure function code is supported
 - quick search algorithm for OD entries
 - node guarding?

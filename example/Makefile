@@ -24,7 +24,10 @@ SOURCES = \
 
 
 CC = g++
-FLAGS = -std=c++14 -Wall -g
+FLAGS = --std=c++14
+FLAGS += -Wall
+# FLAGS += -Wextra
+# FLAGS += -pedantic
 FLAGS += -pthread
 
 
