@@ -42,7 +42,7 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
 
 bool Object::isSubValid(uint8_t subindex)
 {
-    return subindex <= subNumber;
+    return subindex < subNumber;
 }
 
 uint8_t Object::getSize(uint8_t subindex)
