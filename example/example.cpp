@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    node.loadOD();
+    // node.loadOD();
     Object *object = node.findObject(0x6048);
     thread listenThread(func);
     listenThread.detach();
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
         x = a * sin(w * t);
         this_thread::sleep_for(chrono::milliseconds(1));
     }
-    node.saveOD();
+    // node.saveOD();
     return EXIT_SUCCESS;
 }
 
