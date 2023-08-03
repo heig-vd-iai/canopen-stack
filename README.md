@@ -22,8 +22,6 @@ CANopen slave library
 - quick search algorithm for OD entries
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
-- implement TIME_OF_DAY ?
-- implement TIME_DIFFERENCE ?
 - create predefined frames inheriting from base Frame ?
 - group bits together for access type, PDO mapping, and others ?
 - node guarding ?
@@ -46,4 +44,5 @@ CANopen slave library
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
+- TIME_OF_DAY and TIME_DIFFERENCE are alisases to UNSIGNED64
 - DOMAIN is not supported

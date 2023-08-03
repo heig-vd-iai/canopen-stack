@@ -27,6 +27,8 @@ datatype2entryclass = {
     0x09: ntry.VisibleStringEntry,
     0x0A: ntry.VisibleStringEntry,
     0x0B: ntry.VisibleStringEntry,
+    0x0C: ntry.Unsigned64Entry,
+    0x0D: ntry.Unsigned64Entry,
     0x10: ntry.Integer32Entry,
     0x11: ntry.Real64Entry,
     0x12: ntry.Integer64Entry,
