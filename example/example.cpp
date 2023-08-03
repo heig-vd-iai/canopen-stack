@@ -56,7 +56,7 @@ void signal_callback_handler(int signum)
     quit = true;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     signal(SIGINT, signal_callback_handler);
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)

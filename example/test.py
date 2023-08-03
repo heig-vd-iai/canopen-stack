@@ -4,6 +4,7 @@ import struct
 import random
 
 
+
 def callback(message):
     for var in message: print('%s = %f' % (var.name, var.phys))
     
@@ -19,7 +20,7 @@ def callback(message):
 network = canopen.Network()
 node = canopen.RemoteNode(4, "../generator/example.eds")
 
-index = 0x6064
+index = 0x1009
 subindex = 0
 
 network.add_node(node)
@@ -32,7 +33,7 @@ try:
     # node.sdo.download(0x6041, 0, (0x69).to_bytes(2, 'little'))
     # node.sdo.download(0x6061, 0, (0x42).to_bytes(1, 'little'))
     # node.sdo.download(index, subindex, (4114).to_bytes(4, 'little'))
-    val = int.from_bytes(node.sdo.upload(index, subindex), 'little')
+    val = node.sdo.upload(index, subindex).decode()
     print(val)
     # val = int.from_bytes(node.sdo.upload(index, subindex), 'little')
     # print(val)
