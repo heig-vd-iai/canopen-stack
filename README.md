@@ -14,13 +14,17 @@ CANopen slave library
 - 1003
 - 1029
 
+### TIME
+- 
+
 ### Other
-- node.cpp: make sure function code is supported
+- node.cpp: make sure function code is supported (filters)
 - quick search algorithm for OD entries
-- TIME
-- implement missing data types
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
+- implement TIME_OF_DAY ?
+- implement TIME_DIFFERENCE ?
+- implement DOMAIN ?
 - create predefined frames inheriting from base Frame ?
 - group bits together for access type, PDO mapping, and others ?
 - node guarding ?
@@ -42,10 +46,4 @@ CANopen slave library
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
-
-## Application available methods
-- send TPDO
-- get object, read/write to object's entries
-- NMT transition
-- emit EMCY
-- callbacks? for PDO
+- VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
