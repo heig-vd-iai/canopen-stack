@@ -4,6 +4,7 @@ from objects.x1A00 import TPDOMappingObject
 from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
 from typing import Union
+import datatypes as dt
 import jinja2
 
 
@@ -11,6 +12,28 @@ EDS_FILENAME = "example.eds"
 TEMPLATES_DIR = "templates"
 HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
+
+datatype2class = {
+    0x01: dt.BooleanType,
+    0x02: dt.Integer8Type,
+    0x03: dt.Integer16Type,
+    0x04: dt.Integer32Type,
+    0x05: dt.Unsigned16Type,
+    0x06: dt.Unsigned32Type,
+    0x07: dt.Unsigned32Type,
+    0x08: dt.Real32Type,
+    0x10: dt.Integer32Type,
+    0x11: dt.Real64Type,
+    0x12: dt.Integer64Type,
+    0x13: dt.Integer64Type,
+    0x14: dt.Integer64Type,
+    0x15: dt.Integer64Type,
+    0x16: dt.Unsigned32Type,
+    0x18: dt.Unsigned64Type,
+    0x19: dt.Unsigned64Type,
+    0x1A: dt.Unsigned64Type,
+    0x1B: dt.Unsigned64Type
+}
 
 datatype2ctype = {
     0x01: "bool",
