@@ -303,9 +303,9 @@ ObjFlags=1
 [1009]
 ParameterName=Manufacturer Hardware Version
 ObjectType=0x7
-DataType=0x0009
+DataType=0x000B
 AccessType=const
-DefaultValue=
+DefaultValue=among us ඞ
 PDOMapping=0
 ObjFlags=1
 
