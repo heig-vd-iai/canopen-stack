@@ -1,6 +1,6 @@
 #pragma once
 #include "od_include.hpp"
-#define OD_OBJECTS_COUNT 62
+#define OD_OBJECTS_COUNT 63
 #define OD_TPDO_COUNT 4
 
 namespace CANopen
@@ -27,8 +27,9 @@ namespace CANopen
                 uint32_t x1005 = 128;
                 uint32_t x1006 = 0;
                 uint32_t x1007 = 0;
-                uint8_t x1008[17] = {'P', 'D', '4', '-', 'E', 'B', '5', '9', 'C', 'D', '-', 'E', '-', '6', '5', '-', '2'};
-                uint8_t x100A[18] = {'F', 'I', 'R', '-', 'v', '2', '2', '1', '3', '-', 'B', '1', '0', '3', '1', '1', '3', '4'};
+                uint8_t x1008[17] = {80, 68, 52, 45, 69, 66, 53, 57, 67, 68, 45, 69, 45, 54, 53, 45, 50};
+                uint8_t x1009[12] = {97, 109, 111, 110, 103, 32, 117, 115, 32, 224, 182, 158};
+                uint8_t x100A[18] = {70, 73, 82, 45, 118, 50, 50, 49, 51, 45, 66, 49, 48, 51, 49, 49, 51, 52};
                 uint16_t x100C = 0;
                 uint8_t x100D = 0;
                 uint8_t x1010sub0 = 13;
@@ -100,6 +101,7 @@ namespace CANopen
                 ObjectEntry x1006[1] = {ObjectEntry(&data.x1006, 3, 7, 4)};
                 ObjectEntry x1007[1] = {ObjectEntry(&data.x1007, 3, 7, 4)};
                 ObjectEntry x1008[1] = {ObjectEntry(&data.x1008, 5, 9, 17)};
+                ObjectEntry x1009[1] = {ObjectEntry(&data.x1009, 5, 9, 12)};
                 ObjectEntry x100A[1] = {ObjectEntry(&data.x100A, 5, 9, 18)};
                 ObjectEntry x100C[1] = {ObjectEntry(&data.x100C, 3, 6, 2)};
                 ObjectEntry x100D[1] = {ObjectEntry(&data.x100D, 3, 5, 1)};
@@ -163,6 +165,7 @@ namespace CANopen
             Object x1006 = Object(4102, 1, 7, entries.x1006);
             Object x1007 = Object(4103, 1, 7, entries.x1007);
             Object x1008 = Object(4104, 1, 7, entries.x1008);
+            Object x1009 = Object(4105, 1, 7, entries.x1009);
             Object x100A = Object(4106, 1, 7, entries.x100A);
             Object x100C = Object(4108, 1, 7, entries.x100C);
             Object x100D = Object(4109, 1, 7, entries.x100D);
@@ -214,7 +217,7 @@ namespace CANopen
             Object x60FE = Object(24830, 2, 8, entries.x60FE);
         } objects;
         const unsigned length = OD_OBJECTS_COUNT;
-        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.x2, &objects.x3, &objects.x4, &objects.x5, &objects.x6, &objects.x7, &objects.x1000, &objects.x1001, &objects.x1003, &objects.x1005, &objects.x1006, &objects.x1007, &objects.x1008, &objects.x100A, &objects.x100C, &objects.x100D, &objects.x1010, &objects.x1011, &objects.x1014, &objects.x1016, &objects.x1017, &objects.x1018, &objects.x1019, &objects.x1020, &objects.x1029, &objects.x1400, &objects.x1401, &objects.x1402, &objects.x1403, &objects.x1600, &objects.x1601, &objects.x1602, &objects.x1603, &objects.x1800, &objects.x1801, &objects.x1802, &objects.x1803, &objects.x1A00, &objects.x1A01, &objects.x1A02, &objects.x1A03, &objects.x1F51, &objects.x1F57, &objects.x1F80, &objects.x6007, &objects.x603F, &objects.x6040, &objects.x6041, &objects.x6042, &objects.x6043, &objects.x6044, &objects.x6046, &objects.x6048, &objects.x6049, &objects.x604A, &objects.x6060, &objects.x6061, &objects.x6064, &objects.x607A, &objects.x6081, &objects.x60FD, &objects.x60FE};
+        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.x2, &objects.x3, &objects.x4, &objects.x5, &objects.x6, &objects.x7, &objects.x1000, &objects.x1001, &objects.x1003, &objects.x1005, &objects.x1006, &objects.x1007, &objects.x1008, &objects.x1009, &objects.x100A, &objects.x100C, &objects.x100D, &objects.x1010, &objects.x1011, &objects.x1014, &objects.x1016, &objects.x1017, &objects.x1018, &objects.x1019, &objects.x1020, &objects.x1029, &objects.x1400, &objects.x1401, &objects.x1402, &objects.x1403, &objects.x1600, &objects.x1601, &objects.x1602, &objects.x1603, &objects.x1800, &objects.x1801, &objects.x1802, &objects.x1803, &objects.x1A00, &objects.x1A01, &objects.x1A02, &objects.x1A03, &objects.x1F51, &objects.x1F57, &objects.x1F80, &objects.x6007, &objects.x603F, &objects.x6040, &objects.x6041, &objects.x6042, &objects.x6043, &objects.x6044, &objects.x6046, &objects.x6048, &objects.x6049, &objects.x604A, &objects.x6060, &objects.x6061, &objects.x6064, &objects.x607A, &objects.x6081, &objects.x60FD, &objects.x60FE};
     public:
         Object *findObject(uint16_t index);
         void saveData();
