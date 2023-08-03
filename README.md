@@ -5,6 +5,7 @@ CANopen slave library
 ### PDO
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - RPDO
+- mappable objects/entries
 
 ### SDO
 - SDO block transfer
@@ -29,6 +30,7 @@ CANopen slave library
 
 ## Tasks (OD generator)
 - CLI
+- make sure objects are ordered (sort by index)
 - perform strict parsing for mandatory or standard entries (like PDO)
     1. 0x1400 to 0x15FF: RPDO communication parameter
     2. 0x1600 to 0x17FF: RPDO mapping parameter
