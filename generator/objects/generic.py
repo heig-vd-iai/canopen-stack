@@ -1,15 +1,5 @@
 from abc import ABC, abstractmethod
-
-
-
-class ObjectEntry:
-    def __init__(self, accessType: int, dataType: int, ctype: str, parameterName: str, defaultValue) -> None:
-        self.accessType = accessType
-        self.dataType = dataType
-        self.ctype = ctype
-        self.parameterName = parameterName
-        self.defaultValue = 0 if defaultValue is None else defaultValue
-
+from .entries import ObjectEntry
 
 class ObjectBase(ABC):
     def __init__(self, index: int, subNumber: int, objectType: int, cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
@@ -21,7 +11,7 @@ class ObjectBase(ABC):
         self.varName = "x%X" % self.index
 
     def renderObject(self) -> str:
-        return f"{self.cppObjectName} object_{self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.entries_{self.varName})"
+        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.{self.varName})"
     
     @abstractmethod
     def renderData(self) -> list[str]:
@@ -36,17 +26,17 @@ class ObjectBase(ABC):
         return True
 
 
-class VarObject(ObjectBase, ObjectEntry):
-    def __init__(self, index: int, accessType: int, dataType: int, ctype: str, parameterName: str, defaultValue) -> None:
-        ObjectBase.__init__(self, index, 1, 0x07)
-        ObjectEntry.__init__(self, accessType, dataType, ctype, parameterName, defaultValue)
+class VarObject(ObjectBase):
+    def __init__(self, index: int, entry: ObjectEntry) -> None:
+        super().__init__(index, 1, 0x07)
+        self.entry = entry
+        self.entries = [self.entry]
 
     def renderData(self) -> list[str]:
-        return [f"{self.ctype} {self.varName} = {self.defaultValue}"]
+        return [self.entry.renderData(self.varName)]
     
     def renderEntry(self) -> str:
-        init = f"{self.cppEntryName}(&data.{self.varName}, {self.accessType}, {self.dataType}, sizeof(data.{self.varName}))"
-        return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+        return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{self.entry.renderEntry(self.cppEntryName, self.varName)}}}"
     
     def verify(self, objects: dict) -> bool:
         return True
@@ -59,15 +49,15 @@ class ArrayObject(ObjectBase):
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:
-        sub = f"uint8_t {self.sub0Name} = {self.entries[0].defaultValue}"
-        init = ", ".join([str(entry.defaultValue) for entry in self.entries])
-        arr = f"{self.entries[1].ctype} {self.varName}[{self.subNumber}] = {{{init}}}"
+        sub = self.entries[0].renderData(self.sub0Name)
+        init = ", ".join([str(entry.defaultValue) for entry in self.entries[1:]])
+        arr = f"{self.entries[1].ctype} {self.varName}[{self.subNumber - 1}] = {{{init}}}"
         return [sub, arr]
     
     def renderEntry(self) -> str:
-        sub = f"{self.cppEntryName}(&data.{self.sub0Name}, {self.entries[0].accessType}, {self.entries[0].dataType}, sizeof(data.{self.sub0Name}))"
-        init = ", ".join([sub, *[f"{self.cppEntryName}(&data.{self.varName}[{i}], {entry.accessType}, {entry.dataType}, sizeof(data.{self.varName}[{i}]))" for i, entry in enumerate(self.entries[1:])]])
-        return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+        sub = self.entries[0].renderEntry(self.cppEntryName, self.sub0Name)
+        init = ", ".join([sub, *[entry.renderEntry(self.cppEntryName, f"{self.varName}[{i}]") for i, entry in enumerate(self.entries[1:])]])
+        return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
     
     def verify(self, objects: dict) -> bool:
         retval = True
@@ -84,12 +74,12 @@ class RecordObject(ObjectBase):
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:
-        fields = "; ".join([f"{entry.ctype} sub{i} = {entry.defaultValue}" for i, entry in enumerate(self.entries)]) + ";"
+        fields = "; ".join([entry.renderData(f"sub{i}") for i, entry in enumerate(self.entries)]) + ";"
         return [f"struct {{{fields}}} {self.varName}"]
     
     def renderEntry(self) -> str:
-        init = ", ".join([f"{self.cppEntryName}(&data.{self.varName}.sub{i}, {entry.accessType}, {entry.dataType}, sizeof(data.{self.varName}.sub{i}))" for i, entry in enumerate(self.entries)])
-        return f"{self.cppEntryName} entries_{self.varName}[{self.subNumber}] = {{{init}}}"
+        init = ", ".join([entry.renderEntry(self.cppEntryName, f"{self.varName}.sub{i}") for i, entry in enumerate(self.entries)])
+        return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
     
     def verify(self, objects: dict) -> bool:
         return True

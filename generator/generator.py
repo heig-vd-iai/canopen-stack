@@ -1,132 +1,81 @@
-from objects.generic import VarObject, ArrayObject, RecordObject, ObjectEntry
+from objects.generic import VarObject, ArrayObject, RecordObject
+from canopen.objectdictionary import Variable, Array, Record
 from objects.x1800 import TPDOCommunicationObject
 from objects.x1A00 import TPDOMappingObject
-from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
+import objects.entries as ntry
 from typing import Union
-import datatypes as dt
 import jinja2
 
 
-EDS_FILENAME = "example.eds"
+
 TEMPLATES_DIR = "templates"
 HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
+NODEID = 4                      # TODO get from cli
+EDS_FILENAME = "example.eds"    # TODO get from cli
 
-datatype2class = {
-    0x01: dt.BooleanType,
-    0x02: dt.Integer8Type,
-    0x03: dt.Integer16Type,
-    0x04: dt.Integer32Type,
-    0x05: dt.Unsigned16Type,
-    0x06: dt.Unsigned32Type,
-    0x07: dt.Unsigned32Type,
-    0x08: dt.Real32Type,
-    0x10: dt.Integer32Type,
-    0x11: dt.Real64Type,
-    0x12: dt.Integer64Type,
-    0x13: dt.Integer64Type,
-    0x14: dt.Integer64Type,
-    0x15: dt.Integer64Type,
-    0x16: dt.Unsigned32Type,
-    0x18: dt.Unsigned64Type,
-    0x19: dt.Unsigned64Type,
-    0x1A: dt.Unsigned64Type,
-    0x1B: dt.Unsigned64Type
+datatype2entryclass = {
+    0x01: ntry.BooleanEntry,
+    0x02: ntry.Integer8Entry,
+    0x03: ntry.Integer16Entry,
+    0x04: ntry.Integer32Entry,
+    0x05: ntry.Unsigned8Entry,
+    0x06: ntry.Unsigned16Entry,
+    0x07: ntry.Unsigned32Entry,
+    0x08: ntry.Real32Entry,
+    0x09: ntry.VisibleStringEntry,
+    0x0A: ntry.OctetStringEntry,
+    0x10: ntry.Integer32Entry,
+    0x11: ntry.Real64Entry,
+    0x12: ntry.Integer64Entry,
+    0x13: ntry.Integer64Entry,
+    0x14: ntry.Integer64Entry,
+    0x15: ntry.Integer64Entry,
+    0x16: ntry.Unsigned32Entry,
+    0x18: ntry.Unsigned64Entry,
+    0x19: ntry.Unsigned64Entry,
+    0x1A: ntry.Unsigned64Entry,
+    0x1B: ntry.Unsigned64Entry
 }
-
-datatype2ctype = {
-    0x01: "bool",
-    0x02: "int8_t",
-    0x03: "int16_t",
-    0x04: "int32_t",
-    0x05: "uint8_t",
-    0x06: "uint16_t",
-    0x07: "uint32_t",
-    0x08: "float",
-    # 0x09: None,     # "VISIBLE_STRING",
-    # 0x0A: None,     # "OCTET_STRING",
-    # 0x0B: None,     # "UNICODE_STRING",
-    # 0x0C: None,     # "TIME_OF_DAY",
-    # 0x0D: None,     # "TIME_DIFFERENCE",
-    # 0x0F: None,     # "DOMAIN"
-    0x10: "int32_t",
-    0x11: "double",
-    0x12: "int64_t",
-    0x13: "int64_t",
-    0x14: "int64_t",
-    0x15: "int64_t",
-    0x16: "uint32_t",
-    0x18: "uint64_t",
-    0x19: "uint64_t",
-    0x1A: "uint64_t",
-    0x1B: "uint64_t"
-}
-
-datatype2size = {
-    0x01: 1,
-    0x02: 1,
-    0x03: 2,
-    0x04: 4,
-    0x05: 1,
-    0x06: 2,
-    0x07: 4,
-    0x08: 4,
-    # 0x09: None,     # "VISIBLE_STRING",
-    # 0x0A: None,     # "OCTET_STRING",
-    # 0x0B: None,     # "UNICODE_STRING",
-    # 0x0C: None,     # "TIME_OF_DAY",
-    # 0x0D: None,     # "TIME_DIFFERENCE",
-    # 0x0F: None,     # "DOMAIN"
-    0x10: 4,
-    0x11: 8,
-    0x12: 8,
-    0x13: 8,
-    0x14: 8,
-    0x15: 8,
-    0x16: 4,
-    0x18: 8,
-    0x19: 8,
-    0x1A: 8,
-    0x1B: 8
-}
-
-def getAccessType(value: str) -> int:
-    value = value.lower()
-    read_bit = 1 << 0
-    write_bit = 1 << 1
-    const_bit = 1 << 2
-    if value in ["rw", "rww", "rwr"]: return write_bit | read_bit
-    if value == "wo": return write_bit
-    if value == "ro": return read_bit
-    if value == "const": return const_bit | read_bit
-    raise Exception(f"Access type not supported: '{value}'")
 
 def toCANopenObject(object: Union[Variable, Array, Record]):
     if isinstance(object, Variable):
-        return VarObject(object.index, getAccessType(object.access_type), object.data_type, datatype2ctype[object.data_type], object.name, object.default)
+        return VarObject(object.index, datatype2entryclass[object.data_type](object.access_type, object.default))
     if isinstance(object, Array):
-        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
-        return ArrayObject(object.index, objs)
+        entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
+        return ArrayObject(object.index, entries)
     if isinstance(object, Record):
-        objs = [ObjectEntry(getAccessType(obj.access_type), obj.data_type, datatype2ctype[obj.data_type], obj.name, obj.default) for obj in object.values()]
-        if 0x1800 <= object.index <= 0x19FF: return TPDOCommunicationObject(object.index, objs)
-        elif 0x1A00 <= object.index <= 0x1BFF: return TPDOMappingObject(object.index, objs)
-        else: return RecordObject(object.index, objs)
+        entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
+        if 0x1800 <= object.index <= 0x19FF: return TPDOCommunicationObject(object.index, entries)
+        elif 0x1A00 <= object.index <= 0x1BFF: return TPDOMappingObject(object.index, entries)
+        else: return RecordObject(object.index, entries)
 
-def dataTypeFilter(object: Union[Variable, Array, Record]) -> bool:
+def preFilter(object: Union[Variable, Array, Record]) -> bool:
     retval = True
     entries = [object] if isinstance(object, Variable) else list(object.subindices.values())
     for i, var in enumerate(entries):
-        if var.data_type not in datatype2ctype:
+        if var.data_type not in datatype2entryclass:
             print(f"[Warning] Entry x{'%X' % object.index}: unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
+            retval = False
+    return retval
+
+def postFilter(object: Union[VarObject, ArrayObject, RecordObject]) -> bool:
+    retval = True
+    for i, var in enumerate(object.entries):
+        if var.accessType == 0:
+            print(f"[Warning] Entry x{'%X' % object.index}: unknown access type '{var.accessTypeStr}' for sub {i}")
+            retval = False
+        if var.size <= 0:
+            print(f"[Warning] Entry x{'%X' % object.index}: invalid size '{var.size}' for sub {i}")
             retval = False
     return retval
 
 
 
-od: ObjectDictionary = Node(4, EDS_FILENAME).object_dictionary
-objectsDict = dict([(object.index, toCANopenObject(object)) for object in od.values() if dataTypeFilter(object)])
+od: ObjectDictionary = Node(NODEID, EDS_FILENAME).object_dictionary
+objectsDict = {index: toCANopenObject(object) for (index, object) in od.items() if preFilter(object)}
+objectsDict = {index: object for (index, object) in objectsDict.items() if postFilter(object)}
 objectsValues = list(objectsDict.values())
 if(any([not object.verify(objectsDict) for object in objectsValues])): exit(1)
 defines = [

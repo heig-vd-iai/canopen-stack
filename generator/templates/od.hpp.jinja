@@ -31,7 +31,7 @@ namespace {{namespace}}
             {% endfor %}
         } objects;
         const unsigned length = OD_OBJECTS_COUNT;
-        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.object_{{objectNames|join(', &objects.object_')}}};
+        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
     public:
         Object *findObject(uint16_t index);
         void saveData();
