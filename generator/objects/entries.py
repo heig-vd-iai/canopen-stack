@@ -69,26 +69,8 @@ class Real64Entry(ObjectEntry):
 
 class VisibleStringEntry(ObjectEntry):
     def __init__(self, accessType: str, defaultValue: str) -> None:
-        default = "" if defaultValue is None else str(defaultValue)
+        default = "".encode() if defaultValue is None else str(defaultValue).encode()
         super().__init__(0x09, "uint8_t", len(default), accessType, "", default)
 
     def renderData(self, name: str) -> str:
-        init = [f"'{c}'" for c in self.defaultValue]
-        return f"{self.ctype} {name}[{self.size}] = {{{', '.join(init)}}}"
-    
-class OctetStringEntry(ObjectEntry):
-    def __init__(self, accessType: str, defaultValue: str) -> None:
-        default = "" if defaultValue is None else str(defaultValue)
-        super().__init__(0x0A, "uint8_t", len(default), accessType, "", default)
-
-    def renderData(self, name: str) -> str:
-        init = [f"'{c}'" for c in self.defaultValue]
-        return f"{self.ctype} {name}[{self.size}] = {{{', '.join(init)}}}"
-
-
-
-# TODO
-# class UnicodeStringEntry(ObjectEntry):
-#     def __init__(self, accessType: str, defaultValue: str) -> None:
-#         default = "" if defaultValue is None else str(defaultValue)
-#         super().__init__(0x0B, "uint16_t[]", len(default), accessType, "", default)
+        return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.defaultValue])}}}"
