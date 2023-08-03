@@ -30,7 +30,7 @@ namespace {{namespace}}
             {{object.renderObject()}};
             {% endfor %}
         } objects;
-        const unsigned length = OD_OBJECTS_COUNT;
+        const uint16_t length = OD_OBJECTS_COUNT;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
     public:
         Object *findObject(uint16_t index);
