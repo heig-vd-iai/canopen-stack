@@ -207,7 +207,7 @@ ObjFlags=1
 ParameterName=1st Standard error field
 ObjectType=0x7
 DataType=0x0007
-AccessType=ro
+AccessType=rw
 PDOMapping=0
 ObjFlags=1
 
