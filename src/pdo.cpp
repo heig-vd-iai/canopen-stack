@@ -12,6 +12,7 @@ PDO::TPDO::TPDO() : mappedEntries(NULL) {}
 
 PDO::PDO(Node &node) : node(node)
 {
+    syncWindowObject = node.findObject(SYNC_WINDOW_LENGTH_INDEX);
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
         initTPDO(i);
 }
@@ -81,6 +82,14 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     tpdo->timestamp_us = timestamp_us;
 }
 
+uint32_t PDO::getSyncWindow_us()
+{
+    uint32_t value = 0;
+    if (syncWindowObject != NULL)
+        syncWindowObject->getValue(0, &value);
+    return value;
+}
+
 void PDO::enable() { enabled = true; }
 
 void PDO::disable() { enabled = false; }
@@ -127,20 +136,16 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
         TPDO *tpdo = tpdos + i;
+        if (!tpdo->commObject->isSynchronous())
+            continue;
         uint8_t transmission = tpdo->commObject->getTransmissionType();
-        if (transmission == 0) // synchronous acyclic
+        // synchronous acyclic || synchronous cyclic || RTR synchronous
+        bool send = transmission == 0 || (transmission <= X1800_SYNC_MAX && (counter && !(counter % transmission))) || (transmission == X1800_RTR_SYNC && tpdo->syncFlag);
+        if (send)
         {
-            sendTPDO(i, timestamp_us);
-        }
-        else if (transmission <= X1800_SYNC_MAX) // synchronous cyclic
-        {
-            if (counter && !(counter % transmission))
-            {
-                sendTPDO(i, timestamp_us);
-            }
-        }
-        else if (transmission == X1800_RTR_SYNC && tpdo->syncFlag) // RTR synchronous
-        {
+            uint32_t syncWindow = getSyncWindow_us();
+            if (syncWindow != 0 && node.getTime_us() - timestamp_us > syncWindow)
+                break;
             sendTPDO(i, timestamp_us);
         }
     }

@@ -36,5 +36,6 @@ namespace CANopen
         bool isEnabled();
         bool isInhibitSupported();
         bool isTimerSupported();
+        bool isSynchronous();
     };
 }

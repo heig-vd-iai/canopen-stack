@@ -75,3 +75,9 @@ bool Object1800::isEnabled() { return ~getCobId() & 0x80000000; }
 bool Object1800::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
 
 bool Object1800::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
+
+bool Object1800::isSynchronous()
+{
+    uint8_t t = getTransmissionType();
+    return t <= X1800_SYNC_MAX || t == X1800_RTR_SYNC;
+}
