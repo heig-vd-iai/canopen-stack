@@ -50,3 +50,5 @@ CANopen slave library
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
 - TIME_OF_DAY and TIME_DIFFERENCE are alisases to UNSIGNED64
 - DOMAIN is not supported
+- Object 1005 is ignored
+- Object 1006 is ignored
