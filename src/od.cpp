@@ -49,11 +49,17 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size
     if (size != entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     SDOAbortCodes code = preWriteBytes(subindex, bytes, size, node);
-    if (code != SDOAbortCode_OK)
+    switch (code)
+    {
+    case SDOAbortCode_OK:
+        memcpy((void *)entry.dataSrc, bytes, size);
+        postWriteBytes(subindex, bytes, size, node);
+        return SDOAbortCode_OK;
+    case SDOAbortCode_CancelWrite:
+        return SDOAbortCode_OK;
+    default:
         return code;
-    memcpy((void *)entry.dataSrc, bytes, size);
-    postWriteBytes(subindex, bytes, size, node);
-    return SDOAbortCode_OK;
+    }
 }
 
 SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)

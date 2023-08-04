@@ -84,6 +84,7 @@ namespace CANopen
     enum SDOAbortCodes
     { /* See p. 61 */
       SDOAbortCode_OK = 0,
+      SDOAbortCode_CancelWrite = 1,
       SDOAbortCode_ToggleBitNotAlternated = 0x05030000,
       SDOAbortCode_TimedOut = 0x05040000,
       SDOAbortCode_CommandSpecifierInvalid = 0x05040001,
