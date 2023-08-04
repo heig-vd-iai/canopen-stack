@@ -9,11 +9,13 @@ namespace CANopen
     private:
         SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset) override;
         SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
-        void clearErrors();
         void shiftErrors();
+        void incrCount();
 
     public:
         Object1003(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
         uint8_t getCount();
+        void pushError(uint32_t value);
+        void clearErrors();
     };
 }

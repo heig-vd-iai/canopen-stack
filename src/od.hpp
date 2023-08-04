@@ -96,7 +96,7 @@ namespace CANopen
                 ObjectEntry x7[1] = {ObjectEntry(&data.x7, 5, 7, 4)};
                 ObjectEntry x1000[1] = {ObjectEntry(&data.x1000, 1, 7, 4)};
                 ObjectEntry x1001[1] = {ObjectEntry(&data.x1001, 1, 5, 1)};
-                ObjectEntry x1003[9] = {ObjectEntry(&data.x1003sub0, 3, 5, 1), ObjectEntry(&data.x1003[0], 1, 7, 4), ObjectEntry(&data.x1003[1], 1, 7, 4), ObjectEntry(&data.x1003[2], 1, 7, 4), ObjectEntry(&data.x1003[3], 1, 7, 4), ObjectEntry(&data.x1003[4], 1, 7, 4), ObjectEntry(&data.x1003[5], 1, 7, 4), ObjectEntry(&data.x1003[6], 1, 7, 4), ObjectEntry(&data.x1003[7], 1, 7, 4)};
+                ObjectEntry x1003[9] = {ObjectEntry(&data.x1003sub0, 3, 5, 1), ObjectEntry(&data.x1003[0], 3, 7, 4), ObjectEntry(&data.x1003[1], 1, 7, 4), ObjectEntry(&data.x1003[2], 1, 7, 4), ObjectEntry(&data.x1003[3], 1, 7, 4), ObjectEntry(&data.x1003[4], 1, 7, 4), ObjectEntry(&data.x1003[5], 1, 7, 4), ObjectEntry(&data.x1003[6], 1, 7, 4), ObjectEntry(&data.x1003[7], 1, 7, 4)};
                 ObjectEntry x1005[1] = {ObjectEntry(&data.x1005, 3, 7, 4)};
                 ObjectEntry x1006[1] = {ObjectEntry(&data.x1006, 3, 7, 4)};
                 ObjectEntry x1007[1] = {ObjectEntry(&data.x1007, 3, 7, 4)};
