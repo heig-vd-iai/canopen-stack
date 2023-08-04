@@ -3,17 +3,6 @@
 #include <cstring>
 using namespace CANopen;
 
-uint8_t Object1800::getCount() { return *(uint8_t *)entries[X1800_INDEX_COUNT].dataSrc; }
-uint32_t Object1800::getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID].dataSrc; }
-uint8_t Object1800::getTransmissionType() { return *(uint8_t *)entries[X1800_INDEX_TRANSMISSION].dataSrc; }
-uint16_t Object1800::getInhibitTime() { return *(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc; }
-uint32_t Object1800::getInhibitTime_us() { return (uint32_t)getInhibitTime() * 100; }
-uint16_t Object1800::getEventTimer() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
-uint8_t Object1800::getSyncStart() { return *(uint8_t *)entries[X1800_INDEX_SYNC].dataSrc; }
-bool Object1800::isEnabled() { return ~getCobId() & 0x80000000; }
-bool Object1800::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
-bool Object1800::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
-
 SDOAbortCodes Object1800::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     bool enabled = isEnabled();
@@ -66,3 +55,23 @@ void Object1800::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
         remap = false;
     }
 }
+
+uint8_t Object1800::getCount() { return *(uint8_t *)entries[X1800_INDEX_COUNT].dataSrc; }
+
+uint32_t Object1800::getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID].dataSrc; }
+
+uint8_t Object1800::getTransmissionType() { return *(uint8_t *)entries[X1800_INDEX_TRANSMISSION].dataSrc; }
+
+uint16_t Object1800::getInhibitTime() { return *(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc; }
+
+uint32_t Object1800::getInhibitTime_us() { return (uint32_t)getInhibitTime() * 100; }
+
+uint16_t Object1800::getEventTimer() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
+
+uint8_t Object1800::getSyncStart() { return *(uint8_t *)entries[X1800_INDEX_SYNC].dataSrc; }
+
+bool Object1800::isEnabled() { return ~getCobId() & 0x80000000; }
+
+bool Object1800::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
+
+bool Object1800::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
