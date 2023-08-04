@@ -31,7 +31,7 @@ namespace CANopen
         uint8_t getSize(uint8_t subindex);
         AccessType getAccessType(uint8_t subindex);
         // Methods called mainly by SDO
-        SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
+        virtual SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
         virtual SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
         // Methods called mainly by application
         bool getValue(uint8_t subindex, uint8_t *value);

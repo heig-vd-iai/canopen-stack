@@ -11,9 +11,8 @@ namespace CANopen
     {
     public:
         TPDOMappingObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
-
         uint8_t getCount();
         uint32_t getMappedValue(uint8_t index);
-        SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
+        SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
     };
 }
