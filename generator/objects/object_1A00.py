@@ -2,7 +2,7 @@ from .generic import ObjectEntry, RecordObject
 
 class Object1A00(RecordObject):
     def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
-        super().__init__(index, entries, "TPDOMappingObject")
+        super().__init__(index, entries, "Object1A00")
 
     def verify(self, objects: dict) -> bool:
         retval = True
