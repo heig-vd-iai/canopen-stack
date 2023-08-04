@@ -1,16 +1,23 @@
 #include "node.hpp"
 #include "enums.hpp"
 #include "unions.hpp"
-#include <cstdio>
 #include <cstring>
 using namespace CANopen;
 
 Object *ObjectDictionnary::findObject(uint16_t index)
 {
-    for (unsigned i = 0; i < length; i++)
-        if (objectsArray[i]->index == index)
-            return objectsArray[i];
-    printf("[OD] entry 0x%04X not found\n", index);
+    int32_t lower = 0;
+    int32_t upper = length - 1;
+    while (lower <= upper)
+    {
+        int32_t mid = lower + (upper - lower) / 2;
+        if (objectsArray[mid]->index == index)
+            return objectsArray[mid];
+        else if (objectsArray[mid]->index < index)
+            lower = mid + 1;
+        else
+            upper = mid - 1;
+    }
     return NULL;
 }
 
