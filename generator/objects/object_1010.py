@@ -5,4 +5,4 @@ class Object1010(ArrayObject):
         super().__init__(index, entries, "Object1010")
 
     def verify(self, objects: dict) -> bool:
-        return True
+        return super().verify(objects)

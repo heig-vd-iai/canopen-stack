@@ -5,7 +5,7 @@ class Object1003(ArrayObject):
         super().__init__(index, entries, "Object1003")
 
     def verify(self, objects: dict) -> bool:
-        retval = True
+        retval = super().verify(objects)
         if self.subNumber < 2:
             print(f"[Error] Entry {self.varName}: at least 2 entries are required")
             retval = False
