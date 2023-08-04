@@ -6,6 +6,9 @@ class Object1003(ArrayObject):
 
     def verify(self, objects: dict) -> bool:
         retval = True
+        if self.subNumber < 2:
+            print(f"[Error] Entry {self.varName}: at least 2 entries are required")
+            retval = False
         for i, entry in enumerate(self.entries[2:]):
             if entry.accessTypeStr not in ["ro", "const"]:
                 print(f"[Error] Entry {self.varName}: access type of sub {i + 2} is not 'ro' ({entry.accessTypeStr})")
