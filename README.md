@@ -20,7 +20,6 @@ CANopen slave library
 
 ### Other
 - node.cpp: make sure function code is supported (filters)
-- quick search algorithm for OD entries
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
 - create predefined frames inheriting from base Frame ?
