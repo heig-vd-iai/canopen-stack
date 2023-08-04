@@ -58,15 +58,19 @@ void Node::reloadTPDO()
     pdo.reload();
 }
 
-void Node::saveOD()
+bool Node::saveOD(uint8_t parameterGroup)
 {
-    od.saveData();
+    return od.saveData(parameterGroup);
 }
 
-void Node::loadOD()
+bool Node::loadOD(uint8_t parameterGroup)
 {
-    od.loadData();
-    pdo.reload();
+    if (od.loadData(parameterGroup))
+    {
+        pdo.reload();
+        return true;
+    }
+    return false;
 }
 
 Object *Node::findObject(uint16_t index)

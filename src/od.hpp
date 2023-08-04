@@ -169,7 +169,7 @@ namespace CANopen
             Object x100A = Object(4106, 1, 7, entries.x100A);
             Object x100C = Object(4108, 1, 7, entries.x100C);
             Object x100D = Object(4109, 1, 7, entries.x100D);
-            Object x1010 = Object(4112, 14, 8, entries.x1010);
+            Object1010 x1010 = Object1010(4112, 14, 8, entries.x1010);
             Object x1011 = Object(4113, 14, 8, entries.x1011);
             Object x1014 = Object(4116, 1, 7, entries.x1014);
             Object x1016 = Object(4118, 2, 8, entries.x1016);
@@ -220,7 +220,7 @@ namespace CANopen
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.x2, &objects.x3, &objects.x4, &objects.x5, &objects.x6, &objects.x7, &objects.x1000, &objects.x1001, &objects.x1003, &objects.x1005, &objects.x1006, &objects.x1007, &objects.x1008, &objects.x1009, &objects.x100A, &objects.x100C, &objects.x100D, &objects.x1010, &objects.x1011, &objects.x1014, &objects.x1016, &objects.x1017, &objects.x1018, &objects.x1019, &objects.x1020, &objects.x1029, &objects.x1400, &objects.x1401, &objects.x1402, &objects.x1403, &objects.x1600, &objects.x1601, &objects.x1602, &objects.x1603, &objects.x1800, &objects.x1801, &objects.x1802, &objects.x1803, &objects.x1A00, &objects.x1A01, &objects.x1A02, &objects.x1A03, &objects.x1F51, &objects.x1F57, &objects.x1F80, &objects.x6007, &objects.x603F, &objects.x6040, &objects.x6041, &objects.x6042, &objects.x6043, &objects.x6044, &objects.x6046, &objects.x6048, &objects.x6049, &objects.x604A, &objects.x6060, &objects.x6061, &objects.x6064, &objects.x607A, &objects.x6081, &objects.x60FD, &objects.x60FE};
     public:
         Object *findObject(uint16_t index);
-        void saveData();
-        void loadData();
+        bool saveData(uint8_t parameterGroup);
+        bool loadData(uint8_t parameterGroup);
     };
 }

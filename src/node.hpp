@@ -42,8 +42,8 @@ namespace CANopen
         void transmitPDO(unsigned index);
         void reloadTPDO();
         void update();
-        void saveOD();
-        void loadOD();
+        bool saveOD(uint8_t parameterGroup = 0);
+        bool loadOD(uint8_t parameterGroup = 0);
         Object *findObject(uint16_t index);
         void setNmtTransition(NMTServiceCommands command);
         NMTStates getNmtState();

@@ -114,22 +114,24 @@ void Node::sendFrame(Frame frame)
     }
 }
 
-void ObjectDictionnary::saveData()
+bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 {
     std::ofstream f("file.dat", std::ios::out | std::ios::binary);
     if (!f)
-        return;
+        return false;
     f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
+    return true;
 }
 
-void ObjectDictionnary::loadData()
+bool ObjectDictionnary::loadData(uint8_t parameterGroup)
 {
     std::ifstream f("file.dat", std::ios::in | std::ios::binary);
     if (!f)
-        return;
+        return false;
     f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
+    return true;
 }
 
 uint32_t Node::getTime_us()

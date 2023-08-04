@@ -34,7 +34,7 @@ namespace {{namespace}}
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
     public:
         Object *findObject(uint16_t index);
-        void saveData();
-        void loadData();
+        bool saveData(uint8_t parameterGroup);
+        bool loadData(uint8_t parameterGroup);
     };
 }
