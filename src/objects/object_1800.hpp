@@ -18,6 +18,12 @@ namespace CANopen
 {
     class TPDOCommunicationObject : public Object
     {
+    private:
+        bool remap = false;
+
+        SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
+        void postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
+
     public:
         TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
         uint8_t getCount();
@@ -30,6 +36,5 @@ namespace CANopen
         bool isEnabled();
         bool isInhibitSupported();
         bool isTimerSupported();
-        SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
     };
 }

@@ -20,6 +20,11 @@ namespace CANopen
     protected:
         const ObjectEntry *entries;
 
+        virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
+        virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
+        virtual SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
+        virtual void postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
+
     public:
         const uint16_t index;
         const uint8_t subNumber;
@@ -31,8 +36,8 @@ namespace CANopen
         uint8_t getSize(uint8_t subindex);
         AccessType getAccessType(uint8_t subindex);
         // Methods called mainly by SDO
-        virtual SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
-        virtual SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
+        SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
+        SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
         // Methods called mainly by application
         bool getValue(uint8_t subindex, uint8_t *value);
         bool setValue(uint8_t subindex, uint8_t value);

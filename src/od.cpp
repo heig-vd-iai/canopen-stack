@@ -21,6 +21,24 @@ Object *ObjectDictionnary::findObject(uint16_t index)
     return NULL;
 }
 
+SDOAbortCodes Object::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+{
+    return SDOAbortCode_OK;
+}
+
+void Object::postReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+{
+}
+
+SDOAbortCodes Object::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node)
+{
+    return SDOAbortCode_OK;
+}
+
+void Object::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node)
+{
+}
+
 SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     if (!isSubValid(subindex))
@@ -30,7 +48,11 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size
         return SDOAbortCode_AttemptWriteOnReadOnly;
     if (size != entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
+    SDOAbortCodes code = preWriteBytes(subindex, bytes, size, node);
+    if (code != SDOAbortCode_OK)
+        return code;
     memcpy((void *)entry.dataSrc, bytes, size);
+    postWriteBytes(subindex, bytes, size, node);
     return SDOAbortCode_OK;
 }
 
@@ -43,7 +65,11 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
         return SDOAbortCode_AttemptReadOnWriteOnly;
     if (size + offset > entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
+    SDOAbortCodes code = preReadBytes(subindex, bytes, size, offset);
+    if (code != SDOAbortCode_OK)
+        return code;
     memcpy(bytes, (uint8_t *)entry.dataSrc + offset, size);
+    postReadBytes(subindex, bytes, size, offset);
     return SDOAbortCode_OK;
 }
 

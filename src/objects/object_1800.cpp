@@ -14,17 +14,9 @@ bool TPDOCommunicationObject::isEnabled() { return ~getCobId() & 0x80000000; }
 bool TPDOCommunicationObject::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
 bool TPDOCommunicationObject::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
 
-SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes TPDOCommunicationObject::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
-    if (!isSubValid(subindex))
-        return SDOAbortCode_SubindexNonExistent;
-    ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.w)
-        return SDOAbortCode_AttemptWriteOnReadOnly;
-    if (size != entry.size)
-        return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     bool enabled = isEnabled();
-    bool remap = false;
     switch (subindex)
     {
     case X1800_INDEX_COBID: // TPDO COB-ID
@@ -63,8 +55,14 @@ SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *byt
         break;
     }
     }
-    memcpy((void *)entry.dataSrc, bytes, size);
-    if (remap)
-        node.reloadTPDO();
     return SDOAbortCode_OK;
+}
+
+void TPDOCommunicationObject::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+{
+    if (remap)
+    {
+        node.reloadTPDO();
+        remap = false;
+    }
 }

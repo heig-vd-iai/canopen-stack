@@ -1,6 +1,5 @@
 #include "object_1A00.hpp"
 #include "../node.hpp"
-#include <cstring>
 #include <cstdio>
 using namespace CANopen;
 
@@ -8,15 +7,8 @@ uint8_t TPDOMappingObject::getCount() { return *(uint8_t *)entries[X1A00_INDEX_C
 
 uint32_t TPDOMappingObject::getMappedValue(uint8_t index) { return *(uint32_t *)entries[index + 1].dataSrc; }
 
-SDOAbortCodes TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes TPDOMappingObject::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
-    if (!isSubValid(subindex))
-        return SDOAbortCode_SubindexNonExistent;
-    ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.w)
-        return SDOAbortCode_AttemptWriteOnReadOnly;
-    if (size != entry.size)
-        return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     if (subindex == X1A00_INDEX_COUNT)
     {
         uint8_t value = bytes[0];
@@ -43,6 +35,5 @@ SDOAbortCodes TPDOMappingObject::writeBytes(uint8_t subindex, uint8_t *bytes, un
         if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8)
             return SDOAbortCode_CannotMapToPDO;
     }
-    memcpy((void *)entry.dataSrc, bytes, size);
     return SDOAbortCode_OK;
 }
