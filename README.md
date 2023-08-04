@@ -19,6 +19,7 @@ CANopen slave library
 - 
 
 ### Other
+- remove #include <cstdio> <cstdlib>
 - node.cpp: make sure function code is supported (filters)
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
