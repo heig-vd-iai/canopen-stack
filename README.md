@@ -36,6 +36,7 @@ CANopen slave library
     2. 0x1600 to 0x17FF: RPDO mapping parameter
     3. 0x1800 to 0x19FF: TPDO communication parameter
     3. 0x1A00 to 0x1BFF: TPDO mapping parameter
+    4. 0x1003: Pre-defined error fields, make sure correct access
 - PDO mapping: always allocate 8 entries?
 - PDO mapping: enforce correct size
 - PDO: enforce PDOs 1 to 4 (standard) ?
