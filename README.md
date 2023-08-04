@@ -19,6 +19,7 @@ CANopen slave library
 - 
 
 ### Other
+- save and load, objects 1010 and 1011
 - remove #include <cstdio> <cstdlib>
 - node.cpp: make sure function code is supported (filters)
 - implement all predefined objects
@@ -47,6 +48,7 @@ CANopen slave library
 - PDO mapping: I'll do it for bytes, not bits (who maps bits in PDO anyways??)
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
+- Node guarding is not supported, heartbeat only
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
 - TIME_OF_DAY and TIME_DIFFERENCE are alisases to UNSIGNED64
 - DOMAIN is not supported
