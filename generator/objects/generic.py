@@ -43,8 +43,8 @@ class VarObject(ObjectBase):
 
 
 class ArrayObject(ObjectBase):
-    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
-        super().__init__(index, len(entries), 0x08)
+    def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
+        super().__init__(index, len(entries), 0x08, cppObjectName=cppObjectName)
         self.entries = entries
         self.sub0Name = self.varName + "sub0"
 

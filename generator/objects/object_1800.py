@@ -1,6 +1,6 @@
 from .generic import ObjectEntry, RecordObject
 
-class TPDOCommunicationObject(RecordObject):
+class Object1800(RecordObject):
     def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
         super().__init__(index, entries, "TPDOCommunicationObject")
 

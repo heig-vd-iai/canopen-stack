@@ -1,6 +1,6 @@
 from .generic import ObjectEntry, RecordObject
 
-class TPDOMappingObject(RecordObject):
+class Object1A00(RecordObject):
     def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
         super().__init__(index, entries, "TPDOMappingObject")
 

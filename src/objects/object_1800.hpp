@@ -16,7 +16,7 @@
 
 namespace CANopen
 {
-    class TPDOCommunicationObject : public Object
+    class Object1800 : public Object
     {
     private:
         bool remap = false;
@@ -25,7 +25,7 @@ namespace CANopen
         void postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
 
     public:
-        TPDOCommunicationObject(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+        Object1800(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
         uint8_t getCount();
         uint32_t getCobId();
         uint8_t getTransmissionType();

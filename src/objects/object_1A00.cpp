@@ -3,11 +3,11 @@
 #include <cstdio>
 using namespace CANopen;
 
-uint8_t TPDOMappingObject::getCount() { return *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc; }
+uint8_t Object1A00::getCount() { return *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc; }
 
-uint32_t TPDOMappingObject::getMappedValue(uint8_t index) { return *(uint32_t *)entries[index + 1].dataSrc; }
+uint32_t Object1A00::getMappedValue(uint8_t index) { return *(uint32_t *)entries[index + 1].dataSrc; }
 
-SDOAbortCodes TPDOMappingObject::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     if (subindex == X1A00_INDEX_COUNT)
     {

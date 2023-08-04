@@ -20,8 +20,9 @@ SOURCES = \
 	$(CANOPEN_SRC)/sync.cpp \
 	$(CANOPEN_SRC)/time.cpp \
 	$(CANOPEN_SRC)/emergency.cpp \
-	$(OBJECTS_SRC)/object_1A00.cpp \
-	$(OBJECTS_SRC)/object_1800.cpp
+	$(OBJECTS_SRC)/object_1003.cpp \
+	$(OBJECTS_SRC)/object_1800.cpp \
+	$(OBJECTS_SRC)/object_1A00.cpp
 
 
 CC = g++

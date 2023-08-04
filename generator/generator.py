@@ -1,11 +1,12 @@
-from objects.generic import VarObject, ArrayObject, RecordObject
 from canopen.objectdictionary import Variable, Array, Record
-from objects.x1800 import TPDOCommunicationObject
-from objects.x1A00 import TPDOMappingObject
 from canopen import Node, ObjectDictionary
-import objects.entries as ntry
 from typing import Union
 import jinja2
+from objects.generic import VarObject, ArrayObject, RecordObject
+from objects.object_1800 import Object1800
+from objects.object_1A00 import Object1A00
+from objects.object_1003 import Object1003
+from objects.entries import *
 
 
 
@@ -16,30 +17,30 @@ NODEID = 4                      # TODO get from cli
 EDS_FILENAME = "example.eds"    # TODO get from cli
 
 datatype2entryclass = {
-    0x01: ntry.BooleanEntry,
-    0x02: ntry.Integer8Entry,
-    0x03: ntry.Integer16Entry,
-    0x04: ntry.Integer32Entry,
-    0x05: ntry.Unsigned8Entry,
-    0x06: ntry.Unsigned16Entry,
-    0x07: ntry.Unsigned32Entry,
-    0x08: ntry.Real32Entry,
-    0x09: ntry.VisibleStringEntry,
-    0x0A: ntry.VisibleStringEntry,
-    0x0B: ntry.VisibleStringEntry,
-    0x0C: ntry.Unsigned64Entry,
-    0x0D: ntry.Unsigned64Entry,
-    0x10: ntry.Integer32Entry,
-    0x11: ntry.Real64Entry,
-    0x12: ntry.Integer64Entry,
-    0x13: ntry.Integer64Entry,
-    0x14: ntry.Integer64Entry,
-    0x15: ntry.Integer64Entry,
-    0x16: ntry.Unsigned32Entry,
-    0x18: ntry.Unsigned64Entry,
-    0x19: ntry.Unsigned64Entry,
-    0x1A: ntry.Unsigned64Entry,
-    0x1B: ntry.Unsigned64Entry
+    0x01: BooleanEntry,
+    0x02: Integer8Entry,
+    0x03: Integer16Entry,
+    0x04: Integer32Entry,
+    0x05: Unsigned8Entry,
+    0x06: Unsigned16Entry,
+    0x07: Unsigned32Entry,
+    0x08: Real32Entry,
+    0x09: VisibleStringEntry,
+    0x0A: VisibleStringEntry,
+    0x0B: VisibleStringEntry,
+    0x0C: Unsigned64Entry,
+    0x0D: Unsigned64Entry,
+    0x10: Integer32Entry,
+    0x11: Real64Entry,
+    0x12: Integer64Entry,
+    0x13: Integer64Entry,
+    0x14: Integer64Entry,
+    0x15: Integer64Entry,
+    0x16: Unsigned32Entry,
+    0x18: Unsigned64Entry,
+    0x19: Unsigned64Entry,
+    0x1A: Unsigned64Entry,
+    0x1B: Unsigned64Entry
 }
 
 def toCANopenObject(object: Union[Variable, Array, Record]):
@@ -47,12 +48,13 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
         return VarObject(object.index, datatype2entryclass[object.data_type](object.access_type, object.default))
     if isinstance(object, Array):
         entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
+        if object.index == 0x1003: return Object1003(object.index, entries)
         return ArrayObject(object.index, entries)
     if isinstance(object, Record):
         entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
-        if 0x1800 <= object.index <= 0x19FF: return TPDOCommunicationObject(object.index, entries)
-        elif 0x1A00 <= object.index <= 0x1BFF: return TPDOMappingObject(object.index, entries)
-        else: return RecordObject(object.index, entries)
+        if 0x1800 <= object.index <= 0x19FF: return Object1800(object.index, entries)
+        if 0x1A00 <= object.index <= 0x1BFF: return Object1A00(object.index, entries)
+        return RecordObject(object.index, entries)
 
 def preFilter(object: Union[Variable, Array, Record]) -> bool:
     retval = True
@@ -82,7 +84,7 @@ objectsDict = {index: object for (index, object) in objectsDict.items() if postF
 objectsValues = list(objectsDict.values())
 if(any([not object.verify(objectsDict) for object in objectsValues])): exit(1)
 defines = [
-    f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, TPDOCommunicationObject)])}"
+    f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}"
 ]
 variables = {
     "defines": defines,

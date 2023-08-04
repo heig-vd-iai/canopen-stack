@@ -18,8 +18,8 @@ PDO::PDO(Node &node) : node(node)
 
 void PDO::initTPDO(unsigned index)
 {
-    tpdos[index].commObject = (TPDOCommunicationObject *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
-    tpdos[index].mapObject = (TPDOMappingObject *)node.od.findObject(TPDO_MAPPING_INDEX + index);
+    tpdos[index].commObject = (Object1800 *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapObject = (Object1A00 *)node.od.findObject(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
