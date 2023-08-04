@@ -13,8 +13,6 @@ uint8_t TPDOCommunicationObject::getSyncStart() { return *(uint8_t *)entries[X18
 bool TPDOCommunicationObject::isEnabled() { return ~getCobId() & 0x80000000; }
 bool TPDOCommunicationObject::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
 bool TPDOCommunicationObject::isTimerSupported() { return getCount() >= X1800_INDEX_EVENT; }
-// bool TPDOCommunicationObject::getEnableFlag() { return enabledFlag; }
-// void TPDOCommunicationObject::clearEnableFlag() { enabledFlag = false; }
 
 SDOAbortCodes TPDOCommunicationObject::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
