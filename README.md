@@ -23,6 +23,7 @@ CANopen slave library
 - node.cpp: make sure function code is supported (filters)
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
+- remove const access type and only keep ro ?
 - create predefined frames inheriting from base Frame ?
 - group bits together for access type, PDO mapping, and others ?
 - node guarding ?
