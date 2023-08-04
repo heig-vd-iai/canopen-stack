@@ -6,7 +6,7 @@ import random
 
 
 def callback(message):
-    for var in message: print('%s = %f' % (var.name, var.phys))
+    for var in message: print(f"{var.name} = {var.phys}")
     
 # lastCalled = 0
 # def callback2(message):
@@ -26,15 +26,23 @@ subindex = 0
 network.add_node(node)
 network.connect(channel='vcan0', bustype='socketcan')
 try:
+    val = int.from_bytes(node.sdo.upload(0x1003, 2), 'little')
+    print(val)
+
+    # errors = list(node.sdo[0x1003])
+    # print(errors)
+
+
+
     # network.nmt.state = "OPERATIONAL"
-    network.nmt.state = "PRE-OPERATIONAL"
+    # network.nmt.state = "PRE-OPERATIONAL"
     # network.nmt.state = "STOPPED"
 
     # node.sdo.download(0x6041, 0, (0x69).to_bytes(2, 'little'))
     # node.sdo.download(0x6061, 0, (0x42).to_bytes(1, 'little'))
     # node.sdo.download(index, subindex, (4114).to_bytes(4, 'little'))
-    val = node.sdo.upload(index, subindex).decode()
-    print(val)
+    # val = node.sdo.upload(index, subindex).decode()
+    # print(val)
     # val = int.from_bytes(node.sdo.upload(index, subindex), 'little')
     # print(val)
 
@@ -42,7 +50,7 @@ try:
     # node.tpdo[1].read()
     # node.tpdo[1].clear()
     # node.tpdo[1].add_variable(0x6048, 1)
-    # # node.tpdo[1].add_variable(0x6048, 2)
+    # # # node.tpdo[1].add_variable(0x6048, 2)
     # node.tpdo[1].trans_type  = 0xFE
     # node.tpdo[1].event_timer = 1000
     # node.tpdo[1].inhibit_time = 5000
