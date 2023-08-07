@@ -1,11 +1,12 @@
-from .generic import ObjectEntry, RecordObject
+from canopen.objectdictionary import Variable
+from .generic import RecordObject
 
 class Object1A00(RecordObject):
-    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
+    def __init__(self, index: int, entries: list[Variable]) -> None:
         super().__init__(index, entries, "Object1A00")
 
     def verify(self, objects: dict) -> bool:
-        retval = super().verify(objects)
+        retval = True
         for i in range(self.entries[0].defaultValue):
             entry = self.entries[i + 1]
             index = entry.defaultValue >> 16 & 0xFFFF

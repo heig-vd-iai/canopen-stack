@@ -1,12 +1,15 @@
-from .generic import ObjectEntry, RecordObject
+from canopen.objectdictionary import Variable
+from .generic import RecordObject
 
 class Object1800(RecordObject):
-    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
+    def __init__(self, index: int, entries: list[Variable]) -> None:
         super().__init__(index, entries, "Object1800")
-
-    def verify(self, objects: dict) -> bool:
-        retval = super().verify(objects)
-        if self.entries[0].defaultValue != len(self.entries) - 1:
-            self.error(f"invalid value for sub 0")
-            retval = False
-        return retval
+        errors = False
+        if self.subNumber < 3:
+            self.error(f"at least 3 entries should be present")
+            errors = True
+        for i in [0, 1]:
+            if self.entries[i].accessType.writeable:
+                self.warn(f"sub {i} will be set to 'const'")
+                self.entries[i].accessType.set("const")
+        if errors: raise ValueError()

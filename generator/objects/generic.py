@@ -1,29 +1,40 @@
 from abc import ABC, abstractmethod
 from .entries import ObjectEntry
+from canopen.objectdictionary import Variable
+from .entries import datatype2entryclass, accesstypes, ObjectEntry
 
 class ObjectBase(ABC):
-    def __init__(self, index: int, subNumber: int, objectType: int, entries: list[ObjectEntry], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
-        self.index = index
-        self.subNumber = subNumber
-        self.objectType = objectType
-        self.entries = entries
-        self.cppEntryName = cppEntryName
-        self.cppObjectName = cppObjectName
-        self.varName = "x%X" % self.index
+    def __init__(self, index: int, objectType: int, entries: list[Variable], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
 
+        self.index: int = index
+        self.subNumber: int = len(entries)
+        self.objectType: int = objectType
+        self.cppEntryName: str = cppEntryName
+        self.cppObjectName: str = cppObjectName
+        self.varName: str = "x%X" % self.index
+        self.entries: list[ObjectEntry] = []
+        errors = False
+        for i, entry in enumerate(entries):
+            entryValid = True
+            if entry.data_type not in datatype2entryclass:
+                self.error(f"unsupported data type '{entry.data_type:X}' for sub {i}")
+                entryValid = False
+            if entry.access_type not in accesstypes:
+                self.error(f"unknown access type '{entry.access_type}' for sub {i}")
+                entryValid = False
+            if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.default))
+            else: errors = True
+        for i, entry in enumerate(self.entries):
+            if entry.size <= 0:
+                self.error(f"invalid size '{entry.size}' for sub {i}")
+                errors = True
+        if errors: raise ValueError()
+        
     def warn(self, message: str) -> None:
         return print(f"[Warning] Object {self.index:X}: " + message)
 
     def error(self, message: str) -> None:
         return print(f"[Error] Object {self.index:X}: " + message)
-    
-    @staticmethod
-    def warn_static(index: int, message: str) -> None:
-        return print(f"[Warning] Object {index:X}: " + message)
-
-    @staticmethod
-    def error_static(index: int, message: str) -> None:
-        return print(f"[Error] Object {index:X}: " + message)
 
     def renderObject(self) -> str:
         return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.{self.varName})"
@@ -35,15 +46,11 @@ class ObjectBase(ABC):
     @abstractmethod
     def renderEntry(self) -> str:
         return ""
-    
-    @abstractmethod
-    def verify(self, objects: dict) -> bool:
-        return True
 
 
 class VarObject(ObjectBase):
-    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
-        super().__init__(index, 1, 0x07, entries)
+    def __init__(self, index: int, entries: list[Variable]) -> None:
+        super().__init__(index, 0x07, entries)
         self.entry = self.entries[0]
 
     def renderData(self) -> list[str]:
@@ -51,15 +58,17 @@ class VarObject(ObjectBase):
     
     def renderEntry(self) -> str:
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{self.entry.renderEntry(self.cppEntryName, self.varName)}}}"
-    
-    def verify(self, objects: dict) -> bool:
-        return super().verify(objects)
 
 
 class ArrayObject(ObjectBase):
-    def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
-        super().__init__(index, len(entries), 0x08, entries, cppObjectName=cppObjectName)
+    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+        super().__init__(index, 0x08, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
+        errors = False
+        if(any([self.entries[1].dataType != entry.dataType for entry in self.entries[1:]])):
+            self.error(f"at least one entry has incorrect data type")
+            errors = True
+        if errors: raise ValueError()
 
     def renderData(self) -> list[str]:
         sub = self.entries[0].renderData(self.sub0Name)
@@ -71,18 +80,11 @@ class ArrayObject(ObjectBase):
         sub = self.entries[0].renderEntry(self.cppEntryName, self.sub0Name)
         init = ", ".join([sub, *[entry.renderEntry(self.cppEntryName, f"{self.varName}[{i}]") for i, entry in enumerate(self.entries[1:])]])
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
-    
-    def verify(self, objects: dict) -> bool:
-        retval = super().verify(objects)
-        if(any([self.entries[1].dataType != entry.dataType for entry in self.entries[1:]])):
-            print(f"[Error] Entry {self.varName}: at least one entry has incorrect data type")
-            retval = False
-        return retval
 
 
 class RecordObject(ObjectBase):
-    def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
-        super().__init__(index, len(entries), 0x08, entries, cppObjectName=cppObjectName)
+    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+        super().__init__(index, 0x08, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:
@@ -92,6 +94,3 @@ class RecordObject(ObjectBase):
     def renderEntry(self) -> str:
         init = ", ".join([entry.renderEntry(self.cppEntryName, f"{self.varName}.sub{i}") for i, entry in enumerate(self.entries)])
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
-    
-    def verify(self, objects: dict) -> bool:
-        return super().verify(objects)
