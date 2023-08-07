@@ -7,6 +7,6 @@ class Object1800(RecordObject):
     def verify(self, objects: dict) -> bool:
         retval = True
         if self.entries[0].defaultValue != len(self.entries) - 1:
-            print(f"[Error] Object {self.index:X}: invalid value for sub 0")
+            self.error(f"invalid value for sub 0")
             retval = False
         return retval

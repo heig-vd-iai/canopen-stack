@@ -10,6 +10,20 @@ class ObjectBase(ABC):
         self.cppObjectName = cppObjectName
         self.varName = "x%X" % self.index
 
+    def warn(self, message: str) -> None:
+        return print(f"[Warning] Object {self.index:X}: " + message)
+
+    def error(self, message: str) -> None:
+        return print(f"[Error] Object {self.index:X}: " + message)
+    
+    @staticmethod
+    def warn_static(index: int, message: str) -> None:
+        return print(f"[Warning] Object {index:X}: " + message)
+
+    @staticmethod
+    def error_static(index: int, message: str) -> None:
+        return print(f"[Error] Object {index:X}: " + message)
+
     def renderObject(self) -> str:
         return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.{self.varName})"
     

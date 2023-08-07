@@ -12,9 +12,9 @@ class Object1A00(RecordObject):
             subindex = entry.defaultValue >> 8 & 0xFF
             length = entry.defaultValue & 0xFF
             if index not in objects:
-                print(f"[Error] Object {self.index:X}: invalid TPDO mapping for sub {i + 1} (invalid index)")
+                self.error(f"invalid TPDO mapping for sub {i + 1} (invalid index)")
                 retval = False
             elif objects[index].subNumber <= subindex:
-                print(f"[Error] Object {self.index:X}: invalid TPDO mapping for sub {i + 1} (invalid subindex)")
+                self.error(f"invalid TPDO mapping for sub {i + 1} (invalid subindex)")
                 retval = False
         return retval

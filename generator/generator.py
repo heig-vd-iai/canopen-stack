@@ -2,7 +2,7 @@ from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
 from typing import Union
 import jinja2
-from objects.generic import VarObject, ArrayObject, RecordObject
+from objects.generic import VarObject, ArrayObject, RecordObject, ObjectBase
 from objects.object_1003 import Object1003
 from objects.object_1010 import Object1010
 from objects.object_1011 import Object1011
@@ -65,7 +65,7 @@ def preFilter(object: Union[Variable, Array, Record]) -> bool:
     entries = [object] if isinstance(object, Variable) else list(object.subindices.values())
     for i, var in enumerate(entries):
         if var.data_type not in datatype2entryclass:
-            print(f"[Warning] Object {object.index:X}: unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
+            ObjectBase.warn_static(object.index, f"unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
             retval = False
     return retval
 
@@ -73,10 +73,10 @@ def postFilter(object: Union[VarObject, ArrayObject, RecordObject]) -> bool:
     retval = True
     for i, var in enumerate(object.entries):
         if var.accessType == 0:
-            print(f"[Warning] Object {object.index:X}: unknown access type '{var.accessTypeStr}' for sub {i}")
+            object.warn(f"unknown access type '{var.accessTypeStr}' for sub {i}")
             retval = False
         if var.size <= 0:
-            print(f"[Warning] Object {object.index:X}: invalid size '{var.size}' for sub {i}")
+            object.warn(f"invalid size '{var.size}' for sub {i}")
             retval = False
     return retval
 
