@@ -73,6 +73,11 @@ bool Node::loadOD(uint8_t parameterGroup)
     return false;
 }
 
+bool Node::restoreOD(uint8_t parameterGroup)
+{
+    return od.restoreData(parameterGroup);
+}
+
 Object *Node::findObject(uint16_t index)
 {
     return od.findObject(index);

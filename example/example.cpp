@@ -134,6 +134,11 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
     return true;
 }
 
+bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
+{
+    return true;
+}
+
 uint32_t Node::getTime_us()
 {
     return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
