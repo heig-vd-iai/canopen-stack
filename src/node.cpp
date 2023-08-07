@@ -78,9 +78,14 @@ bool Node::restoreOD(uint8_t parameterGroup)
     return od.restoreData(parameterGroup);
 }
 
-Object *Node::findObject(uint16_t index)
+Object *Node::findObject(uint16_t objectIndex)
 {
-    return od.findObject(index);
+    return od.findObject(objectIndex);
+}
+
+Object *Node::at(uint16_t index)
+{
+    return od.at(index);
 }
 
 void Node::setNmtTransition(NMTServiceCommands command)
