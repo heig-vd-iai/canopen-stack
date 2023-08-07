@@ -1,27 +1,51 @@
 from abc import ABC
 
+accesstypes = ["rw", "rww", "rwr", "ro", "wo", "const"]
+
+class AccessType:
+    def __init__(self, accessType: str) -> None:
+        self._READ = 1 << 0
+        self._WRITE = 1 << 1
+        self._CONST = 1 << 2
+        self._value: int = 0
+        self.set(accessType)
+
+    @property
+    def value(self) -> int:
+        return self._value
+    
+    @property
+    def readable(self) -> bool:
+        return bool(self._value & self._READ)
+    
+    @property
+    def writeable(self) -> bool:
+        return bool(self._value & self._WRITE)
+    
+    @property
+    def constant(self) -> bool:
+        return bool(self._value & self._CONST)
+    
+    def set(self, name: str) -> None:
+        if name in ["rw", "rww", "rwr"]: self._value = self._WRITE | self._READ
+        elif name == "ro": self._value = self._READ
+        elif name == "wo": self._value = self._WRITE
+        elif name == "const": self._value = self._CONST | self._READ
+
+
 class ObjectEntry(ABC):
     def __init__(self, dataType: int, ctype: str, size: int, accessType: str, defaultDefaultValue, defaultValue) -> None:
         self.dataType: int = dataType
         self.ctype: str = ctype
         self.size: int = size
         self.defaultValue = defaultDefaultValue if defaultValue is None else defaultValue
-        self.accessTypeStr = accessType
-        ## Get access type from string
-        read_bit = 1 << 0
-        write_bit = 1 << 1
-        const_bit = 1 << 2
-        if accessType in ["rw", "rww", "rwr"]: self.accessType: int = write_bit | read_bit
-        elif accessType == "wo": self.accessType: int = write_bit
-        elif accessType == "ro": self.accessType: int = read_bit
-        elif accessType == "const": self.accessType: int = const_bit | read_bit
-        else: self.accessType: int = 0
+        self.accessType = AccessType(accessType)
 
     def renderData(self, name: str) -> str:
         return f"{self.ctype} {name} = {self.defaultValue}"
     
     def renderEntry(self, entryClassName: str, entryVarName: str) -> str:
-        return f"{entryClassName}(&data.{entryVarName}, {self.accessType}, {self.dataType}, {self.size})"
+        return f"{entryClassName}(&data.{entryVarName}, {self.accessType.value}, {self.dataType}, {self.size})"
 
 class BooleanEntry(ObjectEntry):
     def __init__(self, accessType: str, defaultValue: bool) -> None:
@@ -74,3 +98,30 @@ class VisibleStringEntry(ObjectEntry):
 
     def renderData(self, name: str) -> str:
         return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.defaultValue])}}}"
+
+datatype2entryclass = {
+    0x01: BooleanEntry,
+    0x02: Integer8Entry,
+    0x03: Integer16Entry,
+    0x04: Integer32Entry,
+    0x05: Unsigned8Entry,
+    0x06: Unsigned16Entry,
+    0x07: Unsigned32Entry,
+    0x08: Real32Entry,
+    0x09: VisibleStringEntry,
+    0x0A: VisibleStringEntry,
+    0x0B: VisibleStringEntry,
+    0x0C: Unsigned64Entry,
+    0x0D: Unsigned64Entry,
+    0x10: Integer32Entry,
+    0x11: Real64Entry,
+    0x12: Integer64Entry,
+    0x13: Integer64Entry,
+    0x14: Integer64Entry,
+    0x15: Integer64Entry,
+    0x16: Unsigned32Entry,
+    0x18: Unsigned64Entry,
+    0x19: Unsigned64Entry,
+    0x1A: Unsigned64Entry,
+    0x1B: Unsigned64Entry
+}
