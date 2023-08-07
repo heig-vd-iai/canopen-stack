@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 from .entries import ObjectEntry
 
 class ObjectBase(ABC):
-    def __init__(self, index: int, subNumber: int, objectType: int, cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
+    def __init__(self, index: int, subNumber: int, objectType: int, entries: list[ObjectEntry], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
         self.index = index
         self.subNumber = subNumber
         self.objectType = objectType
+        self.entries = entries
         self.cppEntryName = cppEntryName
         self.cppObjectName = cppObjectName
         self.varName = "x%X" % self.index
@@ -41,10 +42,9 @@ class ObjectBase(ABC):
 
 
 class VarObject(ObjectBase):
-    def __init__(self, index: int, entry: ObjectEntry) -> None:
-        super().__init__(index, 1, 0x07)
-        self.entry = entry
-        self.entries = [self.entry]
+    def __init__(self, index: int, entries: list[ObjectEntry]) -> None:
+        super().__init__(index, 1, 0x07, entries)
+        self.entry = self.entries[0]
 
     def renderData(self) -> list[str]:
         return [self.entry.renderData(self.varName)]
@@ -53,13 +53,12 @@ class VarObject(ObjectBase):
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{self.entry.renderEntry(self.cppEntryName, self.varName)}}}"
     
     def verify(self, objects: dict) -> bool:
-        return True
+        return super().verify(objects)
 
 
 class ArrayObject(ObjectBase):
     def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
-        super().__init__(index, len(entries), 0x08, cppObjectName=cppObjectName)
-        self.entries = entries
+        super().__init__(index, len(entries), 0x08, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:
@@ -74,7 +73,7 @@ class ArrayObject(ObjectBase):
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
     
     def verify(self, objects: dict) -> bool:
-        retval = True
+        retval = super().verify(objects)
         if(any([self.entries[1].dataType != entry.dataType for entry in self.entries[1:]])):
             print(f"[Error] Entry {self.varName}: at least one entry has incorrect data type")
             retval = False
@@ -83,8 +82,7 @@ class ArrayObject(ObjectBase):
 
 class RecordObject(ObjectBase):
     def __init__(self, index: int, entries: list[ObjectEntry], cppObjectName: str = "Object") -> None:
-        super().__init__(index, len(entries), 0x08, cppObjectName=cppObjectName)
-        self.entries = entries
+        super().__init__(index, len(entries), 0x08, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:
@@ -96,4 +94,4 @@ class RecordObject(ObjectBase):
         return f"{self.cppEntryName} {self.varName}[{self.subNumber}] = {{{init}}}"
     
     def verify(self, objects: dict) -> bool:
-        return True
+        return super().verify(objects)
