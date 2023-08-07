@@ -5,7 +5,7 @@ class Object1A00(RecordObject):
         super().__init__(index, entries, "Object1A00")
 
     def verify(self, objects: dict) -> bool:
-        retval = True
+        retval = super().verify(objects)
         for i in range(self.entries[0].defaultValue):
             entry = self.entries[i + 1]
             index = entry.defaultValue >> 16 & 0xFFFF
