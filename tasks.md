@@ -1,9 +1,8 @@
 ## Tasks
 ### PDO
-- PDO mapping sub0: SAM-MDPO and DAM-MPDO
+- SAM-MDPO and DAM-MPDO
 - RPDO
-- mappable objects/entries
-- multiple PDOs
+- multiple PDOs ?
 
 ### SDO
 - SDO block transfer
