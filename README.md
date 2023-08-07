@@ -22,6 +22,7 @@ CANopen slave library
 - save and load, objects 1010 and 1011, restore default from file ?
 - p.103: The default values shall be set valid after the CANopen device is reset (NMT service reset node for sub-index from 01h to 7Fh, NMT service reset communication for sub-index 02h) or power cycled
 - remove #include <cstdio> <cstdlib>
+- use custom cob-ids?
 - node.cpp: make sure function code is supported (filters)
 - implement all predefined objects
 - OD object value range and all other properties (p.91): PDO mapping, range
