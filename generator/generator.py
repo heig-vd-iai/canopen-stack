@@ -47,7 +47,7 @@ datatype2entryclass = {
 
 def toCANopenObject(object: Union[Variable, Array, Record]):
     if isinstance(object, Variable):
-        return VarObject(object.index, datatype2entryclass[object.data_type](object.access_type, object.default))
+        return VarObject(object.index, [datatype2entryclass[object.data_type](object.access_type, object.default)])
     if isinstance(object, Array):
         entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
         if object.index == 0x1003: return Object1003(object.index, entries)
