@@ -22,6 +22,7 @@ SOURCES = \
 	$(CANOPEN_SRC)/emergency.cpp \
 	$(OBJECTS_SRC)/object_1003.cpp \
 	$(OBJECTS_SRC)/object_1010.cpp \
+	$(OBJECTS_SRC)/object_1011.cpp \
 	$(OBJECTS_SRC)/object_1800.cpp \
 	$(OBJECTS_SRC)/object_1A00.cpp
 

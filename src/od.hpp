@@ -170,7 +170,7 @@ namespace CANopen
             Object x100C = Object(4108, 1, 7, entries.x100C);
             Object x100D = Object(4109, 1, 7, entries.x100D);
             Object1010 x1010 = Object1010(4112, 14, 8, entries.x1010);
-            Object x1011 = Object(4113, 14, 8, entries.x1011);
+            Object1011 x1011 = Object1011(4113, 14, 8, entries.x1011);
             Object x1014 = Object(4116, 1, 7, entries.x1014);
             Object x1016 = Object(4118, 2, 8, entries.x1016);
             Object x1017 = Object(4119, 1, 7, entries.x1017);

@@ -5,6 +5,7 @@ import jinja2
 from objects.generic import VarObject, ArrayObject, RecordObject
 from objects.object_1003 import Object1003
 from objects.object_1010 import Object1010
+from objects.object_1011 import Object1011
 from objects.object_1800 import Object1800
 from objects.object_1A00 import Object1A00
 from objects.entries import *
@@ -51,6 +52,7 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
         entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
         if object.index == 0x1003: return Object1003(object.index, entries)
         if object.index == 0x1010: return Object1010(object.index, entries)
+        if object.index == 0x1011: return Object1011(object.index, entries)
         return ArrayObject(object.index, entries)
     if isinstance(object, Record):
         entries = [datatype2entryclass[entry.data_type](entry.access_type, entry.default) for entry in object.values()]
