@@ -37,7 +37,6 @@
 
 ## Tasks (OD generator)
 - CLI
-- print messages uniformity, use function ?
 - make sure objects are ordered (sort by index)
 - perform strict parsing for mandatory or standard entries (like PDO)
     1. 0x1400 to 0x15FF: RPDO communication parameter
