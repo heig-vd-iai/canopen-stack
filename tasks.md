@@ -37,16 +37,9 @@
 
 ## Tasks (OD generator)
 - CLI
+- comment classes and functions
 - make sure objects are ordered (sort by index)
-- perform strict parsing for mandatory or standard entries (like PDO)
-    1. 0x1400 to 0x15FF: RPDO communication parameter
-    2. 0x1600 to 0x17FF: RPDO mapping parameter
-    3. 0x1800 to 0x19FF: TPDO communication parameter
-    3. 0x1A00 to 0x1BFF: TPDO mapping parameter
-    4. 0x1003: Pre-defined error fields, make sure correct access
 - PDO mapping: always allocate 8 entries?
 - PDO mapping: enforce correct size
 - PDO: enforce PDOs 1 to 4 (standard) ?
-- PDO: enforce at least 4 PDOs?
-- PDO parameter: make sure cob-id is correct and set to ro (no dynamic changing)
-- custom or rw cob-ids are not supported (pdo, emcy, sync, ...)
+- PDO: enforce at least 4 PDOs ?
