@@ -38,7 +38,6 @@
 ## Tasks (OD generator)
 - CLI
 - comment classes and functions
-- make sure objects are ordered (sort by index)
 - PDO mapping: always allocate 8 entries?
 - PDO mapping: enforce correct size
 - PDO: enforce PDOs 1 to 4 (standard) ?
