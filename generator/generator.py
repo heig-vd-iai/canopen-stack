@@ -65,7 +65,7 @@ def preFilter(object: Union[Variable, Array, Record]) -> bool:
     entries = [object] if isinstance(object, Variable) else list(object.subindices.values())
     for i, var in enumerate(entries):
         if var.data_type not in datatype2entryclass:
-            print(f"[Warning] Entry x{'%X' % object.index}: unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
+            print(f"[Warning] Object {object.index:X}: unsupported data type '{hex(var.data_type).upper()}' for sub {i}")
             retval = False
     return retval
 
@@ -73,10 +73,10 @@ def postFilter(object: Union[VarObject, ArrayObject, RecordObject]) -> bool:
     retval = True
     for i, var in enumerate(object.entries):
         if var.accessType == 0:
-            print(f"[Warning] Entry x{'%X' % object.index}: unknown access type '{var.accessTypeStr}' for sub {i}")
+            print(f"[Warning] Object {object.index:X}: unknown access type '{var.accessTypeStr}' for sub {i}")
             retval = False
         if var.size <= 0:
-            print(f"[Warning] Entry x{'%X' % object.index}: invalid size '{var.size}' for sub {i}")
+            print(f"[Warning] Object {object.index:X}: invalid size '{var.size}' for sub {i}")
             retval = False
     return retval
 
@@ -88,7 +88,8 @@ objectsDict = {index: object for (index, object) in objectsDict.items() if postF
 objectsValues = list(objectsDict.values())
 if(any([not object.verify(objectsDict) for object in objectsValues])): exit(1)
 defines = [
-    f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}"
+    f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}",
+    *[f"OD_OBJECT_{obj.index:X} {i}" for i, obj in enumerate(objectsValues)]
 ]
 variables = {
     "defines": defines,
