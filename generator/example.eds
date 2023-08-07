@@ -207,7 +207,7 @@ ObjFlags=1
 ParameterName=1st Standard error field
 ObjectType=0x7
 DataType=0x0007
-AccessType=rw
+AccessType=ro
 PDOMapping=0
 ObjFlags=1
 
@@ -1140,7 +1140,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=rw
+AccessType=const
 DefaultValue=$NODEID+0x180
 PDOMapping=0
 
@@ -1201,7 +1201,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=rw
+AccessType=const
 DefaultValue=$NODEID+0x280
 PDOMapping=0
 
@@ -1262,7 +1262,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=rw
+AccessType=const
 DefaultValue=$NODEID+0x380
 PDOMapping=0
 
@@ -1674,38 +1674,6 @@ DataType=0x0007
 AccessType=rw
 DefaultValue=0x00000000
 PDOMapping=0
-
-[1F50]
-ParameterName=Program data
-ObjectType=0x8
-SubNumber=0x03
-
-[1F50sub0]
-ParameterName=Number of entries
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=0x02
-PDOMapping=0
-ObjFlags=1
-
-[1F50sub1]
-ParameterName=Program data bootloader/firmware
-ObjectType=0x7
-DataType=0x000F
-AccessType=rw
-DefaultValue=
-PDOMapping=0
-ObjFlags=1
-
-[1F50sub2]
-ParameterName=Program data NanoJ
-ObjectType=0x7
-DataType=0x000F
-AccessType=rw
-DefaultValue=
-PDOMapping=0
-ObjFlags=1
 
 [1F51]
 ParameterName=Program control
