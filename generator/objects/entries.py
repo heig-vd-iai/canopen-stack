@@ -3,6 +3,7 @@ from abc import ABC
 accesstypes = ["rw", "rww", "rwr", "ro", "wo", "const"]
 
 class AccessType:
+    """Represents an entrie's access type value in a convenient way"""
     def __init__(self, accessType: str) -> None:
         self._READ = 1 << 0
         self._WRITE = 1 << 1
@@ -34,6 +35,7 @@ class AccessType:
 
 
 class ObjectEntry(ABC):
+    """This class serves as the base class for all object entries, that must be subclassed for each data type"""
     def __init__(self, dataType: int, ctype: str, size: int, accessType: str, defaultDefaultValue, defaultValue) -> None:
         self.dataType: int = dataType
         self.ctype: str = ctype

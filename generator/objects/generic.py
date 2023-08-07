@@ -4,8 +4,8 @@ from canopen.objectdictionary import Variable
 from .entries import datatype2entryclass, accesstypes, ObjectEntry
 
 class ObjectBase(ABC):
+    """This is the base class for OD's objects"""
     def __init__(self, index: int, objectType: int, entries: list[Variable], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
-
         self.index: int = index
         self.subNumber: int = len(entries)
         self.objectType: int = objectType
