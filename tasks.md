@@ -3,13 +3,14 @@
 - PDO mapping sub0: SAM-MDPO and DAM-MPDO
 - RPDO
 - mappable objects/entries
+- multiple PDOs
 
 ### SDO
 - SDO block transfer
 
 ### EMCY
 - manufacturer error code
-- 1003
+- link to 1003
 - 1015
 - 1029
 
@@ -37,6 +38,7 @@
 
 ## Tasks (OD generator)
 - CLI
+- print messages uniformity, use function ?
 - make sure objects are ordered (sort by index)
 - perform strict parsing for mandatory or standard entries (like PDO)
     1. 0x1400 to 0x15FF: RPDO communication parameter
