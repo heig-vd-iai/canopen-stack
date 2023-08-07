@@ -2,6 +2,7 @@ from canopen.objectdictionary import Variable
 from .generic import RecordObject
 
 class Object1A00(RecordObject):
+    """Object 1A00: TPDO mapping parameter"""
     def __init__(self, index: int, entries: list[Variable]) -> None:
         super().__init__(index, entries, "Object1A00")
 
