@@ -9,7 +9,7 @@ namespace CANopen
     {
     private:
         class Node &node;
-        class Object *heartbeatTimeObject;
+        class Object *heartbeatTimeObject;  //TODO: use #ifdef
         uint32_t lastPublish = 0;
 
     public:

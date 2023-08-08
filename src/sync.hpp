@@ -10,7 +10,7 @@ namespace CANopen
     private:
         bool enabled = false;
         class Node &node;
-        class Object *syncCounterOverflow;
+        class Object *syncCounterOverflow;  //TODO: use #ifdef
         uint8_t internalCounter = 1;
 
     public:

@@ -31,7 +31,7 @@ namespace CANopen
         bool enabled = false;
         class Node &node;
         TPDO tpdos[OD_TPDO_COUNT];
-        Object *syncWindowObject;
+        Object *syncWindowObject; //TODO: use #ifdef
 
         void initTPDO(unsigned index);
         void remapTPDO(unsigned index);
