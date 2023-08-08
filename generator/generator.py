@@ -6,6 +6,7 @@ from objects.object_1010 import Object1010
 from objects.object_1011 import Object1011
 from objects.object_1800 import Object1800
 from objects.object_1A00 import Object1A00
+from datetime import datetime
 from typing import Union
 import jinja2
 
@@ -55,7 +56,9 @@ variables = {
     "defines": defines,
     "namespace": "CANopen",
     "objects": objectsValues,
-    "objectNames": [obj.varName for obj in objectsValues]
+    "objectNames": [obj.varName for obj in objectsValues],
+    "date": datetime.now(),
+    "filename": HEADER_FILENAME
 }
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
