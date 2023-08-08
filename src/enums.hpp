@@ -126,3 +126,14 @@ enum EMCYErrorCodes
     EMCYErrorCode_AdditionalFunctions = 0xF000,
     EMCYErrorCode_DeviceSpecific = 0xFF00
 };
+
+enum ErrorRegisterBits
+{
+    ErrorRegisterBit_Generic = 0,
+    ErrorRegisterBit_Current = 1,
+    ErrorRegisterBit_Voltage = 2,
+    ErrorRegisterBit_Temperature = 3,
+    ErrorRegisterBit_Communication = 4,
+    ErrorRegisterBit_DeviceProfile = 5,
+    ErrorRegisterBit_Manufacturer = 7
+};
