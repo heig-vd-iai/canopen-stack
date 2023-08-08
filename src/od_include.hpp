@@ -1,5 +1,6 @@
 #pragma once
 #include "od_classes.hpp"
+#include "objects/object_1001.hpp"
 #include "objects/object_1003.hpp"
 #include "objects/object_1010.hpp"
 #include "objects/object_1011.hpp"
