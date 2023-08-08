@@ -1,12 +1,5 @@
 #pragma once
-#include "../od_classes.hpp"
-#define X1001_BIT_GENERIC 0
-#define X1001_BIT_CURRENT 1
-#define X1001_BIT_VOLTAGE 2
-#define X1001_BIT_TEMPERATURE 3
-#define X1001_BIT_COMMUNICATION 4
-#define X1001_BIT_DEVICEPROFILE 5
-#define X1001_BIT_MANUFACTURER 7
+#include "../object.hpp"
 
 namespace CANopen
 {
