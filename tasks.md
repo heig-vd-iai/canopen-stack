@@ -8,8 +8,7 @@
 - SDO block transfer
 
 ### EMCY
-- manufacturer error code
-- link to 1003
+- prevent bit 0 (generic error) to be cleared if other bits are set
 - 1015
 - 1029
 
