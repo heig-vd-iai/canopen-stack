@@ -11,6 +11,8 @@
 #include <net/if.h>
 #include <fstream>
 #include <signal.h>
+#include <bitset>
+#include <iostream>
 #include "CANopen.hpp"
 using namespace std;
 using namespace CANopen;
@@ -20,15 +22,8 @@ mutex mtx;
 int sock;
 bool quit = false;
 uint64_t tRecv = 0, tUpdate = 0;
-double t = 0.0;
-double x = 0.0;
-// double y = 0.0;
-const double dt = 0.001;
-const double a = 120.0;
-const double f = 0.1;
-const double w = 2.0 * M_PI * f;
 
-void func()
+void listenFunc()
 {
     while (true)
     {
@@ -48,6 +43,33 @@ void func()
             tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
             mtx.unlock();
         }
+    }
+}
+
+void updateFunc()
+{
+    double t = 0.0;
+    double x = 0.0;
+    const double dt = 0.001;
+    const double a = 120.0;
+    const double f = 0.1;
+    const double w = 2.0 * M_PI * f;
+    while (!quit)
+    {
+        if (mtx.try_lock())
+        {
+            node.at(OD_OBJECT_6048)->setValue(1, x);
+            auto start = chrono::steady_clock::now();
+            node.update();
+            auto end = chrono::steady_clock::now();
+            tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
+            // node.transmitPDO(0);
+            mtx.unlock();
+            // printf("[main] update: %ld µs, receive: %ld µs\n", tUpdate, tRecv);
+        }
+        t += dt;
+        x = a * sin(w * t);
+        this_thread::sleep_for(chrono::milliseconds(1));
     }
 }
 
@@ -74,28 +96,42 @@ int main(int argc, char *argv[])
     }
 
     // node.loadOD();
-    Object *object = node.findObject(0x6048);
-    thread listenThread(func);
+    thread listenThread(listenFunc);
     listenThread.detach();
-    while (!quit)
+    thread updateThread(updateFunc);
+
+    int choice = 0;
+    do
     {
-        if (mtx.try_lock())
+        cout << "===== CANopen example =====\n0: Quit\n1: Emit generic error\n11: Clear generic error\n2: Emit current error\n22: Clear current error\n3: Emit voltage error\n33: Clear voltage error\n>" << endl;
+        cin >> choice;
+        switch (choice)
         {
-            // if (node.getNmtState() == NMTState_PreOperational)
-            //     node.setNmtTransition(NMTServiceCommand_Start);
-            object->setValue(1, x);
-            auto start = chrono::steady_clock::now();
-            node.update();
-            auto end = chrono::steady_clock::now();
-            tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
-            // node.transmitPDO(0);
-            mtx.unlock();
-            // printf("[main] update: %ld µs, receive: %ld µs\n", tUpdate, tRecv);
+        case 0:
+            quit = true;
+            break;
+        case 1:
+            node.emcy.transmitError(EMCYErrorCode_Generic);
+            break;
+        case 11:
+            node.emcy.clearErrorBit(ErrorRegisterBit_Generic);
+            break;
+        case 2:
+            node.emcy.transmitError(EMCYErrorCode_Current);
+            break;
+        case 22:
+            node.emcy.clearErrorBit(ErrorRegisterBit_Current);
+            break;
+        case 3:
+            node.emcy.transmitError(EMCYErrorCode_Voltage);
+            break;
+        case 33:
+            node.emcy.clearErrorBit(ErrorRegisterBit_Voltage);
+            break;
         }
-        t += dt;
-        x = a * sin(w * t);
-        this_thread::sleep_for(chrono::milliseconds(1));
-    }
+    } while (choice != 0);
+    quit = true;
+    updateThread.join();
     // node.saveOD();
     return EXIT_SUCCESS;
 }
