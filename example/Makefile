@@ -11,7 +11,7 @@ INCLUDE_DIRS = \
 
 SOURCES = \
 	$(APP_SRC)/example.cpp \
-	$(CANOPEN_SRC)/od.cpp \
+	$(CANOPEN_SRC)/object.cpp \
 	$(CANOPEN_SRC)/node.cpp \
 	$(CANOPEN_SRC)/nmt.cpp \
 	$(CANOPEN_SRC)/heartbeat.cpp \
@@ -20,6 +20,7 @@ SOURCES = \
 	$(CANOPEN_SRC)/sync.cpp \
 	$(CANOPEN_SRC)/time.cpp \
 	$(CANOPEN_SRC)/emergency.cpp \
+	$(CANOPEN_SRC)/od.cpp \
 	$(OBJECTS_SRC)/object_1001.cpp \
 	$(OBJECTS_SRC)/object_1003.cpp \
 	$(OBJECTS_SRC)/object_1010.cpp \
