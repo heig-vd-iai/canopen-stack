@@ -6,22 +6,25 @@ void Object1001::writeErrorBit(unsigned bit, bool value)
     ErrorRegister reg = {getValue()};
     switch (bit)
     {
-    case X1001_BIT_CURRENT:
+    case ErrorRegisterBit_Generic:
+        reg.bits.genericError = value;
+        break;
+    case ErrorRegisterBit_Current:
         reg.bits.current = value;
         break;
-    case X1001_BIT_VOLTAGE:
+    case ErrorRegisterBit_Voltage:
         reg.bits.voltage = value;
         break;
-    case X1001_BIT_TEMPERATURE:
+    case ErrorRegisterBit_Temperature:
         reg.bits.temperature = value;
         break;
-    case X1001_BIT_COMMUNICATION:
+    case ErrorRegisterBit_Communication:
         reg.bits.communicationError = value;
         break;
-    case X1001_BIT_DEVICEPROFILE:
+    case ErrorRegisterBit_DeviceProfile:
         reg.bits.deviceProfileSpecific = value;
         break;
-    case X1001_BIT_MANUFACTURER:
+    case ErrorRegisterBit_Manufacturer:
         reg.bits.manufacturerSpecific = value;
         break;
     }
@@ -34,8 +37,9 @@ uint8_t Object1001::getValue()
 }
 
 void Object1001::setErrorBit(unsigned bit)
-{
+{ // Generic error shall be signaled at any error situation
     writeErrorBit(bit, true);
+    writeErrorBit(ErrorRegisterBit_Generic, true);
 }
 
 void Object1001::clearErrorBit(unsigned bit)

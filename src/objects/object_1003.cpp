@@ -17,11 +17,6 @@ SDOAbortCodes Object1003::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
             return SDOAbortCode_InvalidDownloadParameterValue;
         clearErrors();
     }
-    else
-    {
-        shiftErrors();
-        incrCount();
-    }
     return SDOAbortCode_OK;
 }
 
@@ -35,20 +30,21 @@ void Object1003::shiftErrors()
     }
 }
 
-void Object1003::incrCount()
-{
-    uint8_t count = getCount();
-    if (count < subNumber - 1)
-        setValue(0, ++count);
-}
-
 uint8_t Object1003::getCount() { return *(uint8_t *)entries[X1003_INDEX_COUNT].dataSrc; }
 
-void Object1003::pushError(uint32_t value)
+void Object1003::pushError(uint16_t errorCode, uint32_t manufacturerCode)
 {
-    shiftErrors();
-    incrCount();
-    setValue(1, value);
+    uint32_t newError = manufacturerCode << 16 | errorCode;
+    uint32_t firstError = newError;
+    getValue(1, &firstError);
+    if (firstError != newError)
+    {
+        shiftErrors();
+        uint8_t count = getCount();
+        if (count < subNumber - 1)
+            setValue(0, ++count);
+        setValue(1, newError);
+    }
 }
 
 void Object1003::clearErrors()
