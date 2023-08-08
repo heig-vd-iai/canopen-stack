@@ -17,6 +17,7 @@ HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
 NODEID = 4                      # TODO get from cli
 EDS_FILENAME = "example.eds"    # TODO get from cli
+MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
 def toCANopenObject(object: Union[Variable, Array, Record]):
     """This function converts canopen.Variable, canopen.Array and canopen.Record to VarObject, ArrayObject and RecordObject, or any specific object subclass"""
@@ -44,10 +45,17 @@ for index, object in od.items():
 objectsDict = {index: object for index, object in objectsDict.items() if not isinstance(object, Object1A00) or isinstance(object, Object1A00) and object.verify(objectsDict)}
 objectsValues = list(objectsDict.values())
 failedObjects = set(od.keys()) - set(objectsDict.keys())
+missingObjects = set(MANDATORY_OBJECTS) - set(objectsDict.keys())
+ret = False
 if len(failedObjects) > 0:
     print("Please make sure these objects are valid:")
     for index in failedObjects: print(f"- {index:X}")
-    exit(1)
+    ret = True
+if len(missingObjects) > 0:
+    print("Some mandatory objects are missing:")
+    for index in missingObjects: print(f"- {index:X}")
+    ret = True
+if ret: exit(1)
 defines = [
     f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}",
     *[f"OD_OBJECT_{obj.index:X} {i}" for i, obj in enumerate(objectsValues)]
