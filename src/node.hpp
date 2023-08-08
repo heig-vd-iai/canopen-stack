@@ -21,7 +21,8 @@ namespace CANopen
         friend EMCY;
         friend TIME;
 
-    private:
+        // private:
+    public: // TODO: put back to private
         ObjectDictionnary od;
         NMT nmt;
         HB hb;
