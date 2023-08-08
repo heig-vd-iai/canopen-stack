@@ -51,8 +51,8 @@ class ObjectBase(ABC):
 
 
 class VarObject(ObjectBase):
-    def __init__(self, index: int, entries: list[Variable]) -> None:
-        super().__init__(index, 0x07, entries)
+    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+        super().__init__(index, 0x07, entries, cppObjectName=cppObjectName)
         self.entry = self.entries[0]
 
     def renderData(self) -> list[str]:
