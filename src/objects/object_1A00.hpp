@@ -1,5 +1,5 @@
 #pragma once
-#include "../od_classes.hpp"
+#include "../object.hpp"
 #define X1A00_INDEX_COUNT 0
 #define X1A00_MAX_ENTRIES 8
 #define X1A00_SAM_MPDO 0xFE

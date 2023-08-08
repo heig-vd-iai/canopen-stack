@@ -2,7 +2,7 @@
 #include "node.hpp"
 #include "frame.hpp"
 #include "enums.hpp"
-#include "od_classes.hpp"
+#include "object.hpp"
 #include <cstdio>
 #include <cstring>
 using namespace CANopen;

@@ -1,5 +1,5 @@
 #pragma once
-#include "../od_classes.hpp"
+#include "../object.hpp"
 #define X1011_INDEX_COUNT 0
 #define X1011_LOAD_SIGNATURE 0x64616F6C
 
