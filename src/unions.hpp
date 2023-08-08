@@ -34,3 +34,19 @@ union TPDOMapEntry
         uint32_t index : 16;
     } bits;
 };
+
+union ErrorRegister
+{
+    uint8_t value;
+    struct
+    {
+        uint8_t genericError : 1;
+        uint8_t current : 1;
+        uint8_t voltage : 1;
+        uint8_t temperature : 1;
+        uint8_t communicationError : 1;
+        uint8_t deviceProfileSpecific : 1;
+        uint8_t reserved : 1;
+        uint8_t manufacturerSpecific : 1;
+    } bits;
+};
