@@ -20,6 +20,7 @@ SOURCES = \
 	$(CANOPEN_SRC)/sync.cpp \
 	$(CANOPEN_SRC)/time.cpp \
 	$(CANOPEN_SRC)/emergency.cpp \
+	$(OBJECTS_SRC)/object_1001.cpp \
 	$(OBJECTS_SRC)/object_1003.cpp \
 	$(OBJECTS_SRC)/object_1010.cpp \
 	$(OBJECTS_SRC)/object_1011.cpp \

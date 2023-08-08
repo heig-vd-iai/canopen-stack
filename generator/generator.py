@@ -1,6 +1,7 @@
 from objects.generic import VarObject, ArrayObject, RecordObject
 from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
+from objects.object_1001 import Object1001
 from objects.object_1003 import Object1003
 from objects.object_1010 import Object1010
 from objects.object_1011 import Object1011
@@ -22,6 +23,7 @@ MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 def toCANopenObject(object: Union[Variable, Array, Record]):
     """This function converts canopen.Variable, canopen.Array and canopen.Record to VarObject, ArrayObject and RecordObject, or any specific object subclass"""
     if isinstance(object, Variable):
+        if object.index == 0x1001: return Object1001(object.index, [object])
         return VarObject(object.index, [object])
     if isinstance(object, Array):
         entries = list(object.values())
