@@ -3,7 +3,6 @@
 #include <cstdint>
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
-#define SYNC_WINDOW_LENGTH_INDEX 0x1007
 #define PDO_DATA_LENGTH 8
 
 namespace CANopen
@@ -31,7 +30,6 @@ namespace CANopen
         bool enabled = false;
         class Node &node;
         TPDO tpdos[OD_TPDO_COUNT];
-        Object *syncWindowObject; //TODO: use #ifdef
 
         void initTPDO(unsigned index);
         void remapTPDO(unsigned index);

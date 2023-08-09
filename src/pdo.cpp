@@ -12,7 +12,6 @@ PDO::TPDO::TPDO() : mappedEntries(NULL) {}
 
 PDO::PDO(Node &node) : node(node)
 {
-    syncWindowObject = node.findObject(SYNC_WINDOW_LENGTH_INDEX);
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
         initTPDO(i);
 }
@@ -85,8 +84,9 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
 uint32_t PDO::getSyncWindow_us()
 {
     uint32_t value = 0;
-    if (syncWindowObject != NULL)
-        syncWindowObject->getValue(0, &value);
+#ifdef OD_OBJECT_1007
+    node.at(OD_OBJECT_1007)->getValue(0, &value);
+#endif
     return value;
 }
 
