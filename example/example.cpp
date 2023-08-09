@@ -14,8 +14,11 @@
 #include "CANopen.hpp"
 using namespace std;
 using namespace CANopen;
+#define ID_MIN 1
+#define ID_MAX 127
+// #define INTERACTIVE
 
-Node node(4);
+Node *nodePtr;
 mutex mtx;
 int sock;
 bool quit = false;
@@ -36,7 +39,7 @@ void listenFunc()
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
             auto start = chrono::steady_clock::now();
-            node.receiveFrame(CANopenFrame);
+            nodePtr->receiveFrame(CANopenFrame);
             auto end = chrono::steady_clock::now();
             tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
             mtx.unlock();
@@ -56,12 +59,12 @@ void updateFunc()
     {
         if (mtx.try_lock())
         {
-            node.at(OD_OBJECT_6048)->setValue(1, x);
+            nodePtr->at(OD_OBJECT_6048)->setValue(1, x);
             auto start = chrono::steady_clock::now();
-            node.update();
+            nodePtr->update();
             auto end = chrono::steady_clock::now();
             tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
-            // node.transmitPDO(0);
+            // nodePtr->transmitPDO(0);
             mtx.unlock();
             // printf("[main] update: %ld µs, receive: %ld µs\n", tUpdate, tRecv);
         }
@@ -78,7 +81,29 @@ void signal_callback_handler(int signum)
 
 int main(int argc, char *argv[])
 {
+    unsigned nodeID;
+    int ifindex;
     signal(SIGINT, signal_callback_handler);
+    try
+    {
+        nodeID = stoi(argv[2]);
+        if ((ifindex = if_nametoindex(argv[1])) == 0)
+        {
+            cout << "Unknown interface \"" << argv[1] << "\"" << endl;
+            throw exception();
+        }
+    }
+    catch (...)
+    {
+        cout << "Usage: ./app <CAN interface> <node ID>" << endl;
+        return EXIT_FAILURE;
+    }
+    if (nodeID < ID_MIN || ID_MAX < nodeID)
+    {
+        cout << "Node ID must be in range " << ID_MIN << " to " << ID_MAX << endl;
+        return EXIT_FAILURE;
+    }
+
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
     {
         perror("Socket");
@@ -86,18 +111,21 @@ int main(int argc, char *argv[])
     }
     sockaddr_can addr;
     addr.can_family = AF_CAN;
-    addr.can_ifindex = if_nametoindex("vcan0");
+    addr.can_ifindex = ifindex;
     if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         perror("Bind");
         return EXIT_FAILURE;
     }
 
+    cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
+    Node node(nodeID);
+    nodePtr = &node;
     // node.loadOD();
     thread listenThread(listenFunc);
     listenThread.detach();
     thread updateThread(updateFunc);
-
+#ifdef INTERACTIVE
     int choice = 0;
     do
     {
@@ -141,6 +169,7 @@ int main(int argc, char *argv[])
         }
     } while (choice != 0);
     quit = true;
+#endif
     updateThread.join();
     // node.saveOD();
     return EXIT_SUCCESS;
