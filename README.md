@@ -22,6 +22,7 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
     - 1800 to 19FF: sub1 tweaked to be const (mutable COB-IDs unsupported)
 - Object 1006 is ignored (sync producer feature)
 - Object 100D is ignored (node guarding unsupported)
+- Object 1015 is ignored
 - Object 1016 is ignored (heartbeat consumer feature)
 - Object 1020 is ignored
 - Object 1021 is ignored (DOMAIN unsupported)
