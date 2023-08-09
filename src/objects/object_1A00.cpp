@@ -1,6 +1,5 @@
 #include "object_1A00.hpp"
 #include "../node.hpp"
-#include <cstdio>
 using namespace CANopen;
 
 SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
