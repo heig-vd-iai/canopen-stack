@@ -103,7 +103,13 @@ int main(int argc, char *argv[])
     int choice = 0;
     do
     {
-        cout << "===== CANopen example =====\n0: Quit\n1: Emit generic error\n11: Clear generic error\n2: Emit current error\n22: Clear current error\n3: Emit voltage error\n33: Clear voltage error\n>" << endl;
+        cout << "===== CANopen example =====\n";
+        cout << "0: Quit\n";
+        cout << "1: Emit generic error\n11: Clear generic error\n";
+        cout << "2: Emit current error\n22: Clear current error\n";
+        cout << "3: Emit voltage error\n33: Clear voltage error\n";
+        cout << "4: Emit communication error\n44: Clear communication error\n";
+        cout << "<";
         cin >> choice;
         switch (choice)
         {
@@ -127,6 +133,12 @@ int main(int argc, char *argv[])
             break;
         case 33:
             node.emcy.clearErrorBit(ErrorRegisterBit_Voltage);
+            break;
+        case 4:
+            node.emcy.raiseError(EMCYErrorCode_Communication_CANErrorPassive);
+            break;
+        case 44:
+            node.emcy.clearErrorBit(ErrorRegisterBit_Communication);
             break;
         }
     } while (choice != 0);
