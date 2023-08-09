@@ -62,11 +62,11 @@ uint32_t Object1800::getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID]
 
 uint8_t Object1800::getTransmissionType() { return *(uint8_t *)entries[X1800_INDEX_TRANSMISSION].dataSrc; }
 
-uint16_t Object1800::getInhibitTime() { return *(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc; }
+uint32_t Object1800::getInhibitTime_us() { return (uint32_t)(*(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc) * 100; }
 
-uint32_t Object1800::getInhibitTime_us() { return (uint32_t)getInhibitTime() * 100; }
+uint16_t Object1800::getEventTimer_ms() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
 
-uint16_t Object1800::getEventTimer() { return *(uint16_t *)entries[X1800_INDEX_EVENT].dataSrc; }
+uint32_t Object1800::getEventTimer_us() { return (uint32_t)getEventTimer_ms() * 1000; }
 
 uint8_t Object1800::getSyncStart() { return *(uint8_t *)entries[X1800_INDEX_SYNC].dataSrc; }
 

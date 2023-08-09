@@ -29,9 +29,9 @@ namespace CANopen
         uint8_t getCount();
         uint32_t getCobId();
         uint8_t getTransmissionType();
-        uint16_t getInhibitTime();
         uint32_t getInhibitTime_us();
-        uint16_t getEventTimer();
+        uint16_t getEventTimer_ms();
+        uint32_t getEventTimer_us();
         uint8_t getSyncStart();
         bool isEnabled();
         bool isInhibitSupported();
