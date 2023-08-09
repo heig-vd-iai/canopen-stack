@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#define SYNC_MAX_COUNTER 240
 
 namespace CANopen
 {
@@ -10,6 +9,7 @@ namespace CANopen
         bool enabled = false;
         class Node &node;
         uint8_t internalCounter = 1;
+        uint8_t maxCounter;
 
     public:
         SYNC(class Node &node);
