@@ -12,7 +12,6 @@ namespace CANopen
 
     public:
         HB(class Node &node);
-        void receiveFrame(class Frame frame);
         void publishState(NMTStates state);
         void update(uint32_t timestamp_us);
     };

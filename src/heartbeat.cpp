@@ -5,10 +5,6 @@ using namespace CANopen;
 
 HB::HB(Node &node) : node(node) {}
 
-void HB::receiveFrame(Frame frame)
-{
-}
-
 void HB::publishState(NMTStates state)
 {
     Frame frame;

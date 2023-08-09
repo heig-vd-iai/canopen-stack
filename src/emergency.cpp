@@ -26,12 +26,6 @@ void EMCY::enable() { enabled = true; }
 
 void EMCY::disable() { enabled = false; }
 
-void EMCY::receiveFrame(Frame frame)
-{
-    if (!enabled)
-        return;
-}
-
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
 {
     if (!enabled)

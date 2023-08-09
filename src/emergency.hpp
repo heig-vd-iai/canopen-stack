@@ -21,7 +21,6 @@ namespace CANopen
         EMCY(class Node &node);
         void enable();
         void disable();
-        void receiveFrame(class Frame frame);
         void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
         void clearErrorBit(unsigned bit);
         void clearHistory();
