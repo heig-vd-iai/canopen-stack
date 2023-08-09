@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+#define X1029_TO_PREOP 0x00
+#define X1029_NO_CHANGE 0x01
+#define X1029_TO_STOPPED 0x02
 
 namespace CANopen
 {
@@ -18,8 +21,9 @@ namespace CANopen
         void enable();
         void disable();
         void receiveFrame(class Frame frame);
-        void transmitError(uint16_t errorCode, uint16_t manufacturerCode = 0);
+        void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
         void clearErrorBit(unsigned bit);
         void clearHistory();
+        void reset();
     };
 }

@@ -33,7 +33,7 @@ void EMCY::receiveFrame(Frame frame)
         return;
 }
 
-void EMCY::transmitError(uint16_t errorCode, uint16_t manufacturerCode)
+void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
 {
     if (!enabled)
         return;
@@ -74,6 +74,27 @@ void EMCY::transmitError(uint16_t errorCode, uint16_t manufacturerCode)
     ((Object1003 *)node.at(OD_OBJECT_1003))->pushError(errorCode, manufacturerCode);
 #endif
     sendError(errorCode, manufacturerCode);
+
+    uint8_t behaviour = 0;
+#ifdef OD_OBJECT_1029
+    node.at(OD_OBJECT_1029)->getValue(0, &behaviour);
+#endif
+    NMTServiceCommands command = NMTServiceCommand_None;
+    switch (behaviour)
+    {
+    default:
+    case X1029_TO_PREOP:
+        if (node.nmt.getState() == NMTState_Operational)
+            command = NMTServiceCommand_EnterPreOperational;
+        break;
+    case X1029_NO_CHANGE:
+        command = NMTServiceCommand_None;
+        break;
+    case X1029_TO_STOPPED:
+        command = NMTServiceCommand_Stop;
+        break;
+    }
+    node.nmt.setTransition(command);
 }
 
 void EMCY::clearErrorBit(unsigned bit)
@@ -87,7 +108,11 @@ void EMCY::clearErrorBit(unsigned bit)
 void EMCY::clearHistory()
 {
 #ifdef OD_OBJECT_1003
-    if (enabled)
-        ((Object1003 *)node.at(OD_OBJECT_1003))->clearErrors();
+    ((Object1003 *)node.at(OD_OBJECT_1003))->clearErrors();
 #endif
+}
+
+void CANopen::EMCY::reset()
+{
+    errorRegisterObject->reset();
 }
