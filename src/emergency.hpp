@@ -1,8 +1,9 @@
 #pragma once
 #include <cstdint>
-#define X1029_TO_PREOP 0x00
-#define X1029_NO_CHANGE 0x01
-#define X1029_TO_STOPPED 0x02
+#define X1029_SUB_COMMUNICATION 1
+#define X1029_BEHAVIOUR_PREOP 0x00
+#define X1029_BEHAVIOUR_NONE 0x01
+#define X1029_BEHAVIOUR_STOPPED 0x02
 
 namespace CANopen
 {
