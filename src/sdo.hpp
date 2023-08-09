@@ -39,7 +39,7 @@ namespace CANopen
     private:
         bool enabled = false;
         class Node &node;
-        SDOServerStates serverState;
+        SDOServerStates serverState = SDOServerState_Ready;
         struct
         {
             class Object *object;
