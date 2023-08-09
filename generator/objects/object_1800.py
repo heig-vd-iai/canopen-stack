@@ -10,8 +10,4 @@ class Object1800(RecordObject):
         if self.subNumber < 3:
             self.error(f"at least 3 entries should be present")
             errors = True
-        for i in [0, 1]:
-            if self.entries[i].accessType.writeable:
-                self.warn(f"sub {i} will be set to 'const'")
-                self.entries[i].accessType.set("const")
         if errors: raise ValueError()
