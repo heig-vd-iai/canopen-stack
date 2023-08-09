@@ -6,7 +6,6 @@
 #include <cstring>
 using namespace CANopen;
 
-
 PDO::TPDO::TPDO() : mappedEntries(NULL) {}
 
 PDO::PDO(Node &node) : node(node)
@@ -116,11 +115,10 @@ void PDO::update(uint32_t timestamp_us)
     {
         TPDO *tpdo = tpdos + i;
         uint8_t transmission = tpdo->commObject->getTransmissionType();
-        uint16_t timer_ms = tpdo->commObject->getEventTimer();
+        uint32_t timer_us = tpdo->commObject->getEventTimer_us();
         // Only event-driven PDOs can be sent periodically
-        if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_ms == 0 || timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
+        if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_us == 0 || timestamp_us - tpdo->timestamp_us < timer_us)
             continue;
-        
         sendTPDO(i, timestamp_us);
     }
 }
