@@ -19,8 +19,6 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
     - 1005 is ignored (COB-ID SYNC)
     - 1012 is ignored (COB-ID time stamp)
     - 1014 is ignored (COB-ID EMCY)
-    - 1400 to 15FF: sub1 is ignored (mutable COB-IDs unsupported)
-    - 1800 to 19FF: sub1 is ignored (mutable COB-IDs unsupported)
 - Object 1006 is ignored (sync producer feature)
 - Object 100D is ignored (node guarding unsupported)
 - Object 1015 is ignored
