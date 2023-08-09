@@ -102,4 +102,4 @@ void NMT::setTransition(NMTServiceCommands command)
 
 NMTStates NMT::getState() { return currentState; }
 
-void NMT::update() { setTransition((NMTServiceCommands)0); }
+void NMT::update() { setTransition(); }

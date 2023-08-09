@@ -13,7 +13,7 @@ namespace CANopen
     public:
         NMT(class Node &node);
         void receiveFrame(class Frame frame);
-        void setTransition(NMTServiceCommands command);
+        void setTransition(NMTServiceCommands command = NMTServiceCommand_None);
         NMTStates getState();
         void update();
     };

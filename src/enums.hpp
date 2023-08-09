@@ -31,6 +31,7 @@ namespace CANopen
 
     enum NMTServiceCommands
     { // see p. 72-74
+        NMTServiceCommand_None = 0x00,
         NMTServiceCommand_Start = 0x01,
         NMTServiceCommand_Stop = 0x02,
         NMTServiceCommand_EnterPreOperational = 0x80,
