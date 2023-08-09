@@ -5,10 +5,7 @@
 #include <cstdlib>
 using namespace CANopen;
 
-SYNC::SYNC(Node &node) : node(node), syncCounterOverflow(NULL)
-{
-    syncCounterOverflow = node.findObject(SYNC_OBJECT_1019);
-}
+SYNC::SYNC(Node &node) : node(node) {}
 
 void SYNC::enable() { enabled = true; }
 
