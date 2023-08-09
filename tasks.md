@@ -12,7 +12,6 @@
 
 ### Other
 - p.103: The default values shall be set valid after the CANopen device is reset (NMT service reset node for sub-index from 01h to 7Fh, NMT service reset communication for sub-index 02h) or power cycled
-- p.112, 1019: A change of the value shall be responded with a SDO abort (abort code: 0800 0022h or 0800 0000h) in case the sync cycle period is unequal to 0
 - node.cpp: make sure function code is supported (filters)
 - node.cpp: don't mix sync and emcy messages
 - implement all predefined objects
@@ -25,6 +24,7 @@
 - SYNC overflow ?
 - 1013: High res timestamp supported ?
 - how to perform reset ?
+- test with multiple nodes at the same time?
 
 ## Tasks (OD generator)
 - CLI: EDS file name and node ID
