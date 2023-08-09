@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         cout << "2: Emit current error\n22: Clear current error\n";
         cout << "3: Emit voltage error\n33: Clear voltage error\n";
         cout << "4: Emit communication error\n44: Clear communication error\n";
-        cout << "<";
+        cout << ">";
         cin >> choice;
         switch (choice)
         {
