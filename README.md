@@ -24,6 +24,7 @@ The maximum value depends on whether or not object 1019 is present: if it is, th
     - 1014 is ignored (COB-ID EMCY)
 - Object 1006 is ignored (sync producer feature)
 - Object 100D is ignored (node guarding unsupported)
+- Object 1013 is ignored (not consumed and not published)
 - Object 1015 is ignored
 - Object 1016 is ignored (heartbeat consumer feature)
 - Object 1020 is ignored
