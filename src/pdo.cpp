@@ -4,8 +4,8 @@
 #include "enums.hpp"
 #include "objects/object_1800.hpp"
 #include <cstring>
-#include <cstdlib>
 using namespace CANopen;
+
 
 PDO::TPDO::TPDO() : mappedEntries(NULL) {}
 
@@ -120,6 +120,7 @@ void PDO::update(uint32_t timestamp_us)
         // Only event-driven PDOs can be sent periodically
         if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_ms == 0 || timestamp_us - tpdo->timestamp_us < timer_ms * 1000)
             continue;
+        
         sendTPDO(i, timestamp_us);
     }
 }

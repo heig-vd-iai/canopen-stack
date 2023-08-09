@@ -1,7 +1,6 @@
 #include "heartbeat.hpp"
 #include "node.hpp"
 #include "frame.hpp"
-#include <cstdlib>
 using namespace CANopen;
 
 HB::HB(Node &node) : node(node) {}

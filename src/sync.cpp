@@ -2,7 +2,6 @@
 #include "node.hpp"
 #include "frame.hpp"
 #include "enums.hpp"
-#include <cstdlib>
 using namespace CANopen;
 
 SYNC::SYNC(Node &node) : node(node) {}

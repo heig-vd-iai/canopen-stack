@@ -1,5 +1,3 @@
-#include <cstdlib>
-#include <cstdio>
 #include <pthread.h>
 #include <thread>
 #include <chrono>

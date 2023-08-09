@@ -3,7 +3,6 @@
 #include "objects/object_1001.hpp"
 #include "objects/object_1003.hpp"
 #include "frame.hpp"
-#include <cstdlib>
 using namespace CANopen;
 
 EMCY::EMCY(Node &node) : node(node)
