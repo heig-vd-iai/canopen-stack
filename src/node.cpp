@@ -16,8 +16,6 @@ void Node::receiveFrame(Frame frame)
         // Also FunctionCode_EMCY
         sync.receiveFrame(frame, timestamp);
         break;
-    case FunctionCode_TIME:
-        break;
     case FunctionCode_TPDO1:
     case FunctionCode_TPDO2:
     case FunctionCode_TPDO3:
@@ -29,13 +27,8 @@ void Node::receiveFrame(Frame frame)
     case FunctionCode_RPDO3:
     case FunctionCode_RPDO4:
         break;
-    case FunctionCode_TSDO:
     case FunctionCode_RSDO:
         sdo.receiveFrame(frame, timestamp);
-        break;
-    case FunctionCode_HEARTBEAT:
-        break;
-    default:
         break;
     }
 }
