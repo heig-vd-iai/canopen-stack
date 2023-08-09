@@ -70,3 +70,8 @@ bool Object1001::isErrorfree()
 {
     return getValue() == 0;
 }
+
+void CANopen::Object1001::reset()
+{
+    setValue(0, (uint8_t)0);
+}

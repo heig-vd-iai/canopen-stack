@@ -11,5 +11,6 @@ namespace CANopen
         void setErrorBit(unsigned bit);
         void clearErrorBit(unsigned bit);
         bool isErrorfree();
+        void reset();
     };
 }
