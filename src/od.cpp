@@ -16,10 +16,10 @@ Object *ObjectDictionnary::findObject(uint16_t objectIndex)
         else
             upper = mid - 1;
     }
-    return NULL;
+    return nullptr;
 }
 
 Object *ObjectDictionnary::at(uint16_t index)
 {
-    return index < OD_OBJECTS_COUNT ? objectsArray[index] : NULL;
+    return index < OD_OBJECTS_COUNT ? objectsArray[index] : nullptr;
 }

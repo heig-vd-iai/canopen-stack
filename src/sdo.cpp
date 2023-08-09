@@ -38,7 +38,7 @@ void SDO::uploadInitiate(Frame request, uint32_t timestamp_us)
     uint8_t subindex = request.data[3];
     Object *object = node.od.findObject(index);
 
-    if (object == NULL)
+    if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
         return;
@@ -142,7 +142,7 @@ void SDO::downloadInitiate(Frame request, uint32_t timestamp_us)
     uint8_t subindex = request.data[3];
     Object *object = node.od.findObject(index);
 
-    if (object == NULL)
+    if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
         return;

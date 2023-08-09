@@ -18,12 +18,11 @@ namespace CANopen
         {
             class Object1800 *commObject;
             class Object1A00 *mapObject;
-            TPDOPair *mappedEntries;
+            TPDOPair *mappedEntries = nullptr;
             uint8_t count = 0;
             uint8_t size = 0;
             uint32_t timestamp_us = 0;
             bool syncFlag = false;
-            TPDO();
         };
 
     private:

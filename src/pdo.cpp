@@ -6,8 +6,6 @@
 #include <cstring>
 using namespace CANopen;
 
-PDO::TPDO::TPDO() : mappedEntries(NULL) {}
-
 PDO::PDO(Node &node) : node(node)
 {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
@@ -26,7 +24,7 @@ void PDO::remapTPDO(unsigned index)
     TPDO *tpdo = tpdos + index;
     unsigned count = tpdo->mapObject->getCount();
     tpdo->count = 0;
-    if (tpdo->mappedEntries != NULL)
+    if (tpdo->mappedEntries)
         delete[] tpdo->mappedEntries;
     tpdo->mappedEntries = new TPDOPair[count];
     unsigned sizeSum = 0;
