@@ -5,6 +5,7 @@ from objects.object_1001 import Object1001
 from objects.object_1003 import Object1003
 from objects.object_1010 import Object1010
 from objects.object_1011 import Object1011
+from objects.object_1019 import Object1019
 from objects.object_1800 import Object1800
 from objects.object_1A00 import Object1A00
 from datetime import datetime
@@ -24,6 +25,7 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
     """This function converts canopen.Variable, canopen.Array and canopen.Record to VarObject, ArrayObject and RecordObject, or any specific object subclass"""
     if isinstance(object, Variable):
         if object.index == 0x1001: return Object1001(object.index, [object])
+        if object.index == 0x1019: return Object1019(object.index, [object])
         return VarObject(object.index, [object])
     if isinstance(object, Array):
         entries = list(object.values())
