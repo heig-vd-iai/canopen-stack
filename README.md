@@ -10,6 +10,8 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 - Node guarding is not supported
 - OS commands are not supported
 - If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific
+- The SYNC object has an internal counter that is incremented on each SYNC message. If the data contains a counter value, it is copied to the internal counter, otherwise the internal counter is incremented up to its maximum value.
+The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
 ### Unsupported or aliased data types
 - DOMAIN is not supported
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
