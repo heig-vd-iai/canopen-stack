@@ -5,7 +5,6 @@
 #include "objects/object_1800.hpp"
 #include <cstring>
 #include <cstdlib>
-#include <cstdio>
 using namespace CANopen;
 
 PDO::TPDO::TPDO() : mappedEntries(NULL) {}
@@ -31,7 +30,6 @@ void PDO::remapTPDO(unsigned index)
     if (tpdo->mappedEntries != NULL)
         delete[] tpdo->mappedEntries;
     tpdo->mappedEntries = new TPDOPair[count];
-    // printf("[PDO] TPDO[%d] was remapped\n", index + 1);
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
@@ -40,16 +38,13 @@ void PDO::remapTPDO(unsigned index)
         sizeSum += object->getSize(content.bits.subindex);
         if (sizeSum > PDO_DATA_LENGTH)
         {
-            // printf("Exceeded PDO size! Skipping any other mapping (%d/%d)\n", tpdo->count, count);
             break;
         }
         tpdo->mappedEntries[i].object = object;
         tpdo->mappedEntries[i].subindex = content.bits.subindex;
         tpdo->size = sizeSum;
         tpdo->count++;
-        // printf("index: 0x%04X, sub-index: %d, size(bits): %d\n", content.bits.index, content.bits.subindex, content.bits.length);
     }
-    // puts("");
 }
 
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
