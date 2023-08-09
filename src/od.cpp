@@ -1,5 +1,4 @@
 #include "od.hpp"
-#include <cstdio>
 using namespace CANopen;
 
 Object *ObjectDictionnary::findObject(uint16_t objectIndex)
