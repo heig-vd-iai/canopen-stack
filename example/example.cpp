@@ -111,19 +111,19 @@ int main(int argc, char *argv[])
             quit = true;
             break;
         case 1:
-            node.emcy.transmitError(EMCYErrorCode_Generic);
+            node.emcy.raiseError(EMCYErrorCode_Generic);
             break;
         case 11:
             node.emcy.clearErrorBit(ErrorRegisterBit_Generic);
             break;
         case 2:
-            node.emcy.transmitError(EMCYErrorCode_Current);
+            node.emcy.raiseError(EMCYErrorCode_Current);
             break;
         case 22:
             node.emcy.clearErrorBit(ErrorRegisterBit_Current);
             break;
         case 3:
-            node.emcy.transmitError(EMCYErrorCode_Voltage);
+            node.emcy.raiseError(EMCYErrorCode_Voltage);
             break;
         case 33:
             node.emcy.clearErrorBit(ErrorRegisterBit_Voltage);
