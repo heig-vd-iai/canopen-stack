@@ -9,6 +9,7 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 - Multiple PDOS above 4 not supported
 - Node guarding is not supported
 - OS commands are not supported
+- If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific
 ### Unsupported or aliased data types
 - DOMAIN is not supported
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
@@ -18,8 +19,8 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
     - 1005 is ignored (COB-ID SYNC)
     - 1012 is ignored (COB-ID time stamp)
     - 1014 is ignored (COB-ID EMCY)
-    - 1400 to 15FF: sub1 tweaked to be const (mutable COB-IDs unsupported)
-    - 1800 to 19FF: sub1 tweaked to be const (mutable COB-IDs unsupported)
+    - 1400 to 15FF: sub1 is ignored (mutable COB-IDs unsupported)
+    - 1800 to 19FF: sub1 is ignored (mutable COB-IDs unsupported)
 - Object 1006 is ignored (sync producer feature)
 - Object 100D is ignored (node guarding unsupported)
 - Object 1015 is ignored
