@@ -37,7 +37,8 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
 {
     if (!enabled)
         return;
-    switch (errorCode & 0xFF00)
+    uint8_t behaviour = X1029_BEHAVIOUR_PREOP;
+    switch (errorCode)
     {
     case EMCYErrorCode_Generic:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Generic);
@@ -59,9 +60,16 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     case EMCYErrorCode_Temperature_Device:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Temperature);
         break;
+    case EMCYErrorCode_Communication:
     case EMCYErrorCode_Communication_CANOverrun:
     case EMCYErrorCode_Communication_CANErrorPassive:
+    case EMCYErrorCode_Communication_HeartbeatError:
+    case EMCYErrorCode_Communication_RecoveredBusOFF:
+    case EMCYErrorCode_Communication_CANIDCollision:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Communication);
+#ifdef OD_OBJECT_1029
+        node.at(OD_OBJECT_1029)->getValue(X1029_SUB_COMMUNICATION, &behaviour);
+#endif
         break;
     case EMCYErrorCode_DeviceSpecific:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_DeviceProfile);
@@ -74,23 +82,18 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     ((Object1003 *)node.at(OD_OBJECT_1003))->pushError(errorCode, manufacturerCode);
 #endif
     sendError(errorCode, manufacturerCode);
-
-    uint8_t behaviour = 0;
-#ifdef OD_OBJECT_1029
-    node.at(OD_OBJECT_1029)->getValue(0, &behaviour);
-#endif
     NMTServiceCommands command = NMTServiceCommand_None;
     switch (behaviour)
     {
     default:
-    case X1029_TO_PREOP:
+    case X1029_BEHAVIOUR_PREOP:
         if (node.nmt.getState() == NMTState_Operational)
             command = NMTServiceCommand_EnterPreOperational;
         break;
-    case X1029_NO_CHANGE:
+    case X1029_BEHAVIOUR_NONE:
         command = NMTServiceCommand_None;
         break;
-    case X1029_TO_STOPPED:
+    case X1029_BEHAVIOUR_STOPPED:
         command = NMTServiceCommand_Stop;
         break;
     }
