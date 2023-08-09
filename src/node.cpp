@@ -12,7 +12,8 @@ void Node::receiveFrame(Frame frame)
     case FunctionCode_NMT:
         nmt.receiveFrame(frame);
         break;
-    case FunctionCode_SYNC: // Also FunctionCode_EMCY
+    case FunctionCode_SYNC:
+        // Also FunctionCode_EMCY
         sync.receiveFrame(frame, timestamp);
         break;
     case FunctionCode_TIME:

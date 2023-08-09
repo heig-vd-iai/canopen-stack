@@ -22,7 +22,7 @@ void SYNC::disable() { enabled = false; }
 
 void SYNC::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
-    if (!enabled)
+    if (!enabled || frame.cobId.bits.nodeId != 0)
         return;
     internalCounter = frame.dlc > 0 ? frame.data[0] : internalCounter % maxCounter + 1;
     node.pdo.onSync(internalCounter, timestamp_us);

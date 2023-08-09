@@ -7,7 +7,7 @@ NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node) {}
 
 void NMT::receiveFrame(Frame frame)
 {
-    if (frame.cobId.bits.functionCode != FunctionCode_NMT || (frame.data[1] != node.nodeId && frame.data[1] != 0))
+    if (frame.cobId.bits.nodeId != 0 || (frame.data[1] != node.nodeId && frame.data[1] != 0))
         return;
     setTransition((NMTServiceCommands)frame.data[0]);
 }

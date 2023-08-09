@@ -88,7 +88,7 @@ void PDO::disable() { enabled = false; }
 
 void PDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
-    if (!enabled || !frame.rtr)
+    if (!enabled || frame.cobId.bits.nodeId != node.nodeId || !frame.rtr)
         return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
