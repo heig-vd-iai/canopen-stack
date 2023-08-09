@@ -22,7 +22,6 @@ void NMT::setTransition(NMTServiceCommands command)
         node.pdo.disable();
         node.sdo.disable();
         node.sync.disable();
-        node.time.disable();
         node.emcy.disable();
         nextState = NMTState_PreOperational;
         break;
@@ -30,7 +29,6 @@ void NMT::setTransition(NMTServiceCommands command)
         node.pdo.disable();
         node.sdo.enable();
         node.sync.enable();
-        node.time.enable();
         node.emcy.enable();
         switch (command)
         {
@@ -52,7 +50,6 @@ void NMT::setTransition(NMTServiceCommands command)
         node.pdo.enable();
         node.sdo.enable();
         node.sync.enable();
-        node.time.enable();
         node.emcy.enable();
         switch (command)
         {
@@ -74,7 +71,6 @@ void NMT::setTransition(NMTServiceCommands command)
         node.pdo.disable();
         node.sdo.disable();
         node.sync.disable();
-        node.time.disable();
         node.emcy.disable();
         switch (command)
         {

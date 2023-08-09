@@ -7,9 +7,6 @@
 ### SDO
 - SDO block transfer
 
-### TIME
-- implementation
-
 ### Other
 - p.103: The default values shall be set valid after the CANopen device is reset (NMT service reset node for sub-index from 01h to 7Fh, NMT service reset communication for sub-index 02h) or power cycled
 - node.cpp: make sure function code is supported (filters)
