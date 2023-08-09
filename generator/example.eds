@@ -1140,7 +1140,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=const
+AccessType=rw
 DefaultValue=$NODEID+0x180
 PDOMapping=0
 
@@ -1201,7 +1201,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=const
+AccessType=rw
 DefaultValue=$NODEID+0x280
 PDOMapping=0
 
@@ -1262,7 +1262,7 @@ PDOMapping=0
 ParameterName=COB-ID
 ObjectType=0x7
 DataType=0x0007
-AccessType=const
+AccessType=rw
 DefaultValue=$NODEID+0x380
 PDOMapping=0
 
