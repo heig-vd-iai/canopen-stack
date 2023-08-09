@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include "enums.hpp"
-#define HB_OBJECT_1017 0x1017
 
 namespace CANopen
 {
@@ -9,7 +8,6 @@ namespace CANopen
     {
     private:
         class Node &node;
-        class Object *heartbeatTimeObject;  //TODO: use #ifdef
         uint32_t lastPublish = 0;
 
     public:
