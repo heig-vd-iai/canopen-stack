@@ -3,6 +3,7 @@ CANopen slave library
 This library uses the generic pre-defined connection set, as such, custom COB-IDs for objects are not supported (see p.80).
 
 ## Remarks
+- The TIME object is not supported
 - PDO mapping is limited to 8 objects, minimum size of a mapped object is 1 byte and not 1 bit
 - Mutable COB-IDs are unsupported
 - Multiple SDOs not supported
