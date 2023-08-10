@@ -15,8 +15,8 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
     // Fill command byte
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_AbortTransfer;
     // Fill response frame fields
-    response.cobId.bits.functionCode = FunctionCode_TSDO;
-    response.cobId.bits.nodeId = node.nodeId;
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
     response.dlc = 8;
     // Fill response frame data
     response.data[0] = sendCommand.value;
@@ -80,8 +80,8 @@ void SDO::uploadInitiate(Frame request, uint32_t timestamp_us)
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ResponseUploadInitiate;
     // Fill response frame fields
-    response.cobId.bits.functionCode = FunctionCode_TSDO;
-    response.cobId.bits.nodeId = node.nodeId;
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
     response.dlc = 8;
     // Fill response frame data
     response.data[0] = sendCommand.value;
@@ -114,8 +114,8 @@ void SDO::uploadSegment(Frame request, uint32_t timestamp_us)
     sendCommand.bits_segment.n = SDO_SEGMENT_DATA_LENGTH - payloadSize;
     sendCommand.bits_segment.c = !transferData.remainingBytes;
     // Fill response frame fields
-    response.cobId.bits.functionCode = FunctionCode_TSDO;
-    response.cobId.bits.nodeId = node.nodeId;
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
     response.dlc = 8;
     // Upload response data
     response.data[0] = sendCommand.value;
@@ -193,8 +193,8 @@ void SDO::downloadInitiate(Frame request, uint32_t timestamp_us)
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ResponseDownloadInitiate;
     // Fill response frame fields
-    response.cobId.bits.functionCode = FunctionCode_TSDO;
-    response.cobId.bits.nodeId = node.nodeId;
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
     response.dlc = 8;
     // Fill response frame data
     response.data[0] = sendCommand.value;
@@ -246,8 +246,8 @@ void SDO::downloadSegment(Frame request, uint32_t timestamp_us)
     sendCommand.bits_segment.ccs = SDOCommandSpecifier_ResponseDownloadSegment;
     sendCommand.bits_segment.t = recvCommand.bits_segment.t;
     // Fill response frame fields
-    response.cobId.bits.functionCode = FunctionCode_TSDO;
-    response.cobId.bits.nodeId = node.nodeId;
+    response.functionCode = FunctionCode_TSDO;
+    response.nodeId = node.nodeId;
     response.dlc = 8;
     // Fill response frame data
     response.data[0] = sendCommand.value;
@@ -264,7 +264,7 @@ void SDO::disable() { enabled = false; }
 
 void SDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
-    if (!enabled || frame.cobId.bits.nodeId != node.nodeId)
+    if (!enabled || frame.nodeId != node.nodeId)
         return;
     SDO_CommandByte recvCommand = {frame.data[0]};
     uint16_t index = *(uint16_t *)(frame.data + 1);

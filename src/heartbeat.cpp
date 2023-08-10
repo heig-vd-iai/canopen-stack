@@ -8,8 +8,8 @@ HB::HB(Node &node) : node(node) {}
 void HB::publishState(NMTStates state)
 {
     Frame frame;
-    frame.cobId.bits.functionCode = FunctionCode_HEARTBEAT;
-    frame.cobId.bits.nodeId = node.nodeId;
+    frame.functionCode = FunctionCode_HEARTBEAT;
+    frame.nodeId = node.nodeId;
     frame.dlc = 1;
     frame.data[0] = state;
     node.sendFrame(frame);

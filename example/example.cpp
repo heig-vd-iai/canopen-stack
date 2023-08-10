@@ -34,8 +34,8 @@ void listenFunc()
         {
             mtx.lock();
             CANopenFrame.dlc = canFrame.can_dlc;
-            CANopenFrame.cobId.bits.nodeId = canFrame.can_id & 0x7F;
-            CANopenFrame.cobId.bits.functionCode = (canFrame.can_id & 0x780) >> 7;
+            CANopenFrame.nodeId = canFrame.can_id & 0x7F;
+            CANopenFrame.functionCode = (canFrame.can_id & 0x780) >> 7;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
             auto start = chrono::steady_clock::now();
@@ -162,7 +162,7 @@ void Node::sendFrame(Frame frame)
 {
     can_frame canFrame;
     canFrame.len = frame.dlc;
-    canFrame.can_id = frame.cobId.value;
+    canFrame.can_id = frame.getCobID();
     memcpy(canFrame.data, frame.data, frame.dlc);
     int size = sizeof(canFrame);
     if (send(sock, &canFrame, size, 0) != size)

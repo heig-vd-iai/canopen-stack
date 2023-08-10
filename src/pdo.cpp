@@ -65,7 +65,7 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
         return;
     TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
     Frame frame;
-    frame.cobId.value = cobid.value & 0x07FF;
+    frame.setCobID(cobid.bits.canId);
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
@@ -88,7 +88,7 @@ void PDO::disable() { enabled = false; }
 
 void PDO::receiveFrame(Frame frame, uint32_t timestamp_us)
 {
-    if (!enabled || frame.cobId.bits.nodeId != node.nodeId || !frame.rtr)
+    if (!enabled || frame.nodeId != node.nodeId || !frame.rtr)
         return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++)
     {
