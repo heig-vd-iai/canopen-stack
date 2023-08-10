@@ -16,7 +16,7 @@ using namespace std;
 using namespace CANopen;
 #define ID_MIN 1
 #define ID_MAX 127
-// #define INTERACTIVE
+#define INTERACTIVE
 
 Node *nodePtr;
 mutex mtx;
@@ -79,8 +79,43 @@ void signal_callback_handler(int signum)
     quit = true;
 }
 
+// struct Data
+// {
+//     uint32_t a = 12;
+//     uint16_t b[3] = {1000, 2000, 3000};
+//     struct
+//     {
+//         float a = 1.5f;
+//         float b = 2.5f;
+//     } c;
+//     friend ostream &operator<<(ostream &os, const Data &dt)
+//     {
+//         os << "&a: " << &dt.a << ", &b: " << dt.b << ", &c.a: " << &dt.c.a << ", &c.b: " << &dt.c.b << "\n";
+//         os << "a: " << dt.a << ", b: [" << dt.b[0] << ", " << dt.b[1] << ", " << dt.b[2] << "], c: {" << dt.c.a << ", " << dt.c.b << "}";
+//         return os;
+//     }
+// };
+
 int main(int argc, char *argv[])
 {
+    // Data d1;
+    // d1.a = 24;
+    // d1.b[0] = 100;
+    // d1.b[1] = 200;
+    // d1.b[2] = 300;
+    // d1.c.a = 10.5f;
+    // d1.c.b = 20.5f;
+
+    // cout << "d1: " << d1 << endl;
+    // puts("");
+    // Data d2;
+    // cout << "d2: " << d2 << endl;
+    // puts("");
+    // d1 = d2;
+    // cout << "d1: " << d1 << endl;
+
+    // return 0;
+
     unsigned nodeID;
     int ifindex;
     signal(SIGINT, signal_callback_handler);
@@ -121,7 +156,7 @@ int main(int argc, char *argv[])
     cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
     Node node(nodeID);
     nodePtr = &node;
-    // node.loadOD();
+    node.loadOD();
     thread listenThread(listenFunc);
     listenThread.detach();
     thread updateThread(updateFunc);
@@ -131,11 +166,10 @@ int main(int argc, char *argv[])
     {
         cout << "===== CANopen example =====\n";
         cout << "0: Quit\n";
-        cout << "1: Emit generic error\n11: Clear generic error\n";
-        cout << "2: Emit current error\n22: Clear current error\n";
-        cout << "3: Emit voltage error\n33: Clear voltage error\n";
-        cout << "4: Emit communication error\n44: Clear communication error\n";
-        cout << ">";
+        cout << "1: Save OD\n";
+        cout << "2: Load OD\n";
+        cout << "3: Restore OD\n";
+        cout << "> ";
         cin >> choice;
         switch (choice)
         {
@@ -143,35 +177,19 @@ int main(int argc, char *argv[])
             quit = true;
             break;
         case 1:
-            node.emcy.raiseError(EMCYErrorCode_Generic);
-            break;
-        case 11:
-            node.emcy.clearErrorBit(ErrorRegisterBit_Generic);
+            node.saveOD();
             break;
         case 2:
-            node.emcy.raiseError(EMCYErrorCode_Current);
-            break;
-        case 22:
-            node.emcy.clearErrorBit(ErrorRegisterBit_Current);
+            node.loadOD();
             break;
         case 3:
-            node.emcy.raiseError(EMCYErrorCode_Voltage);
-            break;
-        case 33:
-            node.emcy.clearErrorBit(ErrorRegisterBit_Voltage);
-            break;
-        case 4:
-            node.emcy.raiseError(EMCYErrorCode_Communication_CANErrorPassive);
-            break;
-        case 44:
-            node.emcy.clearErrorBit(ErrorRegisterBit_Communication);
+            node.restoreOD();
             break;
         }
     } while (choice != 0);
     quit = true;
 #endif
     updateThread.join();
-    // node.saveOD();
     return EXIT_SUCCESS;
 }
 
@@ -191,7 +209,7 @@ void Node::sendFrame(Frame frame)
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 {
-    std::ofstream f("file.dat", std::ios::out | std::ios::binary);
+    ofstream f("file.dat", ios::out | ios::binary);
     if (!f)
         return false;
     f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
@@ -201,7 +219,7 @@ bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup)
 {
-    std::ifstream f("file.dat", std::ios::in | std::ios::binary);
+    ifstream f("file.dat", ios::in | ios::binary);
     if (!f)
         return false;
     f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
@@ -211,6 +229,7 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
 {
+    objects.entries.data = ObjectDictionnaryData();
     return true;
 }
 
