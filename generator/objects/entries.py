@@ -7,7 +7,6 @@ class AccessType:
     def __init__(self, accessType: str) -> None:
         self._READ = 1 << 0
         self._WRITE = 1 << 1
-        self._CONST = 1 << 2
         self._value: int = 0
         self.set(accessType)
 
@@ -29,9 +28,8 @@ class AccessType:
     
     def set(self, name: str) -> None:
         if name in ["rw", "rww", "rwr"]: self._value = self._WRITE | self._READ
-        elif name == "ro": self._value = self._READ
+        elif name in ["ro", "const"]: self._value = self._READ
         elif name == "wo": self._value = self._WRITE
-        elif name == "const": self._value = self._CONST | self._READ
 
 
 class ObjectEntry(ABC):
