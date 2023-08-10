@@ -3,19 +3,13 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-NMT::NMT(Node &node) : currentState(NMTState_Initialisation), node(node) {}
-
-void NMT::receiveFrame(Frame frame)
+NMT::NMT(Node &node) : node(node)
 {
-    if (frame.cobId.bits.nodeId != 0 || (frame.data[1] != node.nodeId && frame.data[1] != 0))
-        return;
-    setTransition((NMTServiceCommands)frame.data[0]);
 }
 
-void NMT::setTransition(NMTServiceCommands command)
+void CANopen::NMT::updateSM(NMTServiceCommands command)
 {
     NMTStates nextState = currentState;
-
     switch (currentState)
     {
     case NMTState_Initialisation:
@@ -23,8 +17,18 @@ void NMT::setTransition(NMTServiceCommands command)
         node.sdo.disable();
         node.sync.disable();
         node.emcy.disable();
+        switch (resetState)
+        {
+        case NMTResetState_Initialising:
+            break;
+        case NMTResetState_ResetApplication:
+            node.od.restoreData(ParameterGroup_All);
+            break;
+        case NMTResetState_ResetCommunication:
+            node.od.restoreData(ParameterGroup_Communication);
+            break;
+        }
         nextState = NMTState_PreOperational;
-        break;
     case NMTState_PreOperational:
         node.pdo.disable();
         node.sdo.enable();
@@ -39,8 +43,12 @@ void NMT::setTransition(NMTServiceCommands command)
             nextState = NMTState_Stopped;
             break;
         case NMTServiceCommand_ResetNode:
+            nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetApplication;
+            break;
         case NMTServiceCommand_ResetCommunication:
             nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetCommunication;
             break;
         default:
             break;
@@ -60,8 +68,12 @@ void NMT::setTransition(NMTServiceCommands command)
             nextState = NMTState_Stopped;
             break;
         case NMTServiceCommand_ResetNode:
+            nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetApplication;
+            break;
         case NMTServiceCommand_ResetCommunication:
             nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetCommunication;
             break;
         default:
             break;
@@ -81,8 +93,12 @@ void NMT::setTransition(NMTServiceCommands command)
             nextState = NMTState_Operational;
             break;
         case NMTServiceCommand_ResetNode:
+            nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetApplication;
+            break;
         case NMTServiceCommand_ResetCommunication:
             nextState = NMTState_Initialisation;
+            resetState = NMTResetState_ResetCommunication;
             break;
         default:
             break;
@@ -96,6 +112,22 @@ void NMT::setTransition(NMTServiceCommands command)
     currentState = nextState;
 }
 
-NMTStates NMT::getState() { return currentState; }
+void NMT::receiveFrame(Frame frame)
+{
+    if (frame.cobId.bits.nodeId != 0 || (frame.data[1] != node.nodeId && frame.data[1] != 0))
+        return;
+    setTransition((NMTServiceCommands)frame.data[0]);
+}
 
-void NMT::update() { setTransition(); }
+void NMT::setTransition(NMTServiceCommands command)
+{
+    updateSM(command);
+    updateSM();
+}
+
+void NMT::initSM()
+{
+    updateSM();
+}
+
+NMTStates NMT::getState() { return currentState; }
