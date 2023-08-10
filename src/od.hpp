@@ -2,7 +2,7 @@
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on August 9, 2023
+ * [Date]:          Generated on August 10, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
  *****************************************************************************/
@@ -79,86 +79,87 @@ namespace CANopen
     class ObjectDictionnary
     {
     private:
+        struct ObjectDictionnaryData
+        {
+            int8_t x2 = 0;
+            int16_t x3 = 0;
+            int32_t x4 = 0;
+            uint8_t x5 = 0;
+            uint16_t x6 = 0;
+            uint32_t x7 = 0;
+            uint32_t x1000 = 131474;
+            uint8_t x1001 = 0;
+            uint8_t x1003sub0 = 0;
+            uint32_t x1003[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+            uint32_t x1005 = 128;
+            uint32_t x1006 = 0;
+            uint32_t x1007 = 0;
+            uint8_t x1008[17] = {80, 68, 52, 45, 69, 66, 53, 57, 67, 68, 45, 69, 45, 54, 53, 45, 50};
+            uint8_t x1009[12] = {97, 109, 111, 110, 103, 32, 117, 115, 32, 224, 182, 158};
+            uint8_t x100A[18] = {70, 73, 82, 45, 118, 50, 50, 49, 51, 45, 66, 49, 48, 51, 49, 49, 51, 52};
+            uint16_t x100C = 0;
+            uint8_t x100D = 0;
+            uint8_t x1010sub0 = 13;
+            uint32_t x1010[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
+            uint8_t x1011sub0 = 13;
+            uint32_t x1011[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
+            uint32_t x1014 = 132;
+            uint8_t x1016sub0 = 1;
+            uint32_t x1016[1] = {0};
+            uint16_t x1017 = 0;
+            struct {uint8_t sub0 = 4; uint32_t sub1 = 620; uint32_t sub2 = 70; uint32_t sub3 = 145031168; uint32_t sub4 = 0;} x1018;
+            uint8_t x1019 = 0;
+            uint8_t x1020sub0 = 2;
+            uint32_t x1020[2] = {0, 0};
+            uint8_t x1029sub0 = 2;
+            uint8_t x1029[2] = {0, 1};
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 516; uint8_t sub2 = 255;} x1400;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 772; uint8_t sub2 = 255;} x1401;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1028; uint8_t sub2 = 255;} x1402;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1284; uint8_t sub2 = 255;} x1403;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1614807056; uint32_t sub2 = 1616904200; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1600;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1618608160; uint32_t sub2 = 1619066912; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1601;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1614938128; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1602;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1627259168; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1603;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 388; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1800;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 644; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1801;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 900; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1802;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 1156; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1803;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1614872592; uint32_t sub2 = 1616969736; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A00;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1617166368; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A01;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1615069200; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A02;
+            struct {uint8_t sub0 = 1; uint32_t sub1 = 1627193376; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A03;
+            uint8_t x1F51sub0 = 2;
+            uint8_t x1F51[2] = {0, 0};
+            uint8_t x1F57sub0 = 2;
+            uint32_t x1F57[2] = {0, 0};
+            uint32_t x1F80 = 0;
+            int16_t x6007 = 1;
+            uint16_t x603F = 0;
+            uint16_t x6040 = 0;
+            uint16_t x6041 = 0;
+            int16_t x6042 = 200;
+            int16_t x6043 = 0;
+            int16_t x6044 = 0;
+            uint8_t x6046sub0 = 2;
+            uint32_t x6046[2] = {0, 30000};
+            struct {uint8_t sub0 = 2; double sub1 = 500.0; float sub2 = 1.0;} x6048;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 500; uint16_t sub2 = 1;} x6049;
+            struct {uint8_t sub0 = 2; uint64_t sub1 = 5000; uint64_t sub2 = 1;} x604A;
+            int8_t x6060 = 0;
+            int8_t x6061 = 0;
+            int32_t x6064 = 420;
+            int32_t x607A = 4000;
+            uint32_t x6081 = 500;
+            uint32_t x60FD = 0;
+            uint8_t x60FEsub0 = 1;
+            uint32_t x60FE[1] = {0};
+        };
         struct 
         {
             struct
             {
-                struct
-                {
-                int8_t x2 = 0;
-                int16_t x3 = 0;
-                int32_t x4 = 0;
-                uint8_t x5 = 0;
-                uint16_t x6 = 0;
-                uint32_t x7 = 0;
-                uint32_t x1000 = 131474;
-                uint8_t x1001 = 0;
-                uint8_t x1003sub0 = 0;
-                uint32_t x1003[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-                uint32_t x1005 = 128;
-                uint32_t x1006 = 0;
-                uint32_t x1007 = 0;
-                uint8_t x1008[17] = {80, 68, 52, 45, 69, 66, 53, 57, 67, 68, 45, 69, 45, 54, 53, 45, 50};
-                uint8_t x1009[12] = {97, 109, 111, 110, 103, 32, 117, 115, 32, 224, 182, 158};
-                uint8_t x100A[18] = {70, 73, 82, 45, 118, 50, 50, 49, 51, 45, 66, 49, 48, 51, 49, 49, 51, 52};
-                uint16_t x100C = 0;
-                uint8_t x100D = 0;
-                uint8_t x1010sub0 = 13;
-                uint32_t x1010[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
-                uint8_t x1011sub0 = 13;
-                uint32_t x1011[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
-                uint32_t x1014 = 132;
-                uint8_t x1016sub0 = 1;
-                uint32_t x1016[1] = {0};
-                uint16_t x1017 = 0;
-                struct {uint8_t sub0 = 4; uint32_t sub1 = 620; uint32_t sub2 = 70; uint32_t sub3 = 145031168; uint32_t sub4 = 0;} x1018;
-                uint8_t x1019 = 0;
-                uint8_t x1020sub0 = 2;
-                uint32_t x1020[2] = {0, 0};
-                uint8_t x1029sub0 = 2;
-                uint8_t x1029[2] = {0, 1};
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 516; uint8_t sub2 = 255;} x1400;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 772; uint8_t sub2 = 255;} x1401;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 1028; uint8_t sub2 = 255;} x1402;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 1284; uint8_t sub2 = 255;} x1403;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 1614807056; uint32_t sub2 = 1616904200; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1600;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 1618608160; uint32_t sub2 = 1619066912; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1601;
-                struct {uint8_t sub0 = 1; uint32_t sub1 = 1614938128; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1602;
-                struct {uint8_t sub0 = 1; uint32_t sub1 = 1627259168; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1603;
-                struct {uint8_t sub0 = 6; uint32_t sub1 = 388; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1800;
-                struct {uint8_t sub0 = 6; uint32_t sub1 = 644; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1801;
-                struct {uint8_t sub0 = 6; uint32_t sub1 = 900; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1802;
-                struct {uint8_t sub0 = 6; uint32_t sub1 = 1156; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1803;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 1614872592; uint32_t sub2 = 1616969736; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A00;
-                struct {uint8_t sub0 = 1; uint32_t sub1 = 1617166368; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A01;
-                struct {uint8_t sub0 = 1; uint32_t sub1 = 1615069200; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A02;
-                struct {uint8_t sub0 = 1; uint32_t sub1 = 1627193376; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A03;
-                uint8_t x1F51sub0 = 2;
-                uint8_t x1F51[2] = {0, 0};
-                uint8_t x1F57sub0 = 2;
-                uint32_t x1F57[2] = {0, 0};
-                uint32_t x1F80 = 0;
-                int16_t x6007 = 1;
-                uint16_t x603F = 0;
-                uint16_t x6040 = 0;
-                uint16_t x6041 = 0;
-                int16_t x6042 = 200;
-                int16_t x6043 = 0;
-                int16_t x6044 = 0;
-                uint8_t x6046sub0 = 2;
-                uint32_t x6046[2] = {0, 30000};
-                struct {uint8_t sub0 = 2; double sub1 = 500.0; float sub2 = 1.0;} x6048;
-                struct {uint8_t sub0 = 2; uint32_t sub1 = 500; uint16_t sub2 = 1;} x6049;
-                struct {uint8_t sub0 = 2; uint64_t sub1 = 5000; uint64_t sub2 = 1;} x604A;
-                int8_t x6060 = 0;
-                int8_t x6061 = 0;
-                int32_t x6064 = 420;
-                int32_t x607A = 4000;
-                uint32_t x6081 = 500;
-                uint32_t x60FD = 0;
-                uint8_t x60FEsub0 = 1;
-                uint32_t x60FE[1] = {0};
-                } data;
+                ObjectDictionnaryData data;
                 ObjectEntry x2[1] = {ObjectEntry(&data.x2, 5, 2, 1)};
                 ObjectEntry x3[1] = {ObjectEntry(&data.x3, 5, 3, 2)};
                 ObjectEntry x4[1] = {ObjectEntry(&data.x4, 5, 4, 4)};

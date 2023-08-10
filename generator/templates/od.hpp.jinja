@@ -18,18 +18,19 @@ namespace {{namespace}}
     class ObjectDictionnary
     {
     private:
+        struct ObjectDictionnaryData
+        {
+            {% for object in objects %}
+            {% for declaration in object.renderData() %}
+            {{declaration}};
+            {% endfor %}
+            {% endfor %}
+        };
         struct 
         {
             struct
             {
-                struct
-                {
-                {% for object in objects %}
-                {% for declaration in object.renderData() %}
-                {{declaration}};
-                {% endfor %}
-                {% endfor %}
-                } data;
+                ObjectDictionnaryData data;
                 {% for object in objects %}
                 {{object.renderEntry()}};
                 {% endfor %}
