@@ -79,43 +79,8 @@ void signal_callback_handler(int signum)
     quit = true;
 }
 
-// struct Data
-// {
-//     uint32_t a = 12;
-//     uint16_t b[3] = {1000, 2000, 3000};
-//     struct
-//     {
-//         float a = 1.5f;
-//         float b = 2.5f;
-//     } c;
-//     friend ostream &operator<<(ostream &os, const Data &dt)
-//     {
-//         os << "&a: " << &dt.a << ", &b: " << dt.b << ", &c.a: " << &dt.c.a << ", &c.b: " << &dt.c.b << "\n";
-//         os << "a: " << dt.a << ", b: [" << dt.b[0] << ", " << dt.b[1] << ", " << dt.b[2] << "], c: {" << dt.c.a << ", " << dt.c.b << "}";
-//         return os;
-//     }
-// };
-
 int main(int argc, char *argv[])
 {
-    // Data d1;
-    // d1.a = 24;
-    // d1.b[0] = 100;
-    // d1.b[1] = 200;
-    // d1.b[2] = 300;
-    // d1.c.a = 10.5f;
-    // d1.c.b = 20.5f;
-
-    // cout << "d1: " << d1 << endl;
-    // puts("");
-    // Data d2;
-    // cout << "d2: " << d2 << endl;
-    // puts("");
-    // d1 = d2;
-    // cout << "d1: " << d1 << endl;
-
-    // return 0;
-
     unsigned nodeID;
     int ifindex;
     signal(SIGINT, signal_callback_handler);
