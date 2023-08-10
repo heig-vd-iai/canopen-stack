@@ -8,7 +8,7 @@ SDOAbortCodes CANopen::Object1010::preWriteBytes(uint8_t subindex, uint8_t *byte
     {
         uint32_t value = *(uint32_t *)bytes;
         if (value == X1010_SAVE_SIGNATURE)
-            return node.saveOD(subindex) ? SDOAbortCode_CancelWrite : SDOAbortCode_AccessFailedHardwareError;
+            return node.od.saveData(subindex) ? SDOAbortCode_CancelWrite : SDOAbortCode_AccessFailedHardwareError;
         else
             return SDOAbortCode_CannotStoreOrTransfer;
     }
