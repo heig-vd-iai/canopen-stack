@@ -29,6 +29,13 @@ namespace CANopen
         NMTState_Stopped = 0x04
     };
 
+    enum NMTResetStates
+    { // see p.79
+        NMTResetState_Initialising,
+        NMTResetState_ResetApplication,
+        NMTResetState_ResetCommunication
+    };
+
     enum NMTServiceCommands
     { // see p. 72-74
         NMTServiceCommand_None = 0x00,
@@ -129,7 +136,7 @@ enum EMCYErrorCodes
 };
 
 enum ErrorRegisterBits
-{
+{ // see p. 92
     ErrorRegisterBit_Generic = 0,
     ErrorRegisterBit_Current = 1,
     ErrorRegisterBit_Voltage = 2,
@@ -137,4 +144,11 @@ enum ErrorRegisterBits
     ErrorRegisterBit_Communication = 4,
     ErrorRegisterBit_DeviceProfile = 5,
     ErrorRegisterBit_Manufacturer = 7
+};
+
+enum ParameterGroups
+{ // see p. 101-102
+    ParameterGroup_All = 1,
+    ParameterGroup_Communication = 2,
+    ParameterGroup_Application = 3
 };
