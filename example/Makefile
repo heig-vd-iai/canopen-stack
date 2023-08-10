@@ -19,6 +19,7 @@ SOURCES = \
 	$(CANOPEN_SRC)/pdo.cpp \
 	$(CANOPEN_SRC)/sync.cpp \
 	$(CANOPEN_SRC)/emergency.cpp \
+	$(CANOPEN_SRC)/frame.cpp \
 	$(CANOPEN_SRC)/od.cpp \
 	$(OBJECTS_SRC)/object_1001.cpp \
 	$(OBJECTS_SRC)/object_1003.cpp \
