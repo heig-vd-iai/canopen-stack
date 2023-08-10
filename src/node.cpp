@@ -2,7 +2,10 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), nodeId(id) {}
+Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), nodeId(id)
+{
+    nmt.initSM();
+}
 
 void Node::receiveFrame(Frame frame)
 {
@@ -36,7 +39,6 @@ void Node::receiveFrame(Frame frame)
 void Node::update()
 {
     uint32_t timestamp = getTime_us();
-    nmt.update();
     hb.update(timestamp);
     sdo.update(timestamp);
     pdo.update(timestamp);
