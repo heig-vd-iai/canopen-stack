@@ -213,7 +213,7 @@ namespace CANopen
                 ObjectEntry x6043[1] = {ObjectEntry(&data.x6043, 5, 2)};
                 ObjectEntry x6044[1] = {ObjectEntry(&data.x6044, 5, 2)};
                 ObjectEntry x6046[3] = {ObjectEntry(&data.x6046sub0, 1, 1), ObjectEntry(&data.x6046[0], 7, 4), ObjectEntry(&data.x6046[1], 7, 4)};
-                ObjectEntry x6048[3] = {ObjectEntry(&data.x6048.sub0, 1, 1), ObjectEntry(&data.x6048.sub1, 3, 8), ObjectEntry(&data.x6048.sub2, 3, 4)};
+                ObjectEntry x6048[3] = {ObjectEntry(&data.x6048.sub0, 1, 1), ObjectEntry(&data.x6048.sub1, 7, 8), ObjectEntry(&data.x6048.sub2, 7, 4)};
                 ObjectEntry x6049[3] = {ObjectEntry(&data.x6049.sub0, 1, 1), ObjectEntry(&data.x6049.sub1, 5, 4), ObjectEntry(&data.x6049.sub2, 6, 2)};
                 ObjectEntry x604A[3] = {ObjectEntry(&data.x604A.sub0, 1, 1), ObjectEntry(&data.x604A.sub1, 7, 8), ObjectEntry(&data.x604A.sub2, 7, 8)};
                 ObjectEntry x6060[1] = {ObjectEntry(&data.x6060, 7, 1)};
