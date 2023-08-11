@@ -45,9 +45,11 @@ class ObjectEntry(ABC):
         self.accessType = AccessType(accessType, PDOMappable)
 
     def renderData(self, name: str) -> str:
+        """Returns the C++ data declaration, ex. uint16_t x1003 = 42"""
         return f"{self.ctype} {name} = {self.defaultValue}"
     
     def renderEntry(self, entryClassName: str, entryVarName: str) -> str:
+        """Returns the C++ object entry declaration, ex. ObjectEntry(&data.x1003, 3, 2)"""
         return f"{entryClassName}(&data.{entryVarName}, {self.accessType.value}, {self.size})"
 
 class BooleanEntry(ObjectEntry):
@@ -100,6 +102,7 @@ class VisibleStringEntry(ObjectEntry):
         super().__init__(0x09, "uint8_t", len(default), accessType, PDOMappable, "", default)
 
     def renderData(self, name: str) -> str:
+        """Returns the C++ data declaration, ex. uint8_t x1003[6] = {97, 109, 111, 103, 117, 115}"""
         return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.defaultValue])}}}"
 
 datatype2entryclass = {
