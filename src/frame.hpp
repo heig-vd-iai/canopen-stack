@@ -47,6 +47,7 @@ namespace CANopen
         uint8_t getSubindex();
         void setAbortCode(uint32_t abortCode);
         uint32_t getAbortCode();
+        uint32_t getInitiateData();
     };
 
     struct NMTFrame : public Frame

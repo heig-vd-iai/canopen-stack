@@ -155,7 +155,7 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
             sendAbort(index, subindex, SDOAbortCode_GeneralParameterIncompatibility);
             return;
         }
-        transferData.remainingBytes = *(uint32_t *)(request.data + SDO_INITIATE_DATA_OFFSET); // TODO
+        transferData.remainingBytes = request.getInitiateData();
         if (transferData.remainingBytes != size)
         {
             sendAbort(index, subindex, SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);

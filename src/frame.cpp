@@ -109,6 +109,11 @@ uint32_t SDOFrame::getAbortCode()
     return *(uint32_t *)(data + SDO_ABORTCODE_OFFSET);
 }
 
+uint32_t SDOFrame::getInitiateData()
+{
+    return *(uint32_t *)(data + SDO_INITIATE_DATA_OFFSET);
+}
+
 NMTFrame::NMTFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_NMT) {}
 
 uint8_t NMTFrame::getCommand()
