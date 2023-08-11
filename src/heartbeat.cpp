@@ -7,11 +7,7 @@ HB::HB(Node &node) : node(node) {}
 
 void HB::publishState(NMTStates state)
 {
-    Frame frame;
-    frame.functionCode = FunctionCode_HEARTBEAT;
-    frame.nodeId = node.nodeId;
-    frame.dlc = 1;
-    frame.data[0] = state;
+    HeartbeatFrame frame(node.nodeId, state);
     node.sendFrame(frame);
     lastPublish = node.getTime_us();
 }

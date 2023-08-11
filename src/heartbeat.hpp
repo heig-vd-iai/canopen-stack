@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 #include "enums.hpp"
+#define HEARTBEAT_DLC 1
+#define HEARTBEAT_STATE_OFFSET 0
 
 namespace CANopen
 {
