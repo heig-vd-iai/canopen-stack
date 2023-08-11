@@ -5,7 +5,6 @@
 #include "nmt.hpp"
 #include "sync.hpp"
 using namespace CANopen;
-// TODO: add defines for numbers
 
 Frame::Frame(uint8_t nodeId, uint8_t functionCode) : nodeId(nodeId), functionCode(functionCode) {}
 
@@ -16,13 +15,13 @@ Frame::Frame(uint16_t cobId)
 
 uint16_t Frame::getCobID()
 {
-    return ((uint16_t)functionCode & 0xF) << 7 | (nodeId & 0x7F); // TODO
+    return ((uint16_t)functionCode & FUNCTION_MASK) << FUNCTION_OFFSET | (nodeId & NODEID_MASK);
 }
 
 void Frame::setCobID(uint16_t cobId)
 {
-    nodeId = cobId & 0x7F;
-    functionCode = (cobId >> 7) & 0xF; // TODO
+    nodeId = cobId & NODEID_MASK;
+    functionCode = (cobId >> FUNCTION_OFFSET) & FUNCTION_MASK;
 }
 
 HeartbeatFrame::HeartbeatFrame(uint8_t nodeId, uint8_t state) : Frame(nodeId, FunctionCode_HEARTBEAT)
