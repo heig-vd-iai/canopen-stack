@@ -22,7 +22,7 @@ class ObjectBase(ABC):
             if entry.access_type not in accesstypes:
                 self.error(f"unknown access type '{entry.access_type}' for sub {i}")
                 entryValid = False
-            if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.default))
+            if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.pdo_mappable, entry.default))
             else: errors = True
         for i, entry in enumerate(self.entries):
             if entry.size <= 0:

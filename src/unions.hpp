@@ -8,6 +8,7 @@ union AccessType
     {
         uint8_t r : 1;
         uint8_t w : 1;
+        uint8_t map: 1;
     } bits;
 };
 
