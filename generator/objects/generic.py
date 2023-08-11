@@ -5,10 +5,9 @@ from .entries import datatype2entryclass, accesstypes, ObjectEntry
 
 class ObjectBase(ABC):
     """This is the base class for OD's objects"""
-    def __init__(self, index: int, objectType: int, entries: list[Variable], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
+    def __init__(self, index: int, entries: list[Variable], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object") -> None:
         self.index: int = index
         self.subNumber: int = len(entries)
-        self.objectType: int = objectType
         self.cppEntryName: str = cppEntryName
         self.cppObjectName: str = cppObjectName
         self.varName: str = "x%X" % self.index
@@ -39,7 +38,7 @@ class ObjectBase(ABC):
 
     def renderObject(self) -> str:
         """Returns the C++ object declaration, ex. Object x1003 = Object(...)"""
-        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, {self.objectType}, entries.{self.varName})"
+        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, entries.{self.varName})"
     
     @abstractmethod
     def renderData(self) -> list[str]:
@@ -52,7 +51,7 @@ class ObjectBase(ABC):
 
 class VarObject(ObjectBase):
     def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
-        super().__init__(index, 0x07, entries, cppObjectName=cppObjectName)
+        super().__init__(index, entries, cppObjectName=cppObjectName)
         self.entry = self.entries[0]
 
     def renderData(self) -> list[str]:
@@ -66,7 +65,7 @@ class VarObject(ObjectBase):
 
 class ArrayObject(ObjectBase):
     def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
-        super().__init__(index, 0x08, entries, cppObjectName=cppObjectName)
+        super().__init__(index, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
         ## Check for data type consistency based on first entry
         errors = False
@@ -91,7 +90,7 @@ class ArrayObject(ObjectBase):
 
 class RecordObject(ObjectBase):
     def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
-        super().__init__(index, 0x08, entries, cppObjectName=cppObjectName)
+        super().__init__(index, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> list[str]:

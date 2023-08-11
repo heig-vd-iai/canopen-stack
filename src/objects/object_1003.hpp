@@ -12,7 +12,7 @@ namespace CANopen
         void shiftErrors();
 
     public:
-        Object1003(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
+        Object1003(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}
         uint8_t getCount();
         void pushError(uint16_t errorCode, uint32_t manufacturerCode);
         void clearErrors();

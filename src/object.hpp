@@ -28,9 +28,8 @@ namespace CANopen
     public:
         const uint16_t index;
         const uint8_t subNumber;
-        const uint16_t objectType;
 
-        Object(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : entries(entries), index(index), subNumber(subNumber), objectType(objectType) {}
+        Object(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : entries(entries), index(index), subNumber(subNumber) {}
         virtual ~Object() {}
         bool isSubValid(uint8_t subindex);
         uint8_t getSize(uint8_t subindex);
