@@ -16,7 +16,7 @@ using namespace std;
 using namespace CANopen;
 #define ID_MIN 1
 #define ID_MAX 127
-#define INTERACTIVE
+// #define INTERACTIVE
 
 Node *nodePtr;
 mutex mtx;
@@ -29,13 +29,11 @@ void listenFunc()
     while (true)
     {
         can_frame canFrame;
-        Frame CANopenFrame;
         if (recv(sock, &canFrame, sizeof(canFrame), 0))
         {
             mtx.lock();
+            Frame CANopenFrame((uint16_t)canFrame.can_id);
             CANopenFrame.dlc = canFrame.can_dlc;
-            CANopenFrame.nodeId = canFrame.can_id & 0x7F;
-            CANopenFrame.functionCode = (canFrame.can_id & 0x780) >> 7;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
             auto start = chrono::steady_clock::now();
@@ -66,7 +64,6 @@ void updateFunc()
             tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
             // nodePtr->transmitPDO(0);
             mtx.unlock();
-            // printf("[main] update: %ld µs, receive: %ld µs\n", tUpdate, tRecv);
         }
         t += dt;
         x = a * sin(w * t);
