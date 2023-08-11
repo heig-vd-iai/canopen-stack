@@ -3,7 +3,7 @@
 #include <cstdint>
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
-#define PDO_DATA_LENGTH 8
+#define PDO_DLC 8
 
 namespace CANopen
 {

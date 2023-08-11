@@ -33,7 +33,7 @@ void PDO::remapTPDO(unsigned index)
         TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
         Object *object = node.od.findObject(content.bits.index);
         sizeSum += object->getSize(content.bits.subindex);
-        if (sizeSum > PDO_DATA_LENGTH)
+        if (sizeSum > PDO_DLC)
         {
             break;
         }
@@ -63,9 +63,7 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     TPDO *tpdo = tpdos + index;
     if (!enabled || !tpdo->commObject->isEnabled())
         return;
-    TPDOCobidEntry cobid = {tpdo->commObject->getCobId()};
-    Frame frame;
-    frame.setCobID(cobid.bits.canId);
+    Frame frame(tpdo->commObject->getActualCobId());
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
