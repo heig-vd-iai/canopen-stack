@@ -28,6 +28,7 @@ namespace CANopen
         Object1800(uint16_t index, uint8_t subNumber, uint16_t objectType, ObjectEntry *entries) : Object(index, subNumber, objectType, entries) {}
         uint8_t getCount();
         uint32_t getCobId();
+        uint16_t getActualCobId();
         uint8_t getTransmissionType();
         uint32_t getInhibitTime_us();
         uint16_t getEventTimer_ms();

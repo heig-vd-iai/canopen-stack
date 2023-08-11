@@ -60,6 +60,8 @@ uint8_t Object1800::getCount() { return *(uint8_t *)entries[X1800_INDEX_COUNT].d
 
 uint32_t Object1800::getCobId() { return *(uint32_t *)entries[X1800_INDEX_COBID].dataSrc; }
 
+uint16_t Object1800::getActualCobId() { return getCobId() & COBID_MASK; }
+
 uint8_t Object1800::getTransmissionType() { return *(uint8_t *)entries[X1800_INDEX_TRANSMISSION].dataSrc; }
 
 uint32_t Object1800::getInhibitTime_us() { return (uint32_t)(*(uint16_t *)entries[X1800_INDEX_INHIBIT].dataSrc) * 100; }
