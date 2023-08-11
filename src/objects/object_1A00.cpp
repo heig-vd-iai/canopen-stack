@@ -17,7 +17,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
                 TPDOMapEntry entry = {getMappedValue(i)};
                 sizeSum += node.findObject(entry.bits.index)->getSize(entry.bits.subindex);
             }
-            if (sizeSum > PDO_DATA_LENGTH)
+            if (sizeSum > PDO_DLC)
                 return SDOAbortCode_MappedPDOLengthExceeded;
         }
     }
