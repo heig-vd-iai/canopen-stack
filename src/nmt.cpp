@@ -111,11 +111,12 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
     currentState = nextState;
 }
 
-void NMT::receiveFrame(Frame &frame)
+void NMT::receiveFrame(NMTFrame &frame)
 {
-    if (frame.nodeId != 0 || (frame.data[1] != node.nodeId && frame.data[1] != 0))
+    uint8_t targetId = frame.getTargetId();
+    if (frame.nodeId != 0 || (targetId != node.nodeId && targetId != 0))
         return;
-    setTransition((NMTServiceCommands)frame.data[0]);
+    setTransition((NMTServiceCommands)frame.getCommand());
 }
 
 void NMT::setTransition(NMTServiceCommands command)

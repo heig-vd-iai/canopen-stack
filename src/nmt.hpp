@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 #include "enums.hpp"
+#define NMT_COMMAND_OFFSET 0
+#define NMT_NODEID_OFFSET 1
 
 namespace CANopen
 {
@@ -15,7 +17,7 @@ namespace CANopen
 
     public:
         NMT(class Node &node);
-        void receiveFrame(class Frame &frame);
+        void receiveFrame(class NMTFrame &frame);
         void setTransition(NMTServiceCommands command);
         void initSM();
         NMTStates getState();
