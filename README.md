@@ -4,7 +4,7 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 
 ## Remarks
 - The TIME object is not supported
-- PDO mapping is limited to 8 objects, minimum size of a mapped object is 1 byte and not 1 bit
+- PDO mapping is limited to 8 objects, as granularity is set to 8
 - Mutable COB-IDs are unsupported
 - Multiple SDOs not supported
 - Multiple PDOS above 4 not supported
@@ -13,6 +13,8 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 - If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific
 - The SYNC object has an internal counter that is incremented on each SYNC message. If the data contains a counter value, it is copied to the internal counter, otherwise the internal counter is incremented up to its maximum value.
 The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
+- LSS is not supported
+- Object flags (ObjFlags) is not supported
 ### Unsupported or aliased data types
 - DOMAIN is not supported
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
