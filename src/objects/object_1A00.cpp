@@ -27,7 +27,8 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
         Object *object = node.findObject(entry.bits.index);
         if (!object || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
-        if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8)
+        AccessType access = object->getAccessType(entry.bits.subindex);
+        if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8 || !access.bits.mappable || !access.bits.readable)
             return SDOAbortCode_CannotMapToPDO;
     }
     return SDOAbortCode_OK;
