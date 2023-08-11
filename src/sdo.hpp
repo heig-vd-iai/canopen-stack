@@ -5,6 +5,7 @@
 #define SDO_INITIATE_DATA_OFFSET 4
 #define SDO_SEGMENT_DATA_LENGTH 7
 #define SDO_SEGMENT_DATA_OFFSET 1
+#define SDO_BUFFSIZE 256
 
 namespace CANopen
 {
@@ -46,7 +47,7 @@ namespace CANopen
             uint16_t index;
             uint8_t subindex;
             uint32_t remainingBytes;
-            uint8_t buffer[64];
+            uint8_t buffer[SDO_BUFFSIZE];
             uint32_t timestamp;
             uint8_t toggle;
         } transferData;
