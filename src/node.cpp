@@ -31,7 +31,7 @@ void Node::receiveFrame(Frame &frame)
     case FunctionCode_RPDO4:
         break;
     case FunctionCode_RSDO:
-        sdo.receiveFrame(frame, timestamp);
+        sdo.receiveFrame((SDOFrame &)frame, timestamp);
         break;
     }
 }
