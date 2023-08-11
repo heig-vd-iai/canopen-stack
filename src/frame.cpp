@@ -59,12 +59,12 @@ void EmergencyFrame::setManufacturerCode(uint32_t manufacturerCode)
     *(uint32_t *)(data + EMCY_MANUFACTURER_OFFSET) = manufacturerCode;
 }
 
-SDOFrame::SDOFrame(uint8_t nodeId, uint8_t functionCode) : Frame(nodeId, functionCode)
+SDOFrame::SDOFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_TSDO)
 {
     dlc = SDO_DLC;
 }
 
-SDOFrame::SDOFrame(uint8_t nodeId, uint8_t functionCode, uint8_t commandByte) : Frame(nodeId, functionCode)
+SDOFrame::SDOFrame(uint8_t nodeId, uint8_t commandByte) : Frame(nodeId, FunctionCode_TSDO)
 {
     dlc = SDO_DLC;
     setCommandByte(commandByte);

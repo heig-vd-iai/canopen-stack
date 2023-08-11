@@ -13,7 +13,7 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode)
 {
     SDOCommandByte sendCommand = {0};
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_AbortTransfer;
-    SDOFrame response(node.nodeId, FunctionCode_TSDO, sendCommand.value);
+    SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
     response.setAbortCode(abortCode);
@@ -93,7 +93,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us)
     sendCommand.bits_segment.t = recvCommand.bits_segment.t;
     sendCommand.bits_segment.n = SDO_SEGMENT_DATA_LENGTH - payloadSize;
     sendCommand.bits_segment.c = !transferData.remainingBytes;
-    SDOFrame response(node.nodeId, FunctionCode_TSDO, sendCommand.value);
+    SDOFrame response(node.nodeId, sendCommand.value);
     uint32_t abortCode;
     if ((abortCode = transferData.object->readBytes(transferData.subindex, response.data + SDO_SEGMENT_DATA_OFFSET, payloadSize, bytesSent)) != SDOAbortCode_OK)
     {
@@ -163,7 +163,7 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
         }
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ResponseDownloadInitiate;
-    SDOFrame response(node.nodeId, FunctionCode_TSDO, sendCommand.value);
+    SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
     node.sendFrame(response);
@@ -204,7 +204,7 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us)
     }
     sendCommand.bits_segment.ccs = SDOCommandSpecifier_ResponseDownloadSegment;
     sendCommand.bits_segment.t = recvCommand.bits_segment.t;
-    SDOFrame response(node.nodeId, FunctionCode_TSDO, sendCommand.value);
+    SDOFrame response(node.nodeId, sendCommand.value);
     transferData.remainingBytes -= payloadSize;
     node.sendFrame(response);
     if (recvCommand.bits_segment.c)

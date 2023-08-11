@@ -32,10 +32,10 @@ namespace CANopen
         void setManufacturerCode(uint32_t manufacturerCode);
     };
 
-    struct SDOFrame : public Frame // TODO: Really need function code in constructor ?
+    struct SDOFrame : public Frame
     {
-        SDOFrame(uint8_t nodeId, uint8_t functionCode);
-        SDOFrame(uint8_t nodeId, uint8_t functionCode, uint8_t commandByte);
+        SDOFrame(uint8_t nodeId);
+        SDOFrame(uint8_t nodeId, uint8_t commandByte);
         void setCommandByte(uint8_t commandByte);
         uint8_t getCommandByte();
         void setIndex(uint16_t index);
