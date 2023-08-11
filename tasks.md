@@ -8,6 +8,8 @@
 - SDO block transfer
 
 ### Other
+- comment code (ChatGPT will help a lot)
+- GitHub wiki
 - OD object value range and all other properties (p.91): PDO mapping, range
 - group bits together for access type, PDO mapping, and others ?
 - test with multiple nodes at the same time ?
