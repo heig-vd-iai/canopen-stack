@@ -10,15 +10,14 @@ from objects.object_1800 import Object1800
 from objects.object_1A00 import Object1A00
 from datetime import datetime
 from typing import Union
+import argparse
 import jinja2
-
+import os
 
 
 TEMPLATES_DIR = "templates"
 HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
-NODEID = 4                      # TODO get from cli
-EDS_FILENAME = "example.eds"    # TODO get from cli
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
 def toCANopenObject(object: Union[Variable, Array, Record]):
@@ -40,8 +39,17 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
         return RecordObject(object.index, entries)
 
 
-
-od: ObjectDictionary = Node(NODEID, EDS_FILENAME).object_dictionary
+parser = argparse.ArgumentParser(description="This program converts a valid EDS file into an C++ header file.")
+parser.add_argument("id", type=int, help="Node ID", metavar="<node id>")
+parser.add_argument("filename", type=str, help="Name of the EDS file", metavar="<filename>")
+args = parser.parse_args()
+if(not 0 < args.id < 128): 
+    print("Node id must be in range [1, 127]")
+    exit(1)
+if not os.path.exists(args.filename):
+    print(f"No such file: '{args.filename}'")
+    exit(1)
+od: ObjectDictionary = Node(args.id, args.filename).object_dictionary
 objectsDict = {}
 for index, object in od.items():
     try: objectsDict[index] = toCANopenObject(object)
@@ -74,4 +82,4 @@ variables = {
 }
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
-print(f"Header file \"{HEADER_FILENAME}\" was successfully generated")
+print(f"Header file '{HEADER_FILENAME}' was successfully generated")
