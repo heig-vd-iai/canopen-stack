@@ -10,11 +10,8 @@
 ### Other
 - comment code (ChatGPT will help a lot)
 - GitHub wiki
+- document how to add a new Object subclass
 - OD object value range and all other properties (p.91): range
 - test with multiple nodes at the same time ?
 
 ## Tasks (OD generator)
-- comment classes and functions
-- PDO mapping: enforce correct size ?
-- PDO: enforce PDOs 1 to 4 (standard) ?
-- PDO mapping: max 8 mapped objects
