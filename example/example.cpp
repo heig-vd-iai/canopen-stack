@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-void Node::sendFrame(Frame frame)
+void Node::sendFrame(Frame &frame)
 {
     can_frame canFrame;
     canFrame.len = frame.dlc;
