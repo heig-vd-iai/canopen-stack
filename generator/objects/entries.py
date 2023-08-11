@@ -88,11 +88,11 @@ class Unsigned64Entry(ObjectEntry):
 
 class Real32Entry(ObjectEntry):
     def __init__(self, accessType: str, PDOMappable: bool, defaultValue: float) -> None:
-        super().__init__(0x08, "float", 4, accessType, 0.0, PDOMappable, defaultValue)
+        super().__init__(0x08, "float", 4, accessType, PDOMappable, 0.0, defaultValue)
 
 class Real64Entry(ObjectEntry):
     def __init__(self, accessType: str, PDOMappable: bool, defaultValue: float) -> None:
-        super().__init__(0x11, "double", 8, accessType, 0.0, PDOMappable, defaultValue)
+        super().__init__(0x11, "double", 8, accessType, PDOMappable, 0.0, defaultValue)
 
 class VisibleStringEntry(ObjectEntry):
     def __init__(self, accessType: str, PDOMappable: bool, defaultValue: str) -> None:
