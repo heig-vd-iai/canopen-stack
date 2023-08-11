@@ -9,7 +9,6 @@
 
 ### Other
 - OD object value range and all other properties (p.91): PDO mapping, range
-- create predefined frames inheriting from base Frame ?
 - group bits together for access type, PDO mapping, and others ?
 - test with multiple nodes at the same time ?
 
