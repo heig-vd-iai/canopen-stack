@@ -14,7 +14,6 @@
 - test with multiple nodes at the same time ?
 
 ## Tasks (OD generator)
-- CLI: EDS file name and node ID
 - comment classes and functions
 - PDO mapping: enforce correct size ?
 - PDO: enforce PDOs 1 to 4 (standard) ?
