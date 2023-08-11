@@ -40,7 +40,7 @@ namespace CANopen
         PDO(class Node &node);
         void enable();
         void disable();
-        void receiveFrame(class Frame frame, uint32_t timestamp_us);
+        void receiveFrame(class Frame &frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
         void onSync(uint8_t counter, uint32_t timestamp_us);
         void transmitTPDO(unsigned index);

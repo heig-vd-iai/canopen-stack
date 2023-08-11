@@ -2,6 +2,7 @@
 #include "node.hpp"
 #include "frame.hpp"
 #include "enums.hpp"
+#include "unions.hpp"
 #include "object.hpp"
 #include <cstring>
 using namespace CANopen;
@@ -11,7 +12,7 @@ SDO::SDO(Node &node) : node(node) {}
 void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
 {
     Frame response;
-    SDO_CommandByte sendCommand = {0};
+    SDOCommandByte sendCommand = {0};
     // Fill command byte
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_AbortTransfer;
     // Fill response frame fields
@@ -28,10 +29,10 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t errorCode)
     serverState = SDOServerState_Ready;
 }
 
-void SDO::uploadInitiate(Frame request, uint32_t timestamp_us)
+void SDO::uploadInitiate(Frame &request, uint32_t timestamp_us)
 {
     Frame response;
-    SDO_CommandByte sendCommand = {0};
+    SDOCommandByte sendCommand = {0};
     uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subindex = request.data[3];
@@ -95,10 +96,10 @@ void SDO::uploadInitiate(Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void SDO::uploadSegment(Frame request, uint32_t timestamp_us)
+void SDO::uploadSegment(Frame &request, uint32_t timestamp_us)
 {
     Frame response;
-    SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    SDOCommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     if (transferData.toggle != recvCommand.bits_segment.t)
     {
@@ -132,10 +133,10 @@ void SDO::uploadSegment(Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void SDO::downloadInitiate(Frame request, uint32_t timestamp_us)
+void SDO::downloadInitiate(Frame &request, uint32_t timestamp_us)
 {
     Frame response;
-    SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    SDOCommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     uint16_t index = *(uint16_t *)(request.data + 1);
     uint8_t subindex = request.data[3];
@@ -208,10 +209,10 @@ void SDO::downloadInitiate(Frame request, uint32_t timestamp_us)
     transferData.timestamp = timestamp_us;
 }
 
-void SDO::downloadSegment(Frame request, uint32_t timestamp_us)
+void SDO::downloadSegment(Frame &request, uint32_t timestamp_us)
 {
     Frame response;
-    SDO_CommandByte sendCommand = {0}, recvCommand = {request.data[0]};
+    SDOCommandByte sendCommand = {0}, recvCommand = {request.data[0]};
     uint32_t errorCode = 0;
     unsigned size = transferData.object->getSize(transferData.subindex);
     unsigned payloadSize = SDO_SEGMENT_DATA_LENGTH - recvCommand.bits_segment.n;
@@ -262,11 +263,11 @@ void SDO::enable() { enabled = true; }
 
 void SDO::disable() { enabled = false; }
 
-void SDO::receiveFrame(Frame frame, uint32_t timestamp_us)
+void SDO::receiveFrame(Frame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != node.nodeId)
         return;
-    SDO_CommandByte recvCommand = {frame.data[0]};
+    SDOCommandByte recvCommand = {frame.data[0]};
     uint16_t index = *(uint16_t *)(frame.data + 1);
     uint8_t subindex = frame.data[3];
     switch (serverState)

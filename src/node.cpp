@@ -7,7 +7,7 @@ Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*th
     nmt.initSM();
 }
 
-void Node::receiveFrame(Frame frame)
+void Node::receiveFrame(Frame &frame)
 {
     uint32_t timestamp = getTime_us();
     switch (frame.functionCode)

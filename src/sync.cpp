@@ -20,7 +20,7 @@ void SYNC::enable() { enabled = true; }
 
 void SYNC::disable() { enabled = false; }
 
-void SYNC::receiveFrame(Frame frame, uint32_t timestamp_us)
+void SYNC::receiveFrame(Frame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != 0)
         return;

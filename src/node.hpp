@@ -29,14 +29,14 @@ namespace CANopen
         SYNC sync;
         EMCY emcy;
 
-        void sendFrame(class Frame frame);
+        void sendFrame(class Frame &frame);
         uint32_t getTime_us();
 
     public:
         const uint8_t nodeId;
 
         Node(uint8_t id);
-        void receiveFrame(class Frame frame);
+        void receiveFrame(class Frame &frame);
         void transmitPDO(unsigned index);
         void reloadTPDO();
         void update();

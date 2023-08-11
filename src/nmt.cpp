@@ -3,9 +3,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-NMT::NMT(Node &node) : node(node)
-{
-}
+NMT::NMT(Node &node) : node(node) {}
 
 void CANopen::NMT::updateSM(NMTServiceCommands command)
 {
@@ -113,7 +111,7 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
     currentState = nextState;
 }
 
-void NMT::receiveFrame(Frame frame)
+void NMT::receiveFrame(Frame &frame)
 {
     if (frame.nodeId != 0 || (frame.data[1] != node.nodeId && frame.data[1] != 0))
         return;
