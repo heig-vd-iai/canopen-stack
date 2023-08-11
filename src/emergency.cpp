@@ -12,13 +12,7 @@ EMCY::EMCY(Node &node) : node(node)
 
 void CANopen::EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode)
 {
-    Frame frame;
-    frame.functionCode = FunctionCode_EMCY;
-    frame.nodeId = node.nodeId;
-    frame.dlc = 8;
-    *(uint16_t *)frame.data = errorCode;
-    frame.data[2] = errorRegisterObject->getValue();
-    *(uint32_t *)(frame.data + 3) = manufacturerCode;
+    EmergencyFrame frame(node.nodeId, errorCode, errorRegisterObject->getValue(), manufacturerCode);
     node.sendFrame(frame);
 }
 
