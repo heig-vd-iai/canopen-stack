@@ -28,7 +28,7 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
     ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.w)
+    if (!entry.accessType.bits.writeable)
         return SDOAbortCode_AttemptWriteOnReadOnly;
     if (size != entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
@@ -51,7 +51,7 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
     ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.r)
+    if (!entry.accessType.bits.readable)
         return SDOAbortCode_AttemptReadOnWriteOnly;
     if (size + offset > entry.size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
