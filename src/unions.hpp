@@ -6,9 +6,9 @@ union AccessType
     uint8_t value;
     struct
     {
-        uint8_t r : 1;
-        uint8_t w : 1;
-        uint8_t map: 1;
+        uint8_t readable : 1;
+        uint8_t writeable : 1;
+        uint8_t mappable: 1;
     } bits;
 };
 
