@@ -45,7 +45,7 @@ class ObjectEntry(ABC):
         return f"{self.ctype} {name} = {self.defaultValue}"
     
     def renderEntry(self, entryClassName: str, entryVarName: str) -> str:
-        return f"{entryClassName}(&data.{entryVarName}, {self.accessType.value}, {self.dataType}, {self.size})"
+        return f"{entryClassName}(&data.{entryVarName}, {self.accessType.value}, {self.size})"
 
 class BooleanEntry(ObjectEntry):
     def __init__(self, accessType: str, defaultValue: bool) -> None:
