@@ -20,10 +20,10 @@ void SYNC::enable() { enabled = true; }
 
 void SYNC::disable() { enabled = false; }
 
-void SYNC::receiveFrame(Frame &frame, uint32_t timestamp_us)
+void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != 0)
         return;
-    internalCounter = frame.dlc > 0 ? frame.data[0] : internalCounter % maxCounter + 1;
+    internalCounter = frame.isCounter() ? frame.getCounter() : internalCounter % maxCounter + 1;
     node.pdo.onSync(internalCounter, timestamp_us);
 }

@@ -17,7 +17,7 @@ void Node::receiveFrame(Frame &frame)
         break;
     case FunctionCode_SYNC:
         // Also FunctionCode_EMCY
-        sync.receiveFrame(frame, timestamp);
+        sync.receiveFrame((SYNCFrame &)frame, timestamp);
         break;
     case FunctionCode_TPDO1:
     case FunctionCode_TPDO2:

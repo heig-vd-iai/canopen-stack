@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#define SYNC_COUNTER_OFFSET 0
 
 namespace CANopen
 {
@@ -15,6 +16,6 @@ namespace CANopen
         SYNC(class Node &node);
         void enable();
         void disable();
-        void receiveFrame(class Frame &frame, uint32_t timestamp_us);
+        void receiveFrame(class SYNCFrame &frame, uint32_t timestamp_us);
     };
 }
