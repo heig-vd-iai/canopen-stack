@@ -1,5 +1,6 @@
 #include "object_1800.hpp"
 #include "../node.hpp"
+#include "../frame.hpp"
 #include <cstring>
 using namespace CANopen;
 
