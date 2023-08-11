@@ -37,7 +37,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!object->getAccessType(subindex).bits.r)
+    if (!object->getAccessType(subindex).bits.readable)
     {
         sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
         return;
@@ -123,7 +123,7 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!object->getAccessType(subindex).bits.w)
+    if (!object->getAccessType(subindex).bits.writeable)
     {
         sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
         return;
