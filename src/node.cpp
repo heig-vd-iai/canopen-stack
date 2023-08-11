@@ -13,7 +13,7 @@ void Node::receiveFrame(Frame &frame)
     switch (frame.functionCode)
     {
     case FunctionCode_NMT:
-        nmt.receiveFrame(frame);
+        nmt.receiveFrame((NMTFrame &)frame);
         break;
     case FunctionCode_SYNC:
         // Also FunctionCode_EMCY
