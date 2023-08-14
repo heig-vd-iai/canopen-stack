@@ -15,7 +15,7 @@ class Object1A00(RecordObject):
             entry = self.entries[i + 1]
             index = entry.defaultValue >> 16 & 0xFFFF
             subindex = entry.defaultValue >> 8 & 0xFF
-            sizeSum += (entry.defaultValue & 0xFF) // 8
+            sizeSum += entry.size
             if index not in objects:
                 self.error(f"invalid TPDO mapping for sub {i + 1} (invalid index)")
                 retval = False
