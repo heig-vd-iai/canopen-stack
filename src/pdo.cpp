@@ -91,7 +91,7 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
     }
 }
 
-void PDO::unpackRPDO(unsigned index, uint8_t *buffer)
+void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us)
 {
     RPDO *rpdo = rpdos + index;
     if (!enabled || !rpdo->commObject->isEnabled())
@@ -105,6 +105,8 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer)
         object->writeBytes(subindex, buffer + bytesTransferred, size, node);
         bytesTransferred += size;
     }
+    rpdo->timestamp_us = timestamp_us;
+    rpdo->watchTimeoutFlag = true;
 }
 
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
@@ -182,7 +184,9 @@ void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us)
         rpdo->syncFlag = true;
     }
     else
-        unpackRPDO(index, frame.data);
+        unpackRPDO(index, frame.data, timestamp_us);
+    if (onReceiveFunc)
+        onReceiveFunc(index + 1);
 }
 
 void PDO::update(uint32_t timestamp_us)
@@ -193,11 +197,25 @@ void PDO::update(uint32_t timestamp_us)
     {
         TPDO *tpdo = tpdos + i;
         uint8_t transmission = tpdo->commObject->getTransmissionType();
-        uint32_t timer_us = tpdo->commObject->getEventTimer_us();
-        // Only event-driven PDOs can be sent periodically
-        if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported() || timer_us == 0 || timestamp_us - tpdo->timestamp_us < timer_us)
+        if ((transmission != X1800_EVENT1 && transmission != X1800_EVENT2) || !tpdo->commObject->isTimerSupported())
             continue;
+        uint32_t timer_us = tpdo->commObject->getEventTimer_us();
+        if (timer_us == 0 || timestamp_us - tpdo->timestamp_us < timer_us)
+            continue;
+        // Only event-driven PDOs can be sent periodically
         sendTPDO(i, timestamp_us);
+    }
+    for (unsigned i = 0; i < OD_RPDO_COUNT; i++)
+    {
+        RPDO *rpdo = rpdos + i;
+        if (!rpdo->commObject->isTimerSupported())
+            continue;
+        uint32_t timer_us = rpdo->commObject->getEventTimer_us();
+        if (!rpdo->watchTimeoutFlag || timer_us == 0 || timestamp_us - rpdo->timestamp_us < timer_us)
+            continue;
+        rpdo->watchTimeoutFlag = false;
+        if (onTimeoutFunc)
+            onTimeoutFunc(i + 1);
     }
 }
 
@@ -226,7 +244,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
         RPDO *rpdo = rpdos + i;
         if (!rpdo->commObject->isSynchronous() || !rpdo->syncFlag)
             continue;
-        unpackRPDO(i, rpdo->buffer);
+        unpackRPDO(i, rpdo->buffer, timestamp_us);
         rpdo->syncFlag = false;
     }
 }
@@ -271,4 +289,14 @@ void PDO::reloadRPDO()
 {
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++)
         remapRPDO(i);
+}
+
+void PDO::onReceive(std::function<void(unsigned)> callback)
+{
+    onReceiveFunc = callback;
+}
+
+void PDO::onTimeout(std::function<void(unsigned)> callback)
+{
+    onTimeoutFunc = callback;
 }

@@ -114,7 +114,7 @@ namespace CANopen
             uint32_t x1020[2] = {0, 0};
             uint8_t x1029sub0 = 2;
             uint8_t x1029[2] = {0, 1};
-            struct {uint8_t sub0 = 2; uint32_t sub1 = 513; uint8_t sub2 = 255;} x1400;
+            struct {uint8_t sub0 = 5; uint32_t sub1 = 513; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0;} x1400;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 769; uint8_t sub2 = 255;} x1401;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 1025; uint8_t sub2 = 255;} x1402;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 1281; uint8_t sub2 = 255;} x1403;
@@ -187,7 +187,7 @@ namespace CANopen
                 ObjectEntry x1019[1] = {ObjectEntry(&data.x1019, 3, 1)};
                 ObjectEntry x1020[3] = {ObjectEntry(&data.x1020sub0, 1, 1), ObjectEntry(&data.x1020[0], 3, 4), ObjectEntry(&data.x1020[1], 3, 4)};
                 ObjectEntry x1029[3] = {ObjectEntry(&data.x1029sub0, 1, 1), ObjectEntry(&data.x1029[0], 3, 1), ObjectEntry(&data.x1029[1], 3, 1)};
-                ObjectEntry x1400[3] = {ObjectEntry(&data.x1400.sub0, 1, 1), ObjectEntry(&data.x1400.sub1, 3, 4), ObjectEntry(&data.x1400.sub2, 3, 1)};
+                ObjectEntry x1400[6] = {ObjectEntry(&data.x1400.sub0, 1, 1), ObjectEntry(&data.x1400.sub1, 3, 4), ObjectEntry(&data.x1400.sub2, 3, 1), ObjectEntry(&data.x1400.sub3, 3, 2), ObjectEntry(&data.x1400.sub4, 3, 1), ObjectEntry(&data.x1400.sub5, 3, 2)};
                 ObjectEntry x1401[3] = {ObjectEntry(&data.x1401.sub0, 1, 1), ObjectEntry(&data.x1401.sub1, 3, 4), ObjectEntry(&data.x1401.sub2, 3, 1)};
                 ObjectEntry x1402[3] = {ObjectEntry(&data.x1402.sub0, 1, 1), ObjectEntry(&data.x1402.sub1, 3, 4), ObjectEntry(&data.x1402.sub2, 3, 1)};
                 ObjectEntry x1403[3] = {ObjectEntry(&data.x1403.sub0, 1, 1), ObjectEntry(&data.x1403.sub1, 3, 4), ObjectEntry(&data.x1403.sub2, 3, 1)};
@@ -251,7 +251,7 @@ namespace CANopen
             Object1019 x1019 = Object1019(4121, 1, entries.x1019);
             Object x1020 = Object(4128, 3, entries.x1020);
             Object x1029 = Object(4137, 3, entries.x1029);
-            Object1400 x1400 = Object1400(5120, 3, entries.x1400);
+            Object1400 x1400 = Object1400(5120, 6, entries.x1400);
             Object1400 x1401 = Object1400(5121, 3, entries.x1401);
             Object1400 x1402 = Object1400(5122, 3, entries.x1402);
             Object1400 x1403 = Object1400(5123, 3, entries.x1403);

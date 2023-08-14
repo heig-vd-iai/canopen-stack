@@ -709,7 +709,7 @@ ParameterName=Number of entries
 ObjectType=0x7
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=0x05
 PDOMapping=0
 
 [1400sub1]
@@ -726,6 +726,30 @@ ObjectType=0x7
 DataType=0x0005
 AccessType=rw
 DefaultValue=0xFF
+PDOMapping=0
+
+[1400sub3]
+ParameterName=Inhibit Time
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0064
+PDOMapping=0
+
+[1400sub4]
+ParameterName=Compatibility Entry
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0x00
+PDOMapping=0
+
+[1400sub5]
+ParameterName=Event Timer
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0000
 PDOMapping=0
 
 [1401]

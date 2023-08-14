@@ -1,6 +1,7 @@
 #pragma once
 #include "od.hpp"
 #include <cstdint>
+#include <functional>
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
 #define RPDO_COMMUNICATION_INDEX 0x1400
@@ -36,6 +37,7 @@ namespace CANopen
             uint8_t size = 0;
             uint32_t timestamp_us = 0;
             bool syncFlag = false;
+            bool watchTimeoutFlag = false;
         };
 
     private:
@@ -43,6 +45,8 @@ namespace CANopen
         class Node &node;
         TPDO tpdos[OD_TPDO_COUNT];
         RPDO rpdos[OD_RPDO_COUNT];
+        std::function<void(unsigned)> onReceiveFunc;
+        std::function<void(unsigned)> onTimeoutFunc;
 
         void enable();
         void disable();
@@ -51,7 +55,7 @@ namespace CANopen
         void remapTPDO(unsigned index);
         void remapRPDO(unsigned index);
         void bufferizeTPDO(unsigned index, uint8_t *buffer);
-        void unpackRPDO(unsigned index, uint8_t *buffer);
+        void unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us);
         void sendTPDO(unsigned index, uint32_t timestamp_us);
         void receiveTPDO(class Frame &frame, uint32_t timestamp_us);
         void receiveRPDO(class Frame &frame, uint32_t timestamp_us);
@@ -67,5 +71,7 @@ namespace CANopen
         void transmitTPDO(unsigned index);
         void reloadTPDO();
         void reloadRPDO();
+        void onReceive(std::function<void(unsigned)> callback);
+        void onTimeout(std::function<void(unsigned)> callback);
     };
 }
