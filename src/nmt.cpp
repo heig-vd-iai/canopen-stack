@@ -26,7 +26,8 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
             node.od.restoreData(ParameterGroup_Communication);
             break;
         }
-        node.pdo.reload();
+        node.pdo.reloadTPDO();
+        node.pdo.reloadRPDO();
         nextState = NMTState_PreOperational;
     case NMTState_PreOperational:
         node.pdo.disable();
