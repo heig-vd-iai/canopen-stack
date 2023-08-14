@@ -5,5 +5,7 @@
 #include "objects/object_1010.hpp"
 #include "objects/object_1011.hpp"
 #include "objects/object_1019.hpp"
+#include "objects/object_1400.hpp"
+#include "objects/object_1600.hpp"
 #include "objects/object_1800.hpp"
 #include "objects/object_1A00.hpp"
