@@ -94,6 +94,8 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 void PDO::unpackRPDO(unsigned index, uint8_t *buffer)
 {
     RPDO *rpdo = rpdos + index;
+    if (!enabled || !rpdo->commObject->isEnabled())
+        return;
     unsigned bytesTransferred = 0;
     for (unsigned i = 0; i < rpdo->count; i++)
     {
@@ -102,7 +104,7 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer)
         uint8_t size = object->getSize(subindex);
         object->writeBytes(subindex, buffer + bytesTransferred, size, node);
         bytesTransferred += size;
-    } // TODO: event-timer timeout
+    }
 }
 
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
