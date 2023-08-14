@@ -1,5 +1,8 @@
 #include "od.hpp"
+#include "node.hpp"
 using namespace CANopen;
+
+ObjectDictionnary::ObjectDictionnary(Node &node) : node(node) {}
 
 Object *ObjectDictionnary::findObject(uint16_t objectIndex)
 {

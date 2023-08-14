@@ -2,7 +2,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id)
+Node::Node(uint8_t id) : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id)
 {
     _nmt.initSM();
 }

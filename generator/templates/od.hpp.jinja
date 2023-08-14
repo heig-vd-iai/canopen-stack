@@ -39,9 +39,13 @@ namespace {{namespace}}
             {{object.renderObject()}};
             {% endfor %}
         } objects;
-        const uint16_t length = OD_OBJECTS_COUNT;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
+        class Node &node;
+
     public:
+        const uint16_t length = OD_OBJECTS_COUNT;
+
+        ObjectDictionnary(class Node &node);
         Object *findObject(uint16_t index);
         Object *at(uint16_t index);
         bool saveData(uint8_t parameterGroup);
