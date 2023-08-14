@@ -3,7 +3,7 @@ using namespace CANopen;
 
 uint8_t Object1001::getValue()
 {
-    return *(uint8_t *)entries[0].dataSrc;
+    return getCount();
 }
 
 void Object1001::setErrorBit(unsigned bit)
