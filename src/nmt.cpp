@@ -26,11 +26,9 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
             break;
         case NMTResetState_ResetApplication:
             node._od.restoreData(ParameterGroup_All);
-            // TODO: reload PDOs ?
             break;
         case NMTResetState_ResetCommunication:
             node._od.restoreData(ParameterGroup_Communication);
-            // TODO: reload PDOs ?
             break;
         }
         node._pdo.reloadTPDO();
