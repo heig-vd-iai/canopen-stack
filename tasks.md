@@ -2,7 +2,6 @@
 ### PDO
 - SAM-MDPO and DAM-MPDO
 - multiple PDOs ?
-- p. 130: The bit valid (bit 31) allows selecting which RPDOs are used in the NMT state Operational, so make sure PDO is enabled during mapping
 - p. 132: The deadline monitoring is activated within the next reception of an RPDO after configuring the event-timer. A timeout results in an indication to the local application.
 
 ### SDO
