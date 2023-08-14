@@ -5,6 +5,11 @@ using namespace CANopen;
 
 NMT::NMT(Node &node) : node(node) {}
 
+void NMT::initSM()
+{
+    updateSM();
+}
+
 void CANopen::NMT::updateSM(NMTServiceCommands command)
 {
     NMTStates nextState = currentState;
@@ -123,11 +128,6 @@ void NMT::receiveFrame(NMTFrame &frame)
 void NMT::setTransition(NMTServiceCommands command)
 {
     updateSM(command);
-    updateSM();
-}
-
-void NMT::initSM()
-{
     updateSM();
 }
 

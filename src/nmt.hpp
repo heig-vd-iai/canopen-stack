@@ -13,13 +13,14 @@ namespace CANopen
         NMTResetStates resetState = NMTResetState_Initialising;
         class Node &node;
 
+        void initSM();
         void updateSM(NMTServiceCommands command = NMTServiceCommand_None);
+        void receiveFrame(class NMTFrame &frame);
 
     public:
+        friend class Node;
         NMT(class Node &node);
-        void receiveFrame(class NMTFrame &frame);
         void setTransition(NMTServiceCommands command);
-        void initSM();
         NMTStates getState();
     };
 }
