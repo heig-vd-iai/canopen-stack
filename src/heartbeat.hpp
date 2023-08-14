@@ -12,9 +12,12 @@ namespace CANopen
         class Node &node;
         uint32_t lastPublish = 0;
 
-    public:
-        HB(class Node &node);
         void publishState(NMTStates state);
         void update(uint32_t timestamp_us);
+
+    public:
+        friend class NMT;
+        friend class Node;
+        HB(class Node &node);
     };
 }
