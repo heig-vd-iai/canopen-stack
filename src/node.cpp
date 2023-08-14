@@ -2,10 +2,24 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : nmt(*this), hb(*this), sdo(*this), pdo(*this), sync(*this), emcy(*this), nodeId(id)
+Node::Node(uint8_t id) : _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id)
 {
-    nmt.initSM();
+    _nmt.initSM();
 }
+
+ObjectDictionnary &Node::od() { return _od; }
+
+NMT &CANopen::Node::nmt() { return _nmt; }
+
+HB &CANopen::Node::hb() { return _hb; }
+
+SDO &CANopen::Node::sdo() { return _sdo; }
+
+PDO &CANopen::Node::pdo() { return _pdo; }
+
+SYNC &CANopen::Node::sync() { return _sync; }
+
+EMCY &CANopen::Node::emcy() { return _emcy; }
 
 void Node::receiveFrame(Frame &frame)
 {
@@ -13,26 +27,26 @@ void Node::receiveFrame(Frame &frame)
     switch (frame.functionCode)
     {
     case FunctionCode_NMT:
-        nmt.receiveFrame((NMTFrame &)frame);
+        _nmt.receiveFrame((NMTFrame &)frame);
         break;
     case FunctionCode_SYNC:
         // Also FunctionCode_EMCY
-        sync.receiveFrame((SYNCFrame &)frame, timestamp);
+        _sync.receiveFrame((SYNCFrame &)frame, timestamp);
         break;
     case FunctionCode_TPDO1:
     case FunctionCode_TPDO2:
     case FunctionCode_TPDO3:
     case FunctionCode_TPDO4:
-        pdo.receiveTPDO(frame, timestamp);
+        _pdo.receiveTPDO(frame, timestamp);
         break;
     case FunctionCode_RPDO1:
     case FunctionCode_RPDO2:
     case FunctionCode_RPDO3:
     case FunctionCode_RPDO4:
-        pdo.receiveRPDO(frame, timestamp);
+        _pdo.receiveRPDO(frame, timestamp);
         break;
     case FunctionCode_RSDO:
-        sdo.receiveFrame((SDOFrame &)frame, timestamp);
+        _sdo.receiveFrame((SDOFrame &)frame, timestamp);
         break;
     }
 }
@@ -40,63 +54,7 @@ void Node::receiveFrame(Frame &frame)
 void Node::update()
 {
     uint32_t timestamp = getTime_us();
-    hb.update(timestamp);
-    sdo.update(timestamp);
-    pdo.update(timestamp);
-}
-
-void Node::transmitPDO(unsigned index)
-{
-    pdo.transmitTPDO(index);
-}
-
-void Node::reloadTPDO()
-{
-    pdo.reloadTPDO();
-}
-
-void Node::reloadRPDO()
-{
-    pdo.reloadRPDO();
-}
-
-bool Node::saveOD(uint8_t parameterGroup)
-{
-    return od.saveData(parameterGroup);
-}
-
-bool Node::loadOD(uint8_t parameterGroup)
-{
-    if (od.loadData(parameterGroup))
-    {
-        pdo.reloadTPDO();
-        pdo.reloadRPDO();
-        return true;
-    }
-    return false;
-}
-
-bool Node::restoreOD(uint8_t parameterGroup)
-{
-    return od.restoreData(parameterGroup);
-}
-
-Object *Node::findObject(uint16_t objectIndex)
-{
-    return od.findObject(objectIndex);
-}
-
-Object *Node::at(uint16_t index)
-{
-    return od.at(index);
-}
-
-void Node::setNmtTransition(NMTServiceCommands command)
-{
-    nmt.setTransition(command);
-}
-
-NMTStates Node::getNmtState()
-{
-    return nmt.getState();
+    _hb.update(timestamp);
+    _sdo.update(timestamp);
+    _pdo.update(timestamp);
 }

@@ -12,41 +12,36 @@ namespace CANopen
 {
     class Node
     {
+    private:
+        ObjectDictionnary _od;
+        NMT _nmt;
+        HB _hb;
+        SDO _sdo;
+        PDO _pdo;
+        SYNC _sync;
+        EMCY _emcy;
+
+        void sendFrame(class Frame &frame);
+        uint32_t getTime_us();
+
+    public:
         friend NMT;
         friend HB;
         friend SDO;
         friend PDO;
         friend SYNC;
         friend EMCY;
-
-        // private:
-    public: // TODO: put back to private
-        ObjectDictionnary od;
-        NMT nmt;
-        HB hb;
-        SDO sdo;
-        PDO pdo;
-        SYNC sync;
-        EMCY emcy;
-
-        void sendFrame(class Frame &frame);
-        uint32_t getTime_us();
-
-    public:
         const uint8_t nodeId;
 
         Node(uint8_t id);
+        ObjectDictionnary &od();
+        NMT &nmt();
+        HB &hb();
+        SDO &sdo();
+        PDO &pdo();
+        SYNC &sync();
+        EMCY &emcy();
         void receiveFrame(class Frame &frame);
-        void transmitPDO(unsigned index);
-        void reloadTPDO();
-        void reloadRPDO();
         void update();
-        bool saveOD(uint8_t parameterGroup = ParameterGroup_All);
-        bool loadOD(uint8_t parameterGroup = ParameterGroup_All);
-        bool restoreOD(uint8_t parameterGroup = ParameterGroup_All);
-        Object *findObject(uint16_t objectIndex);
-        Object *at(uint16_t index);
-        void setNmtTransition(NMTServiceCommands command);
-        NMTStates getNmtState();
     };
 }
