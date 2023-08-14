@@ -24,7 +24,19 @@ union TPDOCobidEntry
     } bits;
 };
 
-union TPDOMapEntry
+union RPDOCobidEntry
+{
+    uint32_t value;
+    struct
+    {
+        uint32_t canId : 29;
+        uint32_t frame : 1;
+        uint32_t reserved : 1;
+        uint32_t valid : 1;
+    } bits;
+};
+
+union PDOMapEntry
 {
     uint32_t value;
     struct

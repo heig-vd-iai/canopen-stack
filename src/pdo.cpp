@@ -30,7 +30,7 @@ void PDO::remapTPDO(unsigned index)
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
-        TPDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
+        PDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
         Object *object = node.od.findObject(content.bits.index);
         sizeSum += object->getSize(content.bits.subindex);
         if (sizeSum > PDO_DLC)
