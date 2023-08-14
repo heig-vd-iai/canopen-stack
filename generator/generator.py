@@ -6,6 +6,8 @@ from objects.object_1003 import Object1003
 from objects.object_1010 import Object1010
 from objects.object_1011 import Object1011
 from objects.object_1019 import Object1019
+from objects.object_1400 import Object1400
+from objects.object_1600 import Object1600
 from objects.object_1800 import Object1800
 from objects.object_1A00 import Object1A00
 from datetime import datetime
@@ -34,6 +36,8 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
         return ArrayObject(object.index, entries)
     if isinstance(object, Record):
         entries = list(object.values())
+        if 0x1400 <= object.index <= 0x15FF: return Object1400(object.index, entries)
+        if 0x1600 <= object.index <= 0x17FF: return Object1600(object.index, entries)
         if 0x1800 <= object.index <= 0x19FF: return Object1800(object.index, entries)
         if 0x1A00 <= object.index <= 0x1BFF: return Object1A00(object.index, entries)
         return RecordObject(object.index, entries)
@@ -54,7 +58,7 @@ objectsDict = {}
 for index, object in od.items():
     try: objectsDict[index] = toCANopenObject(object)
     except: pass
-objectsDict = {index: object for index, object in objectsDict.items() if not isinstance(object, Object1A00) or isinstance(object, Object1A00) and object.verify(objectsDict)}
+objectsDict = {index: object for index, object in objectsDict.items() if not isinstance(object, (Object1600, Object1A00)) or isinstance(object, (Object1600, Object1A00)) and object.verify(objectsDict)}
 objectsValues = list(objectsDict.values())
 failedObjects = set(od.keys()) - set(objectsDict.keys())
 missingObjects = set(MANDATORY_OBJECTS) - set(objectsDict.keys())
@@ -70,6 +74,7 @@ if len(missingObjects) > 0:
 if ret: exit(1)
 defines = [
     f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}",
+    f"OD_RPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1400)])}",
     *[f"OD_OBJECT_{obj.index:X} {i}" for i, obj in enumerate(objectsValues)]
 ]
 variables = {
