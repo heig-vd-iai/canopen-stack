@@ -186,15 +186,17 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
         return false;
     f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
+    node.pdo().reloadTPDO();
+    node.pdo().reloadRPDO();
     return true;
-    // Reload PDOs
 }
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
 {
     objects.entries.data = ObjectDictionnaryData();
+    node.pdo().reloadTPDO();
+    node.pdo().reloadRPDO();
     return true;
-    // Reload PDOs
 }
 
 uint32_t Node::getTime_us()
