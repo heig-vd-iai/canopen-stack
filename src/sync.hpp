@@ -12,10 +12,13 @@ namespace CANopen
         uint8_t internalCounter = 1;
         uint8_t maxCounter;
 
-    public:
-        SYNC(class Node &node);
         void enable();
         void disable();
         void receiveFrame(class SYNCFrame &frame, uint32_t timestamp_us);
+
+    public:
+        friend class NMT;
+        friend class Node;
+        SYNC(class Node &node);
     };
 }
