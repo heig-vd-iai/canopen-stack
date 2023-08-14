@@ -5,6 +5,13 @@
 using namespace CANopen;
 // TODO: use defines
 
+SDOAbortCodes Object1800::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+{
+    if (subindex == X1800_INDEX_RESERVED)
+        return SDOAbortCode_SubindexNonExistent;
+    return SDOAbortCode_OK;
+}
+
 SDOAbortCodes Object1800::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
     bool enabled = isEnabled();
@@ -12,8 +19,8 @@ SDOAbortCodes Object1800::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     {
     case X1800_INDEX_COBID:
     {
-        TPDOCobidEntry current = {getCobId()};
-        TPDOCobidEntry recent = {*(uint32_t *)bytes};
+        PDOCobidEntry current = {getCobId()};
+        PDOCobidEntry recent = {*(uint32_t *)bytes};
         // Check if bits 0 to 30 are modified
         if (enabled && (current.value ^ recent.value) & ~0x80000000) // TODO
             return SDOAbortCode_InvalidDownloadParameterValue;

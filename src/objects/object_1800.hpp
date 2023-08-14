@@ -20,6 +20,7 @@ namespace CANopen
     private:
         bool remap = false;
 
+        SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset) override;
         SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
         void postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
 
