@@ -8,11 +8,11 @@ union AccessType
     {
         uint8_t readable : 1;
         uint8_t writeable : 1;
-        uint8_t mappable: 1;
+        uint8_t mappable : 1;
     } bits;
 };
 
-union TPDOCobidEntry
+union PDOCobidEntry
 {
     uint32_t value;
     struct
@@ -20,18 +20,6 @@ union TPDOCobidEntry
         uint32_t canId : 29;
         uint32_t frame : 1;
         uint32_t rtr : 1;
-        uint32_t valid : 1;
-    } bits;
-};
-
-union RPDOCobidEntry
-{
-    uint32_t value;
-    struct
-    {
-        uint32_t canId : 29;
-        uint32_t frame : 1;
-        uint32_t reserved : 1;
         uint32_t valid : 1;
     } bits;
 };
