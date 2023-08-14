@@ -85,6 +85,6 @@ variables = {
     "date": datetime.now(),
     "filename": HEADER_FILENAME
 }
-env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True)
 env.get_template(TEMPLATE_FILENAME).stream(**variables).dump(HEADER_FILENAME)
 print(f"Header file '{HEADER_FILENAME}' was successfully generated")
