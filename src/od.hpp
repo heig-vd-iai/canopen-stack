@@ -2,7 +2,7 @@
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on August 11, 2023
+ * [Date]:          Generated on August 14, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
  *****************************************************************************/
@@ -10,6 +10,7 @@
 #include "od_include.hpp"
 #define OD_OBJECTS_COUNT 63
 #define OD_TPDO_COUNT 4
+#define OD_RPDO_COUNT 4
 #define OD_OBJECT_2 0
 #define OD_OBJECT_3 1
 #define OD_OBJECT_4 2
@@ -103,7 +104,7 @@ namespace CANopen
             uint32_t x1010[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
             uint8_t x1011sub0 = 13;
             uint32_t x1011[13] = {1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1};
-            uint32_t x1014 = 132;
+            uint32_t x1014 = 129;
             uint8_t x1016sub0 = 1;
             uint32_t x1016[1] = {0};
             uint16_t x1017 = 0;
@@ -113,18 +114,18 @@ namespace CANopen
             uint32_t x1020[2] = {0, 0};
             uint8_t x1029sub0 = 2;
             uint8_t x1029[2] = {0, 1};
-            struct {uint8_t sub0 = 2; uint32_t sub1 = 516; uint8_t sub2 = 255;} x1400;
-            struct {uint8_t sub0 = 2; uint32_t sub1 = 772; uint8_t sub2 = 255;} x1401;
-            struct {uint8_t sub0 = 2; uint32_t sub1 = 1028; uint8_t sub2 = 255;} x1402;
-            struct {uint8_t sub0 = 2; uint32_t sub1 = 1284; uint8_t sub2 = 255;} x1403;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 513; uint8_t sub2 = 255;} x1400;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 769; uint8_t sub2 = 255;} x1401;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1025; uint8_t sub2 = 255;} x1402;
+            struct {uint8_t sub0 = 2; uint32_t sub1 = 1281; uint8_t sub2 = 255;} x1403;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 1614807056; uint32_t sub2 = 1616904200; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1600;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 1618608160; uint32_t sub2 = 1619066912; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1601;
             struct {uint8_t sub0 = 1; uint32_t sub1 = 1614938128; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1602;
             struct {uint8_t sub0 = 1; uint32_t sub1 = 1627259168; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1603;
-            struct {uint8_t sub0 = 6; uint32_t sub1 = 388; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1800;
-            struct {uint8_t sub0 = 6; uint32_t sub1 = 644; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1801;
-            struct {uint8_t sub0 = 6; uint32_t sub1 = 900; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1802;
-            struct {uint8_t sub0 = 6; uint32_t sub1 = 1156; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1803;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 385; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1800;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 641; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1801;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 897; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1802;
+            struct {uint8_t sub0 = 6; uint32_t sub1 = 1153; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0; uint8_t sub6 = 0;} x1803;
             struct {uint8_t sub0 = 2; uint32_t sub1 = 1614872592; uint32_t sub2 = 1616969736; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A00;
             struct {uint8_t sub0 = 1; uint32_t sub1 = 1617166368; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A01;
             struct {uint8_t sub0 = 1; uint32_t sub1 = 1615069200; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1A02;
@@ -250,14 +251,14 @@ namespace CANopen
             Object1019 x1019 = Object1019(4121, 1, entries.x1019);
             Object x1020 = Object(4128, 3, entries.x1020);
             Object x1029 = Object(4137, 3, entries.x1029);
-            Object x1400 = Object(5120, 3, entries.x1400);
-            Object x1401 = Object(5121, 3, entries.x1401);
-            Object x1402 = Object(5122, 3, entries.x1402);
-            Object x1403 = Object(5123, 3, entries.x1403);
-            Object x1600 = Object(5632, 9, entries.x1600);
-            Object x1601 = Object(5633, 9, entries.x1601);
-            Object x1602 = Object(5634, 9, entries.x1602);
-            Object x1603 = Object(5635, 9, entries.x1603);
+            Object1400 x1400 = Object1400(5120, 3, entries.x1400);
+            Object1400 x1401 = Object1400(5121, 3, entries.x1401);
+            Object1400 x1402 = Object1400(5122, 3, entries.x1402);
+            Object1400 x1403 = Object1400(5123, 3, entries.x1403);
+            Object1600 x1600 = Object1600(5632, 9, entries.x1600);
+            Object1600 x1601 = Object1600(5633, 9, entries.x1601);
+            Object1600 x1602 = Object1600(5634, 9, entries.x1602);
+            Object1600 x1603 = Object1600(5635, 9, entries.x1603);
             Object1800 x1800 = Object1800(6144, 7, entries.x1800);
             Object1800 x1801 = Object1800(6145, 7, entries.x1801);
             Object1800 x1802 = Object1800(6146, 7, entries.x1802);

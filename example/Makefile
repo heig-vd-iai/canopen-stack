@@ -26,6 +26,8 @@ SOURCES = \
 	$(OBJECTS_SRC)/object_1010.cpp \
 	$(OBJECTS_SRC)/object_1011.cpp \
 	$(OBJECTS_SRC)/object_1019.cpp \
+	$(OBJECTS_SRC)/object_1400.cpp \
+	$(OBJECTS_SRC)/object_1600.cpp \
 	$(OBJECTS_SRC)/object_1800.cpp \
 	$(OBJECTS_SRC)/object_1A00.cpp
 
