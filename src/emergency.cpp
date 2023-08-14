@@ -10,15 +10,15 @@ EMCY::EMCY(Node &node) : node(node)
     errorRegisterObject = (Object1001 *)node.at(OD_OBJECT_1001);
 }
 
+void EMCY::enable() { enabled = true; }
+
+void EMCY::disable() { enabled = false; }
+
 void CANopen::EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode)
 {
     EmergencyFrame frame(node.nodeId, errorCode, errorRegisterObject->getValue(), manufacturerCode);
     node.sendFrame(frame);
 }
-
-void EMCY::enable() { enabled = true; }
-
-void EMCY::disable() { enabled = false; }
 
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
 {

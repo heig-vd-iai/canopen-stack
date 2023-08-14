@@ -19,12 +19,13 @@ namespace CANopen
         class Node &node;
         class Object1001 *errorRegisterObject;
 
+        void enable();
+        void disable();
         void sendError(uint16_t errorCode, uint32_t manufacturerCode);
 
     public:
+        friend class NMT;
         EMCY(class Node &node);
-        void enable();
-        void disable();
         void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
         void clearErrorBit(unsigned bit);
         void clearHistory();
