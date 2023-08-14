@@ -11,7 +11,7 @@ SDOAbortCodes Object1003::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigne
 
 SDOAbortCodes Object1003::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node)
 {
-    if (subindex == X1003_INDEX_COUNT)
+    if (subindex == OBJECT_INDEX_COUNT)
     {
         if (bytes[0] != 0)
             return SDOAbortCode_InvalidDownloadParameterValue;
@@ -29,8 +29,6 @@ void Object1003::shiftErrors()
         setValue(i, value);
     }
 }
-
-uint8_t Object1003::getCount() { return *(uint8_t *)entries[X1003_INDEX_COUNT].dataSrc; }
 
 void Object1003::pushError(uint16_t errorCode, uint32_t manufacturerCode)
 {

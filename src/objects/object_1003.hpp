@@ -1,6 +1,5 @@
 #pragma once
 #include "../object.hpp"
-#define X1003_INDEX_COUNT 0
 
 namespace CANopen
 {
@@ -13,7 +12,6 @@ namespace CANopen
 
     public:
         Object1003(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}
-        uint8_t getCount();
         void pushError(uint16_t errorCode, uint32_t manufacturerCode);
         void clearErrors();
     };

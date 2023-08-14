@@ -1,6 +1,5 @@
 #pragma once
 #include "../object.hpp"
-#define X1010_INDEX_COUNT 0
 #define X1010_SAVE_SIGNATURE 0x65766173
 
 namespace CANopen

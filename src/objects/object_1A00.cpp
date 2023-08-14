@@ -4,7 +4,7 @@ using namespace CANopen;
 
 SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
-    if (subindex == X1A00_INDEX_COUNT)
+    if (subindex == OBJECT_INDEX_COUNT)
     {
         uint8_t value = bytes[0];
         if (value > X1A00_MAX_ENTRIES)
@@ -14,7 +14,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
             unsigned sizeSum = 0;
             for (unsigned i = 0; i < value; i++)
             {
-                TPDOMapEntry entry = {getMappedValue(i)};
+                PDOMapEntry entry = {getMappedValue(i)};
                 sizeSum += node.findObject(entry.bits.index)->getSize(entry.bits.subindex);
             }
             if (sizeSum > PDO_DLC)
@@ -23,7 +23,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     }
     else
     {
-        TPDOMapEntry entry = {*(uint32_t *)bytes};
+        PDOMapEntry entry = {*(uint32_t *)bytes};
         Object *object = node.findObject(entry.bits.index);
         if (!object || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
@@ -34,6 +34,9 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     return SDOAbortCode_OK;
 }
 
-uint8_t Object1A00::getCount() { return *(uint8_t *)entries[X1A00_INDEX_COUNT].dataSrc; }
-
-uint32_t Object1A00::getMappedValue(uint8_t index) { return *(uint32_t *)entries[index + 1].dataSrc; }
+uint32_t Object1A00::getMappedValue(uint8_t index)
+{
+    uint32_t value;
+    getValue(index + 1, &value);
+    return value;
+}

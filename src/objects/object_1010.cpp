@@ -4,7 +4,7 @@ using namespace CANopen;
 
 SDOAbortCodes CANopen::Object1010::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
 {
-    if (subindex > X1010_INDEX_COUNT)
+    if (subindex > OBJECT_INDEX_COUNT)
     {
         uint32_t value = *(uint32_t *)bytes;
         if (value == X1010_SAVE_SIGNATURE)

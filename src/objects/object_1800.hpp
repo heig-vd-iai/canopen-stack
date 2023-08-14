@@ -1,6 +1,5 @@
 #pragma once
 #include "../object.hpp"
-#define X1800_INDEX_COUNT 0
 #define X1800_INDEX_COBID 1
 #define X1800_INDEX_TRANSMISSION 2
 #define X1800_INDEX_INHIBIT 3
@@ -26,7 +25,6 @@ namespace CANopen
 
     public:
         Object1800(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}
-        uint8_t getCount();
         uint32_t getCobId();
         uint16_t getActualCobId();
         uint8_t getTransmissionType();
