@@ -9,6 +9,10 @@ using namespace CANopen;
 
 SDO::SDO(Node &node) : node(node) {}
 
+void SDO::enable() { enabled = true; }
+
+void SDO::disable() { enabled = false; }
+
 void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode)
 {
     SDOCommandByte sendCommand = {0};
@@ -211,10 +215,6 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us)
         serverState = SDOServerState_Ready;
     transferData.timestamp_us = timestamp_us;
 }
-
-void SDO::enable() { enabled = true; }
-
-void SDO::disable() { enabled = false; }
 
 void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
 {

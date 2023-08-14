@@ -38,17 +38,19 @@ namespace CANopen
             uint8_t toggle;
         } transferData;
 
+        void enable();
+        void disable();
         void sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode);
         void uploadInitiate(class SDOFrame &request, uint32_t timestamp_us);
         void uploadSegment(class SDOFrame &request, uint32_t timestamp_us);
         void downloadInitiate(class SDOFrame &request, uint32_t timestamp_us);
         void downloadSegment(class SDOFrame &request, uint32_t timestamp_us);
-
-    public:
-        SDO(class Node &node);
-        void enable();
-        void disable();
         void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
+
+    public:
+        friend class NMT;
+        friend class Node;
+        SDO(class Node &node);
     };
 }
