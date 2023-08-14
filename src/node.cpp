@@ -23,12 +23,13 @@ void Node::receiveFrame(Frame &frame)
     case FunctionCode_TPDO2:
     case FunctionCode_TPDO3:
     case FunctionCode_TPDO4:
-        pdo.receiveFrame(frame, timestamp);
+        pdo.receiveTPDO(frame, timestamp);
         break;
     case FunctionCode_RPDO1:
     case FunctionCode_RPDO2:
     case FunctionCode_RPDO3:
     case FunctionCode_RPDO4:
+        pdo.receiveRPDO(frame, timestamp);
         break;
     case FunctionCode_RSDO:
         sdo.receiveFrame((SDOFrame &)frame, timestamp);
@@ -51,7 +52,12 @@ void Node::transmitPDO(unsigned index)
 
 void Node::reloadTPDO()
 {
-    pdo.reload();
+    pdo.reloadTPDO();
+}
+
+void Node::reloadRPDO()
+{
+    pdo.reloadRPDO();
 }
 
 bool Node::saveOD(uint8_t parameterGroup)
@@ -63,7 +69,8 @@ bool Node::loadOD(uint8_t parameterGroup)
 {
     if (od.loadData(parameterGroup))
     {
-        pdo.reload();
+        pdo.reloadTPDO();
+        pdo.reloadRPDO();
         return true;
     }
     return false;

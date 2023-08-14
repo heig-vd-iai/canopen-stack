@@ -39,6 +39,7 @@ namespace CANopen
         void receiveFrame(class Frame &frame);
         void transmitPDO(unsigned index);
         void reloadTPDO();
+        void reloadRPDO();
         void update();
         bool saveOD(uint8_t parameterGroup = ParameterGroup_All);
         bool loadOD(uint8_t parameterGroup = ParameterGroup_All);
