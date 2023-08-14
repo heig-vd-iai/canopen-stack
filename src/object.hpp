@@ -2,6 +2,7 @@
 #include "unions.hpp"
 #include "enums.hpp"
 #include <cstdint>
+#define OBJECT_INDEX_COUNT 0
 
 namespace CANopen
 {
@@ -37,6 +38,7 @@ namespace CANopen
         SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
         SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node);
         // Methods called mainly by application
+        uint8_t getCount();
         bool getValue(uint8_t subindex, uint8_t *value);
         bool setValue(uint8_t subindex, uint8_t value);
         bool getValue(uint8_t subindex, int8_t *value);

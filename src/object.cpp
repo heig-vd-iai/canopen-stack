@@ -82,6 +82,11 @@ AccessType Object::getAccessType(uint8_t subindex)
     return entries[subindex].accessType;
 }
 
+uint8_t Object::getCount()
+{
+    return *(uint8_t *)entries[OBJECT_INDEX_COUNT].dataSrc;
+}
+
 bool Object::getValue(uint8_t subindex, uint8_t *value)
 {
     if (!isSubValid(subindex) || sizeof(uint8_t) != entries[subindex].size)
