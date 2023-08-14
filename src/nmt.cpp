@@ -16,29 +16,31 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
     switch (currentState)
     {
     case NMTState_Initialisation:
-        node.pdo.disable();
-        node.sdo.disable();
-        node.sync.disable();
-        node.emcy.disable();
+        node._pdo.disable();
+        node._sdo.disable();
+        node._sync.disable();
+        node._emcy.disable();
         switch (resetState)
         {
         case NMTResetState_Initialising:
             break;
         case NMTResetState_ResetApplication:
-            node.od.restoreData(ParameterGroup_All);
+            node._od.restoreData(ParameterGroup_All);
+            // TODO: reload PDOs ?
             break;
         case NMTResetState_ResetCommunication:
-            node.od.restoreData(ParameterGroup_Communication);
+            node._od.restoreData(ParameterGroup_Communication);
+            // TODO: reload PDOs ?
             break;
         }
-        node.pdo.reloadTPDO();
-        node.pdo.reloadRPDO();
+        node._pdo.reloadTPDO();
+        node._pdo.reloadRPDO();
         nextState = NMTState_PreOperational;
     case NMTState_PreOperational:
-        node.pdo.disable();
-        node.sdo.enable();
-        node.sync.enable();
-        node.emcy.enable();
+        node._pdo.disable();
+        node._sdo.enable();
+        node._sync.enable();
+        node._emcy.enable();
         switch (command)
         {
         case NMTServiceCommand_Start:
@@ -60,10 +62,10 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
         }
         break;
     case NMTState_Operational:
-        node.pdo.enable();
-        node.sdo.enable();
-        node.sync.enable();
-        node.emcy.enable();
+        node._pdo.enable();
+        node._sdo.enable();
+        node._sync.enable();
+        node._emcy.enable();
         switch (command)
         {
         case NMTServiceCommand_EnterPreOperational:
@@ -85,10 +87,10 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
         }
         break;
     case NMTState_Stopped:
-        node.pdo.disable();
-        node.sdo.disable();
-        node.sync.disable();
-        node.emcy.disable();
+        node._pdo.disable();
+        node._sdo.disable();
+        node._sync.disable();
+        node._emcy.disable();
         switch (command)
         {
         case NMTServiceCommand_EnterPreOperational:
@@ -112,7 +114,7 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
     }
     if (currentState == NMTState_Initialisation && nextState == NMTState_PreOperational)
     {
-        node.hb.publishState(NMTState_Initialisation);
+        node._hb.publishState(NMTState_Initialisation);
     }
     currentState = nextState;
 }

@@ -7,7 +7,7 @@ using namespace CANopen;
 
 EMCY::EMCY(Node &node) : node(node)
 {
-    errorRegisterObject = (Object1001 *)node.at(OD_OBJECT_1001);
+    errorRegisterObject = (Object1001 *)node._od.at(OD_OBJECT_1001);
 }
 
 void EMCY::enable() { enabled = true; }
@@ -55,7 +55,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     case EMCYErrorCode_Communication_CANIDCollision:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Communication);
 #ifdef OD_OBJECT_1029
-        node.at(OD_OBJECT_1029)->getValue(X1029_SUB_COMMUNICATION, &behaviour);
+        node._od.at(OD_OBJECT_1029)->getValue(X1029_SUB_COMMUNICATION, &behaviour);
 #endif
         break;
     case EMCYErrorCode_DeviceSpecific:
@@ -66,7 +66,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
         break;
     }
 #ifdef OD_OBJECT_1003
-    ((Object1003 *)node.at(OD_OBJECT_1003))->pushError(errorCode, manufacturerCode);
+    ((Object1003 *)node._od.at(OD_OBJECT_1003))->pushError(errorCode, manufacturerCode);
 #endif
     sendError(errorCode, manufacturerCode);
     NMTServiceCommands command = NMTServiceCommand_None;
@@ -74,7 +74,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     {
     default:
     case X1029_BEHAVIOUR_PREOP:
-        if (node.nmt.getState() == NMTState_Operational)
+        if (node._nmt.getState() == NMTState_Operational)
             command = NMTServiceCommand_EnterPreOperational;
         break;
     case X1029_BEHAVIOUR_NONE:
@@ -84,7 +84,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
         command = NMTServiceCommand_Stop;
         break;
     }
-    node.nmt.setTransition(command);
+    node._nmt.setTransition(command);
 }
 
 void EMCY::clearErrorBit(unsigned bit)
@@ -98,7 +98,7 @@ void EMCY::clearErrorBit(unsigned bit)
 void EMCY::clearHistory()
 {
 #ifdef OD_OBJECT_1003
-    ((Object1003 *)node.at(OD_OBJECT_1003))->clearErrors();
+    ((Object1003 *)node._od.at(OD_OBJECT_1003))->clearErrors();
 #endif
 }
 

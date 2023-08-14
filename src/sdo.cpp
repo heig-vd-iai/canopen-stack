@@ -30,7 +30,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     SDOCommandByte sendCommand = {0};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    Object *object = node.od.findObject(index);
+    Object *object = node._od.findObject(index);
     if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
@@ -116,7 +116,7 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
     SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    Object *object = node.od.findObject(index);
+    Object *object = node._od.findObject(index);
     if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);

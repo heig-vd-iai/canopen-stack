@@ -9,7 +9,7 @@ SYNC::SYNC(Node &node) : node(node)
 {
 #ifdef OD_OBJECT_1019
     uint8_t tmp;
-    node.at(OD_OBJECT_1019)->getValue(0, &tmp);
+    node._od.at(OD_OBJECT_1019)->getValue(0, &tmp);
     maxCounter = tmp < X1019_MIN_COUNTER ? X1019_MAX_COUNTER : tmp;
 #else
     maxCounter = X1019_MAX_COUNTER;
@@ -25,5 +25,5 @@ void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us)
     if (!enabled || frame.nodeId != 0)
         return;
     internalCounter = frame.isCounter() ? frame.getCounter() : internalCounter % maxCounter + 1;
-    node.pdo.onSync(internalCounter, timestamp_us);
+    node._pdo.onSync(internalCounter, timestamp_us);
 }

@@ -19,15 +19,15 @@ void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index)
 {
-    tpdos[index].commObject = (Object1800 *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
-    tpdos[index].mapObject = (Object1A00 *)node.od.findObject(TPDO_MAPPING_INDEX + index);
+    tpdos[index].commObject = (Object1800 *)node._od.findObject(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapObject = (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index)
 {
-    rpdos[index].commObject = (Object1400 *)node.od.findObject(RPDO_COMMUNICATION_INDEX + index);
-    rpdos[index].mapObject = (Object1600 *)node.od.findObject(RPDO_MAPPING_INDEX + index);
+    rpdos[index].commObject = (Object1400 *)node._od.findObject(RPDO_COMMUNICATION_INDEX + index);
+    rpdos[index].mapObject = (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
 
@@ -43,7 +43,7 @@ void PDO::remapTPDO(unsigned index)
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
-        Object *object = node.od.findObject(content.bits.index);
+        Object *object = node._od.findObject(content.bits.index);
         sizeSum += object->getSize(content.bits.subindex);
         if (sizeSum > PDO_DLC)
             break;
@@ -66,7 +66,7 @@ void PDO::remapRPDO(unsigned index)
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {rpdo->mapObject->getMappedValue(i)};
-        Object *object = node.od.findObject(content.bits.index);
+        Object *object = node._od.findObject(content.bits.index);
         sizeSum += object->getSize(content.bits.subindex);
         if (sizeSum > PDO_DLC)
             break;
@@ -233,7 +233,7 @@ uint32_t PDO::getSyncWindow_us()
 {
     uint32_t value = 0;
 #ifdef OD_OBJECT_1007
-    node.at(OD_OBJECT_1007)->getValue(0, &value);
+    node._od.at(OD_OBJECT_1007)->getValue(0, &value);
 #endif
     return value;
 }
