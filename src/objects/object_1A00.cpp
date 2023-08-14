@@ -9,7 +9,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
         uint8_t value = bytes[0];
         if (value > X1A00_MAX_ENTRIES)
             return SDOAbortCode_DownloadValueTooHigh;
-        if (value > 0)
+        if (value > X1A00_MAP_DISABLED)
         {
             unsigned sizeSum = 0;
             for (unsigned i = 0; i < value; i++)
@@ -28,7 +28,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
         if (!object || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
         AccessType access = object->getAccessType(entry.bits.subindex);
-        if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8 || !access.bits.mappable || !access.bits.readable)
+        if (entry.bits.length != ((uint32_t)object->getSize(entry.bits.subindex)) * 8 || !access.bits.mappable || !access.bits.readable) // TODO: check for entry.bits.length ?
             return SDOAbortCode_CannotMapToPDO;
     }
     return SDOAbortCode_OK;

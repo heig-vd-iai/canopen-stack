@@ -1,6 +1,7 @@
 #pragma once
 #include "../object.hpp"
 #define X1A00_MAX_ENTRIES 8
+#define X1A00_MAP_DISABLED 0
 #define X1A00_SAM_MPDO 0xFE
 #define X1A00_DAM_MPDO 0xFF
 
