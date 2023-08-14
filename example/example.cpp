@@ -57,7 +57,7 @@ void updateFunc()
     {
         if (mtx.try_lock())
         {
-            nodePtr->at(OD_OBJECT_6048)->setValue(1, x);
+            nodePtr->od().at(OD_OBJECT_6048)->setValue(1, x);
             auto start = chrono::steady_clock::now();
             nodePtr->update();
             auto end = chrono::steady_clock::now();
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
     Node node(nodeID);
     nodePtr = &node;
-    node.loadOD();
+    node.od().loadData(0);
     thread listenThread(listenFunc);
     listenThread.detach();
     thread updateThread(updateFunc);
@@ -187,12 +187,14 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
     f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
     f.close();
     return true;
+    // Reload PDOs
 }
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
 {
     objects.entries.data = ObjectDictionnaryData();
     return true;
+    // Reload PDOs
 }
 
 uint32_t Node::getTime_us()
