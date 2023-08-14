@@ -55,7 +55,7 @@ void Object1400::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
 {
     if (remap)
     {
-        node.reloadRPDO();
+        node.pdo().reloadRPDO();
         remap = false;
     }
 }

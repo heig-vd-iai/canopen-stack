@@ -60,7 +60,7 @@ void Object1800::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size,
 {
     if (remap)
     {
-        node.reloadTPDO();
+        node.pdo().reloadTPDO();
         remap = false;
     }
 }

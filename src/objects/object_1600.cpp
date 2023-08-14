@@ -15,7 +15,7 @@ SDOAbortCodes Object1600::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
             for (unsigned i = 0; i < value; i++)
             {
                 PDOMapEntry entry = {getMappedValue(i)};
-                sizeSum += node.findObject(entry.bits.index)->getSize(entry.bits.subindex);
+                sizeSum += node.od().findObject(entry.bits.index)->getSize(entry.bits.subindex);
             }
             if (sizeSum > PDO_DLC)
                 return SDOAbortCode_MappedPDOLengthExceeded;
@@ -24,7 +24,7 @@ SDOAbortCodes Object1600::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     else
     {
         PDOMapEntry entry = {*(uint32_t *)bytes};
-        Object *object = node.findObject(entry.bits.index);
+        Object *object = node.od().findObject(entry.bits.index);
         if (!object || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
         AccessType access = object->getAccessType(entry.bits.subindex);
