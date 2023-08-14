@@ -13,6 +13,10 @@ PDO::PDO(Node &node) : node(node)
         initRPDO(i);
 }
 
+void PDO::enable() { enabled = true; }
+
+void PDO::disable() { enabled = false; }
+
 void PDO::initTPDO(unsigned index)
 {
     tpdos[index].commObject = (Object1800 *)node.od.findObject(TPDO_COMMUNICATION_INDEX + index);
@@ -113,19 +117,6 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     node.sendFrame(frame);
     tpdo->timestamp_us = timestamp_us;
 }
-
-uint32_t PDO::getSyncWindow_us()
-{
-    uint32_t value = 0;
-#ifdef OD_OBJECT_1007
-    node.at(OD_OBJECT_1007)->getValue(0, &value);
-#endif
-    return value;
-}
-
-void PDO::enable() { enabled = true; }
-
-void PDO::disable() { enabled = false; }
 
 void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us)
 {
@@ -236,6 +227,15 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us)
         unpackRPDO(i, rpdo->buffer);
         rpdo->syncFlag = false;
     }
+}
+
+uint32_t PDO::getSyncWindow_us()
+{
+    uint32_t value = 0;
+#ifdef OD_OBJECT_1007
+    node.at(OD_OBJECT_1007)->getValue(0, &value);
+#endif
+    return value;
 }
 
 void PDO::transmitTPDO(unsigned index)

@@ -44,6 +44,8 @@ namespace CANopen
         TPDO tpdos[OD_TPDO_COUNT];
         RPDO rpdos[OD_RPDO_COUNT];
 
+        void enable();
+        void disable();
         void initTPDO(unsigned index);
         void initRPDO(unsigned index);
         void remapTPDO(unsigned index);
@@ -51,16 +53,17 @@ namespace CANopen
         void bufferizeTPDO(unsigned index, uint8_t *buffer);
         void unpackRPDO(unsigned index, uint8_t *buffer);
         void sendTPDO(unsigned index, uint32_t timestamp_us);
-        uint32_t getSyncWindow_us();
-
-    public:
-        PDO(class Node &node);
-        void enable();
-        void disable();
         void receiveTPDO(class Frame &frame, uint32_t timestamp_us);
         void receiveRPDO(class Frame &frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
         void onSync(uint8_t counter, uint32_t timestamp_us);
+        uint32_t getSyncWindow_us();
+
+    public:
+        friend class SYNC;
+        friend class NMT;
+        friend class Node;
+        PDO(class Node &node);
         void transmitTPDO(unsigned index);
         void reloadTPDO();
         void reloadRPDO();
