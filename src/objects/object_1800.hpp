@@ -12,6 +12,7 @@
 #define X1800_RTR_EVENT 0xFD
 #define X1800_EVENT1 0xFE
 #define X1800_EVENT2 0xFF
+#define X1800_COBID_VALID_MASK 0x80000000
 
 namespace CANopen
 {

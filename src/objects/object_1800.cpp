@@ -3,7 +3,6 @@
 #include "../frame.hpp"
 #include <cstring>
 using namespace CANopen;
-// TODO: use defines
 
 SDOAbortCodes Object1800::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
 {
@@ -22,7 +21,7 @@ SDOAbortCodes Object1800::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
         PDOCobidEntry current = {getCobId()};
         PDOCobidEntry recent = {*(uint32_t *)bytes};
         // Check if bits 0 to 30 are modified
-        if (enabled && (current.value ^ recent.value) & ~0x80000000) // TODO
+        if (enabled && (current.value ^ recent.value) & ~X1800_COBID_VALID_MASK)
             return SDOAbortCode_InvalidDownloadParameterValue;
         // If a PDO was enabled
         if (current.bits.valid && !recent.bits.valid)
@@ -104,7 +103,7 @@ uint8_t Object1800::getSyncStart()
     return value;
 }
 
-bool Object1800::isEnabled() { return ~getCobId() & 0x80000000; } // TODO
+bool Object1800::isEnabled() { return ~getCobId() & X1800_COBID_VALID_MASK; }
 
 bool Object1800::isInhibitSupported() { return getCount() >= X1800_INDEX_INHIBIT; }
 

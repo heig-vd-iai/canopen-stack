@@ -3,7 +3,6 @@
 #include "../frame.hpp"
 #include <cstring>
 using namespace CANopen;
-// TODO: use defines
 
 SDOAbortCodes Object1400::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
 {
@@ -22,7 +21,7 @@ SDOAbortCodes Object1400::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
         PDOCobidEntry current = {getCobId()};
         PDOCobidEntry recent = {*(uint32_t *)bytes};
         // Check if bits 0 to 30 are modified
-        if (enabled && (current.value ^ recent.value) & ~0x80000000) // TODO
+        if (enabled && (current.value ^ recent.value) & ~X1400_COBID_VALID_MASK)
             return SDOAbortCode_InvalidDownloadParameterValue;
         // If a PDO was enabled
         if (current.bits.valid && !recent.bits.valid)
@@ -92,7 +91,7 @@ uint16_t Object1400::getEventTimer_ms()
 
 uint32_t Object1400::getEventTimer_us() { return (uint32_t)getEventTimer_ms() * 1000; }
 
-bool Object1400::isEnabled() { return ~getCobId() & 0x80000000; } // TODO
+bool Object1400::isEnabled() { return ~getCobId() & X1400_COBID_VALID_MASK; }
 
 bool Object1400::isInhibitSupported() { return getCount() >= X1400_INDEX_INHIBIT; }
 
