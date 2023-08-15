@@ -2,10 +2,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id)
-{
-    _nmt.initSM();
-}
+Node::Node(uint8_t id) : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id) {}
 
 ObjectDictionnary &Node::od() { return _od; }
 
@@ -20,6 +17,11 @@ PDO &CANopen::Node::pdo() { return _pdo; }
 SYNC &CANopen::Node::sync() { return _sync; }
 
 EMCY &CANopen::Node::emcy() { return _emcy; }
+
+void Node::init()
+{
+    _nmt.initSM();
+}
 
 void Node::receiveFrame(Frame frame)
 {

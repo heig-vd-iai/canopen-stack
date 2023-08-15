@@ -41,6 +41,7 @@ namespace CANopen
         PDO &pdo();
         SYNC &sync();
         EMCY &emcy();
+        void init();
         void receiveFrame(class Frame frame);
         void update();
     };

@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
                          { cout << "Timeout occured on RPDO" << index << endl; });
     // node.pdo().onReceive([](unsigned index)
     //                      { cout << "Received RPDO" << index << endl; });
+    node.init();
     node.od().loadData(0);
     thread listenThread(listenFunc);
     listenThread.detach();
