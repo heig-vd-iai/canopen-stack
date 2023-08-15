@@ -7,7 +7,7 @@ SDOAbortCodes Object1600::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     if (subindex == OBJECT_INDEX_COUNT)
     {
         uint8_t value = bytes[0];
-        if (value > X1600_MAX_ENTRIES)
+        if (value > OD_PDO_MAPPING_MAX)
             return SDOAbortCode_DownloadValueTooHigh;
         if (value > X1600_MAP_DISABLED)
         {
