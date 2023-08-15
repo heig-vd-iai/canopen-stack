@@ -79,7 +79,7 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
     {
         Object *object = tpdo->mappedEntries[i].object;
         uint8_t subindex = tpdo->mappedEntries[i].subindex;
-        uint8_t size = object->getSize(subindex);
+        uint16_t size = object->getSize(subindex);
         object->readBytes(subindex, buffer, size, bytesTransferred);
         bytesTransferred += size;
     }
@@ -95,7 +95,7 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us)
     {
         Object *object = rpdo->mappedEntries[i].object;
         uint8_t subindex = rpdo->mappedEntries[i].subindex;
-        uint8_t size = object->getSize(subindex);
+        uint16_t size = object->getSize(subindex);
         object->writeBytes(subindex, buffer + bytesTransferred, size, node);
         bytesTransferred += size;
     }

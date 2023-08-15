@@ -10,9 +10,9 @@ namespace CANopen
     {
         const void *dataSrc;
         const AccessType accessType;
-        const uint8_t size;
+        const uint16_t size;
 
-        ObjectEntry(void *dataSrc, uint8_t accessType, uint8_t size) : dataSrc(dataSrc), accessType{accessType}, size(size) {}
+        ObjectEntry(void *dataSrc, uint8_t accessType, uint16_t size) : dataSrc(dataSrc), accessType{accessType}, size(size) {}
     };
 
     class Object
@@ -32,7 +32,7 @@ namespace CANopen
         Object(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : entries(entries), index(index), subNumber(subNumber) {}
         virtual ~Object() {}
         bool isSubValid(uint8_t subindex);
-        uint8_t getSize(uint8_t subindex);
+        uint16_t getSize(uint8_t subindex);
         AccessType getAccessType(uint8_t subindex);
         // Methods called mainly by SDO
         SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset);
