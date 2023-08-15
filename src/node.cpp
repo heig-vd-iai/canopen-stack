@@ -21,7 +21,7 @@ SYNC &CANopen::Node::sync() { return _sync; }
 
 EMCY &CANopen::Node::emcy() { return _emcy; }
 
-void Node::receiveFrame(Frame &frame)
+void Node::receiveFrame(Frame frame)
 {
     uint32_t timestamp = getTime_us();
     switch (frame.functionCode)
