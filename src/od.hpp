@@ -293,6 +293,9 @@ namespace CANopen
         } objects;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.x2, &objects.x3, &objects.x4, &objects.x5, &objects.x6, &objects.x7, &objects.x1000, &objects.x1001, &objects.x1003, &objects.x1005, &objects.x1006, &objects.x1007, &objects.x1008, &objects.x1009, &objects.x100A, &objects.x100C, &objects.x100D, &objects.x1010, &objects.x1011, &objects.x1014, &objects.x1016, &objects.x1017, &objects.x1018, &objects.x1019, &objects.x1020, &objects.x1029, &objects.x1400, &objects.x1401, &objects.x1402, &objects.x1403, &objects.x1600, &objects.x1601, &objects.x1602, &objects.x1603, &objects.x1800, &objects.x1801, &objects.x1802, &objects.x1803, &objects.x1A00, &objects.x1A01, &objects.x1A02, &objects.x1A03, &objects.x1F51, &objects.x1F57, &objects.x1F80, &objects.x6007, &objects.x603F, &objects.x6040, &objects.x6041, &objects.x6042, &objects.x6043, &objects.x6044, &objects.x6046, &objects.x6048, &objects.x6049, &objects.x604A, &objects.x6060, &objects.x6061, &objects.x6064, &objects.x607A, &objects.x6081, &objects.x60FD, &objects.x60FE};
         class Node &node;
+#ifdef OD_DEFAULT_DATA
+        const ObjectDictionnaryData defaultData;
+#endif
 
     public:
         const uint16_t length = OD_OBJECTS_COUNT;
