@@ -36,9 +36,6 @@ void PDO::remapTPDO(unsigned index)
     TPDO *tpdo = tpdos + index;
     unsigned count = tpdo->mapObject->getCount();
     tpdo->count = 0;
-    if (tpdo->mappedEntries)
-        delete[] tpdo->mappedEntries;
-    tpdo->mappedEntries = new PDOPair[count];
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
@@ -59,9 +56,6 @@ void PDO::remapRPDO(unsigned index)
     RPDO *rpdo = rpdos + index;
     unsigned count = rpdo->mapObject->getCount();
     rpdo->count = 0;
-    if (rpdo->mappedEntries)
-        delete[] rpdo->mappedEntries;
-    rpdo->mappedEntries = new PDOPair[count];
     unsigned sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {

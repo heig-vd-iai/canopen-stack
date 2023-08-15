@@ -21,7 +21,7 @@ namespace CANopen
         {
             class Object1800 *commObject;
             class Object1A00 *mapObject;
-            PDOPair *mappedEntries = nullptr;
+            PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
             uint8_t count = 0;
             uint8_t size = 0;
             uint32_t timestamp_us = 0;
@@ -31,7 +31,7 @@ namespace CANopen
         {
             class Object1400 *commObject;
             class Object1600 *mapObject;
-            PDOPair *mappedEntries = nullptr;
+            PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
             uint8_t buffer[PDO_DLC] = {0};
             uint8_t count = 0;
             uint8_t size = 0;
