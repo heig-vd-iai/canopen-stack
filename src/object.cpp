@@ -68,7 +68,7 @@ bool Object::isSubValid(uint8_t subindex)
     return subindex < subNumber;
 }
 
-uint16_t Object::getSize(uint8_t subindex)
+uint32_t Object::getSize(uint8_t subindex)
 {
     if (!isSubValid(subindex))
         return 0;
