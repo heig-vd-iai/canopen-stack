@@ -35,10 +35,10 @@ namespace CANopen
         void setManufacturerCode(uint32_t manufacturerCode);
     };
 
-    struct SDOFrame : public Frame
+    struct SDOFrameBase : public Frame
     {
-        SDOFrame(uint8_t nodeId);
-        SDOFrame(uint8_t nodeId, uint8_t commandByte);
+        SDOFrameBase(uint8_t nodeId);
+        SDOFrameBase(uint8_t nodeId, uint8_t commandByte);
         void setCommandByte(uint8_t commandByte);
         uint8_t getCommandByte();
         void setIndex(uint16_t index);
@@ -47,7 +47,27 @@ namespace CANopen
         uint8_t getSubindex();
         void setAbortCode(uint32_t abortCode);
         uint32_t getAbortCode();
+    };
+
+    struct SDOFrame : public SDOFrameBase
+    {
+        SDOFrame(uint8_t nodeId);
+        SDOFrame(uint8_t nodeId, uint8_t commandByte);
+        void setInitiateData(uint32_t initiateData);
         uint32_t getInitiateData();
+    };
+
+    struct SDOBlockFrame : public SDOFrameBase
+    {
+        SDOBlockFrame(uint8_t nodeId);
+        SDOBlockFrame(uint8_t nodeId, uint8_t commandByte);
+        void setSize(uint32_t size);
+        uint32_t getSize();
+        void setInitiateBlockSize(uint8_t blockSize);
+        uint8_t getInitiateBlockSize();
+        void setSubBlockSize(uint8_t blockSize);
+        void setAckseq(uint8_t ackseq);
+        uint16_t getCRC();
     };
 
     struct NMTFrame : public Frame

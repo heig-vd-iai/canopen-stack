@@ -58,60 +58,108 @@ void EmergencyFrame::setManufacturerCode(uint32_t manufacturerCode)
     *(uint32_t *)(data + EMCY_MANUFACTURER_OFFSET) = manufacturerCode;
 }
 
-SDOFrame::SDOFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_TSDO)
+SDOFrameBase::SDOFrameBase(uint8_t nodeId) : Frame(nodeId, FunctionCode_TSDO)
 {
     dlc = SDO_DLC;
 }
 
-SDOFrame::SDOFrame(uint8_t nodeId, uint8_t commandByte) : Frame(nodeId, FunctionCode_TSDO)
+SDOFrameBase::SDOFrameBase(uint8_t nodeId, uint8_t commandByte) : Frame(nodeId, FunctionCode_TSDO)
 {
     dlc = SDO_DLC;
     setCommandByte(commandByte);
 }
 
-void SDOFrame::setCommandByte(uint8_t commandByte)
+void SDOFrameBase::setCommandByte(uint8_t commandByte)
 {
     data[SDO_COMMANDBYTE_OFFSET] = commandByte;
 }
 
-uint8_t SDOFrame::getCommandByte()
+uint8_t SDOFrameBase::getCommandByte()
 {
     return data[SDO_COMMANDBYTE_OFFSET];
 }
 
-void SDOFrame::setIndex(uint16_t index)
+void SDOFrameBase::setIndex(uint16_t index)
 {
     *(uint16_t *)(data + SDO_INDEX_OFFSET) = index;
 }
 
-uint16_t SDOFrame::getIndex()
+uint16_t SDOFrameBase::getIndex()
 {
     return *(uint16_t *)(data + SDO_INDEX_OFFSET);
 }
 
-void SDOFrame::setSubindex(uint8_t subindex)
+void SDOFrameBase::setSubindex(uint8_t subindex)
 {
     data[SDO_SUBINDEX_OFFSET] = subindex;
 }
 
-uint8_t SDOFrame::getSubindex()
+uint8_t SDOFrameBase::getSubindex()
 {
     return data[SDO_SUBINDEX_OFFSET];
 }
 
-void SDOFrame::setAbortCode(uint32_t abortCode)
+void SDOFrameBase::setAbortCode(uint32_t abortCode)
 {
     *(uint32_t *)(data + SDO_ABORTCODE_OFFSET) = abortCode;
 }
 
-uint32_t SDOFrame::getAbortCode()
+uint32_t SDOFrameBase::getAbortCode()
 {
     return *(uint32_t *)(data + SDO_ABORTCODE_OFFSET);
+}
+
+SDOFrame::SDOFrame(uint8_t nodeId) : SDOFrameBase(nodeId) {}
+
+SDOFrame::SDOFrame(uint8_t nodeId, uint8_t commandByte) : SDOFrameBase(nodeId, commandByte) {}
+
+void SDOFrame::setInitiateData(uint32_t initiateData)
+{
+    *(uint32_t *)(data + SDO_INITIATE_DATA_OFFSET) = initiateData;
 }
 
 uint32_t SDOFrame::getInitiateData()
 {
     return *(uint32_t *)(data + SDO_INITIATE_DATA_OFFSET);
+}
+
+SDOBlockFrame::SDOBlockFrame(uint8_t nodeId) : SDOFrameBase(nodeId) {}
+
+SDOBlockFrame::SDOBlockFrame(uint8_t nodeId, uint8_t commandByte) : SDOFrameBase(nodeId, commandByte) {}
+
+void SDOBlockFrame::setSize(uint32_t size)
+{
+    *(uint32_t *)(data + SDO_BLOCK_SIZE_OFFSET) = size;
+}
+
+uint32_t SDOBlockFrame::getSize()
+{
+    return *(uint32_t *)(data + SDO_BLOCK_SIZE_OFFSET);
+}
+
+void SDOBlockFrame::setInitiateBlockSize(uint8_t blockSize)
+{
+    data[SDO_BLOCK_INIT_BLKSIZE_OFFSET] = blockSize;
+}
+
+uint8_t SDOBlockFrame::getInitiateBlockSize()
+{
+    return data[SDO_BLOCK_INIT_BLKSIZE_OFFSET];
+}
+
+void SDOBlockFrame::setSubBlockSize(uint8_t blockSize)
+{
+    data[SDO_BLOCK_SUB_BLKSIZE_OFFSET] = blockSize;
+}
+
+void SDOBlockFrame::setAckseq(uint8_t ackseq)
+{
+    data[SDO_BLOCK_ACKSEQ_OFFSET] = ackseq;
+}
+
+uint16_t SDOBlockFrame::getCRC()
+{
+    return *(uint16_t *)(data + SDO_BLOCK_CRC_OFFSET);
 }
 
 NMTFrame::NMTFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_NMT) {}
