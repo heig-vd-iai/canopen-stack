@@ -70,3 +70,73 @@ union SDOCommandByte
         uint8_t ccs : 3;
     } bits_segment;
 };
+
+union SDOBlockCommandByte
+{
+    uint8_t value;
+    struct
+    {
+        uint8_t ss : 2;
+        uint8_t sc : 1;
+        uint8_t reserved : 2;
+        uint8_t scs : 3;
+    } bits_downResponse;
+    struct
+    {
+        uint8_t cs : 1;
+        uint8_t s : 1;
+        uint8_t cc : 1;
+        uint8_t reserved : 2;
+        uint8_t ccs : 3;
+    } bits_downRequestInitiate;
+    struct
+    {
+        uint8_t seqno : 7;
+        uint8_t c : 1;
+    } bits_downRequestSub;
+    struct
+    {
+        uint8_t cs : 1;
+        uint8_t reserved : 1;
+        uint8_t n : 3;
+        uint8_t ccs : 3;
+    } bits_downRequestEnd;
+    struct
+    {
+        uint8_t cs : 2;
+        uint8_t cc : 1;
+        uint8_t reserved : 2;
+        uint8_t ccs : 3;
+    } bits_upRequestInitiate;
+    struct
+    {
+        uint8_t seqno : 7;
+        uint8_t c : 1;
+    } bits_upRequestSub;
+    struct
+    {
+        uint8_t ss : 2;
+        uint8_t n : 3;
+        uint8_t scs : 3;
+    } bits_upRequestEnd;
+    struct
+    {
+        uint8_t ss : 1;
+        uint8_t s : 1;
+        uint8_t sc : 1;
+        uint8_t reserved : 2;
+        uint8_t scs : 3;
+    } bits_upResponseInitiate;
+    struct
+    {
+        uint8_t cs : 2;
+        uint8_t reserved : 3;
+        uint8_t ccs : 3;
+    } bits_upResponseSub;
+    struct
+    {
+        uint8_t cs : 1;
+        uint8_t reserved : 4;
+        uint8_t ccs : 3;
+    } bits_upResponseEnd;
+};
