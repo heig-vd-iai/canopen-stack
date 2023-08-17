@@ -49,7 +49,7 @@ void updateFunc()
 {
     double t = 0.0;
     double x = 0.0;
-    const double dt = 0.001;
+    const double dt = 0.0001;
     const double a = 120.0;
     const double f = 0.1;
     const double w = 2.0 * M_PI * f;
@@ -67,7 +67,6 @@ void updateFunc()
         }
         t += dt;
         x = a * sin(w * t);
-        this_thread::sleep_for(chrono::milliseconds(1));
     }
 }
 
