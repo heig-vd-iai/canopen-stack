@@ -157,14 +157,19 @@ uint8_t SDOBlockFrame::getSubBlockSize()
     return data[SDO_BLOCK_SUB_BLKSIZE_OFFSET];
 }
 
-uint8_t SDOBlockFrame::getAckseq()
+void SDOBlockFrame::setCRC(uint16_t crc)
 {
-    return data[SDO_BLOCK_ACKSEQ_OFFSET];
+    *(uint16_t *)(data + SDO_BLOCK_CRC_OFFSET) = crc;
 }
 
 uint16_t SDOBlockFrame::getCRC()
 {
     return *(uint16_t *)(data + SDO_BLOCK_CRC_OFFSET);
+}
+
+uint8_t SDOBlockFrame::getAckseq()
+{
+    return data[SDO_BLOCK_ACKSEQ_OFFSET];
 }
 
 uint8_t SDOBlockFrame::getPST()

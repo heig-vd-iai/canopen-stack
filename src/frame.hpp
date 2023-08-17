@@ -67,8 +67,9 @@ namespace CANopen
         uint8_t getInitiateBlockSize();
         void setSubBlockSize(uint8_t blockSize);
         uint8_t getSubBlockSize();
-        uint8_t getAckseq();
+        void setCRC(uint16_t crc);
         uint16_t getCRC();
+        uint8_t getAckseq();
         uint8_t getPST();
     };
 
