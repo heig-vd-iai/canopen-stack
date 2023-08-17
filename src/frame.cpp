@@ -152,14 +152,24 @@ void SDOBlockFrame::setSubBlockSize(uint8_t blockSize)
     data[SDO_BLOCK_SUB_BLKSIZE_OFFSET] = blockSize;
 }
 
-void SDOBlockFrame::setAckseq(uint8_t ackseq)
+uint8_t SDOBlockFrame::getSubBlockSize()
 {
-    data[SDO_BLOCK_ACKSEQ_OFFSET] = ackseq;
+    return data[SDO_BLOCK_SUB_BLKSIZE_OFFSET];
+}
+
+uint8_t SDOBlockFrame::getAckseq()
+{
+    return data[SDO_BLOCK_ACKSEQ_OFFSET];
 }
 
 uint16_t SDOBlockFrame::getCRC()
 {
     return *(uint16_t *)(data + SDO_BLOCK_CRC_OFFSET);
+}
+
+uint8_t SDOBlockFrame::getPST()
+{
+    return data[SDO_BLOCK_PST_OFFSET];
 }
 
 NMTFrame::NMTFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_NMT) {}
