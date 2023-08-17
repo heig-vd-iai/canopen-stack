@@ -57,13 +57,8 @@ namespace CANopen
         SDOCommandSpecifier_ClientUploadSegment = 0x03,
         SDOCommandSpecifier_ServerUploadSegment = 0x00,
         SDOCommandSpecifier_AbortTransfer = 0x04,
-
-        SDOCommandSpecifier_ClientBlockDownloadInitiate = 0x06,
-        SDOCommandSpecifier_ServerBlockDownloadInitiate = 0x05,
-        SDOCommandSpecifier_ServerBlockDownloadSubBlock = 0x05,
-        SDOCommandSpecifier_ClientBlockDownloadEnd = 0x06,
-        SDOCommandSpecifier_ServerBlockDownloadEnd = 0x05,
-
+        SDOCommandSpecifier_ClientBlockDownload = 0x06,
+        SDOCommandSpecifier_ServerBlockDownload = 0x05,
         SDOCommandSpecifier_ClientBlockUpload = 0x05,
         SDOCommandSpecifier_ServerBlockUpload = 0x06
     };
@@ -72,13 +67,12 @@ namespace CANopen
     { // see p. 54-60
         SDOSubCommand_ClientDownloadInitiate = 0x00,
         SDOSubCommand_ServerDownloadInitiate = 0x00,
-        SDOSubCommand_ServerDownloadSubBlock = 0x02,
+        SDOSubCommand_ServerDownloadResponse = 0x02,
         SDOSubCommand_ClientDownloadEnd = 0x01,
         SDOSubCommand_ServerDownloadEnd = 0x01,
-
         SDOSubCommand_ClientUploadInitiate = 0x00,
-        SDOSubCommand_ClientUploadStart = 0x03,
         SDOSubCommand_ServerUploadInitiate = 0x00,
+        SDOSubCommand_ClientUploadStart = 0x03,
         SDOSubCommand_ClientUploadResponse = 0x02,
         SDOSubCommand_ClientUploadEnd = 0x01,
         SDOSubCommand_ServerUploadEnd = 0x01
