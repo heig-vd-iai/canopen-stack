@@ -7,7 +7,7 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 - PDO mapping is limited to 8 objects, as granularity is set to 8
 - Mutable COB-IDs are unsupported
 - Multiple SDOs not supported
-- Multiple PDOS above 4 not supported
+- Multiple RPDOS above default 4 are not supported
 - Node guarding is not supported
 - OS commands are not supported
 - If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific
