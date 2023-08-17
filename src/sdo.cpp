@@ -270,11 +270,13 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
         response.setSubindex(subindex);
         response.setSize(size);
         node.sendFrame(response);
+        transferData.timestamp_us = timestamp_us;
         break;
     }
     case SDOSubCommand_ClientUploadStart:
     {
         serverState = SDOServerState_BlockUploading;
+        transferData.timestamp_us = timestamp_us;
         break;
     }
     default:
@@ -315,6 +317,7 @@ void SDO::blockUploadReceive(class SDOBlockFrame &request, uint32_t timestamp_us
                 node.sendFrame(response);
             }
         }
+        transferData.timestamp_us = timestamp_us;
         break;
     }
     case SDOSubCommand_ServerUploadEnd:
@@ -358,6 +361,14 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us)
     transferData.timestamp_us = timestamp_us;
 }
 
+void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
+{
+}
+
+void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us)
+{
+}
+
 void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != node.nodeId)
@@ -382,6 +393,9 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
         case SDOCommandSpecifier_ClientBlockUpload:
             blockUploadInitiate((SDOBlockFrame &)frame, timestamp_us);
             break;
+        case SDOCommandSpecifier_ClientBlockDownload:
+            blockDownloadInitiate((SDOBlockFrame &)frame, timestamp_us);
+            break;
         default:
             sendAbort(SDOAbortCode_CommandSpecifierInvalid);
             break;
@@ -402,6 +416,12 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
     case SDOServerState_BlockUploading:
         if (recvCommand.bits_segment.ccs == SDOCommandSpecifier_ClientBlockUpload)
             blockUploadReceive((SDOBlockFrame &)frame, timestamp_us);
+        else
+            sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+        break;
+    case SDOServerState_BlockDownloading:
+        if (recvCommand.bits_segment.ccs == SDOCommandSpecifier_ClientBlockDownload)
+            blockDownloadReceive((SDOBlockFrame &)frame, timestamp_us);
         else
             sendAbort(SDOAbortCode_CommandSpecifierInvalid);
         break;
