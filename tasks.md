@@ -4,7 +4,8 @@
 - multiple PDOs ?
 
 ### SDO
-- SDO block transfer
+- SDO block transfer CRC
+- SDO block transfer PST
 
 ### Other
 - replace unsigned by uint32_t
