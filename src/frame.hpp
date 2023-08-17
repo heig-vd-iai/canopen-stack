@@ -57,8 +57,8 @@ namespace CANopen
         uint32_t getInitiateData();
     };
 
-    struct SDOBlockFrame : public SDOFrameBase // TODO: remove unused methods
-    {
+    struct SDOBlockFrame : public SDOFrameBase
+    { // TODO: remove unused methods
         SDOBlockFrame(uint8_t nodeId);
         SDOBlockFrame(uint8_t nodeId, uint8_t commandByte);
         void setSize(uint32_t size);
@@ -69,6 +69,7 @@ namespace CANopen
         uint8_t getSubBlockSize();
         void setCRC(uint16_t crc);
         uint16_t getCRC();
+        void setAckseq(uint8_t ackseq);
         uint8_t getAckseq();
         uint8_t getPST();
     };

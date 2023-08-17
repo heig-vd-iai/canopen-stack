@@ -167,6 +167,11 @@ uint16_t SDOBlockFrame::getCRC()
     return *(uint16_t *)(data + SDO_BLOCK_CRC_OFFSET);
 }
 
+void SDOBlockFrame::setAckseq(uint8_t ackseq)
+{
+    data[SDO_BLOCK_ACKSEQ_OFFSET] = ackseq;
+}
+
 uint8_t SDOBlockFrame::getAckseq()
 {
     return data[SDO_BLOCK_ACKSEQ_OFFSET];
