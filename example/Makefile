@@ -1,44 +1,29 @@
-APP_NAME = app
-CANOPEN_SRC = ../src
-OBJECTS_SRC = $(CANOPEN_SRC)/objects
-APP_SRC = .
+EXECUTABLE = app.out
+CXX = g++
+CXXFLAGS = --std=c++14
+CXXFLAGS += -Wall
+# CXXFLAGS += -Wextra
+# CXXFLAGS += -pedantic
+CXXFLAGS += -pthread
 
+SRC_DIR = ../src
+BUILD_DIR = build
+INCLUDES = -I$(SRC_DIR)
+MAIN_SOURCE = example.cpp
+LIB_SOURCES = $(shell find $(SRC_DIR) -type f -name "*.cpp")
+SOURCES = ${LIB_SOURCES} ${MAIN_SOURCE}
+OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCES)) $(BUILD_DIR)/${MAIN_SOURCE:.cpp=.o}
 
-INCLUDE_DIRS = \
-	-I$(CANOPEN_SRC) \
-	-I$(APP_SRC)
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-SOURCES = \
-	$(APP_SRC)/example.cpp \
-	$(CANOPEN_SRC)/object.cpp \
-	$(CANOPEN_SRC)/node.cpp \
-	$(CANOPEN_SRC)/nmt.cpp \
-	$(CANOPEN_SRC)/heartbeat.cpp \
-	$(CANOPEN_SRC)/sdo.cpp \
-	$(CANOPEN_SRC)/pdo.cpp \
-	$(CANOPEN_SRC)/sync.cpp \
-	$(CANOPEN_SRC)/emergency.cpp \
-	$(CANOPEN_SRC)/frame.cpp \
-	$(CANOPEN_SRC)/od.cpp \
-	$(OBJECTS_SRC)/object_1001.cpp \
-	$(OBJECTS_SRC)/object_1003.cpp \
-	$(OBJECTS_SRC)/object_1010.cpp \
-	$(OBJECTS_SRC)/object_1011.cpp \
-	$(OBJECTS_SRC)/object_1019.cpp \
-	$(OBJECTS_SRC)/object_1400.cpp \
-	$(OBJECTS_SRC)/object_1600.cpp \
-	$(OBJECTS_SRC)/object_1800.cpp \
-	$(OBJECTS_SRC)/object_1A00.cpp
+$(BUILD_DIR)/${MAIN_SOURCE:.cpp=.o}: ${MAIN_SOURCE}
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-
-CC = g++
-FLAGS = --std=c++14
-FLAGS += -Wall
-# FLAGS += -Wextra
-# FLAGS += -pedantic
-FLAGS += -pthread
-
-
-$(APP_NAME):
-	$(CC) $(FLAGS) $(INCLUDE_DIRS) $(SOURCES) -o $@.out
+clean:
+	-rm -rf $(BUILD_DIR) $(EXECUTABLE)
