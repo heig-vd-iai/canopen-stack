@@ -1,4 +1,4 @@
-from objects.generic import VarObject, ArrayObject, RecordObject
+from objects.generic import VarObject, ArrayObject, RecordObject, ENTRY_MAX_SIZE
 from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
 from objects.object_1001 import Object1001
@@ -73,6 +73,7 @@ if len(missingObjects) > 0:
     ret = True
 if ret: exit(1)
 defines = [
+    f"OD_ENTRY_SIZE_MAX {ENTRY_MAX_SIZE}",
     f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}",
     f"OD_RPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1400)])}",
     *[f"OD_OBJECT_{obj.index:X} {i}" for i, obj in enumerate(objectsValues)]

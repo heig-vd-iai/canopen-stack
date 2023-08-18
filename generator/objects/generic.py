@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from .entries import ObjectEntry
 from canopen.objectdictionary import Variable
 from .entries import datatype2entryclass, accesstypes, ObjectEntry
+ENTRY_MAX_SIZE = 1024
 
 class ObjectBase(ABC):
     """This is the base class for OD's objects"""
@@ -26,7 +27,10 @@ class ObjectBase(ABC):
             else: errors = True
         for i, entry in enumerate(self.entries):
             if entry.size <= 0:
-                self.error(f"invalid size '{entry.size}' for sub {i}")
+                self.error(f"invalid size '{entry.size}' for sub {i}, must be greater than 0")
+                errors = True
+            if entry.size > ENTRY_MAX_SIZE:
+                self.error(f"invalid size '{entry.size}' for sub {i}, must be lower than {ENTRY_MAX_SIZE}")
                 errors = True
         if errors: raise ValueError()
         
