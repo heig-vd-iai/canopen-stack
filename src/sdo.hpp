@@ -1,8 +1,10 @@
 #pragma once
+#include "od.hpp"
 #include <cstdint>
 // #define SDO_TIMEOUT_US 5000
 #define SDO_TIMEOUT_US 1000000 // TODO
 #define SDO_DLC 8
+#define SDO_BUFFSIZE OD_ENTRY_SIZE_MAX
 #define SDO_INITIATE_DATA_LENGTH 4
 #define SDO_INITIATE_DATA_OFFSET 4
 #define SDO_SEGMENT_DATA_LENGTH 7
@@ -21,7 +23,6 @@
 #define SDO_BLOCK_DATA_OFFSET 1
 #define SDO_BLOCK_SEQNO_MIN 1
 #define SDO_BLOCK_SEQNO_MAX 127
-#define SDO_BUFFSIZE (SDO_BLOCK_DATA_LENGTH * SDO_BLOCK_SEQNO_MAX)
 
 namespace CANopen
 {
@@ -34,6 +35,7 @@ namespace CANopen
             SDOServerState_Downloading,
             SDOServerState_BlockUploading,
             SDOServerState_BlockDownloading,
+            SDOServerState_BlockDownloadingEnding
         };
 
     private:
@@ -46,14 +48,20 @@ namespace CANopen
             uint16_t index;
             uint8_t subindex;
             uint32_t remainingBytes;
-            uint8_t buffer[SDO_BUFFSIZE];
+            // uint8_t buffer[SDO_BUFFSIZE];
             uint32_t timestamp_us;
             uint8_t toggle;
             // Block transfer specific
             uint16_t blksize;
             uint16_t seqno;
+            uint16_t ackseq;
             uint32_t lastBlockRemainingBytes;
         } transferData;
+        struct
+        {
+            uint8_t data[SDO_BUFFSIZE] = {0};
+            uint32_t offset = 0;
+        } buffer;
 
         void enable();
         void disable();
@@ -66,12 +74,13 @@ namespace CANopen
         void blockUploadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
         void blockUploadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
         void blockUploadSubBlock(uint32_t timestamp_us);
-
         void blockDownloadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
         void blockDownloadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
-
+        void blockDownloadEnd(class SDOBlockFrame &request, uint32_t timestamp_us);
         void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
+        void bufferReset();
+        void bufferAppend(uint8_t *data, uint32_t size);
 
     public:
         friend class NMT;
