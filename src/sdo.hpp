@@ -2,6 +2,7 @@
 #include "od.hpp"
 #include <cstdint>
 #define SDO_TIMEOUT_US 30000
+#define SDO_BLOCK_DOWNLOAD_TIMEOUT_US 1000
 #define SDO_DLC 8
 #define SDO_BUFFSIZE OD_ENTRY_SIZE_MAX
 #define SDO_INITIATE_DATA_LENGTH 4
@@ -64,6 +65,7 @@ namespace CANopen
 
         void enable();
         void disable();
+        bool isTimeout(uint32_t timestamp_us, uint32_t timeout_us);
         void sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode);
         void sendAbort(uint32_t abortCode);
         void uploadInitiate(class SDOFrame &request, uint32_t timestamp_us);
@@ -76,6 +78,7 @@ namespace CANopen
         void blockDownloadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
         void blockDownloadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
         void blockDownloadEnd(class SDOBlockFrame &request, uint32_t timestamp_us);
+        void blockDownloadEndSub(uint32_t timestamp_us);
         void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
         void update(uint32_t timestamp_us);
         void bufferReset();

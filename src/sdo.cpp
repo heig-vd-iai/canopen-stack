@@ -13,6 +13,11 @@ void SDO::enable() { enabled = true; }
 
 void SDO::disable() { enabled = false; }
 
+bool SDO::isTimeout(uint32_t timestamp_us, uint32_t timeout_us)
+{
+    return timestamp_us - transferData.timestamp_us >= timeout_us;
+}
+
 void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode)
 {
     SDOCommandByte sendCommand = {0};
@@ -248,12 +253,6 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
         transferData.remainingBytes = transferData.lastBlockRemainingBytes = size;
         transferData.blksize = request.getInitiateBlockSize();
         transferData.seqno = SDO_BLOCK_SEQNO_MIN;
-
-        // if (size <= request.getPST()) // TODO: pst == 0
-        // {
-        //     // Switch to traditionnal SDO upload
-        // }
-
         sendCommand.bits_upServerInitiate.scs = SDOCommandSpecifier_ServerBlockUpload;
         sendCommand.bits_upServerInitiate.sc = 0;
         sendCommand.bits_upServerInitiate.s = 1;
@@ -409,22 +408,15 @@ void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us)
 {
     SDOBlockCommandByte recvCommand = {request.getCommandByte()};
     if (recvCommand.bits_downClientSub.seqno == transferData.ackseq + 1U)
-    {
+    { // Valid sub-block received
         transferData.ackseq++;
         uint32_t payloadSize = transferData.remainingBytes > SDO_BLOCK_DATA_LENGTH ? SDO_BLOCK_DATA_LENGTH : transferData.remainingBytes;
         bufferAppend(request.data + SDO_BLOCK_DATA_OFFSET, payloadSize);
         transferData.remainingBytes -= payloadSize;
     }
     if (++transferData.seqno >= transferData.blksize || recvCommand.bits_downClientSub.c)
-    {
-        SDOBlockCommandByte cmd = {0};
-        cmd.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
-        cmd.bits_downServer.ss = SDOSubCommand_ServerDownloadResponse;
-        SDOBlockFrame frame(node.nodeId, cmd.value);
-        frame.setAckseq(transferData.ackseq);
-        frame.setSubBlockSize(transferData.blksize);
-        node.sendFrame(frame);
-        transferData.ackseq = transferData.seqno = 0;
+    { // Last sub-block, send confirmation to client
+        blockDownloadEndSub(timestamp_us);
         if (recvCommand.bits_downClientSub.c)
             serverState = SDOServerState_BlockDownloadingEnding;
     }
@@ -450,6 +442,19 @@ void SDO::blockDownloadEnd(class SDOBlockFrame &request, uint32_t timestamp_us)
     SDOBlockFrame frame(node.nodeId, sendCommand.value);
     node.sendFrame(frame);
     serverState = SDOServerState_Ready;
+    transferData.timestamp_us = timestamp_us;
+}
+
+void SDO::blockDownloadEndSub(uint32_t timestamp_us)
+{
+    SDOBlockCommandByte cmd = {0};
+    cmd.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
+    cmd.bits_downServer.ss = SDOSubCommand_ServerDownloadResponse;
+    SDOBlockFrame frame(node.nodeId, cmd.value);
+    frame.setAckseq(transferData.ackseq);
+    frame.setSubBlockSize(transferData.blksize);
+    node.sendFrame(frame);
+    transferData.ackseq = transferData.seqno = 0;
     transferData.timestamp_us = timestamp_us;
 }
 
@@ -499,12 +504,6 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
             sendAbort(SDOAbortCode_CommandSpecifierInvalid);
         break;
     case SDOServerState_BlockDownloading:
-        // { // TODO
-        //     SDOBlockCommandByte bcmd = {cmd.value};
-        //     if (bcmd.bits_downClientSub.seqno != 100)
-        //         blockDownloadReceive((SDOBlockFrame &)frame, timestamp_us);
-        //     break;
-        // }
         blockDownloadReceive((SDOBlockFrame &)frame, timestamp_us);
         break;
     case SDOServerState_BlockDownloadingEnding:
@@ -519,7 +518,7 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
 }
 
 void SDO::update(uint32_t timestamp_us)
-{ // TODO: function for timeout
+{
     if (!enabled)
         return;
     switch (serverState)
@@ -527,14 +526,14 @@ void SDO::update(uint32_t timestamp_us)
     case SDOServerState_BlockUploading:
         blockUploadSubBlock(timestamp_us);
         break;
-    // case SDOServerState_BlockDownloading:
-    //     if (timestamp_us - transferData.timestamp_us >= SDO_TIMEOUT_US)
-    //         blockDownloadEndSub(timestamp_us);
-    //     break;
+    case SDOServerState_BlockDownloading:
+        if (isTimeout(timestamp_us, SDO_BLOCK_DOWNLOAD_TIMEOUT_US))
+            blockDownloadEndSub(timestamp_us);
+        break;
     default:
         break;
     }
-    if (serverState != SDOServerState_Ready && timestamp_us - transferData.timestamp_us >= SDO_TIMEOUT_US)
+    if (serverState != SDOServerState_Ready && isTimeout(timestamp_us, SDO_TIMEOUT_US))
         sendAbort(transferData.index, transferData.subindex, SDOAbortCode_TimedOut);
 }
 
