@@ -4,7 +4,6 @@
 - multiple PDOs ?
 
 ### SDO
-- SDO block transfer CRC
 - SDO block transfer PST
 - block download: missing sub-block, detect with timeout
 
