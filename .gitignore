@@ -41,6 +41,3 @@ __pycache__/
 
 # OD save file
 *.dat
-
-# Test scripts
-example/test.py
