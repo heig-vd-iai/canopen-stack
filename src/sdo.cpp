@@ -5,8 +5,6 @@
 #include "unions.hpp"
 #include "object.hpp"
 #include <cstring>
-#include <iostream>  // TODO
-using namespace std; // TODO
 using namespace CANopen;
 
 SDO::SDO(Node &node) : node(node) {}
@@ -414,14 +412,11 @@ void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us)
     {
         transferData.ackseq++;
         uint32_t payloadSize = transferData.remainingBytes > SDO_BLOCK_DATA_LENGTH ? SDO_BLOCK_DATA_LENGTH : transferData.remainingBytes;
-        // cout << "Received seqno " << transferData.ackseq << endl;
         bufferAppend(request.data + SDO_BLOCK_DATA_OFFSET, payloadSize);
         transferData.remainingBytes -= payloadSize;
     }
-    // cout << "transferData.seqno: " << transferData.seqno << ", transferData.ackseq: " << transferData.ackseq << endl;
     if (++transferData.seqno >= transferData.blksize || recvCommand.bits_downClientSub.c)
     {
-        // cout << "Received last sub-block " << (int)recvCommand.bits_downClientSub.seqno << endl;
         SDOBlockCommandByte cmd = {0};
         cmd.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
         cmd.bits_downServer.ss = SDOSubCommand_ServerDownloadResponse;
@@ -432,7 +427,6 @@ void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us)
         transferData.ackseq = transferData.seqno = 0;
         if (recvCommand.bits_downClientSub.c)
             serverState = SDOServerState_BlockDownloadingEnding;
-        transferData.timestamp_us = timestamp_us;
     }
     transferData.timestamp_us = timestamp_us;
 }
@@ -553,7 +547,7 @@ void SDO::bufferReset()
 void SDO::bufferAppend(uint8_t *data, uint32_t size)
 {
     uint32_t availableSize = sizeof(buffer.data) - buffer.offset;
-    uint32_t transferSize = min(size, availableSize);
+    uint32_t transferSize = size < availableSize ? size : availableSize;
     if (!transferSize)
         return;
     memcpy(buffer.data + buffer.offset, data, transferSize);
