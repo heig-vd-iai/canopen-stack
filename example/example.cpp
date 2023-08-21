@@ -16,7 +16,52 @@ using namespace std;
 using namespace CANopen;
 #define ID_MIN 1
 #define ID_MAX 127
-// #define INTERACTIVE
+#define INTERACTIVE
+
+struct ErrorCodeInfo
+{
+    uint16_t code;
+    const char *description;
+};
+
+ErrorCodeInfo errorInfo[] = {
+    {0x0000, "Error reset or no error"},
+    {0x1000, "Generic error"},
+    {0x2000, "Current - generic error"},
+    {0x2100, "Current, CANopen device input side - generic"},
+    {0x2200, "Current inside the CANopen device - generic"},
+    {0x2300, "Current, CANopen device output side - generic"},
+    {0x3000, "Voltage - generic error"},
+    {0x3100, "Mains voltage - generic"},
+    {0x3200, "Voltage inside the CANopen device - generic"},
+    {0x3300, "Output voltage - generic"},
+    {0x4000, "Temperature - generic error"},
+    {0x4100, "Ambient temperature - generic"},
+    {0x4200, "Device temperature - generic"},
+    {0x5000, "CANopen device hardware - generic error"},
+    {0x6000, "CANopen device software - generic error"},
+    {0x6100, "Internal software - generic"},
+    {0x6200, "User software - generic"},
+    {0x6300, "Data set - generic"},
+    {0x7000, "Additional modules - generic error"},
+    {0x8000, "Monitoring - generic error"},
+    {0x8100, "Communication - generic"},
+    {0x8110, "CAN overrun (objects lost)"},
+    {0x8120, "CAN in error passive mode"},
+    {0x8130, "Life guard error or heartbeat error"},
+    {0x8140, "Recovered from bus off"},
+    {0x8150, "CAN-ID collision"},
+    {0x8200, "Protocol error - generic"},
+    {0x8210, "PDO not processed due to length error"},
+    {0x8220, "PDO length exceeded"},
+    {0x8230, "DAM MPDO not processed, destination object not available"},
+    {0x8240, "Unexpected SYNC data length"},
+    {0x8250, "RPDO timeout"},
+    {0x9000, "External error - generic error"},
+    {0xF000, "Additional functions - generic error"},
+    {0xFF00, "Device specific - generic error"}};
+
+int errorInfoLength = sizeof(errorInfo) / sizeof(errorInfo[0]);
 
 Node *nodePtr;
 mutex mtx;
@@ -75,6 +120,12 @@ void signal_callback_handler(int signum)
     quit = true;
 }
 
+void clear()
+{
+    cin.clear();
+    cin.ignore(1024, '\n');
+}
+
 int main(int argc, char *argv[])
 {
     unsigned nodeID;
@@ -127,7 +178,7 @@ int main(int argc, char *argv[])
     listenThread.detach();
     thread updateThread(updateFunc);
 #ifdef INTERACTIVE
-    int choice = 0;
+    int choice = 0, subChoice = 0;
     do
     {
         cout << "===== CANopen example =====\n";
@@ -135,22 +186,54 @@ int main(int argc, char *argv[])
         cout << "1: Save OD\n";
         cout << "2: Load OD\n";
         cout << "3: Restore OD\n";
+        cout << "4: Raise error\n";
+        cout << "5: Error register\n";
         cout << "> ";
         cin >> choice;
         switch (choice)
         {
-        case 0:
-            quit = true;
-            break;
         case 1:
-            node.saveOD();
+            node.od().saveData(0);
             break;
         case 2:
-            node.loadOD();
+            node.od().loadData(0);
             break;
         case 3:
-            node.restoreOD();
+            node.od().restoreData(0);
             break;
+        case 4:
+        {
+            cout << "===== Error codes =====\n";
+            cout << "0: Return\n";
+            for (int i = 0; i < errorInfoLength; i++)
+                cout << i + 1 << ": " << errorInfo[i].description << endl;
+            cout << "> ";
+            cin >> subChoice;
+            if (1 <= subChoice && subChoice <= errorInfoLength)
+                node.emcy().raiseError(errorInfo[subChoice - 1].code);
+            clear();
+            break;
+        }
+        case 5:
+        {
+            bitset<8> reg{node.emcy().getErrorRegister()};
+            cout << "===== Error register =====\n";
+            cout << "0: Return\n";
+            cout << "1: (" << reg[0] << ") Clear generic error\n";
+            cout << "2: (" << reg[1] << ") Clear current error\n";
+            cout << "3: (" << reg[2] << ") Clear voltage error\n";
+            cout << "4: (" << reg[3] << ") Clear temperature error\n";
+            cout << "5: (" << reg[4] << ") Clear communication error\n";
+            cout << "6: (" << reg[5] << ") Clear device profile specific error\n";
+            cout << "7: Reserved\n";
+            cout << "8: (" << reg[7] << ") Clear manufacturer error\n";
+            cout << "> ";
+            cin >> subChoice;
+            if (1 <= subChoice && subChoice <= 8)
+                node.emcy().clearErrorBit(subChoice - 1);
+            clear();
+            break;
+        }
         }
     } while (choice != 0);
     quit = true;
