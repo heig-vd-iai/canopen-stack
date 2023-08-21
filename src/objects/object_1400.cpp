@@ -4,14 +4,14 @@
 #include <cstring>
 using namespace CANopen;
 
-SDOAbortCodes Object1400::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+SDOAbortCodes Object1400::preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
 {
     if (subindex == X1400_INDEX_RESERVED)
         return SDOAbortCode_SubindexNonExistent;
     return SDOAbortCode_OK;
 }
 
-SDOAbortCodes Object1400::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes Object1400::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
 {
     bool enabled = isEnabled();
     switch (subindex)
@@ -50,7 +50,7 @@ SDOAbortCodes Object1400::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
     return SDOAbortCode_OK;
 }
 
-void Object1400::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+void Object1400::postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
 {
     if (remap)
     {

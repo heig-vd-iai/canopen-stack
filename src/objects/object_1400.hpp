@@ -18,9 +18,9 @@ namespace CANopen
     private:
         bool remap = false;
 
-        SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset) override;
-        SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
-        void postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node) override;
+        SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
+        SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
+        void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
 
     public:
         Object1400(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}

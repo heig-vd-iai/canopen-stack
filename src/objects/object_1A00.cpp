@@ -2,7 +2,7 @@
 #include "../node.hpp"
 using namespace CANopen;
 
-SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
 {
     if (subindex == OBJECT_INDEX_COUNT)
     {
@@ -11,7 +11,7 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsign
             return SDOAbortCode_DownloadValueTooHigh;
         if (value > X1A00_MAP_DISABLED)
         {
-            unsigned sizeSum = 0;
+            uint32_t sizeSum = 0;
             for (unsigned i = 0; i < value; i++)
             {
                 PDOMapEntry entry = {getMappedValue(i)};

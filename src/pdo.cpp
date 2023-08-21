@@ -36,7 +36,7 @@ void PDO::remapTPDO(unsigned index)
     TPDO *tpdo = tpdos + index;
     unsigned count = tpdo->mapObject->getCount();
     tpdo->count = 0;
-    unsigned sizeSum = 0;
+    uint32_t sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
@@ -56,7 +56,7 @@ void PDO::remapRPDO(unsigned index)
     RPDO *rpdo = rpdos + index;
     unsigned count = rpdo->mapObject->getCount();
     rpdo->count = 0;
-    unsigned sizeSum = 0;
+    uint32_t sizeSum = 0;
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {rpdo->mapObject->getMappedValue(i)};
@@ -74,7 +74,7 @@ void PDO::remapRPDO(unsigned index)
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 {
     TPDO *tpdo = tpdos + index;
-    unsigned bytesTransferred = 0;
+    uint32_t bytesTransferred = 0;
     for (unsigned i = 0; i < tpdo->count; i++)
     {
         Object *object = tpdo->mappedEntries[i].object;
@@ -90,7 +90,7 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us)
     RPDO *rpdo = rpdos + index;
     if (!enabled || !rpdo->commObject->isEnabled())
         return;
-    unsigned bytesTransferred = 0;
+    uint32_t bytesTransferred = 0;
     for (unsigned i = 0; i < rpdo->count; i++)
     {
         Object *object = rpdo->mappedEntries[i].object;

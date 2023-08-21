@@ -2,7 +2,7 @@
 #include "../node.hpp"
 using namespace CANopen;
 
-SDOAbortCodes CANopen::Object1019::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes CANopen::Object1019::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
 {
     uint8_t currentValue, newValue;
     getValue(0, &currentValue);

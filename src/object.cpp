@@ -5,25 +5,25 @@
 #include <cstring>
 using namespace CANopen;
 
-SDOAbortCodes Object::preReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+SDOAbortCodes Object::preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
 {
     return SDOAbortCode_OK;
 }
 
-void Object::postReadBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+void Object::postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
 {
 }
 
-SDOAbortCodes Object::preWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node)
+SDOAbortCodes Object::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node)
 {
     return SDOAbortCode_OK;
 }
 
-void Object::postWriteBytes(uint8_t subindex, uint8_t *bytes, unsigned size, class Node &node)
+void Object::postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node)
 {
 }
 
-SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size, Node &node)
+SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
@@ -46,7 +46,7 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, unsigned size
     }
 }
 
-SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, unsigned size, unsigned offset)
+SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
