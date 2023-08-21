@@ -1,6 +1,6 @@
 ## Tasks (C++)
 ### PDO
-- SAM-MDPO and DAM-MPDO
+- SAM-MDPO and DAM-MPDO, objects 1FA0 and 1FD0
 - multiple PDOs ?
 
 ### SDO
