@@ -168,10 +168,12 @@ int main(int argc, char *argv[])
     cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
     Node node(nodeID);
     nodePtr = &node;
+#ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)
                          { cout << "Timeout occured on RPDO" << index << endl; });
-    // node.pdo().onReceive([](unsigned index)
-    //                      { cout << "Received RPDO" << index << endl; });
+    node.pdo().onReceive([](unsigned index)
+                         { cout << "Received RPDO" << index << endl; });
+#endif
     node.init();
     // node.od().loadData(0);
     thread listenThread(listenFunc);
