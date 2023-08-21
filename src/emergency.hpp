@@ -28,6 +28,7 @@ namespace CANopen
         EMCY(class Node &node);
         void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
         void clearErrorBit(unsigned bit);
+        uint8_t getErrorRegister();
         void clearHistory();
         void reset();
     };

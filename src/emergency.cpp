@@ -95,6 +95,11 @@ void EMCY::clearErrorBit(unsigned bit)
         sendError(EMCYErrorCode_Reset, 0);
 }
 
+uint8_t EMCY::getErrorRegister()
+{
+    return errorRegisterObject->getValue();
+}
+
 void EMCY::clearHistory()
 {
 #ifdef OD_OBJECT_1003
