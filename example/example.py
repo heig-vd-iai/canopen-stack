@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import canopen
+import time
 
 
 
@@ -32,21 +33,20 @@ network = canopen.Network()
 network.add_node(node)
 network.connect(channel='vcan0', bustype='socketcan')
 try:
-    pass
-
     ## Block download
-    data = ".susir lev cnun adauselam regetni oel seicirtlu eatiV .des sucal isin des essidnepsuS .sutcel teuqila di rotrot hbiN .iud ucra eranro sarc des taptulov orebil tidnalb deS .siruam sullet tipicsus eativ isin eugnoc cnuN .tema tis surup sittigas euqsiuq tsmutcid aetalp essatibah caH .niorp adauselam reprocmallu alugil te neipas ranivlup cnuN .teidrepmi silef euqsirelecs ue etatupluv sutem nI .te subicuaf neipas assam cenod merol rutetcesnoC .naenea sucnohr siruam eugnoc eativ susruc ucra a muspI .gnicsipida rutetcesnoc tema tis rolod muspi merol tse tegE .otsuj orebil man arreviv repmes tauqesnoC .ropmet assam ni surup subicuaf mauqilA .saneceam taptulov tidnalb mine tu oidO .euqen mine regetni mutnemele ranivlup subicuaF .saneceam satsege siprut ca semaf adauselam te suteN .euqsetnellep mauq supmet eativ euqen rotcua repmes sarc a sillavnoC .auqila angam erolod te erobal tu tnudidicni ropmet domsuie od des ,tile gnicsipida rutetcesnoc ,tema tis rolod muspi meroL".encode()
-    with node.sdo[0x1F51].open("wb", size=len(data), block_transfer=True) as f:
-        f.write(data)
+    # data = ".susir lev cnun adauselam regetni oel seicirtlu eatiV .des sucal isin des essidnepsuS .sutcel teuqila di rotrot hbiN .iud ucra eranro sarc des taptulov orebil tidnalb deS .siruam sullet tipicsus eativ isin eugnoc cnuN .tema tis surup sittigas euqsiuq tsmutcid aetalp essatibah caH .niorp adauselam reprocmallu alugil te neipas ranivlup cnuN .teidrepmi silef euqsirelecs ue etatupluv sutem nI .te subicuaf neipas assam cenod merol rutetcesnoC .naenea sucnohr siruam eugnoc eativ susruc ucra a muspI .gnicsipida rutetcesnoc tema tis rolod muspi merol tse tegE .otsuj orebil man arreviv repmes tauqesnoC .ropmet assam ni surup subicuaf mauqilA .saneceam taptulov tidnalb mine tu oidO .euqen mine regetni mutnemele ranivlup subicuaF .saneceam satsege siprut ca semaf adauselam te suteN .euqsetnellep mauq supmet eativ euqen rotcua repmes sarc a sillavnoC .auqila angam erolod te erobal tu tnudidicni ropmet domsuie od des ,tile gnicsipida rutetcesnoc ,tema tis rolod muspi meroL".encode()
+    # with node.sdo[0x1F51].open("wb", size=len(data), block_transfer=True) as f:
+    #     f.write(data)
 
     # Block upload
-    with node.sdo[0x1F51].open("rb") as f:
-        print(f.read(1024).decode())
+    # with node.sdo[0x1F51].open("rb") as f:
+    #     print(f.read(1024).decode())
 
     ## Configure TPDO
     # i = 1
     # node.tpdo.read()
     # node.tpdo[i].clear()
+    # # node.tpdo[i].cob_id = 0x180
     # node.tpdo[i].trans_type = 0xFE
     # node.tpdo[i].event_timer = 1000
     # node.tpdo[i].inhibit_time = 10 * 1000
@@ -65,9 +65,15 @@ try:
     # node.restoreParameters()
     # node.saveParameters()
 
+    ## Send TPDO RTR
+    # for k in range(5):
+    #     node.tpdo[i].remote_request()
+    #     time.sleep(0.1)
+
     ## Wait until KeyboardInterrupt
     # while True: pass
-
+    
+    pass
 except KeyboardInterrupt: print()
-except: pass
+except Exception as e: print(e)
 network.disconnect()
