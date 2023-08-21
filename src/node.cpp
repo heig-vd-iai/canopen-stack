@@ -26,7 +26,7 @@ void Node::init()
 void Node::receiveFrame(Frame frame)
 {
     uint32_t timestamp = getTime_us();
-    switch (frame.functionCode)
+    switch ((FunctionCodes)frame.functionCode)
     {
     case FunctionCode_NMT:
         _nmt.receiveFrame((NMTFrame &)frame);
@@ -49,6 +49,8 @@ void Node::receiveFrame(Frame frame)
         break;
     case FunctionCode_RSDO:
         _sdo.receiveFrame((SDOFrame &)frame, timestamp);
+        break;
+    default:
         break;
     }
 }

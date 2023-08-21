@@ -224,7 +224,7 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us)
 void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
 {
     SDOBlockCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
-    switch (recvCommand.bits_upClient.cs)
+    switch ((SDOSubCommands)recvCommand.bits_upClient.cs)
     {
     case SDOSubCommand_ClientUploadInitiate:
     {
@@ -280,7 +280,7 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
 void SDO::blockUploadReceive(class SDOBlockFrame &request, uint32_t timestamp_us)
 {
     SDOBlockCommandByte recvCommand = {request.getCommandByte()};
-    switch (recvCommand.bits_upClient.cs)
+    switch ((SDOSubCommands)recvCommand.bits_upClient.cs)
     {
     case SDOSubCommand_ClientUploadResponse:
     {
@@ -466,7 +466,7 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us)
     switch (serverState)
     {
     case SDOServerState_Ready:
-        switch (cmd.bits_initiate.ccs)
+        switch ((SDOCommandSpecifiers)cmd.bits_initiate.ccs)
         {
         case SDOCommandSpecifier_ClientUploadInitiate:
             uploadInitiate(frame, timestamp_us);

@@ -25,7 +25,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     if (!enabled)
         return;
     uint8_t behaviour = X1029_BEHAVIOUR_PREOP;
-    switch (errorCode)
+    switch ((EMCYErrorCodes)errorCode)
     {
     case EMCYErrorCode_Generic:
     case EMCYErrorCode_DeviceHardware:
@@ -77,6 +77,8 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
         break;
     case EMCYErrorCode_AdditionalFunctions:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Manufacturer);
+        break;
+    default:
         break;
     }
 #ifdef OD_OBJECT_1003

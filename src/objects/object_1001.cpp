@@ -10,7 +10,7 @@ void Object1001::setErrorBit(unsigned bit)
 { // Generic error shall be signaled at any error situation
     ErrorRegister reg = {getValue()};
     reg.bits.genericError = 1;
-    switch (bit)
+    switch ((ErrorRegisterBits)bit)
     {
     case ErrorRegisterBit_Current:
         reg.bits.current = 1;
@@ -30,6 +30,8 @@ void Object1001::setErrorBit(unsigned bit)
     case ErrorRegisterBit_Manufacturer:
         reg.bits.manufacturerSpecific = 1;
         break;
+    default:
+        break;
     }
     setValue(0, reg.value);
 }
@@ -37,7 +39,7 @@ void Object1001::setErrorBit(unsigned bit)
 void Object1001::clearErrorBit(unsigned bit)
 {
     ErrorRegister reg = {getValue()};
-    switch (bit)
+    switch ((ErrorRegisterBits)bit)
     {
     case ErrorRegisterBit_Generic:
         // Only clear generic error bit is all other bits are clear
@@ -61,6 +63,8 @@ void Object1001::clearErrorBit(unsigned bit)
         break;
     case ErrorRegisterBit_Manufacturer:
         reg.bits.manufacturerSpecific = 0;
+        break;
+    default:
         break;
     }
     setValue(0, reg.value);

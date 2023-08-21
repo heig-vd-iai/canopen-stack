@@ -121,7 +121,7 @@ void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us)
     if (!enabled || frame.nodeId != node.nodeId || !frame.rtr)
         return;
     uint8_t index;
-    switch (frame.functionCode)
+    switch ((FunctionCodes)frame.functionCode)
     {
     case FunctionCode_TPDO1:
         index = 0;
@@ -151,7 +151,7 @@ void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us)
     if (!enabled || frame.nodeId != node.nodeId)
         return;
     uint8_t index = 42;
-    switch (frame.functionCode)
+    switch ((FunctionCodes)frame.functionCode)
     {
     case FunctionCode_RPDO1:
         index = 0;
