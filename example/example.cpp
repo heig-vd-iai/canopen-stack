@@ -189,6 +189,7 @@ int main(int argc, char *argv[])
         cout << "4: Raise error\n";
         cout << "5: Error register\n";
         cout << "6: Clear error history\n";
+        cout << "7: Transmit PDO\n";
         cout << "> ";
         cin >> choice;
         switch (choice)
@@ -238,6 +239,19 @@ int main(int argc, char *argv[])
         case 6:
             node.emcy().clearHistory();
             break;
+        case 7:
+        {
+            cout << "===== TPDOs =====\n";
+            cout << "0: Return\n";
+            for (int i = 0; i < OD_TPDO_COUNT; i++)
+                cout << i + 1 << ": send TPDO" << i + 1 << '\n';
+            cout << "> ";
+            cin >> subChoice;
+            if (1 <= subChoice && subChoice <= OD_TPDO_COUNT)
+                node.pdo().transmitTPDO(subChoice - 1);
+            clear();
+            break;
+        }
         }
     } while (choice != 0);
     quit = true;
