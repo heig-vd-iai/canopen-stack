@@ -188,6 +188,7 @@ int main(int argc, char *argv[])
         cout << "3: Restore OD\n";
         cout << "4: Raise error\n";
         cout << "5: Error register\n";
+        cout << "6: Clear error history\n";
         cout << "> ";
         cin >> choice;
         switch (choice)
@@ -206,7 +207,7 @@ int main(int argc, char *argv[])
             cout << "===== Error codes =====\n";
             cout << "0: Return\n";
             for (int i = 0; i < errorInfoLength; i++)
-                cout << i + 1 << ": " << errorInfo[i].description << endl;
+                cout << i + 1 << ": " << errorInfo[i].description << '\n';
             cout << "> ";
             cin >> subChoice;
             if (1 <= subChoice && subChoice <= errorInfoLength)
@@ -234,6 +235,9 @@ int main(int argc, char *argv[])
             clear();
             break;
         }
+        case 6:
+            node.emcy().clearHistory();
+            break;
         }
     } while (choice != 0);
     quit = true;
