@@ -4,8 +4,6 @@
 - multiple PDOs ?
 
 ### SDO
-- SDO block transfer PST
-- block download: missing sub-block, detect with timeout
 
 ### Other
 - replace unsigned by uint32_t
