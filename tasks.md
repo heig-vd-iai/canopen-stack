@@ -10,6 +10,7 @@
 
 ### Other
 - replace unsigned by uint32_t
+- switch on enums: cast to enum type to avoid missing cases, when necessary
 - comment code (ChatGPT will help a lot)
 - GitHub wiki
 - document how to add a new Object subclass
