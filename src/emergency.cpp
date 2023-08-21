@@ -28,6 +28,20 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode)
     switch (errorCode)
     {
     case EMCYErrorCode_Generic:
+    case EMCYErrorCode_DeviceHardware:
+    case EMCYErrorCode_Software:
+    case EMCYErrorCode_Software_Internal:
+    case EMCYErrorCode_Software_User:
+    case EMCYErrorCode_Software_Dataset:
+    case EMCYErrorCode_Modules:
+    case EMCYErrorCode_Monitoring:
+    case EMCYErrorCode_Protocol:
+    case EMCYErrorCode_Protocol_PDOLengthError:
+    case EMCYErrorCode_Protocol_PDOLengthExceeded:
+    case EMCYErrorCode_Protocol_DAMMPDODestinationNotAvailable:
+    case EMCYErrorCode_Protocol_SyncDataLength:
+    case EMCYErrorCode_Protocol_RPDOTimeout:
+    case EMCYErrorCode_ExternalError:
         errorRegisterObject->setErrorBit(ErrorRegisterBit_Generic);
         break;
     case EMCYErrorCode_Current:
