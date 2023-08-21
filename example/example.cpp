@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
                          { cout << "Received RPDO" << index << endl; });
 #endif
     node.init();
-    // node.od().loadData(0);
+    node.od().loadData(0);
     thread listenThread(listenFunc);
     listenThread.detach();
     thread updateThread(updateFunc);
