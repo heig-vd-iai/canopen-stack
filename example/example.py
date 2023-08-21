@@ -10,7 +10,7 @@ class CustomNode(canopen.Node):
         self.emcy.add_callback(self._on_EMCY)
 
     def _on_TPDO(self, message):
-        print(message.name)
+        print(f"{message.name}:")
         for var in message: print(f"{var.name} : {var.phys}")
 
     def _on_EMCY(self, emcy): print(f"Emergency code 0x{emcy.code:04X}: {emcy.get_desc()}")
@@ -38,9 +38,9 @@ try:
     i = 1
     node.tpdo.read()
     node.tpdo[i].clear()
-    node.tpdo[i].trans_type = 255
-    node.tpdo[i].event_timer = 500
-    node.tpdo[i].inhibit_time = 100
+    node.tpdo[i].trans_type = 0xFE
+    node.tpdo[i].event_timer = 1000
+    node.tpdo[i].inhibit_time = 10 * 1000
     node.tpdo[i].enabled = True
     node.tpdo[i].add_variable(0x6048, 1)
     node.tpdo.save()
