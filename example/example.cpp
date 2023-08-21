@@ -81,10 +81,10 @@ void listenFunc()
             CANopenFrame.dlc = canFrame.can_dlc;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
-            auto start = chrono::steady_clock::now();
+            // auto start = chrono::steady_clock::now();
             nodePtr->receiveFrame(CANopenFrame);
-            auto end = chrono::steady_clock::now();
-            tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
+            // auto end = chrono::steady_clock::now();
+            // tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
             mtx.unlock();
         }
     }
@@ -103,15 +103,15 @@ void updateFunc()
         if (mtx.try_lock())
         {
             nodePtr->od().at(OD_OBJECT_6048)->setValue(1, x);
-            auto start = chrono::steady_clock::now();
+            // auto start = chrono::steady_clock::now();
             nodePtr->update();
-            auto end = chrono::steady_clock::now();
-            tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
-            // nodePtr->transmitPDO(0);
+            // auto end = chrono::steady_clock::now();
+            // tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
             mtx.unlock();
         }
         t += dt;
         x = a * sin(w * t);
+        // this_thread::sleep_for(chrono::microseconds(100));
     }
 }
 
