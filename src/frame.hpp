@@ -58,7 +58,7 @@ namespace CANopen
     };
 
     struct SDOBlockFrame : public SDOFrameBase
-    { // TODO: remove unused methods
+    {
         SDOBlockFrame(uint8_t nodeId);
         SDOBlockFrame(uint8_t nodeId, uint8_t commandByte);
         void setSize(uint32_t size);
