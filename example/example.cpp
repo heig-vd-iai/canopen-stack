@@ -16,7 +16,7 @@ using namespace std;
 using namespace CANopen;
 #define ID_MIN 1
 #define ID_MAX 127
-#define INTERACTIVE
+// #define INTERACTIVE
 
 struct ErrorCodeInfo
 {
