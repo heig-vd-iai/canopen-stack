@@ -15,6 +15,7 @@ This library uses the generic pre-defined connection set, as such, custom COB-ID
 The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
 - LSS is not supported
 - Object flags (ObjFlags) is not supported
+- SDO block transfer CRC and PST not supported
 ### Unsupported or aliased data types
 - DOMAIN is not supported
 - VISIBLE_STRING is UTF-8 encoded, OCTET_STRING and UNICODE_STRING are aliases to VISIBLE_STRING
