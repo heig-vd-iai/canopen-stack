@@ -7,6 +7,7 @@ CANopen slave library
 - The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see p.80).
 - Because of the generic connection set, mutation of COB-IDs during runtime is unsupported.
 - Multiple RPDOS above default 4 are not supported, but multiple TPDOS (above default 4) are supported.
+- MPDOs are not supported
 - Multiple SDOs not supported.
 - Node guarding is not supported.
 - OS commands are not supported.
