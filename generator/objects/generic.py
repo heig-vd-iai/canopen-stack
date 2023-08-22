@@ -23,7 +23,7 @@ class ObjectBase(ABC):
             if entry.access_type not in accesstypes:
                 self.error(f"unknown access type '{entry.access_type}' for sub {i}")
                 entryValid = False
-            if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.pdo_mappable, entry.default))
+            if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.pdo_mappable, entry.default, entry.min, entry.max))
             else: errors = True
         for i, entry in enumerate(self.entries):
             if entry.size <= 0:
@@ -81,7 +81,7 @@ class ArrayObject(ObjectBase):
     def renderData(self) -> list[str]:
         """Returns the C++ data declaration, ex. uint8_t x1003sub0 = 3; uint16_t x1003[3] = {42, 84, 126}"""
         sub = self.entries[0].renderData(self.sub0Name)
-        init = ", ".join([str(entry.defaultValue) for entry in self.entries[1:]])
+        init = ", ".join([str(entry.value) for entry in self.entries[1:]])
         arr = f"{self.entries[1].ctype} {self.varName}[{self.subNumber - 1}] = {{{init}}}"
         return [sub, arr]
     
