@@ -4,7 +4,6 @@
 ### SDO
 
 ### Other
-- OD object value range and all other properties (p.91): range
 - comment code (ChatGPT will help a lot)
 - GitHub wiki
 - document how to add a new Object subclass
