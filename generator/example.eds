@@ -1957,6 +1957,8 @@ DataType=0x0004
 AccessType=rww
 DefaultValue=4000
 PDOMapping=1
+LowLimit=-5000
+HighLimit=5000
 
 [6081]
 ParameterName=Profile velocity
