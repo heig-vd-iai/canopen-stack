@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from objects.generic import VarObject, ArrayObject, RecordObject, ENTRY_MAX_SIZE
 from canopen.objectdictionary import Variable, Array, Record
 from canopen import Node, ObjectDictionary
