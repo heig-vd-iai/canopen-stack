@@ -519,6 +519,7 @@ namespace CANopen
         ObjectDictionnary(class Node &node);
         Object *findObject(uint16_t index);
         Object *at(uint16_t index);
+        Object *operator[](uint16_t index);
         bool saveData(uint8_t parameterGroup);
         bool loadData(uint8_t parameterGroup);
         bool restoreData(uint8_t parameterGroup);

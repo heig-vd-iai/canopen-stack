@@ -25,3 +25,8 @@ Object *ObjectDictionnary::at(uint16_t index)
 {
     return index < OD_OBJECTS_COUNT ? objectsArray[index] : nullptr;
 }
+
+Object *ObjectDictionnary::operator[](uint16_t index)
+{
+    return at(index);
+}
