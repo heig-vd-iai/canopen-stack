@@ -1,6 +1,7 @@
 EXECUTABLE = app.out
 CXX = g++
 CXXFLAGS = --std=c++14
+CXXFLAGS += -g
 CXXFLAGS += -Wall
 # CXXFLAGS += -Wextra
 # CXXFLAGS += -pedantic
