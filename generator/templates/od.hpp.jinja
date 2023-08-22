@@ -23,8 +23,8 @@ namespace {{namespace}}
         struct ObjectDictionnaryData
         {
             {% for object in objects %}
-            {% for declaration in object.renderData() %}
-            {{declaration}};
+            {% for data in object.renderData() %}
+            {{data}};
             {% endfor %}
             {% endfor %}
         };
@@ -34,7 +34,10 @@ namespace {{namespace}}
             {
                 ObjectDictionnaryData data;
                 {% for object in objects %}
-                {{object.renderEntry()}};
+                {% for entry in object.renderEntry() %}
+                {{entry}};
+                {% endfor %}
+                {{object.renderEntryList()}};
                 {% endfor %}
             } entries;
             {% for object in objects %}

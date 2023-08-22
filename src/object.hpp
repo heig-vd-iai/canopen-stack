@@ -6,19 +6,26 @@
 
 namespace CANopen
 {
-    struct ObjectEntry
+    struct ObjectEntryBase
     {
         const void *dataSrc;
         const AccessType accessType;
         const uint32_t size;
+        ObjectEntryBase(void *src, uint8_t accessType, uint32_t size) : dataSrc(src), accessType{accessType}, size(size) {}
+        virtual bool check() = 0;
+    };
 
-        ObjectEntry(void *dataSrc, uint8_t accessType, uint32_t size) : dataSrc(dataSrc), accessType{accessType}, size(size) {}
+    template <typename T>
+    struct ObjectEntry : public ObjectEntryBase
+    {
+        ObjectEntry(void *src, uint8_t accessType) : ObjectEntryBase(src, accessType, sizeof(T)) {}
+        bool check() { return true; }
     };
 
     class Object
     {
     protected:
-        const ObjectEntry *entries;
+        const ObjectEntryBase **entries;
 
         virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
         virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
@@ -29,15 +36,15 @@ namespace CANopen
         const uint16_t index;
         const uint8_t subNumber;
 
-        Object(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : entries(entries), index(index), subNumber(subNumber) {}
+        Object(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
         virtual ~Object() {}
         bool isSubValid(uint8_t subindex);
         uint32_t getSize(uint8_t subindex);
         AccessType getAccessType(uint8_t subindex);
-        // Methods called mainly by SDO
+        // Methods called by SDO
         SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
         SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
-        // Methods called mainly by application
+        // Methods called by application
         uint8_t getCount();
         bool getValue(uint8_t subindex, uint8_t *value);
         bool setValue(uint8_t subindex, uint8_t value);

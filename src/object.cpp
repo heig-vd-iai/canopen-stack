@@ -27,16 +27,16 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
-    ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.writeable)
+    ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
+    if (!entry->accessType.bits.writeable)
         return SDOAbortCode_AttemptWriteOnReadOnly;
-    if (size != entry.size)
+    if (size != entry->size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     SDOAbortCodes code = preWriteBytes(subindex, bytes, size, node);
     switch (code)
     {
     case SDOAbortCode_OK:
-        memcpy((void *)entry.dataSrc, bytes, size);
+        memcpy((void *)entry->dataSrc, bytes, size);
         postWriteBytes(subindex, bytes, size, node);
         return SDOAbortCode_OK;
     case SDOAbortCode_CancelWrite:
@@ -50,15 +50,15 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size,
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
-    ObjectEntry entry = entries[subindex];
-    if (!entry.accessType.bits.readable)
+    ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
+    if (!entry->accessType.bits.readable)
         return SDOAbortCode_AttemptReadOnWriteOnly;
-    if (size + offset > entry.size)
+    if (size + offset > entry->size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     SDOAbortCodes code = preReadBytes(subindex, bytes, size, offset);
     if (code != SDOAbortCode_OK)
         return code;
-    memcpy(bytes, (uint8_t *)entry.dataSrc + offset, size);
+    memcpy(bytes, (uint8_t *)entry->dataSrc + offset, size);
     postReadBytes(subindex, bytes, size, offset);
     return SDOAbortCode_OK;
 }
@@ -72,177 +72,177 @@ uint32_t Object::getSize(uint8_t subindex)
 {
     if (!isSubValid(subindex))
         return 0;
-    return entries[subindex].size;
+    return entries[subindex]->size;
 }
 
 AccessType Object::getAccessType(uint8_t subindex)
 {
     if (!isSubValid(subindex))
         return AccessType{0};
-    return entries[subindex].accessType;
+    return entries[subindex]->accessType;
 }
 
 uint8_t Object::getCount()
 {
-    return *(uint8_t *)entries[OBJECT_INDEX_COUNT].dataSrc;
+    return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
 }
 
 bool Object::getValue(uint8_t subindex, uint8_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(uint8_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint8_t) != entries[subindex]->size)
         return false;
-    *value = *(uint8_t *)entries[subindex].dataSrc;
+    *value = *(uint8_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, uint8_t value)
 {
-    if (!isSubValid(subindex) || sizeof(uint8_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint8_t) != entries[subindex]->size)
         return false;
-    *(uint8_t *)entries[subindex].dataSrc = value;
+    *(uint8_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, int8_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(int8_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int8_t) != entries[subindex]->size)
         return false;
-    *value = *(int8_t *)entries[subindex].dataSrc;
+    *value = *(int8_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, int8_t value)
 {
-    if (!isSubValid(subindex) || sizeof(int8_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int8_t) != entries[subindex]->size)
         return false;
-    *(int8_t *)entries[subindex].dataSrc = value;
+    *(int8_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, uint16_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(uint16_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint16_t) != entries[subindex]->size)
         return false;
-    *value = *(uint16_t *)entries[subindex].dataSrc;
+    *value = *(uint16_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, uint16_t value)
 {
-    if (!isSubValid(subindex) || sizeof(uint16_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint16_t) != entries[subindex]->size)
         return false;
-    *(uint16_t *)entries[subindex].dataSrc = value;
+    *(uint16_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, int16_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(int16_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int16_t) != entries[subindex]->size)
         return false;
-    *value = *(int16_t *)entries[subindex].dataSrc;
+    *value = *(int16_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, int16_t value)
 {
-    if (!isSubValid(subindex) || sizeof(int16_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int16_t) != entries[subindex]->size)
         return false;
-    *(int16_t *)entries[subindex].dataSrc = value;
+    *(int16_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, uint32_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(uint32_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint32_t) != entries[subindex]->size)
         return false;
-    *value = *(uint32_t *)entries[subindex].dataSrc;
+    *value = *(uint32_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, uint32_t value)
 {
-    if (!isSubValid(subindex) || sizeof(uint32_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint32_t) != entries[subindex]->size)
         return false;
-    *(uint32_t *)entries[subindex].dataSrc = value;
+    *(uint32_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, int32_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(int32_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int32_t) != entries[subindex]->size)
         return false;
-    *value = *(int32_t *)entries[subindex].dataSrc;
+    *value = *(int32_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, int32_t value)
 {
-    if (!isSubValid(subindex) || sizeof(int32_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int32_t) != entries[subindex]->size)
         return false;
-    *(int32_t *)entries[subindex].dataSrc = value;
+    *(int32_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, uint64_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(uint64_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint64_t) != entries[subindex]->size)
         return false;
-    *value = *(uint64_t *)entries[subindex].dataSrc;
+    *value = *(uint64_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, uint64_t value)
 {
-    if (!isSubValid(subindex) || sizeof(uint64_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(uint64_t) != entries[subindex]->size)
         return false;
-    *(uint64_t *)entries[subindex].dataSrc = value;
+    *(uint64_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, int64_t *value)
 {
-    if (!isSubValid(subindex) || sizeof(int64_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int64_t) != entries[subindex]->size)
         return false;
-    *value = *(int64_t *)entries[subindex].dataSrc;
+    *value = *(int64_t *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, int64_t value)
 {
-    if (!isSubValid(subindex) || sizeof(int64_t) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(int64_t) != entries[subindex]->size)
         return false;
-    *(int64_t *)entries[subindex].dataSrc = value;
+    *(int64_t *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, float *value)
 {
-    if (!isSubValid(subindex) || sizeof(float) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(float) != entries[subindex]->size)
         return false;
-    *value = *(float *)entries[subindex].dataSrc;
+    *value = *(float *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, float value)
 {
-    if (!isSubValid(subindex) || sizeof(float) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(float) != entries[subindex]->size)
         return false;
-    *(float *)entries[subindex].dataSrc = value;
+    *(float *)entries[subindex]->dataSrc = value;
     return true;
 }
 
 bool Object::getValue(uint8_t subindex, double *value)
 {
-    if (!isSubValid(subindex) || sizeof(double) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(double) != entries[subindex]->size)
         return false;
-    *value = *(double *)entries[subindex].dataSrc;
+    *value = *(double *)entries[subindex]->dataSrc;
     return true;
 }
 
 bool Object::setValue(uint8_t subindex, double value)
 {
-    if (!isSubValid(subindex) || sizeof(double) != entries[subindex].size)
+    if (!isSubValid(subindex) || sizeof(double) != entries[subindex]->size)
         return false;
-    *(double *)entries[subindex].dataSrc = value;
+    *(double *)entries[subindex]->dataSrc = value;
     return true;
 }
