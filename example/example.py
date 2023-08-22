@@ -43,20 +43,20 @@ try:
     #     print(f.read(1024).decode())
 
     ## Configure TPDO
-    # i = 1
-    # node.tpdo.read()
-    # node.tpdo[i].clear()
-    # # node.tpdo[i].cob_id = 0x180
-    # node.tpdo[i].trans_type = 0xFE
-    # node.tpdo[i].event_timer = 1000
-    # node.tpdo[i].inhibit_time = 10 * 1000
-    # node.tpdo[i].enabled = True
-    # node.tpdo[i].add_variable(0x6048, 1)
-    # node.tpdo.save()
+    i = 1
+    node.tpdo.read()
+    node.tpdo[i].clear()
+    # node.tpdo[i].cob_id = 0x180
+    node.tpdo[i].trans_type = 0xFE
+    node.tpdo[i].event_timer = 1000
+    node.tpdo[i].inhibit_time = 10 * 1000
+    node.tpdo[i].enabled = True
+    node.tpdo[i].add_variable(0x6048, 1)
+    node.tpdo.save()
 
     ## NMT 
     # node.nmt.state = "PRE-OPERATIONAL"
-    # node.nmt.state = "OPERATIONAL"
+    node.nmt.state = "OPERATIONAL"
     # node.nmt.state = "STOPPED"
     # node.nmt.state = "RESET COMMUNICATION"
     # node.setHeartbeatTime(1000)
@@ -71,7 +71,7 @@ try:
     #     time.sleep(0.1)
 
     ## Wait until KeyboardInterrupt
-    # while True: pass
+    while True: pass
     
     pass
 except KeyboardInterrupt: print()
