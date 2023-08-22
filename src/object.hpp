@@ -46,25 +46,21 @@ namespace CANopen
         SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
         // Methods called by application
         uint8_t getCount();
-        bool getValue(uint8_t subindex, uint8_t *value);
-        bool setValue(uint8_t subindex, uint8_t value);
-        bool getValue(uint8_t subindex, int8_t *value);
-        bool setValue(uint8_t subindex, int8_t value);
-        bool getValue(uint8_t subindex, uint16_t *value);
-        bool setValue(uint8_t subindex, uint16_t value);
-        bool getValue(uint8_t subindex, int16_t *value);
-        bool setValue(uint8_t subindex, int16_t value);
-        bool getValue(uint8_t subindex, uint32_t *value);
-        bool setValue(uint8_t subindex, uint32_t value);
-        bool getValue(uint8_t subindex, int32_t *value);
-        bool setValue(uint8_t subindex, int32_t value);
-        bool getValue(uint8_t subindex, uint64_t *value);
-        bool setValue(uint8_t subindex, uint64_t value);
-        bool getValue(uint8_t subindex, int64_t *value);
-        bool setValue(uint8_t subindex, int64_t value);
-        bool getValue(uint8_t subindex, float *value);
-        bool setValue(uint8_t subindex, float value);
-        bool getValue(uint8_t subindex, double *value);
-        bool setValue(uint8_t subindex, double value);
+        template <typename T>
+        bool getValue(uint8_t subindex, T *value)
+        {
+            if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->size)
+                return false;
+            *value = *(T *)entries[subindex]->dataSrc;
+            return true;
+        }
+        template <typename T>
+        bool setValue(uint8_t subindex, T value)
+        {
+            if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->size)
+                return false;
+            *(T *)entries[subindex]->dataSrc = value;
+            return true;
+        }
     };
 }
