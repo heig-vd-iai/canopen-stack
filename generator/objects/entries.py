@@ -37,7 +37,7 @@ class AccessType:
 
 class ObjectEntry(ABC):
     """This class serves as the base class for all object entries, that must be subclassed for each data type"""
-    def __init__(self, dataType: int, ctype: str, size: int, accessType: str, PDOMappable: bool, defaultValue, value, lowLimit = None, highLimit = None) -> None:
+    def __init__(self, dataType: int, ctype: str, size: int, accessType: str, PDOMappable: bool, defaultValue, value, lowLimit = None, highLimit = None, cppEntryName: str = "ObjectEntry", cppLimitedEntryName: str = "LimitedObjectEntry") -> None:
         self.dataType: int = dataType
         self.ctype: str = ctype
         self.size: int = size
@@ -45,14 +45,21 @@ class ObjectEntry(ABC):
         self.accessType = AccessType(accessType, PDOMappable)
         self.lowLimit = lowLimit
         self.highLimit = highLimit
+        self.cppEntryName: str = cppEntryName
+        self.cppLimitedEntryName: str = cppLimitedEntryName
+
+    @property
+    def isLimited(self) -> bool:
+        return self.lowLimit is not None and self.highLimit is not None
 
     def renderData(self, name: str) -> str:
         """Returns the C++ data declaration, ex. uint16_t x1003 = 42"""
         return f"{self.ctype} {name} = {self.value}"
     
-    def renderEntry(self, entryClassName: str, entryVarName: str, entrySrcName: str) -> str:
+    def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(&data.x1003, 3)"""
-        return f"{entryClassName}<{self.ctype}> {entryVarName} = {entryClassName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
+        if self.isLimited: return f"{self.cppLimitedEntryName}<{self.ctype}> {entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
+        else: return f"{self.cppEntryName}<{self.ctype}> {entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
 
 class BooleanEntry(ObjectEntry):
     def __init__(self, accessType: str, PDOMappable: bool, value: bool, lowLimit = None, highLimit = None) -> None:
@@ -107,9 +114,9 @@ class VisibleStringEntry(ObjectEntry):
         """Returns the C++ data declaration, ex. uint8_t x1003[6] = {97, 109, 111, 103, 117, 115}"""
         return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.value])}}}"
     
-    def renderEntry(self, entryClassName: str, entryVarName: str, entrySrcName: str) -> str:
+    def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<uint8_t[125]> x1003sub0 = ObjectEntry<uint8_t[125]>(&data.x1003, 3)"""
-        return f"{entryClassName}<{self.ctype}[{self.size}]> {entryVarName} = {entryClassName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
+        return f"{self.cppEntryName}<{self.ctype}[{self.size}]> {entryVarName} = {self.cppEntryName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
 
 datatype2entryclass = {
     0x01: BooleanEntry,

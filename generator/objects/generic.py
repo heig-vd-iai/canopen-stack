@@ -6,10 +6,9 @@ ENTRY_MAX_SIZE = 1024
 
 class ObjectBase(ABC):
     """This is the base class for OD's objects"""
-    def __init__(self, index: int, entries: list[Variable], cppEntryName: str = "ObjectEntry", cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase") -> None:
+    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase") -> None:
         self.index: int = index
         self.subNumber: int = len(entries)
-        self.cppEntryName: str = cppEntryName
         self.cppObjectName: str = cppObjectName
         self.cppBaseEntryName: str = cppBaseEntryName
         self.varName: str = "x%X" % self.index
@@ -23,6 +22,9 @@ class ObjectBase(ABC):
                 entryValid = False
             if entry.access_type not in accesstypes:
                 self.error(f"unknown access type '{entry.access_type}' for sub {i}")
+                entryValid = False
+            if (entry.min is None) != (entry.max is None):
+                self.error(f"LowLimit and HighLimit must be both declared or not at all for sub {i}")
                 entryValid = False
             if entryValid: self.entries.append(datatype2entryclass[entry.data_type](entry.access_type, entry.pdo_mappable, entry.default, entry.min, entry.max))
             else: errors = True
@@ -68,7 +70,7 @@ class VarObject(ObjectBase):
     
     def renderEntry(self) -> list[str]:
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
-        return [self.entry.renderEntry(self.cppEntryName, f"{self.varName}sub0", self.varName)]
+        return [self.entry.renderEntry(f"{self.varName}sub0", self.varName)]
 
 
 class ArrayObject(ObjectBase):
@@ -91,8 +93,8 @@ class ArrayObject(ObjectBase):
     
     def renderEntry(self) -> list[str]:
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
-        sub0 = self.entries[0].renderEntry(self.cppEntryName, self.sub0Name, self.sub0Name)
-        subs = [entry.renderEntry(self.cppEntryName, f"{self.varName}sub{sub + 1}", f"{self.varName}[{sub}]") for sub, entry in enumerate(self.entries[1:])]
+        sub0 = self.entries[0].renderEntry(self.sub0Name, self.sub0Name)
+        subs = [entry.renderEntry(f"{self.varName}sub{sub + 1}", f"{self.varName}[{sub}]") for sub, entry in enumerate(self.entries[1:])]
         return [sub0, *subs]
 
 
@@ -108,4 +110,4 @@ class RecordObject(ObjectBase):
     
     def renderEntry(self) -> list[str]:
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
-        return [entry.renderEntry(self.cppEntryName, f"{self.varName}sub{sub}", f"{self.varName}.sub{sub}") for sub, entry in enumerate(self.entries)]
+        return [entry.renderEntry(f"{self.varName}sub{sub}", f"{self.varName}.sub{sub}") for sub, entry in enumerate(self.entries)]

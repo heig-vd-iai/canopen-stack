@@ -433,7 +433,7 @@ namespace CANopen
                 const ObjectEntryBase *x6061[1] = {&x6061sub0};
                 ObjectEntry<int32_t> x6064sub0 = ObjectEntry<int32_t>(&data.x6064, 5);
                 const ObjectEntryBase *x6064[1] = {&x6064sub0};
-                ObjectEntry<int32_t> x607Asub0 = ObjectEntry<int32_t>(&data.x607A, 7);
+                LimitedObjectEntry<int32_t> x607Asub0 = LimitedObjectEntry<int32_t>(&data.x607A, 7, -5000, 5000);
                 const ObjectEntryBase *x607A[1] = {&x607Asub0};
                 ObjectEntry<uint32_t> x6081sub0 = ObjectEntry<uint32_t>(&data.x6081, 7);
                 const ObjectEntryBase *x6081[1] = {&x6081sub0};
