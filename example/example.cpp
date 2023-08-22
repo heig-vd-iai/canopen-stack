@@ -102,7 +102,7 @@ void updateFunc()
     {
         if (mtx.try_lock())
         {
-            nodePtr->od().at(OD_OBJECT_6048)->setValue(1, x);
+            nodePtr->od()[OD_OBJECT_6048]->setValue(1, x);
             // auto start = chrono::steady_clock::now();
             nodePtr->update();
             // auto end = chrono::steady_clock::now();
