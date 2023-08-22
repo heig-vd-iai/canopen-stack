@@ -26,7 +26,7 @@ namespace CANopen
         void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
 
     public:
-        Object1800(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}
+        Object1800(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
         uint32_t getCobId();
         uint16_t getActualCobId();
         uint8_t getTransmissionType();

@@ -11,7 +11,7 @@ namespace CANopen
         void shiftErrors();
 
     public:
-        Object1003(uint16_t index, uint8_t subNumber, ObjectEntry *entries) : Object(index, subNumber, entries) {}
+        Object1003(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
         void pushError(uint16_t errorCode, uint32_t manufacturerCode);
         void clearErrors();
     };
