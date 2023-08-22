@@ -11,10 +11,10 @@ class Object1600(RecordObject):
         ## Check that mapped objects exist and size is valid
         retval = True
         sizeSum = 0
-        for i in range(self.entries[0].defaultValue):
+        for i in range(self.entries[0].value):
             entry = self.entries[i + 1]
-            index = entry.defaultValue >> 16 & 0xFFFF
-            subindex = entry.defaultValue >> 8 & 0xFF
+            index = entry.value >> 16 & 0xFFFF
+            subindex = entry.value >> 8 & 0xFF
             sizeSum += entry.size
             if index not in objects:
                 self.error(f"invalid RPDO mapping for sub {i + 1} (invalid index)")
