@@ -32,6 +32,11 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
         return SDOAbortCode_AttemptWriteOnReadOnly;
     if (size != entry->size)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
+    int limits = entry->checkLimits(bytes);
+    if (limits < 0)
+        return SDOAbortCode_DownloadValueTooLow;
+    if (limits > 0)
+        return SDOAbortCode_DownloadValueTooHigh;
     SDOAbortCodes code = preWriteBytes(subindex, bytes, size, node);
     switch (code)
     {
