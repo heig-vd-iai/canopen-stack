@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <bitset>
 #include <iostream>
-#include "CANopen.hpp"
+#include "../src/CANopen.hpp"
 using namespace std;
 using namespace CANopen;
 #define ID_MIN 1
