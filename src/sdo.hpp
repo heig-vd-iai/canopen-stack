@@ -48,7 +48,6 @@ namespace CANopen
             uint16_t index;
             uint8_t subindex;
             uint32_t remainingBytes;
-            // uint8_t buffer[SDO_BUFFSIZE];
             uint32_t timestamp_us;
             uint8_t toggle;
             // Block transfer specific
