@@ -46,9 +46,6 @@ namespace {{namespace}}
         } objects;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
         class Node &node;
-#ifdef OD_DEFAULT_DATA
-        const ObjectDictionnaryData defaultData;
-#endif
 
     public:
         const uint16_t length = OD_OBJECTS_COUNT;
