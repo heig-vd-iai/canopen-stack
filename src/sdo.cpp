@@ -391,6 +391,7 @@ void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
     transferData.remainingBytes = transferData.lastBlockRemainingBytes = size;
     transferData.blksize = SDO_BLOCK_SEQNO_MAX;
     transferData.seqno = transferData.ackseq = 0;
+    transferData.retries = 0;
     sendCommand.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
     sendCommand.bits_downServer.sc = 0;
     sendCommand.bits_downServer.ss = SDOSubCommand_ServerDownloadInitiate;
@@ -527,8 +528,11 @@ void SDO::update(uint32_t timestamp_us)
         blockUploadSubBlock(timestamp_us);
         break;
     case SDOServerState_BlockDownloading:
-        if (isTimeout(timestamp_us, SDO_BLOCK_DOWNLOAD_TIMEOUT_US))
+        if (isTimeout(timestamp_us, SDO_BLOCK_DOWNLOAD_TIMEOUT_US) && transferData.retries < SDO_BLOCK_MAX_RETRIES)
+        {
             blockDownloadEndSub(timestamp_us);
+            transferData.retries++;
+        }
         break;
     default:
         break;
