@@ -47,7 +47,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the HB object.
+     * @brief This is a specialized Frame used by the HB class.
      * See p. 76 of CIA301 for more details.
      */
     struct HeartbeatFrame : public Frame
@@ -67,7 +67,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the EMCY object.
+     * @brief This is a specialized Frame used by the EMCY class.
      * See p. 68 of CIA301 for more details.
      */
     struct EmergencyFrame : public Frame
@@ -101,7 +101,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SDO object.
+     * @brief This is a specialized Frame used by the SDO class.
      * It is the base class for SDOFrame and SDOBlockFrame.
      * It contains common accessors for both its subclasses.
      * See p. 48 of CIA301 for more details.
@@ -171,7 +171,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SDO object when dealing with SDO transactions.
+     * @brief This is a specialized Frame used by the SDO class when dealing with SDO transactions.
      * See p. 48 of CIA301 for more details.
      */
     struct SDOFrame : public SDOFrameBase
@@ -203,7 +203,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SDO object when dealing with SDO block transactions.
+     * @brief This is a specialized Frame used by the SDO class when dealing with SDO block transactions.
      * See p. 53 of CIA301 for more details.
      */
     struct SDOBlockFrame : public SDOFrameBase
@@ -289,7 +289,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the NMT object.
+     * @brief This is a specialized Frame used by the NMT class.
      * See p. 72 of CIA301 for more details.
      */
     struct NMTFrame : public Frame
@@ -314,7 +314,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SYNC object.
+     * @brief This is a specialized Frame used by the SYNC class.
      * See p. 63 of CIA301 for more details.
      */
     struct SYNCFrame : public Frame

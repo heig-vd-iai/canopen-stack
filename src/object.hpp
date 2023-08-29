@@ -166,7 +166,7 @@ namespace CANopen
 
         /**
          * @brief Read data from an object entry.
-         * This method should only be called by SDO CANopen object.
+         * This method should only be called by SDO class.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the destination buffer.
          * @param size Number of bytes to read.
@@ -177,7 +177,7 @@ namespace CANopen
 
         /**
          * @brief Write bytes to an object entry.
-         * This method should only be called by SDO CANopen object.
+         * This method should only be called by SDO class.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
          * @param size Number of bytes to write.
