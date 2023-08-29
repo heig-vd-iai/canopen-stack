@@ -178,7 +178,7 @@ namespace CANopen
 
         /**
          * @brief Receive and process an SDO frame.
-         * @param frame SDO frame to be processed.
+         * @param frame SDOFrame to be processed.
          * @param timestamp_us Timestamp in microseconds of the frame reception.
          */
         void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
