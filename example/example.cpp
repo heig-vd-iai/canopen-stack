@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
 void Node::sendFrame(Frame &frame)
 {
     can_frame canFrame;
-    canFrame.len = frame.dlc;
+    canFrame.can_dlc = frame.dlc;
     canFrame.can_id = frame.getCobID();
     memcpy(canFrame.data, frame.data, frame.dlc);
     int size = sizeof(canFrame);
