@@ -11,6 +11,11 @@
 
 namespace CANopen
 {
+    /**
+     * @brief This class represents the Emergency object.
+     * It class handles the emission of emergency messages, as well as the pre-defined error field and error register.
+     * See p. 64 of CIA301 for more details.
+     */
     class EMCY
     {
     private:
@@ -39,20 +44,22 @@ namespace CANopen
     public:
         friend class NMT;
         /**
-         * @brief Constructor for EMCY class. This class handles the emission of emergency messages, as well as the pre-defined error field and error register.
+         * @brief Constructor for EMCY class.
          * @param node The parent Node instance.
          */
         EMCY(class Node &node);
 
         /**
-         * @brief Sends an emergency message on the bus, and automatically sets the corresponding bits in the error register. The generic error bit is always set when using this method.
+         * @brief Sends an emergency message on the bus, and automatically sets the corresponding bits in the error register.
+         * The generic error bit is always set when using this method.
          * @param errorCode The error code to send.
          * @param manufacturerCode The optional manufacturer-specific error code.
          */
         void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
 
         /**
-         * @brief Clear a specific error bit from the error register. The generic error bit can only be cleared if all other bits are clear.
+         * @brief Clear a specific error bit from the error register.
+         * The generic error bit can only be cleared if all other bits are already cleared.
          * @param bit The index of the error bit to clear.
          */
         void clearErrorBit(unsigned bit);
