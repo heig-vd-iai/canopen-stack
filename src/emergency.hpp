@@ -13,7 +13,7 @@ namespace CANopen
 {
     /**
      * @brief This class represents the Emergency object.
-     * It class handles the emission of emergency messages, as well as the pre-defined error field and error register.
+     * It handles the emission of emergency messages, as well as the pre-defined error field and error register.
      * See p. 64 of CIA301 for more details.
      */
     class EMCY
@@ -45,7 +45,7 @@ namespace CANopen
         friend class NMT;
         /**
          * @brief Constructor for EMCY class.
-         * @param node The parent Node instance.
+         * @param node The parent Node reference.
          */
         EMCY(class Node &node);
 
