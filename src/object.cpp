@@ -75,16 +75,12 @@ bool Object::isSubValid(uint8_t subindex)
 
 uint32_t Object::getSize(uint8_t subindex)
 {
-    if (!isSubValid(subindex))
-        return 0;
-    return entries[subindex]->size;
+    return isSubValid(subindex) ? entries[subindex]->size : 0;
 }
 
 AccessType Object::getAccessType(uint8_t subindex)
 {
-    if (!isSubValid(subindex))
-        return AccessType{0};
-    return entries[subindex]->accessType;
+    return isSubValid(subindex) ? entries[subindex]->accessType : AccessType{0};
 }
 
 uint8_t Object::getCount()
