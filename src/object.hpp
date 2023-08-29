@@ -49,7 +49,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This class represents a limited object entry in the Object Dictionary with value constraints.
+     * @brief This class represents a limited object entry in the %Object Dictionary with value constraints.
      * An object entry is identified by a sub-index, and belongs to an object.
      * @tparam T Data type associated with the object entry.
      */
@@ -79,6 +79,10 @@ namespace CANopen
         }
     };
 
+    /**
+     * @brief This class represents an object in the %Object Dictionnary.
+     * An object is identified by an index, and owns multiple entries.
+     */
     class Object
     {
     protected:

@@ -171,7 +171,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SDO class when dealing with SDO transactions.
+     * @brief This is a specialized Frame used by the SDO class when dealing with %SDO transactions.
      * See p. 48 of CIA301 for more details.
      */
     struct SDOFrame : public SDOFrameBase
@@ -203,7 +203,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This is a specialized Frame used by the SDO class when dealing with SDO block transactions.
+     * @brief This is a specialized Frame used by the SDO class when dealing with %SDO block transactions.
      * See p. 53 of CIA301 for more details.
      */
     struct SDOBlockFrame : public SDOFrameBase
