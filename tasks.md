@@ -1,9 +1,5 @@
 ## Tasks (C++)
-### PDO
-
-### SDO
-
-### Other
+- onSync event
 - comment code (ChatGPT will help a lot)
 - GitHub wiki
 - document how to add a new Object subclass
