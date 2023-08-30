@@ -23,12 +23,17 @@ You can run the generator.py script by providing the path of the EDS file and th
 python3 generator.py example.eds 1
 ```
 The node ID is required because it may be referenced in the EDS file, for example for PDO COB-ID.
-The script will do some basic verification, such as missing mandatory objects, missing mapped objects, or unsupported data types.  
+The script will do some basic verification, such as missing mandatory objects, missing mapped objects, or unsupported data types.
+
 **Keep in mind that the verification performed is basic and as such you are responsible for providing a well-build EDS file !**  
+
 On success, the program will create a file named od.hpp containing the custom object dictionnary class.
 It is a mandatory dependency for the rest of the library.
 
 ## Object Dictionnary
+The object dictionnary is created from an associated EDS file. Because it is converted into a header file, it is statically allocated and its size is known at compile time.
+The dictionnary is composed by an array of objects. Each object is identified by a hexadecimal index. Objects are themselves composed by an array of entries. Each entry is identified by a subindex.
+The entries hold the data source, read/write access and data size. To access the data from the dictionnary, the index of the object and the entry subindex are used.
 *table of supported objects*
 
 ## Running The Example
