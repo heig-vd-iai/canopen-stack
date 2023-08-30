@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1800.cpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the definitions of the "RPDO mapping parameter" Object1800 class.
+ *****************************************************************************/
 #include "object_1800.hpp"
 #include "../node.hpp"
 #include "../frame.hpp"

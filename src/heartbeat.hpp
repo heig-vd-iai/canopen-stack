@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      heartbeat.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the HB class.
+ *****************************************************************************/
 #pragma once
 #include <cstdint>
 #include "enums.hpp"

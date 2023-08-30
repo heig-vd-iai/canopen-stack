@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      unions.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains all of the shared unions used in this project.
+ *****************************************************************************/
 #pragma once
 #include <cstdint>
 

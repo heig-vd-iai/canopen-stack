@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1800.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "RPDO mapping parameter" Object1800 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 #define X1800_INDEX_COBID 1

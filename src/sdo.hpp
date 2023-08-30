@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      sdo.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the SDO class.
+ *****************************************************************************/
 #pragma once
 #include "od.hpp"
 #include <cstdint>

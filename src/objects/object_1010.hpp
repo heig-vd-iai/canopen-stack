@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1010.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "Store parameters" Object1010 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 #define X1010_SAVE_SIGNATURE 0x65766173

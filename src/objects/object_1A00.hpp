@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1A00.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "TPDO mapping parameter" Object1A00 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 #define X1A00_MAP_DISABLED 0

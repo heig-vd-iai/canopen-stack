@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      frame.cpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the definitions of all of the frame classes.
+ *****************************************************************************/
 #include "frame.hpp"
 #include "heartbeat.hpp"
 #include "emergency.hpp"

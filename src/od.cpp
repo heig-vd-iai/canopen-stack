@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      od.cpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declarations of the ObjectDictionnary class.
+ *****************************************************************************/
 #include "od.hpp"
 #include "node.hpp"
 using namespace CANopen;

@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1011.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "Restore default parameters" Object1011 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 #define X1011_LOAD_SIGNATURE 0x64616F6C

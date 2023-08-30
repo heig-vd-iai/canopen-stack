@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1600.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "RPDO mapping parameter" Object1600 class.
+ *****************************************************************************/
 #pragma once
 #include "object_1A00.hpp"
 #define X1600_MAP_DISABLED X1A00_MAP_DISABLED

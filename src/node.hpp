@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      node.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the Node class.
+ *****************************************************************************/
 #pragma once
 #include "nmt.hpp"
 #include "heartbeat.hpp"

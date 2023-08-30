@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      emergency.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the EMCY class.
+ *****************************************************************************/
 #pragma once
 #include <cstdint>
 #define X1029_SUB_COMMUNICATION 1

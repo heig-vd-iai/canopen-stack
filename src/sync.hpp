@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      sync.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the SYNC class.
+ *****************************************************************************/
 #pragma once
 #include <cstdint>
 #define SYNC_COUNTER_OFFSET 0

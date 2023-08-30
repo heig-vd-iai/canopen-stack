@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1003.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "Pre-defined error field" Object1003 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 

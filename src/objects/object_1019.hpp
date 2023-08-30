@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1019.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "Synchronous counter overflow value" Object1019 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 #define X1019_NO_COUNTER 0

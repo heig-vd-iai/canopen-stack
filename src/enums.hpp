@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      enums.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains all of the shared enumerations used in this project.
+ *****************************************************************************/
 #pragma once
 
 namespace CANopen

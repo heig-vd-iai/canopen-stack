@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declarations of OD objects and entries.
+ *****************************************************************************/
 #pragma once
 #include "unions.hpp"
 #include "enums.hpp"

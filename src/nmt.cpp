@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      nmt.cpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the definitions of the NMT class.
+ *****************************************************************************/
 #include "nmt.hpp"
 #include "node.hpp"
 #include "frame.hpp"

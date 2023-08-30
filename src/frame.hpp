@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      frame.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of all of the frame classes.
+ *****************************************************************************/
 #pragma once
 #include <cstdint>
 #define CAN_DATA_LENGTH 8

@@ -1,3 +1,10 @@
+/******************************************************************************
+ * [Filename]:      object_1001.hpp
+ * [Project]:       CANopen
+ * [Author]:        Tristan Lieberherr
+ * [Date]:          August 2023
+ * [Description]:   Contains the declaration of the "Error register" Object1001 class.
+ *****************************************************************************/
 #pragma once
 #include "../object.hpp"
 
