@@ -17,6 +17,7 @@ using namespace std;
 #define ID_MAX 127
 #define ID_MIN 1
 #define FILENAME "od.dat"
+// #define INTERACTIVE // uncomment to enable interactive mode
 
 struct ErrorCodeInfo
 {

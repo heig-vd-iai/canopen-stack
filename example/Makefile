@@ -19,9 +19,6 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCES)) $(BUILD
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-interactive: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -DINTERACTIVE $^ -o $(EXECUTABLE)
-
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
