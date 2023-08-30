@@ -17,8 +17,13 @@
 
 namespace {{namespace}}
 {
+    /**
+     * @brief This class represents the %Object Dictionary.
+     * It is an auto-generated class that should not be manually edited.
+     */
     class ObjectDictionnary
     {
+    // @cond
     private:
         struct ObjectDictionnaryData
         {
@@ -46,16 +51,61 @@ namespace {{namespace}}
         } objects;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
         class Node &node;
-
+        // @endcond
     public:
         const uint16_t length = OD_OBJECTS_COUNT;
 
+        /**
+         * @brief Constructor for the %Object Dictionary.
+         * @param node The parent Node reference.
+         */
         ObjectDictionnary(class Node &node);
+
+        /**
+        * @brief Find an object in the dictionary.
+        * @param index The hex index of the object to find.
+        * @return Pointer to the found object, or nullptr if not found.
+        */
         Object *findObject(uint16_t index);
+
+        /**
+         * @brief Access an object in the dictionary by array index.
+         * @param index The array index of the object.
+         * This parameter should always use one of the generated defines. 
+         * @return Pointer to the accessed object, or nullptr if not found.
+         */
         Object *at(uint16_t index);
+
+        /**
+         * @brief Access an object in the dictionary by array index using the subscript operator.
+         * Under the hood, this method uses the at() method.
+         * @param index The array index of the object to access.
+         * @return Pointer to the accessed object, or nullptr if not found.
+         */
         Object *operator[](uint16_t index);
+
+        /**
+         * @brief Save data to non-volatile storage for a specified parameter group.
+         * This method is called by object 0x1010.
+         * @param parameterGroup The parameter group number.
+         * @return True if saving was successful, false otherwise.
+         */
         bool saveData(uint8_t parameterGroup);
+
+        /**
+         * @brief Load data from non-volatile storage for a specified parameter group.
+         * This method should be called on application startup to load the object dictionnary.
+         * @param parameterGroup The parameter group number.
+         * @return True if loading was successful, false otherwise.
+         */
         bool loadData(uint8_t parameterGroup);
+
+        /**
+         * @brief Restore data to default for a specified parameter group.
+         * This method is called by object 0x1011.
+         * @param parameterGroup The parameter group number.
+         * @return True if restoring was successful, false otherwise.
+         */
         bool restoreData(uint8_t parameterGroup);
     };
 }

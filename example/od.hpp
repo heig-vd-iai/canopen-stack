@@ -2,7 +2,7 @@
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on August 24, 2023
+ * [Date]:          Generated on August 30, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
  *****************************************************************************/
@@ -80,8 +80,13 @@
 
 namespace CANopen
 {
+    /**
+     * @brief This class represents the %Object Dictionary.
+     * It is an auto-generated class that should not be manually edited.
+     */
     class ObjectDictionnary
     {
+    // @cond
     private:
         struct ObjectDictionnaryData
         {
@@ -509,16 +514,61 @@ namespace CANopen
         } objects;
         Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.x2, &objects.x3, &objects.x4, &objects.x5, &objects.x6, &objects.x7, &objects.x1000, &objects.x1001, &objects.x1003, &objects.x1005, &objects.x1006, &objects.x1007, &objects.x1008, &objects.x1009, &objects.x100A, &objects.x100C, &objects.x100D, &objects.x1010, &objects.x1011, &objects.x1014, &objects.x1016, &objects.x1017, &objects.x1018, &objects.x1019, &objects.x1020, &objects.x1029, &objects.x1400, &objects.x1401, &objects.x1402, &objects.x1403, &objects.x1600, &objects.x1601, &objects.x1602, &objects.x1603, &objects.x1800, &objects.x1801, &objects.x1802, &objects.x1803, &objects.x1A00, &objects.x1A01, &objects.x1A02, &objects.x1A03, &objects.x1F51, &objects.x1F57, &objects.x1F80, &objects.x6007, &objects.x603F, &objects.x6040, &objects.x6041, &objects.x6042, &objects.x6043, &objects.x6044, &objects.x6046, &objects.x6048, &objects.x6049, &objects.x604A, &objects.x6060, &objects.x6061, &objects.x6064, &objects.x607A, &objects.x6081, &objects.x60FD, &objects.x60FE};
         class Node &node;
-
+        // @endcond
     public:
         const uint16_t length = OD_OBJECTS_COUNT;
 
+        /**
+         * @brief Constructor for the %Object Dictionary.
+         * @param node The parent Node reference.
+         */
         ObjectDictionnary(class Node &node);
+
+        /**
+        * @brief Find an object in the dictionary.
+        * @param index The hex index of the object to find.
+        * @return Pointer to the found object, or nullptr if not found.
+        */
         Object *findObject(uint16_t index);
+
+        /**
+         * @brief Access an object in the dictionary by array index.
+         * @param index The array index of the object.
+         * This parameter should always use one of the generated defines. 
+         * @return Pointer to the accessed object, or nullptr if not found.
+         */
         Object *at(uint16_t index);
+
+        /**
+         * @brief Access an object in the dictionary by array index using the subscript operator.
+         * Under the hood, this method uses the at() method.
+         * @param index The array index of the object to access.
+         * @return Pointer to the accessed object, or nullptr if not found.
+         */
         Object *operator[](uint16_t index);
+
+        /**
+         * @brief Save data to non-volatile storage for a specified parameter group.
+         * This method is called by object 0x1010.
+         * @param parameterGroup The parameter group number.
+         * @return True if saving was successful, false otherwise.
+         */
         bool saveData(uint8_t parameterGroup);
+
+        /**
+         * @brief Load data from non-volatile storage for a specified parameter group.
+         * This method should be called on application startup to load the object dictionnary.
+         * @param parameterGroup The parameter group number.
+         * @return True if loading was successful, false otherwise.
+         */
         bool loadData(uint8_t parameterGroup);
+
+        /**
+         * @brief Restore data to default for a specified parameter group.
+         * This method is called by object 0x1011.
+         * @param parameterGroup The parameter group number.
+         * @return True if restoring was successful, false otherwise.
+         */
         bool restoreData(uint8_t parameterGroup);
     };
 }
