@@ -1,22 +1,22 @@
-#include <pthread.h>
-#include <thread>
-#include <chrono>
-#include <mutex>
-#include <cstring>
-#include <cmath>
 #include <sys/socket.h>
 #include <linux/can.h>
+#include <pthread.h>
 #include <net/if.h>
-#include <fstream>
 #include <signal.h>
-#include <bitset>
 #include <iostream>
-#include "../src/CANopen.hpp"
-using namespace std;
+#include <cstring>
+#include <fstream>
+#include <thread>
+#include <chrono>
+#include <bitset>
+#include <mutex>
+#include <cmath>
+#include "CANopen.hpp"
 using namespace CANopen;
-#define ID_MIN 1
+using namespace std;
 #define ID_MAX 127
-// #define INTERACTIVE
+#define ID_MIN 1
+#define FILENAME "od.dat"
 
 struct ErrorCodeInfo
 {
@@ -24,7 +24,7 @@ struct ErrorCodeInfo
     const char *description;
 };
 
-ErrorCodeInfo errorInfo[] = {
+const ErrorCodeInfo errorInfo[] = {
     {0x0000, "Error reset or no error"},
     {0x1000, "Generic error"},
     {0x2000, "Current - generic error"},
@@ -60,16 +60,19 @@ ErrorCodeInfo errorInfo[] = {
     {0x9000, "External error - generic error"},
     {0xF000, "Additional functions - generic error"},
     {0xFF00, "Device specific - generic error"}};
-
-int errorInfoLength = sizeof(errorInfo) / sizeof(errorInfo[0]);
-
-Node *nodePtr;
-mutex mtx;
-int sock;
+const int errorInfoLength = sizeof(errorInfo) / sizeof(errorInfo[0]);
 bool quit = false;
-uint64_t tRecv = 0, tUpdate = 0;
+int sock = -1;
 
-void listenFunc()
+#ifdef INTERACTIVE
+void clear()
+{
+    cin.clear();
+    cin.ignore(1024, '\n');
+}
+#endif
+
+void listenFunc(Node &node, mutex &mtx)
 {
     while (true)
     {
@@ -81,16 +84,13 @@ void listenFunc()
             CANopenFrame.dlc = canFrame.can_dlc;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
-            // auto start = chrono::steady_clock::now();
-            nodePtr->receiveFrame(CANopenFrame);
-            // auto end = chrono::steady_clock::now();
-            // tRecv = chrono::duration_cast<chrono::microseconds>(end - start).count();
+            node.receiveFrame(CANopenFrame);
             mtx.unlock();
         }
     }
 }
 
-void updateFunc()
+void updateFunc(Node &node, mutex &mtx)
 {
     double t = 0.0;
     double x = 0.0;
@@ -102,11 +102,8 @@ void updateFunc()
     {
         if (mtx.try_lock())
         {
-            nodePtr->od()[OD_OBJECT_6048]->setValue(1, x);
-            // auto start = chrono::steady_clock::now();
-            nodePtr->update();
-            // auto end = chrono::steady_clock::now();
-            // tUpdate = chrono::duration_cast<chrono::microseconds>(end - start).count();
+            node.od()[OD_OBJECT_6048]->setValue(1, x);
+            node.update();
             mtx.unlock();
         }
         t += dt;
@@ -115,22 +112,12 @@ void updateFunc()
     }
 }
 
-void signal_callback_handler(int signum)
-{
-    quit = true;
-}
-
-void clear()
-{
-    cin.clear();
-    cin.ignore(1024, '\n');
-}
-
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, [](int signum)
+           { quit = true; });
     unsigned nodeID;
     int ifindex;
-    signal(SIGINT, signal_callback_handler);
     try
     {
         nodeID = stoi(argv[2]);
@@ -167,7 +154,6 @@ int main(int argc, char *argv[])
 
     cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
     Node node(nodeID);
-    nodePtr = &node;
 #ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)
                          { cout << "Timeout occured on RPDO" << index << endl; });
@@ -176,9 +162,10 @@ int main(int argc, char *argv[])
 #endif
     node.init();
     node.od().loadData(0);
-    thread listenThread(listenFunc);
+    mutex mtx;
+    thread listenThread(listenFunc, ref(node), ref(mtx));
     listenThread.detach();
-    thread updateThread(updateFunc);
+    thread updateThread(updateFunc, ref(node), ref(mtx));
 #ifdef INTERACTIVE
     int choice = 0, subChoice = 0;
     do
@@ -278,7 +265,7 @@ void Node::sendFrame(Frame &frame)
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 {
-    ofstream f("file.dat", ios::out | ios::binary);
+    ofstream f(FILENAME, ios::out | ios::binary);
     if (!f)
         return false;
     f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
@@ -288,7 +275,7 @@ bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup)
 {
-    ifstream f("file.dat", ios::in | ios::binary);
+    ifstream f(FILENAME, ios::in | ios::binary);
     if (!f)
         return false;
     f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
