@@ -1,5 +1,6 @@
 ## Tasks (C++)
 - onSync event
+- .clang-format
 - add headers with my name on all files
 - comment code (ChatGPT will help a lot)
 - GitHub wiki
