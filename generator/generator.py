@@ -45,8 +45,8 @@ def toCANopenObject(object: Union[Variable, Array, Record]):
 
 
 parser = argparse.ArgumentParser(description="This program converts a valid EDS file into an C++ header file.")
-parser.add_argument("id", type=int, help="Node ID", metavar="<node id>")
 parser.add_argument("filename", type=str, help="Name of the EDS file", metavar="<filename>")
+parser.add_argument("id", type=int, help="Node ID", metavar="<node id>")
 args = parser.parse_args()
 if(not 0 < args.id < 128): 
     print("Node id must be in range [1, 127]")
