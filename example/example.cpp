@@ -9,8 +9,8 @@
 #include <thread>
 #include <chrono>
 #include <bitset>
+#include <random>
 #include <mutex>
-#include <cmath>
 #include "CANopen.hpp"
 using namespace CANopen;
 using namespace std;
@@ -92,22 +92,16 @@ void listenFunc(Node &node, mutex &mtx)
 
 void updateFunc(Node &node, mutex &mtx)
 {
-    double t = 0.0;
-    double x = 0.0;
-    const double dt = 0.0001;
-    const double a = 120.0;
-    const double f = 0.1;
-    const double w = 2.0 * M_PI * f;
+    default_random_engine engine;
+    uniform_real_distribution<double> unif(100.0, 200.0);
     while (!quit)
     {
         if (mtx.try_lock())
         {
-            node.od()[OD_OBJECT_6048]->setValue(1, x);
+            node.od()[OD_OBJECT_6048]->setValue(1, unif(engine));
             node.update();
             mtx.unlock();
         }
-        t += dt;
-        x = a * sin(w * t);
         // this_thread::sleep_for(chrono::microseconds(100));
     }
 }
