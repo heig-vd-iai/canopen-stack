@@ -40,8 +40,8 @@ __pycache__/
 *$py.class
 
 # Doxygen generated docs
-/html
-/latex
+doc/html
+doc/latex
 
 # OD save file
 *.dat
