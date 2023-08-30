@@ -2,8 +2,12 @@
 
 namespace CANopen
 {
+    /**
+     * @brief Enumeration representing the CANopen function codes.
+     * See p. 81 of CIA301 for more details.
+     */
     enum FunctionCodes
-    { // see p. 81
+    {
         FunctionCode_NMT = 0b0000,
         FunctionCode_SYNC = 0b0001,
         FunctionCode_EMCY = 0b0001,
@@ -21,23 +25,35 @@ namespace CANopen
         FunctionCode_HEARTBEAT = 0b1110,
     };
 
+    /**
+     * @brief Enumeration representing the states of the %NMT state machine.
+     * See p. 76 of CIA301 for more details.
+     */
     enum NMTStates
-    { // see p. 76
+    {
         NMTState_Initialisation = 0x00,
         NMTState_PreOperational = 0x7F,
         NMTState_Operational = 0x05,
         NMTState_Stopped = 0x04
     };
 
+    /**
+     * @brief Enumeration representing the %NMT initialisation state substeps.
+     * See p. 79 of CIA301 for more details.
+     */
     enum NMTResetStates
-    { // see p.79
+    {
         NMTResetState_Initialising,
         NMTResetState_ResetApplication,
         NMTResetState_ResetCommunication
     };
 
+    /**
+     * @brief Enumeration representing the %NMT command specifiers sent by the master.
+     * See p. 72 of CIA301 for more details.
+     */
     enum NMTServiceCommands
-    { // see p. 72-74
+    {
         NMTServiceCommand_None = 0x00,
         NMTServiceCommand_Start = 0x01,
         NMTServiceCommand_Stop = 0x02,
@@ -46,8 +62,12 @@ namespace CANopen
         NMTServiceCommand_ResetCommunication = 0x82
     };
 
+    /**
+     * @brief Enumeration representing the command specifier part in the %SDO command byte.
+     * See p. 49 of CIA301 for more details.
+     */
     enum SDOCommandSpecifiers
-    { // see p. 49-61
+    {
         SDOCommandSpecifier_ClientDownloadInitiate = 0x01,
         SDOCommandSpecifier_ServerDownloadInitiate = 0x03,
         SDOCommandSpecifier_ClientDownloadSegment = 0x00,
@@ -63,8 +83,12 @@ namespace CANopen
         SDOCommandSpecifier_ServerBlockUpload = 0x06
     };
 
+    /**
+     * @brief Enumeration representing the subcommand part in the %SDO block command byte.
+     * See p. 54 of CIA301 for more details.
+     */
     enum SDOSubCommands
-    { // see p. 54-60
+    {
         SDOSubCommand_ClientDownloadInitiate = 0x00,
         SDOSubCommand_ServerDownloadInitiate = 0x00,
         SDOSubCommand_ServerDownloadResponse = 0x02,
@@ -78,8 +102,13 @@ namespace CANopen
         SDOSubCommand_ServerUploadEnd = 0x01
     };
 
+    /**
+     * @brief Enumeration representing all of the available %SDO abort codes available.
+     * Some special abort codes were added, but are only used internally and should never be sent.
+     * See p. 61 of CIA301 for more details.
+     */
     enum SDOAbortCodes
-    { // see p. 61-62
+    {
         SDOAbortCode_OK = 0,
         SDOAbortCode_CancelWrite = 1,
         SDOAbortCode_ToggleBitNotAlternated = 0x05030000,
@@ -115,8 +144,12 @@ namespace CANopen
     };
 }
 
+/**
+ * @brief Enumeration representing all of the available %EMCY error codes.
+ * See p. 64 of CIA301 for more details.
+ */
 enum EMCYErrorCodes
-{ // see p. 64-65
+{
     EMCYErrorCode_Reset = 0x0000,
     EMCYErrorCode_Generic = 0x1000,
     EMCYErrorCode_Current = 0x2000,
@@ -154,8 +187,12 @@ enum EMCYErrorCodes
     EMCYErrorCode_DeviceSpecific = 0xFF00
 };
 
+/**
+ * @brief Enumeration representing the bit number of each bit in the error register.
+ * See p. 92 of CIA301 for more details.
+ */
 enum ErrorRegisterBits
-{ // see p. 92
+{
     ErrorRegisterBit_Generic = 0,
     ErrorRegisterBit_Current = 1,
     ErrorRegisterBit_Voltage = 2,
@@ -165,8 +202,14 @@ enum ErrorRegisterBits
     ErrorRegisterBit_Manufacturer = 7
 };
 
+/**
+ * @brief Enumeration representing the parameter groups for saving and restoring the object dictionnary.
+ * This enum only accounts for 3 first default groups.
+ * Up to 255 groups can be implemented, depending on the device profile or manufacturer.
+ * See p. 101 of CIA301 for more details.
+ */
 enum ParameterGroups
-{ // see p. 101-102
+{
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3

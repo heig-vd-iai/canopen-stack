@@ -3,6 +3,10 @@
 
 namespace CANopen
 {
+    /**
+     * @brief Union representing the access type of an ObjectEntry.
+     * The access type specifies the read and write permissions, as well as the %PDO mappability.
+     */
     union AccessType
     {
         uint8_t value;
@@ -14,6 +18,9 @@ namespace CANopen
         } bits;
     };
 
+    /**
+     * @brief Union representing the COB-ID entry in %PDO communication parameter (0x1400, 0x1800)
+     */
     union PDOCobidEntry
     {
         uint32_t value;
@@ -26,6 +33,9 @@ namespace CANopen
         } bits;
     };
 
+    /**
+     * @brief Union representing the mapping value in %PDO mapping parameter (0x1600, 0x1A00).
+     */
     union PDOMapEntry
     {
         uint32_t value;
@@ -37,6 +47,9 @@ namespace CANopen
         } bits;
     };
 
+    /**
+     * @brief Union representing the error register value in error register (0x1001).
+     */
     union ErrorRegister
     {
         uint8_t value;
@@ -53,6 +66,10 @@ namespace CANopen
         } bits;
     };
 
+    /**
+     * @brief Union representing the %SDO command byte (byte 0) in %SDO transactions.
+     * Multiple structures are used depending on the operation.
+     */
     union SDOCommandByte
     {
         uint8_t value;
@@ -73,6 +90,10 @@ namespace CANopen
         } bits_segment;
     };
 
+    /**
+     * @brief Union representing the %SDO command byte (byte 0) in %SDO block transactions.
+     * Multiple structures are used depending on the operation.
+     */
     union SDOBlockCommandByte
     {
         uint8_t value;
