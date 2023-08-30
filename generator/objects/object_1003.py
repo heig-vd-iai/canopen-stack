@@ -3,7 +3,7 @@ from .generic import ArrayObject
 
 class Object1003(ArrayObject):
     """Object 1003: Pre-defined error field"""
-    def __init__(self, index: int, entries: list[Variable]) -> None:
+    def __init__(self, index: int, entries: "list[Variable]") -> None:
         super().__init__(index, entries, "Object1003")
         ## Check for valid sub number
         errors = False

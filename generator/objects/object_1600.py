@@ -3,7 +3,7 @@ from .generic import RecordObject
 
 class Object1600(RecordObject):
     """Object 1600: RPDO mapping parameter"""
-    def __init__(self, index: int, entries: list[Variable]) -> None:
+    def __init__(self, index: int, entries: "list[Variable]") -> None:
         super().__init__(index, entries, "Object1600")
         self._MAX_SIZE = 8
 

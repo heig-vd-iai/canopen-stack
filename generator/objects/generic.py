@@ -6,13 +6,13 @@ ENTRY_MAX_SIZE = 1024
 
 class ObjectBase(ABC):
     """This is the base class for OD's objects"""
-    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase") -> None:
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase") -> None:
         self.index: int = index
         self.subNumber: int = len(entries)
         self.cppObjectName: str = cppObjectName
         self.cppBaseEntryName: str = cppBaseEntryName
         self.varName: str = "x%X" % self.index
-        self.entries: list[ObjectEntry] = []
+        self.entries: "list[ObjectEntry]" = []
         ## Check for valid data type, access type and data size (for strings)
         errors = False
         for i, entry in enumerate(entries):
@@ -53,28 +53,28 @@ class ObjectBase(ABC):
         return f"const {self.cppBaseEntryName} *{self.varName}[{len(self.entries)}] = {{{', '.join(subs)}}}"
     
     @abstractmethod
-    def renderData(self) -> list[str]: return []
+    def renderData(self) -> "list[str]": return []
 
     @abstractmethod
-    def renderEntry(self) -> list[str]: return []
+    def renderEntry(self) -> "list[str]": return []
 
 
 class VarObject(ObjectBase):
-    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
         super().__init__(index, entries, cppObjectName=cppObjectName)
         self.entry = self.entries[0]
 
-    def renderData(self) -> list[str]:
+    def renderData(self) -> "list[str]":
         """Returns the C++ data declaration, ex. uint16_t x1003 = 42"""
         return [self.entry.renderData(self.varName)]
     
-    def renderEntry(self) -> list[str]:
+    def renderEntry(self) -> "list[str]":
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
         return [self.entry.renderEntry(f"{self.varName}sub0", self.varName)]
 
 
 class ArrayObject(ObjectBase):
-    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
         super().__init__(index, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
         ## Check for data type consistency based on first entry
@@ -84,14 +84,14 @@ class ArrayObject(ObjectBase):
             errors = True
         if errors: raise ValueError()
 
-    def renderData(self) -> list[str]:
+    def renderData(self) -> "list[str]":
         """Returns the C++ data declaration, ex. uint8_t x1003sub0 = 3; uint16_t x1003[3] = {42, 84, 126}"""
         sub = self.entries[0].renderData(self.sub0Name)
         init = ", ".join([str(entry.value) for entry in self.entries[1:]])
         arr = f"{self.entries[1].ctype} {self.varName}[{self.subNumber - 1}] = {{{init}}}"
         return [sub, arr]
     
-    def renderEntry(self) -> list[str]:
+    def renderEntry(self) -> "list[str]":
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
         sub0 = self.entries[0].renderEntry(self.sub0Name, self.sub0Name)
         subs = [entry.renderEntry(f"{self.varName}sub{sub + 1}", f"{self.varName}[{sub}]") for sub, entry in enumerate(self.entries[1:])]
@@ -99,15 +99,15 @@ class ArrayObject(ObjectBase):
 
 
 class RecordObject(ObjectBase):
-    def __init__(self, index: int, entries: list[Variable], cppObjectName: str = "Object") -> None:
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
         super().__init__(index, entries, cppObjectName=cppObjectName)
         self.sub0Name = self.varName + "sub0"
 
-    def renderData(self) -> list[str]:
+    def renderData(self) -> "list[str]":
         """Returns the C++ data declaration, ex. struct{uint8_t sub0 = 2; uint32_t sub1 = 42; uint32_t sub2 = 84;} x1003;"""
         fields = "; ".join([entry.renderData(f"sub{i}") for i, entry in enumerate(self.entries)]) + ";"
         return [f"struct {{{fields}}} {self.varName}"]
     
-    def renderEntry(self) -> list[str]:
+    def renderEntry(self) -> "list[str]":
         """Returns the C+++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(...)"""
         return [entry.renderEntry(f"{self.varName}sub{sub}", f"{self.varName}.sub{sub}") for sub, entry in enumerate(self.entries)]
