@@ -53,13 +53,12 @@ namespace CANopen
         friend PDO;
         friend SYNC;
         friend EMCY;
-        const uint8_t nodeId;
+        const uint8_t nodeId = OD_NODE_ID;
 
         /**
          * @brief Constructor for the Node class.
-         * @param id The ID of the node.
          */
-        Node(uint8_t id);
+        Node();
 
         /**
          * @brief Get the %Object Dictionnary object.

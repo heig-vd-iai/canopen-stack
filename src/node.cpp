@@ -9,7 +9,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(uint8_t id) : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this), nodeId(id) {}
+Node::Node() : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this) {}
 
 ObjectDictionnary &Node::od() { return _od; }
 
@@ -39,7 +39,6 @@ void Node::receiveFrame(Frame frame)
         _nmt.receiveFrame((NMTFrame &)frame);
         break;
     case FunctionCode_SYNC:
-        // Also FunctionCode_EMCY
         _sync.receiveFrame((SYNCFrame &)frame, timestamp);
         break;
     case FunctionCode_TPDO1:
