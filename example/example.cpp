@@ -258,6 +258,11 @@ void Node::sendFrame(Frame &frame)
     }
 }
 
+uint32_t Node::getTime_us()
+{
+    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+}
+
 bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 {
     ofstream f(FILENAME, ios::out | ios::binary);
@@ -286,9 +291,4 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
     node.pdo().reloadTPDO();
     node.pdo().reloadRPDO();
     return true;
-}
-
-uint32_t Node::getTime_us()
-{
-    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
 }
