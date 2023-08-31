@@ -192,15 +192,17 @@ namespace CANopen
         void reloadRPDO();
 
         /**
-         * @brief Set a callback function to be called when a TPDO is received.
-         * The function will receive the TPDO index as an argument.
+         * @brief Set a callback function to be called when a %TPDO is received.
+         * The function will receive the %TPDO index as an argument.
+         * **DO NOT use time consuming calls in the provided callback.**
          * @param callback Callback function to be called on TPDO reception.
          */
         void onReceive(std::function<void(unsigned)> callback);
 
         /**
-         * @brief Set a callback function to be called when an RPDO timeout occurs.
-         * The function will receive the RPDO index as an argument.
+         * @brief Set a callback function to be called when an %RPDO timeout occurs.
+         * The function will receive the %RPDO index as an argument.
+         * **DO NOT use time consuming calls in the provided callback.**
          * @param callback Callback function to be called on RPDO timeout.
          */
         void onTimeout(std::function<void(unsigned)> callback);
