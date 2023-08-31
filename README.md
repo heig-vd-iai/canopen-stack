@@ -151,7 +151,7 @@ The interface is done by simply writing the function definition of a few class m
 Examples can be found in the example.cpp file under the /example folder. These methods are documented in their header file as well.
 
 ```cpp
-void Node::sendFrame(Frame &frame)
+void CANopen::Node::sendFrame(Frame &frame)
 {
     // This example uses Linux SocketCan.
     can_frame canFrame;
@@ -163,7 +163,7 @@ void Node::sendFrame(Frame &frame)
 }
 ```
 ```cpp
-uint32_t Node::getTime_us()
+uint32_t CANopen::Node::getTime_us()
 {
     // This example uses std::chrono to get elapsed time in µs.
     // Returned time value doesn't have to be absolute, so a µs precise clock/counter value is also valid.
@@ -172,7 +172,7 @@ uint32_t Node::getTime_us()
 }
 ```
 ```cpp
-bool ObjectDictionnary::saveData(uint8_t parameterGroup)
+bool CANopen::ObjectDictionnary::saveData(uint8_t parameterGroup)
 {
     // This example uses a file to store data.
     // It will save everything, independent of the parameterGroup argument.
@@ -187,7 +187,7 @@ bool ObjectDictionnary::saveData(uint8_t parameterGroup)
 }
 ```
 ```cpp
-bool ObjectDictionnary::loadData(uint8_t parameterGroup)
+bool CANopen::ObjectDictionnary::loadData(uint8_t parameterGroup)
 {
     // This example uses a file to load data.
     // It will load everything, independent of the parameterGroup argument.
@@ -205,7 +205,7 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
 }
 ```
 ```cpp
-bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
+bool CANopen::ObjectDictionnary::restoreData(uint8_t parameterGroup)
 {
     // This example uses the ObjectDictionnaryData constructor to reset data.
     // It will reset everything, independent of the parameterGroup argument.
@@ -219,8 +219,34 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
 ```
 
 ## Usage Guide
-Create a node
-Access data from the object dictionnary
+The usage of the library is all done through the Node object.
+
+**Only one Node object should be used per program, because its ID is obtained from the od.hpp file. Since the header file is specific to a single node, running multiple nodes on a single device means you will need different projects using different header files.**
+
+Before starting, some words of caution. Since this library is designed to be used on an OS or a microcontroller, **there is no built-in concurrency protection**. This task is up to the user.  
+The node must be updated in a loop, while still being able to receive messages asynchronously.
+
+A typical approach regarding the updating and message reception of the node could be one of those :
+- cyclical
+- threaded
+- interruption
+
+By using the cyclical approach, CAN message polling and node updating can both be done in the same loop. This would be the easiest approach.
+
+When using threads or interruptions, one solution would be to use a message queue, so that new messages are not immediatly fed to the node. The main program loop can then process each message cyclically, righ before or after updating the node.  
+If using threads, another easier solution would be to simply use a mutex to avoid receiving and updating at the same time. This solution is used in the example.cpp file.
+
+```cpp
+
+```
+
+Access data
+
+Warning: concurrency and interrupts
+
+```cpp
+
+```
 
 ## Adding Objects
 
