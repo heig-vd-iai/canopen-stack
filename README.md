@@ -1,6 +1,6 @@
 # CANopen
 ## Introduction
-This is C++ written CANopen slave library. It was written based on the official [CIA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.  
+This is a C++14 written CANopen slave library. It is based on the official [CIA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.  
 This implementation features the following:
 - Automatic generation of the object dictionnary as a header file from a device's EDS file.
 - Non volatile storage of object dictionnary.
@@ -140,6 +140,83 @@ Index   | Name
 ~~0x1FFF~~  | ~~Object dispatching list~~
 
 ## Hardware Interfacing
+This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
+The interface is done by simply writing the function definition of a few class methods :
+- `Node::sendFrame`: send a frame to the CAN network
+- `Node::getTime_us`: called for internal timing
+- `ObjectDictionnary::saveData`: save object dictionnary data to non-volatile memory
+- `ObjectDictionnary::loadData`: load object dictionnary data from non-volatile memory
+- `ObjectDictionnary::restoreData`: reset object dictionnary data to default
+
+Examples can be found in the example.cpp file under the /example folder. These methods are documented in their header file as well.
+
+```cpp
+void Node::sendFrame(Frame &frame)
+{
+    // This example uses Linux SocketCan.
+    can_frame canFrame;
+    // Simply copy CANopen frame fields to regular CAN frame.
+    canFrame.can_dlc = frame.dlc;
+    canFrame.can_id = frame.getCobID();
+    memcpy(canFrame.data, frame.data, frame.dlc);
+    send(sock, &canFrame, sizeof(canFrame), 0)
+}
+```
+```cpp
+uint32_t Node::getTime_us()
+{
+    // This example uses std::chrono to get elapsed time in µs.
+    // Returned time value doesn't have to be absolute, so a µs precise clock/counter value is also valid.
+    // It HAS to wrap around 0xFFFFFFFF though.
+    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+}
+```
+```cpp
+bool ObjectDictionnary::saveData(uint8_t parameterGroup)
+{
+    // This example uses a file to store data.
+    // It will save everything, independent of the parameterGroup argument.
+    ofstream f(FILENAME, ios::out | ios::binary);
+    if (!f) return false;
+    // The dictionnary's data structure is located at objects.entries.data.
+    // This is the structure that needs to persist.
+    f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
+    f.close();
+    // Return true is saving was successful, false otherwise.
+    return true;
+}
+```
+```cpp
+bool ObjectDictionnary::loadData(uint8_t parameterGroup)
+{
+    // This example uses a file to load data.
+    // It will load everything, independent of the parameterGroup argument.
+    ifstream f(FILENAME, ios::in | ios::binary);
+    if (!f) return false;
+    // The dictionnary's data structure is located at objects.entries.data.
+    // This is the structure that needs to persist.
+    f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
+    f.close();
+    // Reload PDOs according to potentially updated mapping parameters.
+    node.pdo().reloadTPDO();
+    node.pdo().reloadRPDO();
+    // Return true is loading was successful, false otherwise.
+    return true;
+}
+```
+```cpp
+bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
+{
+    // This example uses the ObjectDictionnaryData constructor to reset data.
+    // It will reset everything, independent of the parameterGroup argument.
+    objects.entries.data = ObjectDictionnaryData();
+    // Reload PDOs according to potentially updated mapping parameters.
+    node.pdo().reloadTPDO();
+    node.pdo().reloadRPDO();
+    // Return true is restoring was successful, false otherwise.
+    return true;
+}
+```
 
 ## Usage Guide
 Create a node
