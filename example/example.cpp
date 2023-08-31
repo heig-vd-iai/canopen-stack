@@ -145,8 +145,8 @@ int main(int argc, char *argv[])
     node.pdo().onReceive([](unsigned index)
                          { cout << "Received RPDO" << index << endl; });
 #endif
-    node.init();
     node.od().loadData(0);
+    node.init();
     mutex mtx;
     thread listenThread(listenFunc, ref(node), ref(mtx));
     listenThread.detach();
