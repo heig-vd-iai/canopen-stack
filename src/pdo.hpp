@@ -177,6 +177,7 @@ namespace CANopen
 
         /**
          * @brief Transmit the specified Transmit %PDO.
+         * Index start at 0 for TPDO1
          * @param index Index of the TPDO to transmit.
          */
         void transmitTPDO(unsigned index);
@@ -192,16 +193,18 @@ namespace CANopen
         void reloadRPDO();
 
         /**
-         * @brief Set a callback function to be called when a %TPDO is received.
-         * The function will receive the %TPDO index as an argument.
+         * @brief Set a callback function to be called when an %RPDO is received.
+         * The function will receive the %RPDO index as an argument.
+         * Index start at 0 for RPDO1.
          * **DO NOT use time consuming calls in the provided callback.**
-         * @param callback Callback function to be called on TPDO reception.
+         * @param callback Callback function to be called on RPDO reception.
          */
         void onReceive(std::function<void(unsigned)> callback);
 
         /**
          * @brief Set a callback function to be called when an %RPDO timeout occurs.
          * The function will receive the %RPDO index as an argument.
+         * Index start at 0 for RPDO1.
          * **DO NOT use time consuming calls in the provided callback.**
          * @param callback Callback function to be called on RPDO timeout.
          */
