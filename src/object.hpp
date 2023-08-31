@@ -150,11 +150,6 @@ namespace CANopen
         Object(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
 
         /**
-         * @brief Virtual destructor for the Object class.
-         */
-        virtual ~Object() {}
-
-        /**
          * @brief Check if the subindex exists.
          * @param subindex Subindex to check.
          * @return True if the subindex exists, false otherwise.
