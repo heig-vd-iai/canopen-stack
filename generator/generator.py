@@ -74,6 +74,8 @@ if len(missingObjects) > 0:
     ret = True
 if ret: exit(1)
 defines = [
+    f"OD_NODE_ID {args.id}",
+    f"OD_OBJECTS_COUNT {len(objectsValues)}",
     f"OD_ENTRY_SIZE_MAX {ENTRY_MAX_SIZE}",
     f"OD_TPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1800)])}",
     f"OD_RPDO_COUNT {len([obj for obj in objectsValues if isinstance(obj, Object1400)])}",
