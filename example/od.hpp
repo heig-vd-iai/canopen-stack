@@ -2,15 +2,16 @@
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on August 30, 2023
+ * [Date]:          Generated on August 31, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
  *****************************************************************************/
 #pragma once
 #include "od_include.hpp"
-#define OD_OBJECTS_COUNT 63
 #define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
+#define OD_NODE_ID 1
+#define OD_OBJECTS_COUNT 63
 #define OD_ENTRY_SIZE_MAX 1024
 #define OD_TPDO_COUNT 4
 #define OD_RPDO_COUNT 4
