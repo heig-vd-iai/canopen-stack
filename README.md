@@ -35,8 +35,9 @@ The object dictionnary is created from an associated EDS file. Because it is con
 The dictionnary is composed by an array of objects. Each object is identified by a hexadecimal index. Objects are themselves composed by an array of entries. Each entry is identified by a subindex.
 The entries hold the data source, read/write access and data size. To access the data from the dictionnary, the 16 bits index of the object and the entry 8 bits subindex are used.
 
-The CANopen standard defines a list of object types, such as VAR, RECORD or ARRAY. These notions are used only during the dictionnary rendering phase, but are otherwise meaningless.
-Data is always accessed using the index/subindex multiplexer, so the object type doesn't matter at all. For VAR objects, data is simply located at subindex 0.
+The CANopen standard defines a list of object types, such as VAR, RECORD or ARRAY. These notions are used only during the dictionnary rendering phase.
+VAR type is rendered as a single variable, RECORD as a struct containing variables, and RECORD as a pair of single variable and an array.  
+In the C++ application, data is always accessed using the index/subindex multiplexer, so the object type doesn't matter at all. For VAR objects, data is simply located at subindex 0.
 
 The standard also defines a list of object dictionnary data types.
 For simplicity, this library supports all of the "primitive" data types that have a direct C type equivalent, with some tweaks.  
@@ -139,7 +140,7 @@ Index   | Name
 ...     | ...
 ~~0x1FFF~~  | ~~Object dispatching list~~
 
-## Hardware Interfacing
+## Hardware Interface
 This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
 The interface is done by simply writing the function definition of a few class methods :
 - `Node::sendFrame`: send a frame to the CAN network
@@ -219,11 +220,12 @@ bool CANopen::ObjectDictionnary::restoreData(uint8_t parameterGroup)
 ```
 
 ## Usage Guide
+### example Makefile
 The usage of the library is all done through the Node object.
 
 **Only one Node object should be used per program, because its ID is obtained from the od.hpp file. Since the header file is specific to a single node, running multiple nodes on a single device means you will need different projects using different header files.**
 
-Before starting, some words of caution. Since this library is designed to be used on an OS or a microcontroller, **there is no built-in concurrency protection**. This task is up to the user.  
+Before starting, some words of caution. Since this library is designed to be used on an OS or a microcontroller, **there is no built-in concurrency protection.** This task is up to the user.  
 The node must be updated in a loop, while still being able to receive messages asynchronously.
 
 A typical approach regarding the updating and message reception of the node could be one of those :
@@ -319,13 +321,69 @@ if (!obj->setValue(0, (float)64.23))
 The operation will fail if the incorrect type is supplied. The read/write access is bypassed for these methods.
 
 ## Adding Objects
+Some objects have additionnal read/write restrictions. Typically, some reserved values are forbidden and the SDO request is aborted with a specific abort code.
+In objects 0x1010 and 0x1011, used respectively for storing and restoring data, a write access shall trigger an action, but not a write action.  
+This is a perfect use for polymorphism. All of the special objects have their own class that derive from the base Object class.
+Depending on the device profile or manufacturer's needs, it may be necessary to implement new special objects.
 
+This section explains how to do so.
 
+The new class should have the name ObjectXXXX, where XXXX is the hexadecimal index of the object. This will be shared for the Python and C++ class.
+The first thing to to is to create a new Python class corresponding to the object, and put it in the generator/objects folder.
+The class should inherit one of the three VarObject, ArrayObject, RecordObject classes depending on the object type.
+It is important to choose the matching Object class because it will perform some checks based on it, and most importantly, will render the C++ code accordingly.
+In the super().\_\_init\_\_() method, make sure to use the same class name for the cppObjectName parameter.
+```python
+from canopen.objectdictionary import Variable
+from .generic import VarObject, ArrayObject, RecordObject
+
+class ObjectXXXX(VarObject):
+    """Object XXXX: ..."""
+    def __init__(self, index: int, entries: "list[Variable]") -> None:
+        super().__init__(index, entries, "ObjectXXXX")
+```
+Once done, it has to be imported from the generator.py file.
+Then, in the toCANopenObject function, an if condition must be added for the corresponding object type (Var, Record, Array).   
+This allows using the equality operator or chained comparison expression.
+```python
+from objects.object_XXXX import ObjectXXXX
+
+...
+
+def toCANopenObject(object: Union[Variable, Array, Record]):
+    if isinstance(object, Variable):
+        if object.index == 0xXXXX: return ObjectXXXX(object.index, [object])
+        return VarObject(object.index, [object])
+```
+Once done, the script will generate the new ObjectXXXX C++ class if it appears in the EDS file.
+
+The next step is to create the twin C++ class. Start by creating a pair of object_XXXX.hpp and object_XXXX.cpp files into src/objects.  
+The new class should inherit from the Object class.
+```cpp
+#include "../object.hpp"
+
+namespace CANopen
+{
+    class ObjectXXXX : public Object
+    {
+    private:
+        SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
+        void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
+        SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
+        void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
+
+    public:
+        ObjectXXXX(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
+    };
+}
+```
+The pre/post read/write can be overridden, and any other useful methods can be added. **Don't touch any non virtual methods.**  
+The final step is to include the newly created header file in the src/od_include.hpp file so that the od.hpp file can have access to the new object declaration.
 
 ## Limitations
 Despite the majority of the CANopen specification being well implemented, there are still some limitations.
 - The TIME object is not supported.
-- PDO mapping is limited to 8 objects, as granularity is set to 8.
+- PDO mapping is limited to 8 objects, as granularity is set to 8 (byte level mapping).
 - The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see p.80).
 - Because of the generic connection set, mutation of COB-IDs during runtime is unsupported.
 - Multiple RPDOS above default 4 are not supported, but multiple TPDOS (above default 4) are supported.
