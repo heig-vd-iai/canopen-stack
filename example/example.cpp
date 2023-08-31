@@ -111,25 +111,15 @@ int main(int argc, char *argv[])
 {
     signal(SIGINT, [](int signum)
            { quit = true; });
-    unsigned nodeID;
     int ifindex;
-    try
+    if (argc < 2)
     {
-        nodeID = stoi(argv[2]);
-        if ((ifindex = if_nametoindex(argv[1])) == 0)
-        {
-            cout << "Unknown interface \"" << argv[1] << "\"" << endl;
-            throw exception();
-        }
-    }
-    catch (...)
-    {
-        cout << "Usage: ./app <CAN interface> <node ID>" << endl;
+        cout << "Usage: ./app <CAN interface>" << endl;
         return EXIT_FAILURE;
     }
-    if (nodeID < ID_MIN || ID_MAX < nodeID)
+    if ((ifindex = if_nametoindex(argv[1])) == 0)
     {
-        cout << "Node ID must be in range " << ID_MIN << " to " << ID_MAX << endl;
+        cout << "Unknown interface \"" << argv[1] << "\"" << endl;
         return EXIT_FAILURE;
     }
 
@@ -147,8 +137,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    cout << "Starting node with ID " << nodeID << " on interface " << argv[1] << endl;
-    Node node(nodeID);
+    Node node;
+    cout << "Starting node with ID " << node.nodeId << " on interface " << argv[1] << endl;
 #ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)
                          { cout << "Timeout occured on RPDO" << index << endl; });
