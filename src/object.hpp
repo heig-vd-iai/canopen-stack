@@ -193,7 +193,7 @@ namespace CANopen
         SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
 
         /**
-         * @brief Get the number of entries in the object.
+         * @brief Get the number of entries in the object, **if object is not of type VAR**.
          * @return Number of entries.
          */
         uint8_t getCount();
