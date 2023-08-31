@@ -236,17 +236,87 @@ By using the cyclical approach, CAN message polling and node updating can both b
 When using threads or interruptions, one solution would be to use a message queue, so that new messages are not immediatly fed to the node. The main program loop can then process each message cyclically, righ before or after updating the node.  
 If using threads, another easier solution would be to simply use a mutex to avoid receiving and updating at the same time. This solution is used in the example.cpp file.
 
-```cpp
+When instanciating a node, its init method should be called when the setup is done.
 
+It is possible to get and change the NMT state from the application by using the nmt accessor :
+```cpp
+if (node.nmt().getState() == NMTState_PreOperational)
+{
+    node.nmt().setTransition(NMTServiceCommand_Start)
+    cout << "Entered operationnal state" << endl;
+}
 ```
 
-Access data
-
-Warning: concurrency and interrupts
-
+By using the pdo accessor, you can subscribe to RPDO reception and timeout events :
 ```cpp
-
+// Subscribe to events using lambda function.
+node.pdo().onTimeout([](unsigned index) { cout << "Timeout occured on RPDO" << index << endl; });
+node.pdo().onReceive([](unsigned index) { cout << "Received RPDO" << index << endl; });
 ```
+If the transmission type is set to event-driven (0xFE of 0xFF), TPDOs can be sent by the application :
+```cpp
+// Write new values to mapped entries first, then transmit the TPDO
+node.od()[OD_OBJECT_6048]->setValue(0, (float)49.3);
+node.od()[OD_OBJECT_6048]->setValue(1, (float)420.42);
+node.pdo().transmitTPDO(0)
+```
+
+The emcy accessor is used to emit EMCY messages on the network :
+```cpp
+if(voltage < MIN_VOLTAGE)
+{
+    // Don't forget the generic bit will be set as well !
+    node.emcy().raiseError(EMCYErrorCode_Voltage);
+    throw "Error: Voltage too low !";
+}
+```
+The corresponding bit in the error register will automatically be set, and the error will be pushed to the error history.
+Don't forget the generic error bit will be set as well.
+
+When an error is cleared in the application, it can be cleared from the error register :
+```cpp
+// Don't forget to clear the generic bit as well
+node.emcy().clearErrorBit(ErrorRegisterBit_Voltage);
+node.emcy().clearErrorBit(ErrorRegisterBit_Generic);
+if(node.emcy().getErrorRegister() == 0)
+{
+    cout << "All errors cleared, clearing history" << endl;
+    node.emcy().clearHistory();
+}
+```
+
+The access to the object dictionnary data is done with the od accessor.  
+Saving is normally done from object 0x1010 via SDO, but can also be done from the application.
+Data loading is typically done before calling node.init() :
+```cpp
+int main()
+{
+    Node node;
+    node.od().loadData(0);
+    cout << "Loaded " << node.od().length << " dictionnary objects from non-volatile memory" << endl;
+    node.init();
+
+    while(...)
+    {
+        ...
+    }
+    node.od().saveData(0);
+
+    return 0;
+}
+```
+
+Data access is done from the object instance itself. Templated getter and setter are used to read/write from the entry :
+```cpp
+float value;
+Object *obj = node.od()[OD_OBJECT_6048];
+if (!obj->getValue(0, &value))
+    throw "Error: Could not read value from entry. Invalid size ?";
+cout << "Value: " << value << endl;
+if (!obj->setValue(0, (float)64.23))
+    throw "Error: Could not write value to entry. Invalid size ?";
+```
+The operation will fail if the incorrect type is supplied. The read/write access is bypassed for these methods.
 
 ## Adding Objects
 
