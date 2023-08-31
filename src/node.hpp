@@ -104,7 +104,7 @@ namespace CANopen
 
         /**
          * @brief Initialize the CANopen node.
-         * This method will initialize the NMT state machine, so it should be called first.
+         * This method will initialize the NMT state machine, so it should be called when the node is ready to accept incoming frames.
          */
         void init();
 
