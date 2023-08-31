@@ -12,7 +12,7 @@ namespace CANopen
 {
     /**
      * @brief Union representing the access type of an ObjectEntry.
-     * The access type specifies the read and write permissions, as well as the %PDO mappability.
+     * The access type specifies the read and write permissions, as well as the PDO mappability.
      */
     union AccessType
     {
@@ -26,7 +26,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the COB-ID entry in %PDO communication parameter (0x1400, 0x1800)
+     * @brief Union representing the COB-ID entry in PDO communication parameter (0x1400, 0x1800)
      */
     union PDOCobidEntry
     {
@@ -41,7 +41,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the mapping value in %PDO mapping parameter (0x1600, 0x1A00).
+     * @brief Union representing the mapping value in PDO mapping parameter (0x1600, 0x1A00).
      */
     union PDOMapEntry
     {
@@ -74,7 +74,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the %SDO command byte (byte 0) in %SDO transactions.
+     * @brief Union representing the SDO command byte (byte 0) in SDO transactions.
      * Multiple structures are used depending on the operation.
      */
     union SDOCommandByte
@@ -98,7 +98,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the %SDO command byte (byte 0) in %SDO block transactions.
+     * @brief Union representing the SDO command byte (byte 0) in SDO block transactions.
      * Multiple structures are used depending on the operation.
      */
     union SDOBlockCommandByte

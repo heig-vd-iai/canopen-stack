@@ -77,12 +77,12 @@ namespace CANopen
         } buffer;
 
         /**
-         * @brief Enable %SDO functionality, should be used by NMT only.
+         * @brief Enable SDO functionality, should be used by NMT only.
          */
         void enable();
 
         /**
-         * @brief Disable %SDO functionality, should be used by NMT only.
+         * @brief Disable SDO functionality, should be used by NMT only.
          */
         void disable();
 
@@ -98,55 +98,55 @@ namespace CANopen
          * @brief Send an abort frame with specified abort code and object index and subindex.
          * @param index Index of the current object.
          * @param subindex Subindex of the current object.
-         * @param abortCode %SDO abort code.
+         * @param abortCode SDO abort code.
          */
         void sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode);
 
         /**
          * @brief Send an abort frame with specified abort code.
-         * @param abortCode %SDO abort code.
+         * @param abortCode SDO abort code.
          */
         void sendAbort(uint32_t abortCode);
 
         /**
          * @brief This method handles upload initiate frames.
          * @param request SDOFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void uploadInitiate(class SDOFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles upload segment frames.
          * @param request SDOFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void uploadSegment(class SDOFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles download initiate frames.
          * @param request SDOFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void downloadInitiate(class SDOFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles download segment frames.
          * @param request SDOFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void downloadSegment(class SDOFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles block upload initiate frames.
          * @param request SDOBlockFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void blockUploadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles the reception of client block upload response and client block upload end block.
          * @param request SDOBlockFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void blockUploadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
 
@@ -159,21 +159,21 @@ namespace CANopen
         /**
          * @brief This method handles block download initiate frames.
          * @param request SDOBlockFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void blockDownloadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles successions of download sub-block frames.
          * @param request SDOBlockFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void blockDownloadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
 
         /**
          * @brief This method handles block download end frames.
          * @param request SDOBlockFrame to be processed.
-         * @param timestamp_us %Frame reception timestamp in microseconds.
+         * @param timestamp_us Frame reception timestamp in microseconds.
          */
         void blockDownloadEnd(class SDOBlockFrame &request, uint32_t timestamp_us);
 
@@ -191,7 +191,7 @@ namespace CANopen
         void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
 
         /**
-         * @brief Check for general %SDO or block download timeouts and send block upload sub-blocks.
+         * @brief Check for general SDO or block download timeouts and send block upload sub-blocks.
          * @param timestamp_us Current timestamp in microseconds.
          */
         void update(uint32_t timestamp_us);

@@ -82,7 +82,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the %Object Dictionary.
+     * @brief This class represents the Object Dictionary.
      * It is an auto-generated class that should not be manually edited.
      */
     class ObjectDictionnary
@@ -520,7 +520,7 @@ namespace CANopen
         const uint16_t length = OD_OBJECTS_COUNT;
 
         /**
-         * @brief Constructor for the %Object Dictionary.
+         * @brief Constructor for the Object Dictionary.
          * @param node The parent Node reference.
          */
         ObjectDictionnary(class Node &node);

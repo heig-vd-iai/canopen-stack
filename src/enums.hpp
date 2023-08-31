@@ -33,7 +33,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the states of the %NMT state machine.
+     * @brief Enumeration representing the states of the NMT state machine.
      * See p. 76 of CIA301 for more details.
      */
     enum NMTStates
@@ -45,7 +45,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the %NMT initialisation state substeps.
+     * @brief Enumeration representing the NMT initialisation state substeps.
      * See p. 79 of CIA301 for more details.
      */
     enum NMTResetStates
@@ -56,7 +56,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the %NMT command specifiers sent by the master.
+     * @brief Enumeration representing the NMT command specifiers sent by the master.
      * See p. 72 of CIA301 for more details.
      */
     enum NMTServiceCommands
@@ -70,7 +70,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the command specifier part in the %SDO command byte.
+     * @brief Enumeration representing the command specifier part in the SDO command byte.
      * See p. 49 of CIA301 for more details.
      */
     enum SDOCommandSpecifiers
@@ -91,7 +91,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the subcommand part in the %SDO block command byte.
+     * @brief Enumeration representing the subcommand part in the SDO block command byte.
      * See p. 54 of CIA301 for more details.
      */
     enum SDOSubCommands
@@ -110,7 +110,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing all of the available %SDO abort codes available.
+     * @brief Enumeration representing all of the available SDO abort codes available.
      * Some special abort codes were added, but are only used internally and should never be sent.
      * See p. 61 of CIA301 for more details.
      */
@@ -152,7 +152,7 @@ namespace CANopen
 }
 
 /**
- * @brief Enumeration representing all of the available %EMCY error codes.
+ * @brief Enumeration representing all of the available EMCY error codes.
  * See p. 64 of CIA301 for more details.
  */
 enum EMCYErrorCodes

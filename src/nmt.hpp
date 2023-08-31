@@ -15,7 +15,7 @@ namespace CANopen
 {
     /**
      * @brief This class represents the NMT object.
-     * It handles the reception of %NMT commands, as well as the management of the %NMT state machine.
+     * It handles the reception of NMT commands, as well as the management of the NMT state machine.
      * See p. 68 of CIA301 for more details.
      */
     class NMT
@@ -55,13 +55,13 @@ namespace CANopen
 
         /**
          * @brief Issue a state machine transition based on the given command.
-         * @param command %NMT service command.
+         * @param command NMT service command.
          */
         void setTransition(NMTServiceCommands command);
 
         /**
          * @brief Get the current state of the state machine.
-         * @return The current %NMT state.
+         * @return The current NMT state.
          */
         NMTStates getState();
     };

@@ -32,12 +32,12 @@ namespace CANopen
         class Object1001 *errorRegisterObject;
 
         /**
-         * @brief Enable %EMCY functionality, should be used by NMT only.
+         * @brief Enable EMCY functionality, should be used by NMT only.
          */
         void enable();
 
         /**
-         * @brief Disable %EMCY functionality, should be used by NMT only.
+         * @brief Disable EMCY functionality, should be used by NMT only.
          */
         void disable();
 

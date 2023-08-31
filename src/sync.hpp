@@ -12,8 +12,8 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the %SYNC object.
-     * It automatically handles the reception of %SYNC events and calls associated callback for PDO class.
+     * @brief This class represents the SYNC object.
+     * It automatically handles the reception of SYNC events and calls associated callback for PDO class.
      * See p. 62 of CIA301 for more details.
      */
     class SYNC
@@ -25,12 +25,12 @@ namespace CANopen
         uint8_t maxCounter;
 
         /**
-         * @brief Enable %EMCY functionality, should be used by NMT only.
+         * @brief Enable EMCY functionality, should be used by NMT only.
          */
         void enable();
 
         /**
-         * @brief Disable %EMCY functionality, should be used by NMT only.
+         * @brief Disable EMCY functionality, should be used by NMT only.
          */
         void disable();
 

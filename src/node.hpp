@@ -61,13 +61,13 @@ namespace CANopen
         Node();
 
         /**
-         * @brief Get the %Object Dictionnary object.
+         * @brief Get the Object Dictionnary object.
          * @return Reference to the ObjectDictionnary instance.
          */
         ObjectDictionnary &od();
 
         /**
-         * @brief Get the %NMT object.
+         * @brief Get the NMT object.
          * @return Reference to the NMT instance.
          */
         NMT &nmt();
@@ -79,13 +79,13 @@ namespace CANopen
         HB &hb();
 
         /**
-         * @brief Get the %SDO object.
+         * @brief Get the SDO object.
          * @return Reference to the SDO instance.
          */
         SDO &sdo();
 
         /**
-         * @brief Get the %PDO object.
+         * @brief Get the PDO object.
          * @return Reference to the PDO instance.
          */
         PDO &pdo();
@@ -104,7 +104,7 @@ namespace CANopen
 
         /**
          * @brief Initialize the CANopen node.
-         * This method will initialize the %NMT state machine, so it should be called first.
+         * This method will initialize the NMT state machine, so it should be called first.
          */
         void init();
 

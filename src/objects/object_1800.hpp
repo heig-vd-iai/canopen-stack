@@ -82,8 +82,8 @@ namespace CANopen
         uint32_t getEventTimer_us();
 
         /**
-         * @brief Get the %SYNC start value.
-         * @return The %SYNC start value for the TPDO.
+         * @brief Get the SYNC start value.
+         * @return The SYNC start value for the TPDO.
          */
         uint8_t getSyncStart();
 
