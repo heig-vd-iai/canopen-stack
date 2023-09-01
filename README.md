@@ -381,7 +381,7 @@ The pre/post read/write can be overridden, and any other useful methods can be a
 The final step is to include the newly created header file in the src/od_include.hpp file so that the od.hpp file can have access to the new object declaration.
 
 ## Limitations
-Despite the majority of the CANopen specification being well implemented, there are still some limitations.
+Despite the majority of the CANopen specification being well implemented, there are still some limitations and non-implemented features.
 - The TIME object is not supported.
 - PDO mapping is limited to 8 objects, as granularity is set to 8 (byte level mapping).
 - The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see p.80).
@@ -392,24 +392,22 @@ Despite the majority of the CANopen specification being well implemented, there 
 - Node guarding is not supported.
 - OS commands are not supported.
 - If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific.
-- The SYNC object has an internal counter that is incremented on each SYNC message. If the data contains a counter value, it is copied to the internal counter, otherwise the internal counter is incremented up to its maximum value.
+- The SYNC object has an internal counter that is incremented on each SYNC message. If the data contains a counter value, it is copied to the internal counter, otherwise the internal counter is incremented up to its maximum value.  
 The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
 - LSS is not supported.
 - Object flags (ObjFlags) is not supported.
 - SDO block transfer CRC and PST not supported.
 
-
-
-Ignored objects :
+Ignored and non-implemented objects :
 - Object 1005: standard SYNC COB-ID is used
 - Object 1012: standard TIME COB-ID is used
 - Object 1014: standard EMCY COB-ID is used
 - Object 1006: sync producer feature
 - Object 100D: node guarding unsupported
 - Object 1013: not consumed and not published
-- Object 1015: 
+- Object 1015: no inhibit time for EMCY
 - Object 1016: heartbeat consumer feature
-- Object 1020: 
+- Object 1020: manufacturer specific
 - Object 1021: DOMAIN unsupported
 - Objects 1023: OS commands unsupported
 - Objects 1027: modular devices unsupported
