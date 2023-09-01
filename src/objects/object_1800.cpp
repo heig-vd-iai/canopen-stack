@@ -6,8 +6,8 @@
  * [Description]:   Contains the definitions of the "RPDO mapping parameter" Object1800 class.
  *****************************************************************************/
 #include "object_1800.hpp"
-#include "../node.hpp"
 #include "../frame.hpp"
+#include "../node.hpp"
 #include <cstring>
 using namespace CANopen;
 

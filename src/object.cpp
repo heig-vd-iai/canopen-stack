@@ -6,8 +6,8 @@
  * [Description]:   Contains the definitions of the Object class.
  *****************************************************************************/
 #include "object.hpp"
-#include "node.hpp"
 #include "enums.hpp"
+#include "node.hpp"
 #include "unions.hpp"
 #include <cstring>
 using namespace CANopen;

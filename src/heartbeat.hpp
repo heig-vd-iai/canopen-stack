@@ -6,8 +6,8 @@
  * [Description]:   Contains the declaration of the HB class.
  *****************************************************************************/
 #pragma once
-#include <cstdint>
 #include "enums.hpp"
+#include <cstdint>
 #define HEARTBEAT_DLC 1
 #define HEARTBEAT_STATE_OFFSET 0
 

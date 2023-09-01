@@ -6,13 +6,13 @@
  * [Description]:   Contains the declaration of the Node class.
  *****************************************************************************/
 #pragma once
-#include "nmt.hpp"
+#include "emergency.hpp"
 #include "heartbeat.hpp"
-#include "sdo.hpp"
+#include "nmt.hpp"
 #include "od.hpp"
 #include "pdo.hpp"
+#include "sdo.hpp"
 #include "sync.hpp"
-#include "emergency.hpp"
 #include <cstdint>
 
 namespace CANopen

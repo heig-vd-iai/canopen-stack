@@ -6,10 +6,10 @@
  * [Description]:   Contains the definitions of the EMCY class.
  *****************************************************************************/
 #include "emergency.hpp"
+#include "frame.hpp"
 #include "node.hpp"
 #include "objects/object_1001.hpp"
 #include "objects/object_1003.hpp"
-#include "frame.hpp"
 using namespace CANopen;
 
 EMCY::EMCY(Node &node) : node(node)

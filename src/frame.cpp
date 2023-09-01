@@ -6,10 +6,10 @@
  * [Description]:   Contains the definitions of all of the frame classes.
  *****************************************************************************/
 #include "frame.hpp"
-#include "heartbeat.hpp"
 #include "emergency.hpp"
-#include "sdo.hpp"
+#include "heartbeat.hpp"
 #include "nmt.hpp"
+#include "sdo.hpp"
 #include "sync.hpp"
 using namespace CANopen;
 

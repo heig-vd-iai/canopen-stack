@@ -6,11 +6,11 @@
  * [Description]:   Contains the definitions of the SDO class.
  *****************************************************************************/
 #include "sdo.hpp"
-#include "node.hpp"
-#include "frame.hpp"
 #include "enums.hpp"
-#include "unions.hpp"
+#include "frame.hpp"
+#include "node.hpp"
 #include "object.hpp"
+#include "unions.hpp"
 #include <cstring>
 using namespace CANopen;
 

@@ -6,8 +6,8 @@
  * [Description]:   Contains the definitions of the HB class.
  *****************************************************************************/
 #include "heartbeat.hpp"
-#include "node.hpp"
 #include "frame.hpp"
+#include "node.hpp"
 using namespace CANopen;
 
 HB::HB(Node &node) : node(node) {}

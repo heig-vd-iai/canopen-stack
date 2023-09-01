@@ -6,9 +6,9 @@
  * [Description]:   Contains the definitions of the PDO class.
  *****************************************************************************/
 #include "pdo.hpp"
-#include "node.hpp"
-#include "frame.hpp"
 #include "enums.hpp"
+#include "frame.hpp"
+#include "node.hpp"
 #include <cstring>
 using namespace CANopen;
 

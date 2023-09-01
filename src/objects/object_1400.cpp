@@ -6,8 +6,8 @@
  * [Description]:   Contains the definitions of the "Synchronous counter overflow value" Object1400 class.
  *****************************************************************************/
 #include "object_1400.hpp"
-#include "../node.hpp"
 #include "../frame.hpp"
+#include "../node.hpp"
 #include <cstring>
 using namespace CANopen;
 

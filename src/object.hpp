@@ -6,8 +6,8 @@
  * [Description]:   Contains the declarations of OD objects and entries.
  *****************************************************************************/
 #pragma once
-#include "unions.hpp"
 #include "enums.hpp"
+#include "unions.hpp"
 #include <cstdint>
 #define OBJECT_INDEX_COUNT 0
 

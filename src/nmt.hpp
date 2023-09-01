@@ -6,8 +6,8 @@
  * [Description]:   Contains the declaration of the NMT class.
  *****************************************************************************/
 #pragma once
-#include <cstdint>
 #include "enums.hpp"
+#include <cstdint>
 #define NMT_COMMAND_OFFSET 0
 #define NMT_NODEID_OFFSET 1
 

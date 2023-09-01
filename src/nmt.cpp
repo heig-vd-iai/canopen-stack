@@ -6,8 +6,8 @@
  * [Description]:   Contains the definitions of the NMT class.
  *****************************************************************************/
 #include "nmt.hpp"
-#include "node.hpp"
 #include "frame.hpp"
+#include "node.hpp"
 using namespace CANopen;
 
 NMT::NMT(Node &node) : node(node) {}
