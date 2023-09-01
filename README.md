@@ -220,8 +220,8 @@ bool CANopen::ObjectDictionnary::restoreData(uint8_t parameterGroup)
 ```
 
 ## Usage Guide
-### example Makefile
-The usage of the library is all done through the Node object.
+The usage of the library is all done through the Node object.  
+An example project using SocketCan interface (for Linux) is provided under the /example folder. The folder has a makefile that will compile the project into an executable.
 
 **Only one Node object should be used per program, because its ID is obtained from the od.hpp file. Since the header file is specific to a single node, running multiple nodes on a single device means you will need different projects using different header files.**
 
