@@ -7,6 +7,7 @@
  *****************************************************************************/
 #pragma once
 #include <cstdint>
+#include <functional>
 #define SYNC_COUNTER_OFFSET 0
 
 namespace CANopen
@@ -23,6 +24,7 @@ namespace CANopen
         class Node &node;
         uint8_t internalCounter = 1;
         uint8_t maxCounter;
+        std::function<void(unsigned)> onSyncFunc;
 
         /**
          * @brief Enable EMCY functionality, should be used by NMT only.
@@ -51,5 +53,14 @@ namespace CANopen
          * @param node The parent Node reference.
          */
         SYNC(class Node &node);
+
+        /**
+         * @brief Set a callback function to be called when a SYNC message is received.
+         * The function will receive the counter value.
+         * This callback is called before any PDO action.
+         * **DO NOT use time consuming calls in the provided callback.**
+         * @param callback Callback function to be called on SYNC event.
+         */
+        void onSync(std::function<void(unsigned)> callback);
     };
 }

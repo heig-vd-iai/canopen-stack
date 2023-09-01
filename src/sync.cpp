@@ -32,5 +32,12 @@ void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us)
     if (!enabled || frame.nodeId != 0)
         return;
     internalCounter = frame.isCounter() ? frame.getCounter() : internalCounter % maxCounter + 1;
+    if (onSyncFunc)
+        onSyncFunc(internalCounter);
     node._pdo.onSync(internalCounter, timestamp_us);
+}
+
+void SYNC::onSync(std::function<void(unsigned)> callback)
+{
+    onSyncFunc = callback;
 }
