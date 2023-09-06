@@ -17,21 +17,26 @@
 namespace {{namespace}}
 {
     /**
-     * @brief This class represents the %Object Dictionary.
+     * @brief This struct represents the object dictionary raw data.
+     * It is an auto-generated struct that should not be manually edited.
+     */
+    struct ObjectDictionnaryData
+    {
+        {% for object in objects %}
+        {% for data in object.renderData() %}
+        {{data}};
+        {% endfor %}
+        {% endfor %}
+    };
+
+    /**
+     * @brief This class represents the Object Dictionary.
      * It is an auto-generated class that should not be manually edited.
      */
     class ObjectDictionnary
     {
     // @cond
     private:
-        struct ObjectDictionnaryData
-        {
-            {% for object in objects %}
-            {% for data in object.renderData() %}
-            {{data}};
-            {% endfor %}
-            {% endfor %}
-        };
         struct 
         {
             struct
