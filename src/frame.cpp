@@ -13,6 +13,8 @@
 #include "sync.hpp"
 using namespace CANopen;
 
+Frame::Frame(uint8_t nodeId) : nodeId(nodeId) {}
+
 Frame::Frame(uint8_t nodeId, uint8_t functionCode) : nodeId(nodeId), functionCode(functionCode) {}
 
 Frame::Frame(uint16_t cobId)

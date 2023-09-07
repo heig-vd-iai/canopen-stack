@@ -21,11 +21,22 @@ namespace CANopen
      */
     struct Frame
     {
-        uint8_t nodeId;
-        uint8_t functionCode;
+        uint8_t nodeId = 0;
+        uint8_t functionCode = 0;
         uint8_t data[CAN_DATA_LENGTH] = {0};
         uint8_t dlc = 0;
         bool rtr = false;
+
+        /**
+         * @brief Default constructor for a generic CANopen frame.
+         */
+        Frame(){};
+
+        /**
+         * @brief Constructor for a generic CANopen frame from node ID.
+         * @param nodeId Node ID.
+         */
+        Frame(uint8_t nodeId);
 
         /**
          * @brief Constructor for a generic CANopen frame from node ID and function code.
