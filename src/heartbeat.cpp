@@ -37,3 +37,8 @@ void HB::receiveFrame(Frame &frame, uint32_t timestamp_us)
     publishState(node._nmt.getState(), toggleBit);
     toggleBit = !toggleBit;
 }
+
+void HB::resetToggleBit()
+{
+    toggleBit = 0;
+}

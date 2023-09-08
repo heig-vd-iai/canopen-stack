@@ -47,6 +47,12 @@ namespace CANopen
          */
         void receiveFrame(class Frame &frame, uint32_t timestamp_us);
 
+        /**
+         * @brief Reset the toggle bit value to 0.
+         * This method should only be called by the NMT state machine.
+         */
+        void resetToggleBit();
+
     public:
         friend class NMT;
         friend class Node;
