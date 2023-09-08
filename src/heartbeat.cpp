@@ -12,9 +12,9 @@ using namespace CANopen;
 
 HB::HB(Node &node) : node(node) {}
 
-void HB::publishState(NMTStates state)
+void HB::publishState(NMTStates state, uint8_t toggleBit)
 {
-    HeartbeatFrame frame(node.nodeId, state);
+    HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
     node.sendFrame(frame);
     lastPublish = node.getTime_us();
 }
@@ -28,4 +28,12 @@ void HB::update(uint32_t timestamp_us)
     if (heartbeatTime_ms > 0 && timestamp_us - lastPublish >= heartbeatTime_us)
         publishState(node._nmt.getState());
 #endif
+}
+
+void HB::receiveFrame(Frame &frame, uint32_t timestamp_us)
+{
+    if (frame.nodeId != node.nodeId || !frame.rtr)
+        return;
+    publishState(node._nmt.getState(), toggleBit);
+    toggleBit = !toggleBit;
 }
