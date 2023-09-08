@@ -36,6 +36,7 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
             break;
         case NMTResetState_ResetCommunication:
             node._od.restoreData(ParameterGroup_Communication);
+            node._hb.resetToggleBit();
             break;
         }
         node._pdo.reloadTPDO();
