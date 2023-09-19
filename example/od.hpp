@@ -2,7 +2,7 @@
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on September 06, 2023
+ * [Date]:          Generated on September 19, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
  *****************************************************************************/
@@ -120,9 +120,9 @@ namespace CANopen
         uint8_t x1029sub0 = 2;
         uint8_t x1029[2] = {0, 1};
         struct {uint8_t sub0 = 5; uint32_t sub1 = 513; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0;} x1400;
-        struct {uint8_t sub0 = 2; uint32_t sub1 = 769; uint8_t sub2 = 255;} x1401;
-        struct {uint8_t sub0 = 2; uint32_t sub1 = 1025; uint8_t sub2 = 255;} x1402;
-        struct {uint8_t sub0 = 2; uint32_t sub1 = 1281; uint8_t sub2 = 255;} x1403;
+        struct {uint8_t sub0 = 5; uint32_t sub1 = 769; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0;} x1401;
+        struct {uint8_t sub0 = 5; uint32_t sub1 = 1025; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0;} x1402;
+        struct {uint8_t sub0 = 5; uint32_t sub1 = 1281; uint8_t sub2 = 255; uint16_t sub3 = 100; uint8_t sub4 = 0; uint16_t sub5 = 0;} x1403;
         struct {uint8_t sub0 = 2; uint32_t sub1 = 1614807056; uint32_t sub2 = 1616904200; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1600;
         struct {uint8_t sub0 = 2; uint32_t sub1 = 1618608160; uint32_t sub2 = 1619066912; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1601;
         struct {uint8_t sub0 = 1; uint32_t sub1 = 1614938128; uint32_t sub2 = 0; uint32_t sub3 = 0; uint32_t sub4 = 0; uint32_t sub5 = 0; uint32_t sub6 = 0; uint32_t sub7 = 0; uint32_t sub8 = 0;} x1602;
@@ -279,15 +279,24 @@ namespace CANopen
                 ObjectEntry<uint8_t> x1401sub0 = ObjectEntry<uint8_t>(&data.x1401.sub0, 1);
                 ObjectEntry<uint32_t> x1401sub1 = ObjectEntry<uint32_t>(&data.x1401.sub1, 3);
                 ObjectEntry<uint8_t> x1401sub2 = ObjectEntry<uint8_t>(&data.x1401.sub2, 3);
-                const ObjectEntryBase *x1401[3] = {&x1401sub0, &x1401sub1, &x1401sub2};
+                ObjectEntry<uint16_t> x1401sub3 = ObjectEntry<uint16_t>(&data.x1401.sub3, 3);
+                ObjectEntry<uint8_t> x1401sub4 = ObjectEntry<uint8_t>(&data.x1401.sub4, 3);
+                ObjectEntry<uint16_t> x1401sub5 = ObjectEntry<uint16_t>(&data.x1401.sub5, 3);
+                const ObjectEntryBase *x1401[6] = {&x1401sub0, &x1401sub1, &x1401sub2, &x1401sub3, &x1401sub4, &x1401sub5};
                 ObjectEntry<uint8_t> x1402sub0 = ObjectEntry<uint8_t>(&data.x1402.sub0, 1);
                 ObjectEntry<uint32_t> x1402sub1 = ObjectEntry<uint32_t>(&data.x1402.sub1, 3);
                 ObjectEntry<uint8_t> x1402sub2 = ObjectEntry<uint8_t>(&data.x1402.sub2, 3);
-                const ObjectEntryBase *x1402[3] = {&x1402sub0, &x1402sub1, &x1402sub2};
+                ObjectEntry<uint16_t> x1402sub3 = ObjectEntry<uint16_t>(&data.x1402.sub3, 3);
+                ObjectEntry<uint8_t> x1402sub4 = ObjectEntry<uint8_t>(&data.x1402.sub4, 3);
+                ObjectEntry<uint16_t> x1402sub5 = ObjectEntry<uint16_t>(&data.x1402.sub5, 3);
+                const ObjectEntryBase *x1402[6] = {&x1402sub0, &x1402sub1, &x1402sub2, &x1402sub3, &x1402sub4, &x1402sub5};
                 ObjectEntry<uint8_t> x1403sub0 = ObjectEntry<uint8_t>(&data.x1403.sub0, 1);
                 ObjectEntry<uint32_t> x1403sub1 = ObjectEntry<uint32_t>(&data.x1403.sub1, 3);
                 ObjectEntry<uint8_t> x1403sub2 = ObjectEntry<uint8_t>(&data.x1403.sub2, 3);
-                const ObjectEntryBase *x1403[3] = {&x1403sub0, &x1403sub1, &x1403sub2};
+                ObjectEntry<uint16_t> x1403sub3 = ObjectEntry<uint16_t>(&data.x1403.sub3, 3);
+                ObjectEntry<uint8_t> x1403sub4 = ObjectEntry<uint8_t>(&data.x1403.sub4, 3);
+                ObjectEntry<uint16_t> x1403sub5 = ObjectEntry<uint16_t>(&data.x1403.sub5, 3);
+                const ObjectEntryBase *x1403[6] = {&x1403sub0, &x1403sub1, &x1403sub2, &x1403sub3, &x1403sub4, &x1403sub5};
                 ObjectEntry<uint8_t> x1600sub0 = ObjectEntry<uint8_t>(&data.x1600.sub0, 3);
                 ObjectEntry<uint32_t> x1600sub1 = ObjectEntry<uint32_t>(&data.x1600.sub1, 3);
                 ObjectEntry<uint32_t> x1600sub2 = ObjectEntry<uint32_t>(&data.x1600.sub2, 3);
@@ -481,9 +490,9 @@ namespace CANopen
             Object x1020 = Object(4128, 3, entries.x1020);
             Object x1029 = Object(4137, 3, entries.x1029);
             Object1400 x1400 = Object1400(5120, 6, entries.x1400);
-            Object1400 x1401 = Object1400(5121, 3, entries.x1401);
-            Object1400 x1402 = Object1400(5122, 3, entries.x1402);
-            Object1400 x1403 = Object1400(5123, 3, entries.x1403);
+            Object1400 x1401 = Object1400(5121, 6, entries.x1401);
+            Object1400 x1402 = Object1400(5122, 6, entries.x1402);
+            Object1400 x1403 = Object1400(5123, 6, entries.x1403);
             Object1600 x1600 = Object1600(5632, 9, entries.x1600);
             Object1600 x1601 = Object1600(5633, 9, entries.x1601);
             Object1600 x1602 = Object1600(5634, 9, entries.x1602);

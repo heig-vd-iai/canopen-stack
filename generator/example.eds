@@ -702,7 +702,7 @@ PDOMapping=0
 [1400]
 ParameterName=Receive PDO 1 Communication Parameter
 ObjectType=0x9
-SubNumber=0x03
+SubNumber=0x06
 
 [1400sub0]
 ParameterName=Number of entries
@@ -755,14 +755,14 @@ PDOMapping=0
 [1401]
 ParameterName=Receive PDO 2 Communication Parameter
 ObjectType=0x9
-SubNumber=0x03
+SubNumber=0x06
 
 [1401sub0]
 ParameterName=Number of entries
 ObjectType=0x7
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=0x05
 PDOMapping=0
 
 [1401sub1]
@@ -781,17 +781,41 @@ AccessType=rw
 DefaultValue=0xFF
 PDOMapping=0
 
+[1401sub3]
+ParameterName=Inhibit Time
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0064
+PDOMapping=0
+
+[1401sub4]
+ParameterName=Compatibility Entry
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0x00
+PDOMapping=0
+
+[1401sub5]
+ParameterName=Event Timer
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0000
+PDOMapping=0
+
 [1402]
 ParameterName=Receive PDO 3 Communication Parameter
 ObjectType=0x9
-SubNumber=0x03
+SubNumber=0x06
 
 [1402sub0]
 ParameterName=Number of entries
 ObjectType=0x7
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=0x05
 PDOMapping=0
 
 [1402sub1]
@@ -810,17 +834,41 @@ AccessType=rw
 DefaultValue=0xFF
 PDOMapping=0
 
+[1402sub3]
+ParameterName=Inhibit Time
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0064
+PDOMapping=0
+
+[1402sub4]
+ParameterName=Compatibility Entry
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0x00
+PDOMapping=0
+
+[1402sub5]
+ParameterName=Event Timer
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0000
+PDOMapping=0
+
 [1403]
 ParameterName=Receive PDO 4 Communication Parameter
 ObjectType=0x9
-SubNumber=0x03
+SubNumber=0x06
 
 [1403sub0]
 ParameterName=Number of entries
 ObjectType=0x7
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=0x05
 PDOMapping=0
 
 [1403sub1]
@@ -837,6 +885,30 @@ ObjectType=0x7
 DataType=0x0005
 AccessType=rw
 DefaultValue=0xFF
+PDOMapping=0
+
+[1403sub3]
+ParameterName=Inhibit Time
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0064
+PDOMapping=0
+
+[1403sub4]
+ParameterName=Compatibility Entry
+ObjectType=0x7
+DataType=0x0005
+AccessType=rw
+DefaultValue=0x00
+PDOMapping=0
+
+[1403sub5]
+ParameterName=Event Timer
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0x0000
 PDOMapping=0
 
 [1600]
