@@ -3,7 +3,7 @@
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
  * [Date]:          August 2023
- * [Description]:   Contains the declaration of the "Synchronous counter overflow value" Object1400 class.
+ * [Description]:   Contains the declaration of the "RPDO communication parameter" Object1400 class.
  *****************************************************************************/
 #pragma once
 #include "object_1800.hpp"
