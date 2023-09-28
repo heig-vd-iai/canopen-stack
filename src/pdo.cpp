@@ -87,7 +87,9 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
         Object *object = tpdo->mappedEntries[i].object;
         uint8_t subindex = tpdo->mappedEntries[i].subindex;
         uint32_t size = object->getSize(subindex);
-        object->readBytes(subindex, buffer, size, bytesTransferred);
+        if (bytesTransferred + size > PDO_DLC)
+            break;
+        object->readBytes(subindex, buffer + bytesTransferred, size, 0);
         bytesTransferred += size;
     }
 }
