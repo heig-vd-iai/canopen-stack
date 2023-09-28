@@ -42,16 +42,18 @@ try:
     # with node.sdo[0x1F51].open("rb") as f:
     #     print(f.read(1024).decode())
 
+    node.sdo[0x6060].phys = 42
+
     ## Configure TPDO
     i = 1
     node.tpdo.read()
     node.tpdo[i].clear()
-    # node.tpdo[i].cob_id = 0x180
     node.tpdo[i].trans_type = 0xFE
     node.tpdo[i].event_timer = 1000
     node.tpdo[i].inhibit_time = 10 * 1000
     node.tpdo[i].enabled = True
-    node.tpdo[i].add_variable(0x6048, 1)
+    node.tpdo[i].add_variable(0x6060, 0)
+    node.tpdo[i].add_variable(0x6042, 0)
     node.tpdo.save()
 
     ## NMT 
@@ -72,7 +74,6 @@ try:
 
     ## Wait until KeyboardInterrupt
     while True: pass
-    
     pass
 except KeyboardInterrupt: print()
 except Exception as e: print(e)
