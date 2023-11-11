@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      sdo.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the SDO class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the SDO class.
+ */
 #include "sdo.hpp"
 #include "enums.hpp"
 #include "frame.hpp"

@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1011.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "Restore default parameters" Object1011 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "Restore default parameters" Object1011 class.
+ */
 #include "object_1011.hpp"
 #include "../node.hpp"
 using namespace CANopen;

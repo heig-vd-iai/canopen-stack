@@ -1,11 +1,11 @@
-/******************************************************************************
+/**
  * [Filename]:      od.hpp
  * [Project]:       CANopen
  * [Author]:        Tristan Lieberherr
  * [Date]:          Generated on September 19, 2023
  * [Description]:   This file contains the declaration of the ObjectDictionnary class.
  *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
- *****************************************************************************/
+ */
 #pragma once
 #include "od_include.hpp"
 #define OD_GRANULARITY 8
@@ -82,7 +82,7 @@
 namespace CANopen
 {
     /**
-     * @brief This struct represents the object dictionary raw data.
+     * This struct represents the object dictionary raw data.
      * It is an auto-generated struct that should not be manually edited.
      */
     struct ObjectDictionnaryData
@@ -162,14 +162,14 @@ namespace CANopen
     };
 
     /**
-     * @brief This class represents the Object Dictionary.
+     * This class represents the Object Dictionary.
      * It is an auto-generated class that should not be manually edited.
      */
     class ObjectDictionnary
     {
     // @cond
     private:
-        struct 
+        struct
         {
             struct
             {
@@ -534,28 +534,28 @@ namespace CANopen
         const uint16_t length = OD_OBJECTS_COUNT;
 
         /**
-         * @brief Constructor for the Object Dictionary.
+         * Constructor for the Object Dictionary.
          * @param node The parent Node reference.
          */
         ObjectDictionnary(class Node &node);
 
         /**
-        * @brief Find an object in the dictionary.
+        * Find an object in the dictionary.
         * @param index The hex index of the object to find.
         * @return Pointer to the found object, or nullptr if not found.
         */
         Object *findObject(uint16_t index);
 
         /**
-         * @brief Access an object in the dictionary by array index.
+         * Access an object in the dictionary by array index.
          * @param index The array index of the object.
-         * This parameter should always use one of the generated defines. 
+         * This parameter should always use one of the generated defines.
          * @return Pointer to the accessed object, or nullptr if not found.
          */
         Object *at(uint16_t index);
 
         /**
-         * @brief Access an object in the dictionary by array index using the subscript operator.
+         * Access an object in the dictionary by array index using the subscript operator.
          * Under the hood, this method uses the at() method.
          * @param index The array index of the object to access.
          * @return Pointer to the accessed object, or nullptr if not found.
@@ -563,7 +563,7 @@ namespace CANopen
         Object *operator[](uint16_t index);
 
         /**
-         * @brief Save data to non-volatile storage for a specified parameter group.
+         * Save data to non-volatile storage for a specified parameter group.
          * This method is called by object 0x1010.
          * @param parameterGroup The parameter group number.
          * @return True if saving was successful, false otherwise.
@@ -571,7 +571,7 @@ namespace CANopen
         bool saveData(uint8_t parameterGroup);
 
         /**
-         * @brief Load data from non-volatile storage for a specified parameter group.
+         * Load data from non-volatile storage for a specified parameter group.
          * This method should be called on application startup to load the object dictionnary.
          * @param parameterGroup The parameter group number.
          * @return True if loading was successful, false otherwise.
@@ -579,7 +579,7 @@ namespace CANopen
         bool loadData(uint8_t parameterGroup);
 
         /**
-         * @brief Restore data to default for a specified parameter group.
+         * Restore data to default for a specified parameter group.
          * This method is called by object 0x1011.
          * @param parameterGroup The parameter group number.
          * @return True if restoring was successful, false otherwise.

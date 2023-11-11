@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the declarations of OD objects and entries.
- *****************************************************************************/
+/**
+ * Contains the declarations of OD objects and entries.
+ */
 #pragma once
 #include "enums.hpp"
 #include "unions.hpp"
@@ -14,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the base object entry in the Object Dictionnary.
+     * This class represents the base object entry in the Object Dictionnary.
      * An object entry is identified by a sub-index, and belongs to an object.
      */
     struct ObjectEntryBase
@@ -24,7 +20,7 @@ namespace CANopen
         const uint32_t size;
 
         /**
-         * @brief Constructor for the base object entry.
+         * Constructor for the base object entry.
          * @param src Pointer to the data source.
          * @param accessType Access type of the object entry.
          * @param size Size in bytes of the data associated with the entry.
@@ -32,7 +28,7 @@ namespace CANopen
         ObjectEntryBase(void *src, uint8_t accessType, uint32_t size) : dataSrc(src), accessType{accessType}, size(size) {}
 
         /**
-         * @brief Check if incoming data is within defined range.
+         * Check if incoming data is within defined range.
          * @param data Pointer to the raw data to be checked.
          * @return 0 for unbound entries. For limited entries, 0 if data is within limits, -1 if below, 1 if above.
          */
@@ -40,7 +36,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This class represents an object entry in the Object Dictionary.
+     * This class represents an object entry in the Object Dictionary.
      * An object entry is identified by a sub-index, and belongs to an object.
      * @tparam T Data type associated with the object entry.
      */
@@ -48,7 +44,7 @@ namespace CANopen
     struct ObjectEntry : public ObjectEntryBase
     {
         /**
-         * @brief Constructor for the ObjectEntry.
+         * Constructor for the ObjectEntry.
          * @param src Pointer to the data source.
          * @param accessType Access type of the object entry.
          */
@@ -56,7 +52,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This class represents a limited object entry in the Object Dictionary with value constraints.
+     * This class represents a limited object entry in the Object Dictionary with value constraints.
      * An object entry is identified by a sub-index, and belongs to an object.
      * @tparam T Data type associated with the object entry.
      */
@@ -66,7 +62,7 @@ namespace CANopen
         const T minVal, maxVal;
 
         /**
-         * @brief Constructor for the LimitedObjectEntry.
+         * Constructor for the LimitedObjectEntry.
          * @param src Pointer to the data source.
          * @param accessType Access type of the object entry.
          * @param minVal Minimum allowed value.
@@ -75,7 +71,7 @@ namespace CANopen
         LimitedObjectEntry(void *src, uint8_t accessType, T minVal, T maxVal) : ObjectEntryBase(src, accessType, sizeof(T)), minVal(minVal), maxVal(maxVal) {}
 
         /**
-         * @brief Check if incoming data is within defined range.
+         * Check if incoming data is within defined range.
          * @param data Pointer to the raw data to be checked.
          * @return 0 if data is within limits, -1 if below, 1 if above.
          */
@@ -87,7 +83,7 @@ namespace CANopen
     };
 
     /**
-     * @brief This class represents an object in the Object Dictionnary.
+     * This class represents an object in the Object Dictionnary.
      * An object is identified by an index, and owns multiple entries.
      */
     class Object
@@ -96,7 +92,7 @@ namespace CANopen
         const ObjectEntryBase **entries;
 
         /**
-         * @brief Pre-read operation hook for processing before reading bytes.
+         * Pre-read operation hook for processing before reading bytes.
          * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise readBytes will be cancelled.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the destination buffer.
@@ -107,7 +103,7 @@ namespace CANopen
         virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
 
         /**
-         * @brief Post-read operation hook for processing after reading bytes.
+         * Post-read operation hook for processing after reading bytes.
          * This function is called after a sucessful readBytes operation.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the destination buffer.
@@ -117,7 +113,7 @@ namespace CANopen
         virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
 
         /**
-         * @brief Pre-write operation hook for processing before writing bytes.
+         * Pre-write operation hook for processing before writing bytes.
          * * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise writeBytes will be cancelled.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
@@ -128,7 +124,7 @@ namespace CANopen
         virtual SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
 
         /**
-         * @brief Post-write operation hook for processing after writing bytes.
+         * Post-write operation hook for processing after writing bytes.
          * This function is called after a sucessful writeBytes operation.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
@@ -142,7 +138,7 @@ namespace CANopen
         const uint8_t subNumber;
 
         /**
-         * @brief Constructor for the Object class.
+         * Constructor for the Object class.
          * @param index Index of the object.
          * @param subNumber Number of subentries in the object.
          * @param entries Array of pointers to object entries belonging to that object.
@@ -150,28 +146,28 @@ namespace CANopen
         Object(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
 
         /**
-         * @brief Check if the subindex exists.
+         * Check if the subindex exists.
          * @param subindex Subindex to check.
          * @return True if the subindex exists, false otherwise.
          */
         bool isSubValid(uint8_t subindex);
 
         /**
-         * @brief Get the size of an object's entry data.
+         * Get the size of an object's entry data.
          * @param subindex Subindex of the object entry.
          * @return Size in bytes of the object entry data.
          */
         uint32_t getSize(uint8_t subindex);
 
         /**
-         * @brief Get the access type of an object's entry.
+         * Get the access type of an object's entry.
          * @param subindex Subindex of the object entry.
          * @return Access type of the object entry.
          */
         AccessType getAccessType(uint8_t subindex);
 
         /**
-         * @brief Read data from an object entry.
+         * Read data from an object entry.
          * This method should only be called by SDO class.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the destination buffer.
@@ -182,7 +178,7 @@ namespace CANopen
         SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
 
         /**
-         * @brief Write bytes to an object entry.
+         * Write bytes to an object entry.
          * This method should only be called by SDO class.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
@@ -193,13 +189,13 @@ namespace CANopen
         SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
 
         /**
-         * @brief Get the number of entries in the object, **if object is not of type VAR**.
+         * Get the number of entries in the object, **if object is not of type VAR**.
          * @return Number of entries.
          */
         uint8_t getCount();
 
         /**
-         * @brief Get the value of an object's entry.
+         * Get the value of an object's entry.
          * If the size of the data type does not match that of the actual data, the operation will fail.
          * @tparam T Data type of the value.
          * @param subindex Subindex of the object entry.
@@ -216,7 +212,7 @@ namespace CANopen
         }
 
         /**
-         * @brief Set the value of an object's entry.
+         * Set the value of an object's entry.
          * If the size of the data type does not match that of the actual data, the operation will fail.
          * @tparam T Data type of the value.
          * @param subindex Subindex of the object entry.

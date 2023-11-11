@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1010.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the declaration of the "Store parameters" Object1010 class.
- *****************************************************************************/
+/**
+ * Contains the declaration of the "Store parameters" Object1010 class.
+ */
 #pragma once
 #include "../object.hpp"
 #define X1010_SAVE_SIGNATURE 0x65766173
@@ -12,7 +8,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the Store parameters (0x1010) object.
+     * This class represents the Store parameters (0x1010) object.
      */
     class Object1010 : public Object
     {
@@ -21,7 +17,7 @@ namespace CANopen
 
     public:
         /**
-         * @brief Constructor for the Object class.
+         * Constructor for the Object class.
          * @param index Index of the object.
          * @param subNumber Number of subentries in the object.
          * @param entries Array of pointers to object entries belonging to that object.

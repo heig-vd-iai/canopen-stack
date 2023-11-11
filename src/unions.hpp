@@ -1,17 +1,13 @@
-/******************************************************************************
- * [Filename]:      unions.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains all of the shared unions used in this project.
- *****************************************************************************/
+/**
+ * Contains all of the shared unions used in this project.
+ */
 #pragma once
 #include <cstdint>
 
 namespace CANopen
 {
     /**
-     * @brief Union representing the access type of an ObjectEntry.
+     * Union representing the access type of an ObjectEntry.
      * The access type specifies the read and write permissions, as well as the PDO mappability.
      */
     union AccessType
@@ -26,7 +22,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the COB-ID entry in PDO communication parameter (0x1400, 0x1800)
+     * Union representing the COB-ID entry in PDO communication parameter (0x1400, 0x1800)
      */
     union PDOCobidEntry
     {
@@ -41,7 +37,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the mapping value in PDO mapping parameter (0x1600, 0x1A00).
+     * Union representing the mapping value in PDO mapping parameter (0x1600, 0x1A00).
      */
     union PDOMapEntry
     {
@@ -55,7 +51,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the error register value in error register (0x1001).
+     * Union representing the error register value in error register (0x1001).
      */
     union ErrorRegister
     {
@@ -74,7 +70,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the SDO command byte (byte 0) in SDO transactions.
+     * Union representing the SDO command byte (byte 0) in SDO transactions.
      * Multiple structures are used depending on the operation.
      */
     union SDOCommandByte
@@ -98,7 +94,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Union representing the SDO command byte (byte 0) in SDO block transactions.
+     * Union representing the SDO command byte (byte 0) in SDO block transactions.
      * Multiple structures are used depending on the operation.
      */
     union SDOBlockCommandByte

@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1600.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "RPDO mapping parameter" Object1600 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "RPDO mapping parameter" Object1600 class.
+ */
 #include "object_1600.hpp"
 #include "../node.hpp"
 using namespace CANopen;

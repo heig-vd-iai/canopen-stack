@@ -1,16 +1,12 @@
-/******************************************************************************
- * [Filename]:      enums.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains all of the shared enumerations used in this project.
- *****************************************************************************/
+/**
+ * Contains all of the shared enumerations used in this project.
+ */
 #pragma once
 
 namespace CANopen
 {
     /**
-     * @brief Enumeration representing the CANopen function codes.
+     * Enumeration representing the CANopen function codes.
      * See p. 81 of CIA301 for more details.
      */
     enum FunctionCodes
@@ -33,7 +29,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the states of the NMT state machine.
+     * Enumeration representing the states of the NMT state machine.
      * See p. 76 of CIA301 for more details.
      */
     enum NMTStates
@@ -45,7 +41,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the NMT initialisation state substeps.
+     * Enumeration representing the NMT initialisation state substeps.
      * See p. 79 of CIA301 for more details.
      */
     enum NMTResetStates
@@ -56,7 +52,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the NMT command specifiers sent by the master.
+     * Enumeration representing the NMT command specifiers sent by the master.
      * See p. 72 of CIA301 for more details.
      */
     enum NMTServiceCommands
@@ -70,7 +66,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the command specifier part in the SDO command byte.
+     * Enumeration representing the command specifier part in the SDO command byte.
      * See p. 49 of CIA301 for more details.
      */
     enum SDOCommandSpecifiers
@@ -91,7 +87,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing the subcommand part in the SDO block command byte.
+     * Enumeration representing the subcommand part in the SDO block command byte.
      * See p. 54 of CIA301 for more details.
      */
     enum SDOSubCommands
@@ -110,7 +106,7 @@ namespace CANopen
     };
 
     /**
-     * @brief Enumeration representing all of the available SDO abort codes available.
+     * Enumeration representing all of the available SDO abort codes available.
      * Some special abort codes were added, but are only used internally and should never be sent.
      * See p. 61 of CIA301 for more details.
      */
@@ -152,7 +148,7 @@ namespace CANopen
 }
 
 /**
- * @brief Enumeration representing all of the available EMCY error codes.
+ * Enumeration representing all of the available EMCY error codes.
  * See p. 64 of CIA301 for more details.
  */
 enum EMCYErrorCodes
@@ -195,7 +191,7 @@ enum EMCYErrorCodes
 };
 
 /**
- * @brief Enumeration representing the bit number of each bit in the error register.
+ * Enumeration representing the bit number of each bit in the error register.
  * See p. 92 of CIA301 for more details.
  */
 enum ErrorRegisterBits
@@ -210,7 +206,7 @@ enum ErrorRegisterBits
 };
 
 /**
- * @brief Enumeration representing the parameter groups for saving and restoring the object dictionnary.
+ * Enumeration representing the parameter groups for saving and restoring the object dictionnary.
  * This enum only accounts for 3 first default groups.
  * Up to 255 groups can be implemented, depending on the device profile or manufacturer.
  * See p. 101 of CIA301 for more details.

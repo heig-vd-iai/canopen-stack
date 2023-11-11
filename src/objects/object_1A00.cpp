@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1A00.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "TPDO mapping parameter" Object1A00 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "TPDO mapping parameter" Object1A00 class.
+ */
 #include "object_1A00.hpp"
 #include "../node.hpp"
 using namespace CANopen;

@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1019.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the declaration of the "Synchronous counter overflow value" Object1019 class.
- *****************************************************************************/
+/**
+ * Contains the declaration of the "Synchronous counter overflow value" Object1019 class.
+ */
 #pragma once
 #include "../object.hpp"
 #define X1019_NO_COUNTER 0
@@ -14,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the Synchronous counter overflow value (0x1019) object.
+     * This class represents the Synchronous counter overflow value (0x1019) object.
      */
     class Object1019 : public Object
     {
@@ -23,7 +19,7 @@ namespace CANopen
 
     public:
         /**
-         * @brief Constructor for the Object class.
+         * Constructor for the Object class.
          * @param index Index of the object.
          * @param subNumber Number of subentries in the object.
          * @param entries Array of pointers to object entries belonging to that object.

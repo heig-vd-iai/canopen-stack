@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the Object class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the Object class.
+ */
 #include "object.hpp"
 #include "enums.hpp"
 #include "node.hpp"

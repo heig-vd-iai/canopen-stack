@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      emergency.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the EMCY class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the EMCY class.
+ */
 #include "emergency.hpp"
 #include "frame.hpp"
 #include "node.hpp"

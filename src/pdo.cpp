@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      pdo.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the PDO class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the PDO class.
+ */
 #include "pdo.hpp"
 #include "enums.hpp"
 #include "frame.hpp"

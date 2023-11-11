@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      od_include.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains all of the declarations needed by generated od.hpp file.
- *****************************************************************************/
+/**
+ * Contains all of the declarations needed by generated od.hpp file.
+ */
 #pragma once
 #include "object.hpp"
 #include "objects/object_1001.hpp"

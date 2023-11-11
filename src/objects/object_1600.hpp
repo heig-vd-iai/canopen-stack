@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1600.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the declaration of the "RPDO mapping parameter" Object1600 class.
- *****************************************************************************/
+/**
+ * Contains the declaration of the "RPDO mapping parameter" Object1600 class.
+ */
 #pragma once
 #include "object_1A00.hpp"
 #define X1600_MAP_DISABLED X1A00_MAP_DISABLED
@@ -14,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the RPDO mapping parameter (0x1600) object.
+     * This class represents the RPDO mapping parameter (0x1600) object.
      */
     class Object1600 : public Object
     {
@@ -23,7 +19,7 @@ namespace CANopen
 
     public:
         /**
-         * @brief Constructor for the Object class.
+         * Constructor for the Object class.
          * @param index Index of the object.
          * @param subNumber Number of subentries in the object.
          * @param entries Array of pointers to object entries belonging to that object.
@@ -31,7 +27,7 @@ namespace CANopen
         Object1600(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
 
         /**
-         * @brief Get the RPDO map value for the specified index.
+         * Get the RPDO map value for the specified index.
          * The subindex is equal to index + 1, so index 0 is first RPDO map.
          * @param index The index of the map value.
          * @return The mapped value for the specified index.

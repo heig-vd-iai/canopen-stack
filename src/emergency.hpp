@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      emergency.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the declaration of the EMCY class.
- *****************************************************************************/
+/**
+ * Declaration of the EMCY class.
+ */
 #pragma once
 #include <cstdint>
 #define X1029_SUB_COMMUNICATION 1
@@ -19,7 +15,7 @@
 namespace CANopen
 {
     /**
-     * @brief This class represents the Emergency object.
+     * This class represents the Emergency object.
      * It handles the emission of emergency messages, as well as the pre-defined error field and error register.
      * See p. 64 of CIA301 for more details.
      */
@@ -32,17 +28,17 @@ namespace CANopen
         class Object1001 *errorRegisterObject;
 
         /**
-         * @brief Enable EMCY functionality, should be used by NMT only.
+         * Enable EMCY functionality, should be used by NMT only.
          */
         void enable();
 
         /**
-         * @brief Disable EMCY functionality, should be used by NMT only.
+         * Disable EMCY functionality, should be used by NMT only.
          */
         void disable();
 
         /**
-         * @brief Internal method to send an error message.
+         * Internal method to send an error message.
          * @param errorCode The error code to send.
          * @param manufacturerCode The manufacturer-specific error code.
          */
@@ -51,13 +47,13 @@ namespace CANopen
     public:
         friend class NMT;
         /**
-         * @brief Constructor for EMCY class.
+         * Constructor for EMCY class.
          * @param node The parent Node reference.
          */
         EMCY(class Node &node);
 
         /**
-         * @brief Sends an emergency message on the bus, and automatically sets the corresponding bits in the error register.
+         * Sends an emergency message on the bus, and automatically sets the corresponding bits in the error register.
          * The generic error bit is always set when using this method.
          * @param errorCode The error code to send.
          * @param manufacturerCode The optional manufacturer-specific error code.
@@ -65,25 +61,25 @@ namespace CANopen
         void raiseError(uint16_t errorCode, uint16_t manufacturerCode = 0);
 
         /**
-         * @brief Clear a specific error bit from the error register.
+         * Clear a specific error bit from the error register.
          * The generic error bit can only be cleared if all other bits are already cleared.
          * @param bit The index of the error bit to clear.
          */
         void clearErrorBit(unsigned bit);
 
         /**
-         * @brief Get the current error register value.
+         * Get the current error register value.
          * @return The error register value.
          */
         uint8_t getErrorRegister();
 
         /**
-         * @brief Clear the pre-defined error field (error history) in object 0x1003.
+         * Clear the pre-defined error field (error history) in object 0x1003.
          */
         void clearHistory();
 
         /**
-         * @brief Completely reset the error register to 0.
+         * Completely reset the error register to 0.
          */
         void reset();
     };

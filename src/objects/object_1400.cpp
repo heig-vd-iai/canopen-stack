@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1400.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "RPDO communication parameter" Object1400 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "RPDO communication parameter" Object1400 class.
+ */
 #include "object_1400.hpp"
 #include "../frame.hpp"
 #include "../node.hpp"

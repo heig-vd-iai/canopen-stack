@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1001.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "Error register" Object1001 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "Error register" Object1001 class.
+ */
 #include "object_1001.hpp"
 using namespace CANopen;
 

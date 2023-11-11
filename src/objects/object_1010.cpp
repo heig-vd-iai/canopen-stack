@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1010.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "Store parameters" Object1010 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "Store parameters" Object1010 class.
+ */
 #include "object_1010.hpp"
 #include "../node.hpp"
 using namespace CANopen;

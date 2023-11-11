@@ -1,10 +1,6 @@
-/******************************************************************************
- * [Filename]:      object_1019.cpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          August 2023
- * [Description]:   Contains the definitions of the "Synchronous counter overflow value" Object1019 class.
- *****************************************************************************/
+/**
+ * Contains the definitions of the "Synchronous counter overflow value" Object1019 class.
+ */
 #include "object_1019.hpp"
 #include "../node.hpp"
 using namespace CANopen;
