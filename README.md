@@ -1,5 +1,15 @@
 # CANopen
 
+- [CANopen](#canopen)
+  - [Introduction](#introduction)
+  - [Getting Started](#getting-started)
+  - [Documentation](#documentation)
+  - [Object Dictionnary](#object-dictionnary)
+  - [Hardware Interface](#hardware-interface)
+  - [Usage Guide](#usage-guide)
+  - [Adding Objects](#adding-objects)
+  - [Limitations](#limitations)
+
 ## Introduction
 
 This is a C++14 written CANopen slave library. It is based on the official [CIA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.
@@ -37,6 +47,17 @@ The script will do some basic verification, such as missing mandatory objects, m
 
 On success, the program will create a file named od.hpp containing the custom object dictionnary class.
 It is a mandatory dependency for the rest of the library.
+
+## Documentation
+
+To generate Doxygen documentation:
+
+```bash
+sudo apt install doxygen graphviz
+git submodule init # Fetch Doxygen Awesome CSS
+git submodule update
+doxygen Doxyfile
+```
 
 ## Object Dictionnary
 
