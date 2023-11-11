@@ -20,6 +20,8 @@ namespace CANopen
         const uint32_t size;
 
         /**
+         * TODO: We see it is a constructor: remove word constructor, documentation useless :(
+         * TODO: rename size with sizeInBytes or sizeBytes to avoid comment.
          * Constructor for the base object entry.
          * @param src Pointer to the data source.
          * @param accessType Access type of the object entry.
@@ -32,7 +34,7 @@ namespace CANopen
          * @param data Pointer to the raw data to be checked.
          * @return 0 for unbound entries. For limited entries, 0 if data is within limits, -1 if below, 1 if above.
          */
-        inline int checkLimits(void *data) { return 0; }
+        inline int checkLimits(void *data) const { return 0; }
     };
 
     /**
@@ -56,6 +58,7 @@ namespace CANopen
      * An object entry is identified by a sub-index, and belongs to an object.
      * @tparam T Data type associated with the object entry.
      */
+    // TODO: Not all objects have limited values ? Should be easier to have a generic object with or without limits?
     template <typename T>
     struct LimitedObjectEntry : public ObjectEntryBase
     {
@@ -114,7 +117,7 @@ namespace CANopen
 
         /**
          * Pre-write operation hook for processing before writing bytes.
-         * * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise writeBytes will be cancelled.
+         * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise writeBytes will be cancelled.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
          * @param size Number of bytes to write.
@@ -125,7 +128,7 @@ namespace CANopen
 
         /**
          * Post-write operation hook for processing after writing bytes.
-         * This function is called after a sucessful writeBytes operation.
+         * Called after a sucessful writeBytes operation.
          * @param subindex Subindex of the object entry.
          * @param bytes Pointer to the source buffer.
          * @param size Number of bytes written.

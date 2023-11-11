@@ -9,6 +9,8 @@ namespace CANopen
      * Enumeration representing the CANopen function codes.
      * See p. 81 of CIA301 for more details.
      */
+    // TODO: Refer to standard with complete reference i.e. CiA301:2011§7.3.3
+    // TODO: Use enum class instead of enum to avoid mangling
     enum FunctionCodes
     {
         FunctionCode_NMT = 0b0000,
@@ -31,6 +33,7 @@ namespace CANopen
     /**
      * Enumeration representing the states of the NMT state machine.
      * See p. 76 of CIA301 for more details.
+     * TODO: Full Reference
      */
     enum NMTStates
     {
@@ -43,6 +46,7 @@ namespace CANopen
     /**
      * Enumeration representing the NMT initialisation state substeps.
      * See p. 79 of CIA301 for more details.
+     * TODO: Full Reference
      */
     enum NMTResetStates
     {

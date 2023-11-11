@@ -43,6 +43,11 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     SDOCommandByte sendCommand = {0};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
+
+    /* TODO: This is O(n), could be O(log n), and O(1) if using a map. Fetching
+       Fetching the object meta-data isn't an issue here, it can be repetable and fast.
+       However, the data should NOT be contained in the object.
+     */
     Object *object = node._od.findObject(index);
     if (!object)
     {
@@ -62,7 +67,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     transferData.index = index;
     transferData.subindex = subindex;
     transferData.object = object;
-    uint32_t size = object->getSize(subindex);
+    uint32_t size = object->getSize(subindex); // TODO: Why uint32_t ? The subindex is only 8-bit long. Use uint_least8_t instead.
     transferData.remainingBytes = size;
     transferData.toggle = 0;
     SDOFrame response(node.nodeId);
@@ -75,10 +80,19 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     }
     else
     { // Expedited transfer
-        sendCommand.bits_initiate.e = 1;
+        sendCommand.bits_initiate.e = 1; // TODO: Use true or false
         sendCommand.bits_initiate.s = 1;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
         uint32_t abortCode;
+        /* TODO: This readbyte can be SLOW. If the data has to be accessed through IPC, we cannot wait for it here.
+           The mechanism isn't reliable and will not work in our application.
+           One can imagine a two step process:
+           1. SDO request is checked (object validity, access type...)
+              If the SDO isn't locally available (remote value, through IPC)
+           2. A IPC request is made to fetch the data.
+              A queue is used to store the request and the SDO is put on hold.
+              When the data is available, the SDO is resumed and the data is sent.
+        */
         if ((abortCode = object->readBytes(subindex, response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) != SDOAbortCode_OK)
         {
             sendAbort(index, subindex, abortCode);

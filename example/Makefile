@@ -1,11 +1,6 @@
 EXECUTABLE = app.out
-CXX = g++
-CXXFLAGS = --std=c++14
-CXXFLAGS += -g
-CXXFLAGS += -Wall
-# CXXFLAGS += -Wextra
-# CXXFLAGS += -pedantic
-CXXFLAGS += -pthread
+CXX ?= g++
+CXXFLAGS = --std=c++14 -g -Wall -Wextra -pedantic -pthread
 
 SRC_DIR = ../src
 EXAMPLE_DIR = ../example
@@ -16,16 +11,22 @@ LIB_SOURCES = $(shell find $(SRC_DIR) -type f -name "*.cpp")
 SOURCES = ${LIB_SOURCES} ${MAIN_SOURCE}
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCES)) $(BUILD_DIR)/${MAIN_SOURCE:.cpp=.o}
 
-$(EXECUTABLE): $(OBJECTS)
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-$(BUILD_DIR)/${MAIN_SOURCE:.cpp=.o}: ${MAIN_SOURCE}
-	@mkdir -p $(@D)
+$(BUILD_DIR)/${MAIN_SOURCE:.cpp=.o}: ${MAIN_SOURCE} | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/objects
 
 clean:
-	-rm -rf $(BUILD_DIR) $(EXECUTABLE)
+	$(RM) -rf $(BUILD_DIR) $(EXECUTABLE)
+
+.PHONY: clean all

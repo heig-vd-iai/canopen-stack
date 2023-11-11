@@ -1,5 +1,6 @@
 /**
  * Contains the declaration of the HB class.
+ * TODO: Document what this class does.
  */
 #pragma once
 #include "enums.hpp"

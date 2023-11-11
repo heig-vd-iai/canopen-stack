@@ -76,6 +76,7 @@ namespace CANopen
     union SDOCommandByte
     {
         uint8_t value;
+        // TODO: Better to have a union with short and long names: e/expedited, s/size, n/number, ccs/commandSpecifier
         struct
         {
             bool s : 1;

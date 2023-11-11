@@ -1,5 +1,7 @@
 /**
  * Contains the declaration of all of the frame classes.
+ * TODO: Title isn't very descriptive. Below I see a class Frame. So
+ * it looks like I don't need this header. Insteal, describe what a Frame is.
  */
 #pragma once
 #include <cstdint>
@@ -9,10 +11,12 @@
 #define FUNCTION_MASK 0xF
 #define NODEID_MASK 0x7F
 
+// TODO: I do not like indenting namespaces. It makes the code harder to read.
+// https://github.com/sass/libsass/issues/2917 to see why. Modify .clang-format accordingly
 namespace CANopen
 {
     /**
-     * This class is the generic CANopen frame that is used to send and receive messages.
+     * CANopen generic frame that is used to send and receive messages.
      * It has to be converted to a CAN frame before it can be sent on the bus.
      */
     struct Frame
@@ -26,6 +30,7 @@ namespace CANopen
         /**
          * Default constructor for a generic CANopen frame.
          */
+        // TODO: No implementation in header files. You could use a default NodeId value in the nodeId constructor
         Frame(){};
 
         /**
@@ -39,19 +44,23 @@ namespace CANopen
          * @param nodeId Node ID.
          * @param functionCode Function code.
          */
+        // TODO: functionCode could be optional, then one constructor instead of three.
         Frame(uint8_t nodeId, uint8_t functionCode);
 
         /**
          * Constructor for a generic CANopen frame from COB-ID.
          * @param cobId COB-ID of the message.
          */
+        // TODO: Very confusing. I would instead use a factory method to create a Frame from a COB-ID.
+        // auto frame = Frame::fromCobId(cobId);
         Frame(uint16_t cobId);
 
         /**
          * Get the CANopen COB-ID.
          * @return The COB-ID value.
          */
-        uint16_t getCobID();
+        // TODO This one doesn't modify the instance : const
+        uint16_t getCobID() const;
 
         /**
          * Set the CANopen COB-ID.
@@ -88,6 +97,7 @@ namespace CANopen
     {
         /**
          * Constructor for specialized CANopen emergency frame.
+         * TODO: Very useless documentation. I do not have more information here :(
          * @param nodeId Node ID.
          * @param errorCode Error code.
          * @param errorRegister Error register value.
@@ -145,6 +155,7 @@ namespace CANopen
          * Get the command byte.
          * @return The command byte.
          */
+        // TODO: Const
         uint8_t getCommandByte();
 
         /**
@@ -157,6 +168,7 @@ namespace CANopen
          * Get the index of the target dictionnary Object.
          * @return The index.
          */
+        // TODO: Const
         uint16_t getIndex();
 
         /**
