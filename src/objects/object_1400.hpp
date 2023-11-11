@@ -17,7 +17,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the RPDO communication parameter (0x1400) object.
+     * RPDO communication parameter (0x1400) object.
      */
     class Object1400 : public Object
     {

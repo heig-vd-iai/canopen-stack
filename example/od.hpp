@@ -162,7 +162,7 @@ namespace CANopen
     };
 
     /**
-     * This class represents the Object Dictionary.
+     * Object Dictionary.
      * It is an auto-generated class that should not be manually edited.
      */
     class ObjectDictionnary

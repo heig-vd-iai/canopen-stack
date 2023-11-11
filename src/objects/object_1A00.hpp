@@ -10,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the TPDO mapping parameter (0x1A00) object.
+     * TPDO mapping parameter (0x1A00) object.
      */
     class Object1A00 : public Object
     {

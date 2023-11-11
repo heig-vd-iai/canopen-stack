@@ -8,7 +8,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the Restore default parameters (0x1011) object.
+     * Restore default parameters (0x1011) object.
      */
     class Object1011 : public Object
     {

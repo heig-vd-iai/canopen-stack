@@ -7,7 +7,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the Error register (0x1001) object.
+     * Error register (0x1001) object.
      */
     class Object1001 : public Object
     {

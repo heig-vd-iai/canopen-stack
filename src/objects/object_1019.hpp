@@ -10,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the Synchronous counter overflow value (0x1019) object.
+     * Synchronous counter overflow value (0x1019) object.
      */
     class Object1019 : public Object
     {

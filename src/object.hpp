@@ -10,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the base object entry in the Object Dictionnary.
+     * base object entry in the Object Dictionnary.
      * An object entry is identified by a sub-index, and belongs to an object.
      */
     struct ObjectEntryBase

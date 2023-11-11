@@ -8,7 +8,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the Store parameters (0x1010) object.
+     * Store parameters (0x1010) object.
      */
     class Object1010 : public Object
     {

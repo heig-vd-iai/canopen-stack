@@ -31,7 +31,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the SDO object.
+     * SDO object.
      * It handles data upload and download, in regular and block mode transfer.
      * See p. 37 of CIA301 for more details.
      */

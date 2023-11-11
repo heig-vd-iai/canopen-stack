@@ -10,7 +10,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the RPDO mapping parameter (0x1600) object.
+     * RPDO mapping parameter (0x1600) object.
      */
     class Object1600 : public Object
     {

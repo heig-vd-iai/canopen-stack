@@ -20,7 +20,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the TPDO communication parameter (0x1800) object.
+     * TPDO communication parameter (0x1800) object.
      */
     class Object1800 : public Object
     {

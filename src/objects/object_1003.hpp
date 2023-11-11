@@ -7,7 +7,7 @@
 namespace CANopen
 {
     /**
-     * This class represents the Pre-defined error field (0x1003) object.
+     * Pre-defined error field (0x1003) object.
      */
     class Object1003 : public Object
     {
