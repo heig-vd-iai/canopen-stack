@@ -36,9 +36,11 @@ pip3 -r requirements.txt
 You can run the generator.py script by providing the path of the EDS file and the node ID:
 
 ```bash
-python3 generator.py example.eds 1
+python3 -mgenerator --id=1 generator/example.eds > od.hpp
 ```
+
 The node ID is required because it may be referenced in the EDS file, for example for PDO COB-ID.
+
 The script will do some basic verification, such as missing mandatory objects, missing mapped objects, or unsupported data types.
 
 > [NOTE]
