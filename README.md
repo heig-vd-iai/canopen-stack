@@ -81,30 +81,30 @@ Here is the list of supported data types and their assigned C type :
 
 | Code | Name            | C Type     |
 | ---- | --------------- | ---------- |
-| 0x01 | BOOLEAN         | bool       |
-| 0x02 | INTEGER8        | int8_t     |
-| 0x03 | INTEGER16       | int16_t    |
-| 0x04 | INTEGER32       | int32_t    |
-| 0x05 | UNSIGNED8       | uint8_t    |
-| 0x06 | UNSIGNED16      | uint16_t   |
-| 0x07 | UNSIGNED32      | uint32_t   |
-| 0x08 | REAL32          | float      |
-| 0x09 | VISIBLE_STRING  | uint8_t[ ] |
-| 0x0A | OCTET_STRING    | uint8_t[ ] |
-| 0x0B | UNICODE_STRING  | uint8_t[ ] |
-| 0x0C | TIME_OF_DAY     | uint64_t   |
-| 0x0D | TIME_DIFFERENCE | uint64_t   |
-| 0x10 | INTEGER24       | int32_t    |
-| 0x11 | REAL64          | double     |
-| 0x12 | INTEGER40       | int64_t    |
-| 0x13 | INTEGER48       | int64_t    |
-| 0x14 | INTEGER56       | int64_t    |
-| 0x15 | INTEGER64       | int64_t    |
-| 0x16 | UNSIGNED24      | uint32_t   |
-| 0x18 | UNSIGNED40      | uint64_t   |
-| 0x19 | UNSIGNED48      | uint64_t   |
-| 0x1A | UNSIGNED56      | uint64_t   |
-| 0x1B | UNSIGNED64      | uint64_t   |
+| 0x01 | BOOLEAN         | `bool`       |
+| 0x02 | INTEGER8        | `int8_t`     |
+| 0x03 | INTEGER16       | `int16_t`    |
+| 0x04 | INTEGER32       | `int32_t`    |
+| 0x05 | UNSIGNED8       | `uint8_t`    |
+| 0x06 | UNSIGNED16      | `uint16_t`   |
+| 0x07 | UNSIGNED32      | `uint32_t`   |
+| 0x08 | REAL32          | `float`      |
+| 0x09 | VISIBLE_STRING  | `uint8_t[ ]` |
+| 0x0A | OCTET_STRING    | `uint8_t[ ]` |
+| 0x0B | UNICODE_STRING  | `uint8_t[ ]` |
+| 0x0C | TIME_OF_DAY     | `uint64_t`   |
+| 0x0D | TIME_DIFFERENCE | `uint64_t`   |
+| 0x10 | INTEGER24       | `int32_t`    |
+| 0x11 | REAL64          | `double`     |
+| 0x12 | INTEGER40       | `int64_t`    |
+| 0x13 | INTEGER48       | `int64_t`    |
+| 0x14 | INTEGER56       | `int64_t`    |
+| 0x15 | INTEGER64       | `int64_t`    |
+| 0x16 | UNSIGNED24      | `uint32_t`   |
+| 0x18 | UNSIGNED40      | `uint64_t`   |
+| 0x19 | UNSIGNED48      | `uint64_t`   |
+| 0x1A | UNSIGNED56      | `uint64_t`   |
+| 0x1B | UNSIGNED64      | `uint64_t`   |
 
 All of the non-regular integer types are automatically cast to the higher regular type, so for example INTEGER40 will be converted to INTEGER64, and so on.
 
@@ -184,6 +184,7 @@ Here is the list of standard objects, with unsupported ones being crossed :
 This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
 
 The interface is done by simply writing the function definition of a few class methods :
+
 - `Node::sendFrame`: send a frame to the CAN network
 - `Node::getTime_us`: called for internal timing
 - `ObjectDictionnary::saveData`: save object dictionnary data to non-volatile memory
