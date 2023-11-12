@@ -24,8 +24,8 @@ namespace CANopen
         uint8_t nodeId = 0;
         uint8_t functionCode = 0;
         uint8_t data[CAN_DATA_LENGTH] = {0};
-        uint8_t dlc = 0;
-        bool rtr = false;
+        uint8_t dlc = 0; // TODO: What is a dlc?
+        bool rtr = false; // TODO: What is a rtr?
 
         /**
          * Default constructor for a generic CANopen frame.
@@ -342,6 +342,7 @@ namespace CANopen
     /**
      * This is a specialized Frame used by the SYNC class.
      * See p. 63 of CIA301 for more details.
+     * TODO: Why not putting this frame into the sync module?
      */
     struct SYNCFrame : public Frame
     {
@@ -355,12 +356,12 @@ namespace CANopen
          * Check if the optionnal counter value is present in the message.
          * @return True if the counter is set, false otherwise.
          */
-        bool isCounter();
+        bool isCounter() const;
 
         /**
          * Get the counter value.
          * @return The counter value.
          */
-        uint8_t getCounter();
+        uint8_t getCounter() const;
     };
 }

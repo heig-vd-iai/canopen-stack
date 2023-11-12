@@ -1,9 +1,16 @@
 /**
- * Contains the declaration of the SYNC class.
+ * SYNC consumer.
+ *
+ * The SYNC producer broadcasts the synchronization object periodically.
+ * This SYNC provides the basic network synchronization mechanism.
+ * The time period between the SYNCs is specified by the standard
+ * parameter communication cycle period.
  */
 #pragma once
+
 #include <cstdint>
 #include <functional>
+
 #define SYNC_COUNTER_OFFSET 0
 
 namespace CANopen
@@ -24,6 +31,7 @@ namespace CANopen
 
         /**
          * Enable EMCY functionality, should be used by NMT only.
+         * TODO: Why enabling SYNC would enable EMCY and why should be used by NMT only? This is confusing.
          */
         void enable();
 

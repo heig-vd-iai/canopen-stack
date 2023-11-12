@@ -34,6 +34,7 @@ namespace CANopen
          * @param data Pointer to the raw data to be checked.
          * @return 0 for unbound entries. For limited entries, 0 if data is within limits, -1 if below, 1 if above.
          */
+        // TODO: Liskov substitution principle not respected here. All derived classes should return 0.
         inline int checkLimits(void *data) const { return 0; }
     };
 

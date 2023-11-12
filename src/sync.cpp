@@ -1,6 +1,3 @@
-/**
- * Contains the definitions of the SYNC class.
- */
 #include "sync.hpp"
 #include "enums.hpp"
 #include "frame.hpp"
@@ -27,6 +24,7 @@ void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != 0)
         return;
+    // TODO: Why is this needed? Why not just increment internalCounter?
     internalCounter = frame.isCounter() ? frame.getCounter() : internalCounter % maxCounter + 1;
     if (onSyncFunc)
         onSyncFunc(internalCounter);
