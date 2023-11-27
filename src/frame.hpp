@@ -1,7 +1,5 @@
 /**
- * Contains the declaration of all of the frame classes.
- * TODO: Title isn't very descriptive. Below I see a class Frame. So
- * it looks like I don't need this header. Insteal, describe what a Frame is.
+ * Contains the declaration of the basic, generic CANopen frame, as well as all specialized subclasses.
  */
 #pragma once
 #include <cstdint>
@@ -12,7 +10,6 @@
 #define NODEID_MASK 0x7F
 
 // TODO: I do not like indenting namespaces. It makes the code harder to read.
-// https://github.com/sass/libsass/issues/2917 to see why. Modify .clang-format accordingly
 namespace CANopen
 {
     /**
@@ -24,49 +21,27 @@ namespace CANopen
         uint8_t nodeId = 0;
         uint8_t functionCode = 0;
         uint8_t data[CAN_DATA_LENGTH] = {0};
-        uint8_t dlc = 0; // TODO: What is a dlc?
-        bool rtr = false; // TODO: What is a rtr?
-
-        /**
-         * Default constructor for a generic CANopen frame.
-         */
-        // TODO: No implementation in header files. You could use a default NodeId value in the nodeId constructor
-        Frame(){};
-
-        /**
-         * Constructor for a generic CANopen frame from node ID.
-         * @param nodeId Node ID.
-         */
-        Frame(uint8_t nodeId);
+        uint8_t dlc = 0;  // Data length
+        bool rtr = false; // Remote transmission request
 
         /**
          * Constructor for a generic CANopen frame from node ID and function code.
          * @param nodeId Node ID.
          * @param functionCode Function code.
          */
-        // TODO: functionCode could be optional, then one constructor instead of three.
-        Frame(uint8_t nodeId, uint8_t functionCode);
+        Frame(uint8_t nodeId = 0, uint8_t functionCode = 0);
 
         /**
-         * Constructor for a generic CANopen frame from COB-ID.
+         * Factory method for creating a generic CANopen frame from COB-ID.
          * @param cobId COB-ID of the message.
          */
-        // TODO: Very confusing. I would instead use a factory method to create a Frame from a COB-ID.
-        // auto frame = Frame::fromCobId(cobId);
-        Frame(uint16_t cobId);
+        static Frame fromCobId(uint16_t cobId);
 
         /**
          * Get the CANopen COB-ID.
          * @return The COB-ID value.
          */
-        // TODO This one doesn't modify the instance : const
         uint16_t getCobID() const;
-
-        /**
-         * Set the CANopen COB-ID.
-         * @param cobId The COB-ID to set.
-         */
-        void setCobID(uint16_t cobId);
     };
 
     /**
@@ -97,10 +72,9 @@ namespace CANopen
     {
         /**
          * Constructor for specialized CANopen emergency frame.
-         * TODO: Very useless documentation. I do not have more information here :(
          * @param nodeId Node ID.
-         * @param errorCode Error code.
-         * @param errorRegister Error register value.
+         * @param errorCode Error code, should be a value from EMCYErrorCodes enum.
+         * @param errorRegister Error register value, should come from object 0x1001.
          * @param manufacturerCode Manufacturer-specific error code.
          */
         EmergencyFrame(uint8_t nodeId, uint16_t errorCode, uint8_t errorRegister, uint32_t manufacturerCode);
@@ -155,8 +129,7 @@ namespace CANopen
          * Get the command byte.
          * @return The command byte.
          */
-        // TODO: Const
-        uint8_t getCommandByte();
+        uint8_t getCommandByte() const;
 
         /**
          * Set the index of the target dictionnary Object.
@@ -168,8 +141,7 @@ namespace CANopen
          * Get the index of the target dictionnary Object.
          * @return The index.
          */
-        // TODO: Const
-        uint16_t getIndex();
+        uint16_t getIndex() const;
 
         /**
          * Set the subindex of the target dictionnary Object.
@@ -181,7 +153,7 @@ namespace CANopen
          * Get the subindex of the target dictionnary Object.
          * @return The subindex.
          */
-        uint8_t getSubindex();
+        uint8_t getSubindex() const;
 
         /**
          * Set the abort code.
@@ -193,7 +165,7 @@ namespace CANopen
          * Get the abort code.
          * @return The abort code.
          */
-        uint32_t getAbortCode();
+        uint32_t getAbortCode() const;
     };
 
     /**
@@ -225,7 +197,7 @@ namespace CANopen
          * Get the data (d) field (bytes 4 to 7) from an initiate frame.
          * @return The initiate data.
          */
-        uint32_t getInitiateData();
+        uint32_t getInitiateData() const;
     };
 
     /**
@@ -257,7 +229,7 @@ namespace CANopen
          * Get the size field (bytes 4 to 7) from a block initiate frame.
          * @return The size.
          */
-        uint32_t getSize();
+        uint32_t getSize() const;
 
         /**
          * Set the block size (blksize) field (byte 4) to a block initiate frame.
@@ -269,7 +241,7 @@ namespace CANopen
          * Get the block size (blksize) field (byte 4) from a block initiate frame.
          * @return The block size.
          */
-        uint8_t getInitiateBlockSize();
+        uint8_t getInitiateBlockSize() const;
 
         /**
          * Set the block size (blksize) field (byte 2) to a block download/upload sub-block frame.
@@ -281,7 +253,7 @@ namespace CANopen
          * Get the block size (blksize) field (byte 2) from a block download/upload sub-block frame.
          * @return The block size.
          */
-        uint8_t getSubBlockSize();
+        uint8_t getSubBlockSize() const;
 
         /**
          * Set the CRC field (bytes 1 to 2) to a block end frame.
@@ -293,7 +265,7 @@ namespace CANopen
          * Get the CRC field (bytes 1 to 2) from a block end frame.
          * @return The CRC value.
          */
-        uint16_t getCRC();
+        uint16_t getCRC() const;
 
         /**
          * Set the last sequence number (ackseq) field (byte 1) to a block download/upload sub-block frame.
@@ -305,13 +277,13 @@ namespace CANopen
          * Get the last sequence number (ackseq) field (byte 1) from a block download/upload sub-block frame.
          * @return The ackseq value.
          */
-        uint8_t getAckseq();
+        uint8_t getAckseq() const;
 
         /**
          * Get the protocol switch threshold (pst) field (byte 5) from a block upload initiate frame.
          * @return The pst value.
          */
-        uint8_t getPST();
+        uint8_t getPST() const;
     };
 
     /**
@@ -330,19 +302,18 @@ namespace CANopen
          * Get the NMT command.
          * @return The NMT command.
          */
-        uint8_t getCommand();
+        uint8_t getCommand() const;
 
         /**
          * Get the target node ID for the command (0 if broadcasting).
          * @return The target node ID.
          */
-        uint8_t getTargetId();
+        uint8_t getTargetId() const;
     };
 
     /**
      * This is a specialized Frame used by the SYNC class.
      * See p. 63 of CIA301 for more details.
-     * TODO: Why not putting this frame into the sync module?
      */
     struct SYNCFrame : public Frame
     {
