@@ -11,51 +11,51 @@
 
 namespace CANopen
 {
+/**
+ * Heartbeat object.
+ * It automatically handles the emission of heartbeat messages.
+ * See p. 76 of CIA301 for more details.
+ */
+class HB
+{
+private:
+    class Node &node;
+    uint32_t lastPublish = 0;
+    uint8_t toggleBit = 0;
+
     /**
-     * Heartbeat object.
-     * It automatically handles the emission of heartbeat messages.
-     * See p. 76 of CIA301 for more details.
+     * Internal method to publish the NMT state.
+     * @param state NMT state to publish.
+     * @param toggleBit Toggle bit value for node guarding (defaults to 0).
      */
-    class HB
-    {
-    private:
-        class Node &node;
-        uint32_t lastPublish = 0;
-        uint8_t toggleBit = 0;
+    void publishState(NMTStates state, uint8_t toggleBit = 0);
 
-        /**
-         * Internal method to publish the NMT state.
-         * @param state NMT state to publish.
-         * @param toggleBit Toggle bit value for node guarding (defaults to 0).
-         */
-        void publishState(NMTStates state, uint8_t toggleBit = 0);
+    /**
+     * Update this object.
+     * If producer heartbeat time (0x1017) is configured, the state will be published at said rate.
+     * @param timestamp_us Current timestamp in microseconds.
+     */
+    void update(uint32_t timestamp_us);
 
-        /**
-         * Update this object.
-         * If producer heartbeat time (0x1017) is configured, the state will be published at said rate.
-         * @param timestamp_us Current timestamp in microseconds.
-         */
-        void update(uint32_t timestamp_us);
+    /**
+     * Receive and process a node guarding RTR frame.
+     * @param frame Frame to be processed.
+     */
+    void receiveFrame(class Frame &frame);
 
-        /**
-         * Receive and process a node guarding RTR frame.
-         * @param frame Frame to be processed.
-         */
-        void receiveFrame(class Frame &frame);
+    /**
+     * Reset the toggle bit value to 0.
+     * This method should only be called by the NMT state machine.
+     */
+    void resetToggleBit();
 
-        /**
-         * Reset the toggle bit value to 0.
-         * This method should only be called by the NMT state machine.
-         */
-        void resetToggleBit();
-
-    public:
-        friend class NMT;
-        friend class Node;
-        /**
-         * Constructor for the HB class.
-         * @param node The parent Node reference.
-         */
-        HB(class Node &node);
-    };
+public:
+    friend class NMT;
+    friend class Node;
+    /**
+     * Constructor for the HB class.
+     * @param node The parent Node reference.
+     */
+    HB(class Node &node);
+};
 }
