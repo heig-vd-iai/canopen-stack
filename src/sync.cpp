@@ -24,7 +24,7 @@ void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us)
 {
     if (!enabled || frame.nodeId != 0)
         return;
-    // TODO: Why is this needed? Why not just increment internalCounter?
+    // In case a sync frame is received without a value, increment internal counter, otherwise copy.
     internalCounter = frame.isCounter() ? frame.getCounter() : internalCounter % maxCounter + 1;
     if (onSyncFunc)
         onSyncFunc(internalCounter);

@@ -28,12 +28,12 @@ private:
     class Object1001 *errorRegisterObject;
 
     /**
-     * Enable EMCY functionality, should be used by NMT only.
+     * Enable EMCY functionality, should only be called internally by NMT class.
      */
     void enable();
 
     /**
-     * Disable EMCY functionality, should be used by NMT only.
+     * Disable EMCY functionality, should only be called internally by NMT class.
      */
     void disable();
 

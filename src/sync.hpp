@@ -30,13 +30,12 @@ private:
     std::function<void(unsigned)> onSyncFunc;
 
     /**
-     * Enable EMCY functionality, should be used by NMT only.
-     * TODO: Why enabling SYNC would enable EMCY and why should be used by NMT only? This is confusing.
+     * Enable EMCY functionality, should only be called internally by NMT class.
      */
     void enable();
 
     /**
-     * Disable EMCY functionality, should be used by NMT only.
+     * Disable EMCY functionality, should only be called internally by NMT class.
      */
     void disable();
 

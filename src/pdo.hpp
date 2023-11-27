@@ -68,12 +68,12 @@ private:
     std::function<void(unsigned)> onTimeoutFunc;
 
     /**
-     * Enable PDO functionality, should be used by NMT only.
+     * Enable PDO functionality, should only be called internally by NMT class.
      */
     void enable();
 
     /**
-     * Disable PDO functionality, should be used by NMT only.
+     * Disable PDO functionality, should only be called internally by NMT class.
      */
     void disable();
 

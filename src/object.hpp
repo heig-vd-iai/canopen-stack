@@ -20,8 +20,6 @@ struct ObjectEntryBase
     const uint32_t sizeBytes;
 
     /**
-     * TODO: We see it is a constructor: remove word constructor, documentation useless :(
-     * TODO: rename size with sizeInBytes or sizeBytes to avoid comment.
      * Constructor for the base object entry.
      * @param src Pointer to the data source.
      * @param accessType Access type of the object entry.
@@ -59,7 +57,6 @@ struct ObjectEntry : public ObjectEntryBase
  * An object entry is identified by a sub-index, and belongs to an object.
  * @tparam T Data type associated with the object entry.
  */
-// TODO: Not all objects have limited values ? Should be easier to have a generic object with or without limits?
 template <typename T>
 struct LimitedObjectEntry : public ObjectEntryBase
 {

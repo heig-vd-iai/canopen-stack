@@ -73,12 +73,12 @@ private:
     } buffer;
 
     /**
-     * Enable SDO functionality, should be used by NMT only.
+     * Enable SDO functionality, should only be called internally by NMT class.
      */
     void enable();
 
     /**
-     * Disable SDO functionality, should be used by NMT only.
+     * Disable SDO functionality, should only be called internally by NMT class.
      */
     void disable();
 

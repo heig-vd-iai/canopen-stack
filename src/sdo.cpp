@@ -43,11 +43,6 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     SDOCommandByte sendCommand = {0};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-
-    /* TODO: This is O(n), could be O(log n), and O(1) if using a map. Fetching
-       Fetching the object meta-data isn't an issue here, it can be repetable and fast.
-       However, the data should NOT be contained in the object.
-     */
     Object *object = node._od.findObject(index);
     if (!object)
     {
@@ -67,32 +62,23 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     transferData.index = index;
     transferData.subindex = subindex;
     transferData.object = object;
-    uint32_t size = object->getSize(subindex); // TODO: Why uint32_t ? The subindex is only 8-bit long. Use uint_least8_t instead.
+    uint32_t size = object->getSize(subindex);
     transferData.remainingBytes = size;
-    transferData.toggle = 0;
+    transferData.toggle = false;
     SDOFrame response(node.nodeId);
     if (size > SDO_INITIATE_DATA_LENGTH)
     { // Segment transfer
-        sendCommand.bits_initiate.e = 0;
-        sendCommand.bits_initiate.s = 1;
-        sendCommand.bits_initiate.n = 0;
+        sendCommand.bits_initiate.e = false;
+        sendCommand.bits_initiate.s = true;
+        sendCommand.bits_initiate.n = false;
         response.setInitiateData(size);
     }
     else
-    {                                    // Expedited transfer
-        sendCommand.bits_initiate.e = 1; // TODO: Use true or false
-        sendCommand.bits_initiate.s = 1;
+    { // Expedited transfer
+        sendCommand.bits_initiate.e = true;
+        sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
         uint32_t abortCode;
-        /* TODO: This readbyte can be SLOW. If the data has to be accessed through IPC, we cannot wait for it here.
-           The mechanism isn't reliable and will not work in our application.
-           One can imagine a two step process:
-           1. SDO request is checked (object validity, access type...)
-              If the SDO isn't locally available (remote value, through IPC)
-           2. A IPC request is made to fetch the data.
-              A queue is used to store the request and the SDO is put on hold.
-              When the data is available, the SDO is resumed and the data is sent.
-        */
         if ((abortCode = object->readBytes(subindex, response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) != SDOAbortCode_OK)
         {
             sendAbort(index, subindex, abortCode);
@@ -163,7 +149,7 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
     transferData.subindex = subindex;
     transferData.object = object;
     uint32_t size = object->getSize(subindex);
-    transferData.toggle = 0;
+    transferData.toggle = false;
     if (recvCommand.bits_initiate.e)
     { // Expedited transfer
         transferData.remainingBytes = recvCommand.bits_initiate.s ? SDO_INITIATE_DATA_LENGTH - recvCommand.bits_initiate.n : size;
@@ -271,8 +257,8 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
         transferData.blksize = request.getInitiateBlockSize();
         transferData.seqno = SDO_BLOCK_SEQNO_MIN;
         sendCommand.bits_upServerInitiate.scs = SDOCommandSpecifier_ServerBlockUpload;
-        sendCommand.bits_upServerInitiate.sc = 0;
-        sendCommand.bits_upServerInitiate.s = 1;
+        sendCommand.bits_upServerInitiate.sc = false;
+        sendCommand.bits_upServerInitiate.s = true;
         sendCommand.bits_upServerInitiate.ss = SDOSubCommand_ServerUploadInitiate;
         SDOBlockFrame response(node.nodeId, sendCommand.value);
         response.setIndex(index);
@@ -350,12 +336,12 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us)
     if (transferData.remainingBytes > SDO_BLOCK_DATA_LENGTH)
     {
         payloadSize = SDO_BLOCK_DATA_LENGTH;
-        cmd.bits_upServerSub.c = 0;
+        cmd.bits_upServerSub.c = false;
     }
     else
     {
         payloadSize = transferData.remainingBytes;
-        cmd.bits_upServerSub.c = 1;
+        cmd.bits_upServerSub.c = true;
     }
     uint32_t bytesSent = transferData.object->getSize(transferData.subindex) - transferData.remainingBytes;
     SDOBlockFrame frame(node.nodeId, cmd.value);
@@ -410,7 +396,7 @@ void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
     transferData.seqno = transferData.ackseq = 0;
     transferData.retries = 0;
     sendCommand.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
-    sendCommand.bits_downServer.sc = 0;
+    sendCommand.bits_downServer.sc = false;
     sendCommand.bits_downServer.ss = SDOSubCommand_ServerDownloadInitiate;
     SDOBlockFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);

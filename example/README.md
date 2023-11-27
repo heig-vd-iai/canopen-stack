@@ -1,8 +1,7 @@
 # Example
 
 To use this example we will use a virtual can interface named vcan0.
-
-TODO: Describe what is [can0.sh](can0.sh) and [vcan0.sh](vcan0.sh)
+The two can0.sh and vcan0.sh scripts are example setup commands for physical and virtual can interfaces.
 
 ## VCAN interface on WSL2
 

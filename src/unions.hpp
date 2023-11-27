@@ -76,21 +76,20 @@ union ErrorRegister
 union SDOCommandByte
 {
     uint8_t value;
-    // TODO: Better to have a union with short and long names: e/expedited, s/size, n/number, ccs/commandSpecifier
     struct
     {
-        bool s : 1;
-        bool e : 1;
-        unsigned n : 2;
+        bool s : 1;     // size indicator
+        bool e : 1;     // expedited transfer
+        unsigned n : 2; // n bytes that do not contain data
         unsigned reserved : 1;
-        unsigned ccs : 3;
+        unsigned ccs : 3; // client command specifier
     } bits_initiate;
     struct
     {
-        bool c : 1;
-        unsigned n : 3;
-        bool t : 1;
-        unsigned ccs : 3;
+        bool c : 1;       // final segment
+        unsigned n : 3;   // n bytes that do not contain data
+        bool t : 1;       // toggle bit
+        unsigned ccs : 3; // client command specifier
     } bits_segment;
 };
 
@@ -103,56 +102,56 @@ union SDOBlockCommandByte
     uint8_t value;
     struct
     {
-        bool cs : 1;
-        bool s : 1;
-        bool cc : 1;
+        bool cs : 1; // client subcommand
+        bool s : 1;  // size indicator
+        bool cc : 1; // client CRC support
         unsigned reserved : 2;
-        unsigned ccs : 3;
+        unsigned ccs : 3; // client command specifier
     } bits_downClientInitiate;
     struct
     {
-        unsigned seqno : 7;
-        bool c : 1;
+        unsigned seqno : 7; // sequence number
+        bool c : 1;         // final segment
     } bits_downClientSub;
     struct
     {
-        bool cs : 1;
+        bool cs : 1; // client subcommand
         bool reserved : 1;
-        unsigned n : 3;
-        unsigned ccs : 3;
+        unsigned n : 3;   // n bytes that do not contain data
+        unsigned ccs : 3; // client command specifier
     } bits_downClientEnd;
     struct
     {
-        unsigned ss : 2;
-        bool sc : 1;
+        unsigned ss : 2; // server subcommand
+        bool sc : 1;     // server CRC support
         unsigned reserved : 2;
-        unsigned scs : 3;
+        unsigned scs : 3; // server command specifier
     } bits_downServer;
     struct
     {
-        unsigned cs : 2;
-        bool cc : 1;
+        unsigned cs : 2; // client subcommand
+        bool cc : 1;     // client CRC support
         unsigned reserved : 2;
-        unsigned ccs : 3;
+        unsigned ccs : 3; // client command specifier
     } bits_upClient;
     struct
     {
-        bool ss : 1;
-        bool s : 1;
-        bool sc : 1;
+        bool ss : 1; // server subcommand
+        bool s : 1;  // size indicator
+        bool sc : 1; // server CRC support
         unsigned reserved : 2;
-        unsigned scs : 3;
+        unsigned scs : 3; // server command specifier
     } bits_upServerInitiate;
     struct
     {
-        unsigned seqno : 7;
-        bool c : 1;
+        unsigned seqno : 7; // sequence number
+        bool c : 1;         // final segment
     } bits_upServerSub;
     struct
     {
-        unsigned ss : 2;
-        unsigned n : 3;
-        unsigned scs : 3;
+        unsigned ss : 2;  // server subcommand
+        unsigned n : 3;   // n bytes that do not contain data
+        unsigned scs : 3; // server command specifier
     } bits_upServerEnd;
 };
 }
