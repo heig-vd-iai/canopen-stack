@@ -45,7 +45,7 @@ struct Frame
 
 /**
  * This is a specialized Frame used by the HB class.
- * See p. 76 of CIA301 for more details.
+ * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
 struct HeartbeatFrame : public Frame
 {
@@ -65,7 +65,7 @@ struct HeartbeatFrame : public Frame
 
 /**
  * This is a specialized Frame used by the EMCY class.
- * See p. 68 of CIA301 for more details.
+ * See CiA301:2011§7.2.7.3.1 (p. 68)
  */
 struct EmergencyFrame : public Frame
 {
@@ -101,7 +101,7 @@ struct EmergencyFrame : public Frame
  * This is a specialized Frame used by the SDO class.
  * It is the base class for SDOFrame and SDOBlockFrame.
  * It contains common accessors for both its subclasses.
- * See p. 48 of CIA301 for more details.
+ * CiA301:2011§7.2.4.3 (p. 48)
  */
 struct SDOFrameBase : public Frame
 {
@@ -169,7 +169,8 @@ struct SDOFrameBase : public Frame
 
 /**
  * This is a specialized Frame used by the SDO class when dealing with SDO transactions.
- * See p. 48 of CIA301 for more details.
+ *
+ * CiA301:2011§7.2.4.3 (p. 48)
  */
 struct SDOFrame : public SDOFrameBase
 {
@@ -201,7 +202,7 @@ struct SDOFrame : public SDOFrameBase
 
 /**
  * This is a specialized Frame used by the SDO class when dealing with SDO block transactions.
- * See p. 53 of CIA301 for more details.
+ * CiA301:2011§7.2.4.3 (p. 53)
  */
 struct SDOBlockFrame : public SDOFrameBase
 {
@@ -287,7 +288,7 @@ struct SDOBlockFrame : public SDOFrameBase
 
 /**
  * This is a specialized Frame used by the NMT class.
- * See p. 72 of CIA301 for more details.
+ * CiA301:2011§7.2.8.3.1 (p. 72)
  */
 struct NMTFrame : public Frame
 {
@@ -312,7 +313,7 @@ struct NMTFrame : public Frame
 
 /**
  * This is a specialized Frame used by the SYNC class.
- * See p. 63 of CIA301 for more details.
+ * CiA301:2011§7.2.5.3.1 (p. 63)
  */
 struct SYNCFrame : public Frame
 {

@@ -7,10 +7,8 @@ namespace CANopen
 {
 /**
  * Enumeration representing the CANopen function codes.
- * See p. 81 of CIA301 for more details.
+ * See CiA301:2011§7.3.3 (p. 81)
  */
-// TODO: Refer to standard with complete reference i.e. CiA301:2011§7.3.3
-// TODO: Use enum class instead of enum to avoid mangling
 enum FunctionCodes
 {
     FunctionCode_NMT = 0b0000,
@@ -32,8 +30,7 @@ enum FunctionCodes
 
 /**
  * Enumeration representing the states of the NMT state machine.
- * See p. 76 of CIA301 for more details.
- * TODO: Full Reference
+ * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
 enum NMTStates
 {
@@ -45,8 +42,7 @@ enum NMTStates
 
 /**
  * Enumeration representing the NMT initialisation state substeps.
- * See p. 79 of CIA301 for more details.
- * TODO: Full Reference
+ * See CiA301:2011§7.3.2.2.1 (p. 79)
  */
 enum NMTResetStates
 {
@@ -57,7 +53,7 @@ enum NMTResetStates
 
 /**
  * Enumeration representing the NMT command specifiers sent by the master.
- * See p. 72 of CIA301 for more details.
+ * See CiA301:2011§7.2.8.3.1 (p. 72)
  */
 enum NMTServiceCommands
 {
@@ -71,7 +67,7 @@ enum NMTServiceCommands
 
 /**
  * Enumeration representing the command specifier part in the SDO command byte.
- * See p. 49 of CIA301 for more details.
+ * See CiA301:2011§7.2.4.3 (p. 49)
  */
 enum SDOCommandSpecifiers
 {
@@ -92,7 +88,7 @@ enum SDOCommandSpecifiers
 
 /**
  * Enumeration representing the subcommand part in the SDO block command byte.
- * See p. 54 of CIA301 for more details.
+ * See CiA301:2011§7.2.4.3 (p. 54)
  */
 enum SDOSubCommands
 {
@@ -112,7 +108,7 @@ enum SDOSubCommands
 /**
  * Enumeration representing all of the available SDO abort codes available.
  * Some special abort codes were added, but are only used internally and should never be sent.
- * See p. 61 of CIA301 for more details.
+ * See CiA301:2011§7.2.4.3.17 (p. 61)
  */
 enum SDOAbortCodes
 {
@@ -153,7 +149,7 @@ enum SDOAbortCodes
 
 /**
  * Enumeration representing all of the available EMCY error codes.
- * See p. 64 of CIA301 for more details.
+ * See CiA301:2011§7.2.7.1 (p. 64)
  */
 enum EMCYErrorCodes
 {
@@ -196,7 +192,7 @@ enum EMCYErrorCodes
 
 /**
  * Enumeration representing the bit number of each bit in the error register.
- * See p. 92 of CIA301 for more details.
+ * See CiA301:2011§7.5.2.2 (p. 92)
  */
 enum ErrorRegisterBits
 {
@@ -213,7 +209,7 @@ enum ErrorRegisterBits
  * Enumeration representing the parameter groups for saving and restoring the object dictionnary.
  * This enum only accounts for 3 first default groups.
  * Up to 255 groups can be implemented, depending on the device profile or manufacturer.
- * See p. 101 of CIA301 for more details.
+ * See CiA301:2011§7.5.2.13 (p. 101)
  */
 enum ParameterGroups
 {

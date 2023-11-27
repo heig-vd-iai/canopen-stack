@@ -12,7 +12,7 @@ namespace CANopen
 /**
  * NMT object.
  * It handles the reception of NMT commands, as well as the management of the NMT state machine.
- * See p. 68 of CIA301 for more details.
+ * See CiA301:2011§7.2.8 (p. 68)
  */
 class NMT
 {

@@ -18,7 +18,7 @@ namespace CANopen
 /**
  * SYNC object.
  * It automatically handles the reception of SYNC events and calls associated callback for PDO class.
- * See p. 62 of CIA301 for more details.
+ * See CiA301:2011§7.2.5 (p. 62)
  */
 class SYNC
 {

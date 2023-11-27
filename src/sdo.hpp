@@ -33,7 +33,7 @@ namespace CANopen
 /**
  * SDO object.
  * It handles data upload and download, in regular and block mode transfer.
- * See p. 37 of CIA301 for more details.
+ * See CiA301:2011§7.2.4 (p. 37)
  */
 class SDO
 {

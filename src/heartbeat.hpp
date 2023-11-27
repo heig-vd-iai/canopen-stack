@@ -14,7 +14,7 @@ namespace CANopen
 /**
  * Heartbeat object.
  * It automatically handles the emission of heartbeat messages.
- * See p. 76 of CIA301 for more details.
+ * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
 class HB
 {

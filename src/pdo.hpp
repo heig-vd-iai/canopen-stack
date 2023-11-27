@@ -16,7 +16,7 @@ namespace CANopen
 /**
  * PDO object.
  * It handles the emission and reception of TPDOs and RPDOs, as well as their mapping and communication parameters.
- * See p. 31 of CIA301 for more details.
+ * See CiA301:2011§7.2.2 (p. 31)
  */
 class PDO
 {

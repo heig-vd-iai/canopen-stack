@@ -17,7 +17,7 @@ namespace CANopen
 /**
  * Emergency object.
  * It handles the emission of emergency messages, as well as the pre-defined error field and error register.
- * See p. 64 of CIA301 for more details.
+ * See CiA301:2011§7.2.7 (p. 64)
  */
 class EMCY
 {

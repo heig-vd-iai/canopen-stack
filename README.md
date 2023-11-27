@@ -458,7 +458,7 @@ Despite the majority of the CANopen specification being well implemented, there 
 
 - The TIME object is not supported.
 - PDO mapping is limited to 8 objects, as granularity is set to 8 (byte level mapping).
-- The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see p.80).
+- The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see CiA301:2011§7.3.3 at page 80).
 - Because of the generic connection set, mutation of COB-IDs during runtime is unsupported.
 - Multiple RPDOS above default 4 are not supported, but multiple TPDOS (above default 4) are supported.
 - MPDOs are not supported
