@@ -81,7 +81,7 @@ void listenFunc(Node &node, mutex &mtx)
         if (recv(sock, &canFrame, sizeof(canFrame), 0))
         {
             mtx.lock();
-            Frame CANopenFrame((uint16_t)canFrame.can_id);
+            Frame CANopenFrame = Frame::fromCobId(canFrame.can_id);
             CANopenFrame.dlc = canFrame.can_dlc;
             CANopenFrame.rtr = canFrame.can_id & CAN_RTR_FLAG;
             memcpy(CANopenFrame.data, canFrame.data, canFrame.can_dlc);
@@ -103,7 +103,6 @@ void updateFunc(Node &node, mutex &mtx)
             node.update();
             mtx.unlock();
         }
-        // this_thread::sleep_for(chrono::microseconds(100));
     }
 }
 
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
     }
 
     Node node;
-    cout << "Starting node with ID " << node.nodeId << " on interface " << argv[1] << endl;
+    cout << "Starting node with ID " << (int)node.nodeId << " on interface " << argv[1] << endl;
 #ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)
                          { cout << "Timeout occured on RPDO" << index << endl; });
