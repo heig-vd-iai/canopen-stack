@@ -81,16 +81,16 @@ namespace CANopen
         {
             bool s : 1;
             bool e : 1;
-            int n : 2;
-            int reserved : 1;
-            int ccs : 3;
+            unsigned n : 2;
+            unsigned reserved : 1;
+            unsigned ccs : 3;
         } bits_initiate;
         struct
         {
             bool c : 1;
-            int n : 3;
+            unsigned n : 3;
             bool t : 1;
-            int ccs : 3;
+            unsigned ccs : 3;
         } bits_segment;
     };
 
@@ -106,53 +106,53 @@ namespace CANopen
             bool cs : 1;
             bool s : 1;
             bool cc : 1;
-            int reserved : 2;
-            int ccs : 3;
+            unsigned reserved : 2;
+            unsigned ccs : 3;
         } bits_downClientInitiate;
         struct
         {
-            int seqno : 7;
+            unsigned seqno : 7;
             bool c : 1;
         } bits_downClientSub;
         struct
         {
             bool cs : 1;
             bool reserved : 1;
-            int n : 3;
-            int ccs : 3;
+            unsigned n : 3;
+            unsigned ccs : 3;
         } bits_downClientEnd;
         struct
         {
-            int ss : 2;
+            unsigned ss : 2;
             bool sc : 1;
-            int reserved : 2;
-            int scs : 3;
+            unsigned reserved : 2;
+            unsigned scs : 3;
         } bits_downServer;
         struct
         {
-            int cs : 2;
+            unsigned cs : 2;
             bool cc : 1;
-            int reserved : 2;
-            int ccs : 3;
+            unsigned reserved : 2;
+            unsigned ccs : 3;
         } bits_upClient;
         struct
         {
             bool ss : 1;
             bool s : 1;
             bool sc : 1;
-            int reserved : 2;
-            int scs : 3;
+            unsigned reserved : 2;
+            unsigned scs : 3;
         } bits_upServerInitiate;
         struct
         {
-            int seqno : 7;
+            unsigned seqno : 7;
             bool c : 1;
         } bits_upServerSub;
         struct
         {
-            int ss : 2;
-            int n : 3;
-            int scs : 3;
+            unsigned ss : 2;
+            unsigned n : 3;
+            unsigned scs : 3;
         } bits_upServerEnd;
     };
 }
