@@ -5,14 +5,14 @@
 #include "../node.hpp"
 using namespace CANopen;
 
-SDOAbortCodes Object1003::preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
+SDOAbortCodes Object1003::preReadBytes(uint8_t subindex, uint8_t * /*bytes*/, uint32_t /*size*/, uint32_t /*offset*/)
 {
     if (subindex > getCount())
         return SDOAbortCode_NoDataAvailable;
     return SDOAbortCode_OK;
 }
 
-SDOAbortCodes Object1003::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node)
+SDOAbortCodes Object1003::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t /*size*/, class Node & /*node*/)
 {
     if (subindex == OBJECT_INDEX_COUNT)
     {

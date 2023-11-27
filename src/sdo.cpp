@@ -79,7 +79,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
         response.setInitiateData(size);
     }
     else
-    { // Expedited transfer
+    {                                    // Expedited transfer
         sendCommand.bits_initiate.e = 1; // TODO: Use true or false
         sendCommand.bits_initiate.s = 1;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
