@@ -40,9 +40,8 @@ namespace CANopen
         /**
          * Receive and process a node guarding RTR frame.
          * @param frame Frame to be processed.
-         * @param timestamp_us Timestamp in microseconds of the frame reception.
          */
-        void receiveFrame(class Frame &frame, uint32_t timestamp_us);
+        void receiveFrame(class Frame &frame);
 
         /**
          * Reset the toggle bit value to 0.

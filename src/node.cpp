@@ -35,7 +35,7 @@ void Node::receiveFrame(Frame frame)
         _nmt.receiveFrame((NMTFrame &)frame);
         break;
     case FunctionCode_HEARTBEAT:
-        _hb.receiveFrame(frame, timestamp);
+        _hb.receiveFrame(frame);
         break;
     case FunctionCode_SYNC:
         _sync.receiveFrame((SYNCFrame &)frame, timestamp);

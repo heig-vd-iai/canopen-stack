@@ -26,7 +26,7 @@ void HB::update(uint32_t timestamp_us)
 #endif
 }
 
-void HB::receiveFrame(Frame &frame, uint32_t timestamp_us)
+void HB::receiveFrame(Frame &frame)
 {
     if (frame.nodeId != node.nodeId || !frame.rtr)
         return;
