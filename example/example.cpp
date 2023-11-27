@@ -109,7 +109,7 @@ void updateFunc(Node &node, mutex &mtx)
 
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, [](int signum)
+    signal(SIGINT, [](int /*signum*/)
            { quit = true; });
     int ifindex;
     if (argc < 2)
@@ -253,7 +253,7 @@ uint32_t Node::getTime_us()
     return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-bool ObjectDictionnary::saveData(uint8_t parameterGroup)
+bool ObjectDictionnary::saveData(uint8_t /*parameterGroup*/)
 {
     ofstream f(FILENAME, ios::out | ios::binary);
     if (!f)
@@ -263,7 +263,7 @@ bool ObjectDictionnary::saveData(uint8_t parameterGroup)
     return true;
 }
 
-bool ObjectDictionnary::loadData(uint8_t parameterGroup)
+bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/)
 {
     ifstream f(FILENAME, ios::in | ios::binary);
     if (!f)
@@ -275,7 +275,7 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup)
     return true;
 }
 
-bool ObjectDictionnary::restoreData(uint8_t parameterGroup)
+bool ObjectDictionnary::restoreData(uint8_t /*parameterGroup*/)
 {
     objects.entries.data = ObjectDictionnaryData();
     node.pdo().reloadTPDO();
