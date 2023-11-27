@@ -94,7 +94,6 @@ public:
 
     /**
      * Get the Emergency object.
-     * TODO: Inutile :( On vois bien que emcy returns a reference to emcy
      * @return Reference to the EMCY instance.
      */
     EMCY &emcy();

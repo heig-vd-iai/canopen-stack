@@ -17,7 +17,7 @@ struct ObjectEntryBase
 {
     const void *dataSrc;
     const AccessType accessType;
-    const uint32_t size;
+    const uint32_t sizeBytes;
 
     /**
      * TODO: We see it is a constructor: remove word constructor, documentation useless :(
@@ -25,9 +25,9 @@ struct ObjectEntryBase
      * Constructor for the base object entry.
      * @param src Pointer to the data source.
      * @param accessType Access type of the object entry.
-     * @param size Size in bytes of the data associated with the entry.
+     * @param sizeBytes Size in bytes of the data associated with the entry.
      */
-    ObjectEntryBase(void *src, uint8_t accessType, uint32_t size) : dataSrc(src), accessType{accessType}, size(size) {}
+    ObjectEntryBase(void *src, uint8_t accessType, uint32_t sizeBytes) : dataSrc(src), accessType{accessType}, sizeBytes(sizeBytes) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -100,42 +100,42 @@ protected:
      * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise readBytes will be cancelled.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the destination buffer.
-     * @param size Number of bytes to read.
+     * @param sizeBytes Number of bytes to read.
      * @param offset Offset within the object entry data.
      * @return SDOAbortCodes indicating operation status.
      */
-    virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
+    virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
 
     /**
      * Post-read operation hook for processing after reading bytes.
      * This function is called after a sucessful readBytes operation.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the destination buffer.
-     * @param size Number of bytes read.
+     * @param sizeBytes Number of bytes read.
      * @param offset Offset within the object entry data.
      */
-    virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
+    virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
 
     /**
      * Pre-write operation hook for processing before writing bytes.
      * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise writeBytes will be cancelled.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the source buffer.
-     * @param size Number of bytes to write.
+     * @param sizeBytes Number of bytes to write.
      * @param node Reference to the Node instance.
      * @return SDOAbortCodes indicating operation status.
      */
-    virtual SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
+    virtual SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
     /**
      * Post-write operation hook for processing after writing bytes.
      * Called after a sucessful writeBytes operation.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the source buffer.
-     * @param size Number of bytes written.
+     * @param sizeBytes Number of bytes written.
      * @param node Reference to the Node instance.
      */
-    virtual void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
+    virtual void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
 public:
     const uint16_t index;
@@ -175,22 +175,22 @@ public:
      * This method should only be called by SDO class.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the destination buffer.
-     * @param size Number of bytes to read.
+     * @param sizeBytes Number of bytes to read.
      * @param offset Offset within the object entry data.
      * @return SDOAbortCodes indicating operation status.
      */
-    SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset);
+    SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
 
     /**
      * Write bytes to an object entry.
      * This method should only be called by SDO class.
      * @param subindex Subindex of the object entry.
      * @param bytes Pointer to the source buffer.
-     * @param size Number of bytes to write.
+     * @param sizeBytes Number of bytes to write.
      * @param node Reference to the Node instance.
      * @return SDOAbortCodes indicating operation status.
      */
-    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node);
+    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
     /**
      * Get the number of entries in the object, **if object is not of type VAR**.
@@ -209,7 +209,7 @@ public:
     template <typename T>
     inline bool getValue(uint8_t subindex, T *value)
     {
-        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->size)
+        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
             return false;
         *value = *(T *)entries[subindex]->dataSrc;
         return true;
@@ -226,7 +226,7 @@ public:
     template <typename T>
     inline bool setValue(uint8_t subindex, T value)
     {
-        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->size)
+        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
             return false;
         *(T *)entries[subindex]->dataSrc = value;
         return true;

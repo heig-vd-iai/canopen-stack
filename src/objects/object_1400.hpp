@@ -24,9 +24,9 @@ class Object1400 : public Object
 private:
     bool remap = false;
 
-    SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
-    SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
-    void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
+    SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset) override;
+    SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node) override;
+    void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node) override;
 
 public:
     /**

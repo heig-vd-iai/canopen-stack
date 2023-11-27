@@ -1,6 +1,5 @@
 /**
  * Contains the declaration of the HB class.
- * TODO: Document what this class does.
  */
 #pragma once
 #include "enums.hpp"
@@ -13,7 +12,7 @@ namespace CANopen
 {
 /**
  * Heartbeat object.
- * It automatically handles the emission of heartbeat messages.
+ * It automatically handles the following protocols: node guarding, heartbeat, boot-up.
  * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
 class HB

@@ -221,9 +221,9 @@ struct SDOBlockFrame : public SDOFrameBase
 
     /**
      * Set the size field (bytes 4 to 7) to a block initiate frame.
-     * @param size Size to set.
+     * @param sizeBytes Size to set.
      */
-    void setSize(uint32_t size);
+    void setSize(uint32_t sizeBytes);
 
     /**
      * Get the size field (bytes 4 to 7) from a block initiate frame.
@@ -233,9 +233,9 @@ struct SDOBlockFrame : public SDOFrameBase
 
     /**
      * Set the block size (blksize) field (byte 4) to a block initiate frame.
-     * @param blockSize Block size to set.
+     * @param blockSizeBytes Block size to set.
      */
-    void setInitiateBlockSize(uint8_t blockSize);
+    void setInitiateBlockSize(uint8_t blockSizeBytes);
 
     /**
      * Get the block size (blksize) field (byte 4) from a block initiate frame.
@@ -245,13 +245,13 @@ struct SDOBlockFrame : public SDOFrameBase
 
     /**
      * Set the block size (blksize) field (byte 2) to a block download/upload sub-block frame.
-     * @param blockSize Block size to set.
+     * @param blockSizeBytes Block size to set.
      */
-    void setSubBlockSize(uint8_t blockSize);
+    void setSubBlockSize(uint8_t blockSizeBytes);
 
     /**
      * Get the block size (blksize) field (byte 2) from a block download/upload sub-block frame.
-     * @return The block size.
+     * @return The block size in bytes.
      */
     uint8_t getSubBlockSize() const;
 

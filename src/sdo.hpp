@@ -200,9 +200,9 @@ private:
     /**
      * Append data to the download buffer.
      * @param data Pointer to the source data.
-     * @param size Size in bytes of the data.
+     * @param sizeBytes Size in bytes of the data.
      */
-    void bufferAppend(uint8_t *data, uint32_t size);
+    void bufferAppend(uint8_t *data, uint32_t sizeBytes);
 
 public:
     friend class NMT;

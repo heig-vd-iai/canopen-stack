@@ -8,44 +8,44 @@
 #include <cstring>
 using namespace CANopen;
 
-SDOAbortCodes Object::preReadBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*size*/, uint32_t /*offset*/)
+SDOAbortCodes Object::preReadBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*sizeBytes*/, uint32_t /*offset*/)
 {
     return SDOAbortCode_OK;
 }
 
-void Object::postReadBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*size*/, uint32_t /*offset*/)
+void Object::postReadBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*sizeBytes*/, uint32_t /*offset*/)
 {
 }
 
-SDOAbortCodes Object::preWriteBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*size*/, class Node & /*node*/)
+SDOAbortCodes Object::preWriteBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*sizeBytes*/, class Node & /*node*/)
 {
     return SDOAbortCode_OK;
 }
 
-void Object::postWriteBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*size*/, class Node & /*node*/)
+void Object::postWriteBytes(uint8_t /*subindex*/, uint8_t * /*bytes*/, uint32_t /*sizeBytes*/, class Node & /*node*/)
 {
 }
 
-SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, Node &node)
+SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, Node &node)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
     ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
     if (!entry->accessType.bits.writeable)
         return SDOAbortCode_AttemptWriteOnReadOnly;
-    if (size != entry->size)
+    if (sizeBytes != entry->sizeBytes)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     int limits = entry->checkLimits(bytes);
     if (limits < 0)
         return SDOAbortCode_DownloadValueTooLow;
     if (limits > 0)
         return SDOAbortCode_DownloadValueTooHigh;
-    SDOAbortCodes code = preWriteBytes(subindex, bytes, size, node);
+    SDOAbortCodes code = preWriteBytes(subindex, bytes, sizeBytes, node);
     switch (code)
     {
     case SDOAbortCode_OK:
-        memcpy((void *)entry->dataSrc, bytes, size);
-        postWriteBytes(subindex, bytes, size, node);
+        memcpy((void *)entry->dataSrc, bytes, sizeBytes);
+        postWriteBytes(subindex, bytes, sizeBytes, node);
         return SDOAbortCode_OK;
     case SDOAbortCode_CancelWrite:
         return SDOAbortCode_OK;
@@ -54,20 +54,20 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
     }
 }
 
-SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset)
+SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset)
 {
     if (!isSubValid(subindex))
         return SDOAbortCode_SubindexNonExistent;
     ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
     if (!entry->accessType.bits.readable)
         return SDOAbortCode_AttemptReadOnWriteOnly;
-    if (size + offset > entry->size)
+    if (sizeBytes + offset > entry->sizeBytes)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
-    SDOAbortCodes code = preReadBytes(subindex, bytes, size, offset);
+    SDOAbortCodes code = preReadBytes(subindex, bytes, sizeBytes, offset);
     if (code != SDOAbortCode_OK)
         return code;
-    memcpy(bytes, (uint8_t *)entry->dataSrc + offset, size);
-    postReadBytes(subindex, bytes, size, offset);
+    memcpy(bytes, (uint8_t *)entry->dataSrc + offset, sizeBytes);
+    postReadBytes(subindex, bytes, sizeBytes, offset);
     return SDOAbortCode_OK;
 }
 
@@ -78,7 +78,7 @@ bool Object::isSubValid(uint8_t subindex)
 
 uint32_t Object::getSize(uint8_t subindex)
 {
-    return isSubValid(subindex) ? entries[subindex]->size : 0;
+    return isSubValid(subindex) ? entries[subindex]->sizeBytes : 0;
 }
 
 AccessType Object::getAccessType(uint8_t subindex)

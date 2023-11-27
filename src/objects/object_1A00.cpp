@@ -5,7 +5,7 @@
 #include "../node.hpp"
 using namespace CANopen;
 
-SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t /*size*/, Node &node)
+SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t /*sizeBytes*/, Node &node)
 {
     if (subindex == OBJECT_INDEX_COUNT)
     {

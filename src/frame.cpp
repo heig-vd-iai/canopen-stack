@@ -124,9 +124,9 @@ SDOBlockFrame::SDOBlockFrame(uint8_t nodeId) : SDOFrameBase(nodeId) {}
 
 SDOBlockFrame::SDOBlockFrame(uint8_t nodeId, uint8_t commandByte) : SDOFrameBase(nodeId, commandByte) {}
 
-void SDOBlockFrame::setSize(uint32_t size)
+void SDOBlockFrame::setSize(uint32_t sizeBytes)
 {
-    *(uint32_t *)(data + SDO_BLOCK_SIZE_OFFSET) = size;
+    *(uint32_t *)(data + SDO_BLOCK_SIZE_OFFSET) = sizeBytes;
 }
 
 uint32_t SDOBlockFrame::getSize() const
@@ -134,9 +134,9 @@ uint32_t SDOBlockFrame::getSize() const
     return *(uint32_t *)(data + SDO_BLOCK_SIZE_OFFSET);
 }
 
-void SDOBlockFrame::setInitiateBlockSize(uint8_t blockSize)
+void SDOBlockFrame::setInitiateBlockSize(uint8_t blockSizeBytes)
 {
-    data[SDO_BLOCK_INIT_BLKSIZE_OFFSET] = blockSize;
+    data[SDO_BLOCK_INIT_BLKSIZE_OFFSET] = blockSizeBytes;
 }
 
 uint8_t SDOBlockFrame::getInitiateBlockSize() const
@@ -144,9 +144,9 @@ uint8_t SDOBlockFrame::getInitiateBlockSize() const
     return data[SDO_BLOCK_INIT_BLKSIZE_OFFSET];
 }
 
-void SDOBlockFrame::setSubBlockSize(uint8_t blockSize)
+void SDOBlockFrame::setSubBlockSize(uint8_t blockSizeBytes)
 {
-    data[SDO_BLOCK_SUB_BLKSIZE_OFFSET] = blockSize;
+    data[SDO_BLOCK_SUB_BLKSIZE_OFFSET] = blockSizeBytes;
 }
 
 uint8_t SDOBlockFrame::getSubBlockSize() const

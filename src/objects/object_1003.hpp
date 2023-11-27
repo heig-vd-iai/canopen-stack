@@ -12,8 +12,8 @@ namespace CANopen
 class Object1003 : public Object
 {
 private:
-    SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
-    SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
+    SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset) override;
+    SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node) override;
 
     /**
      * Shifts the error history.
