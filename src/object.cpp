@@ -46,6 +46,8 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
     case SDOAbortCode_OK:
         memcpy((void *)entry->dataSrc, bytes, sizeBytes);
         postWriteBytes(subindex, bytes, sizeBytes, node);
+        if (onWriteFunc)
+            onWriteFunc(subindex);
         return SDOAbortCode_OK;
     case SDOAbortCode_CancelWrite:
         return SDOAbortCode_OK;
@@ -89,4 +91,9 @@ AccessType Object::getAccessType(uint8_t subindex)
 uint8_t Object::getCount()
 {
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
+}
+
+void CANopen::Object::onWrite(std::function<void(unsigned)> callback)
+{
+    onWriteFunc = callback;
 }

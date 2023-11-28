@@ -5,6 +5,7 @@
 #include "enums.hpp"
 #include "unions.hpp"
 #include <cstdint>
+#include <functional>
 #define OBJECT_INDEX_COUNT 0
 
 namespace CANopen
@@ -90,6 +91,31 @@ struct LimitedObjectEntry : public ObjectEntryBase
  */
 class Object
 {
+private:
+    std::function<void(unsigned)> onWriteFunc;
+
+    /**
+     * Read data from an object entry.
+     * This method should only be called by SDO class.
+     * @param subindex Subindex of the object entry.
+     * @param bytes Pointer to the destination buffer.
+     * @param sizeBytes Number of bytes to read.
+     * @param offset Offset within the object entry data.
+     * @return SDOAbortCodes indicating operation status.
+     */
+    SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
+
+    /**
+     * Write bytes to an object entry.
+     * This method should only be called by SDO class.
+     * @param subindex Subindex of the object entry.
+     * @param bytes Pointer to the source buffer.
+     * @param sizeBytes Number of bytes to write.
+     * @param node Reference to the Node instance.
+     * @return SDOAbortCodes indicating operation status.
+     */
+    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
+
 protected:
     const ObjectEntryBase **entries;
 
@@ -136,6 +162,8 @@ protected:
     virtual void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
 public:
+    friend class SDO;
+    friend class PDO;
     const uint16_t index;
     const uint8_t subNumber;
 
@@ -167,28 +195,6 @@ public:
      * @return Access type of the object entry.
      */
     AccessType getAccessType(uint8_t subindex);
-
-    /**
-     * Read data from an object entry.
-     * This method should only be called by SDO class.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the destination buffer.
-     * @param sizeBytes Number of bytes to read.
-     * @param offset Offset within the object entry data.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
-
-    /**
-     * Write bytes to an object entry.
-     * This method should only be called by SDO class.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the source buffer.
-     * @param sizeBytes Number of bytes to write.
-     * @param node Reference to the Node instance.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
     /**
      * Get the number of entries in the object, **if object is not of type VAR**.
@@ -229,5 +235,13 @@ public:
         *(T *)entries[subindex]->dataSrc = value;
         return true;
     }
+
+    /**
+     * Set a callback function to be called after an object entry was written to.
+     * The function will receive the subindex as an argument.
+     * **DO NOT use time consuming calls in the provided callback.**
+     * @param callback Callback function to be called on object entry write.
+     */
+    void onWrite(std::function<void(unsigned)> callback);
 };
 }
