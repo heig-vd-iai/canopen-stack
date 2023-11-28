@@ -106,6 +106,11 @@ void updateFunc(Node &node, mutex &mtx)
     }
 }
 
+void onWrite(Object &object, unsigned subindex)
+{
+    printf("Object %X at subindex %d was written to\n", object.index, subindex);
+}
+
 int main(int argc, char *argv[])
 {
     signal(SIGINT, [](int /*signum*/)
@@ -143,6 +148,8 @@ int main(int argc, char *argv[])
                          { cout << "Timeout occured on RPDO" << index << endl; });
     node.pdo().onReceive([](unsigned index)
                          { cout << "Received RPDO" << index << endl; });
+    for (int i = 0; i < node.od().length; i++)
+        node.od()[i]->onWrite(onWrite);
 #endif
     node.od().loadData(0);
     node.init();
