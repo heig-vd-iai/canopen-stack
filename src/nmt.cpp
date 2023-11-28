@@ -39,6 +39,7 @@ void CANopen::NMT::updateSM(NMTServiceCommands command)
         node._pdo.reloadRPDO();
         nextState = NMTState_PreOperational;
         // explicit fallthrough [[fallthrough]];
+        [[fallthrough]]; // TODO: non standard in C++14
     case NMTState_PreOperational:
         node._pdo.disable();
         node._sdo.enable();
