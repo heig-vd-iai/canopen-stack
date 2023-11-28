@@ -93,7 +93,17 @@ uint8_t Object::getCount()
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
 }
 
+bool CANopen::Object::isRemote()
+{
+    return (bool)onReadRemoteFunc;
+}
+
 void CANopen::Object::onWrite(std::function<void(Object &, unsigned)> callback)
 {
     onWriteFunc = callback;
+}
+
+void CANopen::Object::onReadRemote(std::function<void(Object &, unsigned)> callback)
+{
+    onReadRemoteFunc = callback;
 }

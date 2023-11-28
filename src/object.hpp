@@ -93,6 +93,7 @@ class Object
 {
 private:
     std::function<void(Object &, unsigned)> onWriteFunc;
+    std::function<void(Object &, unsigned)> onReadRemoteFunc;
 
     /**
      * Read data from an object entry.
@@ -203,6 +204,12 @@ public:
     uint8_t getCount();
 
     /**
+     * Check if the object is considered as remote, that is if a callback was set using onReadRemote().
+     * @return True is the object is considered as remote, false otherwise.
+     */
+    bool isRemote();
+
+    /**
      * Get the value of an object's entry.
      * If the size of the data type does not match that of the actual data, the operation will fail.
      * @tparam T Data type of the value.
@@ -238,10 +245,23 @@ public:
 
     /**
      * Set a callback function to be called after an object entry was written to.
-     * The function will receive the subindex as an argument.
+     * The function will receive a reference to the object and the subindex.
      * **DO NOT use time consuming calls in the provided callback.**
      * @param callback Callback function to be called on object entry write.
      */
     void onWrite(std::function<void(Object &, unsigned)> callback);
+
+    // TODO: unsigned or uint8_t for subindex?
+    /**
+     * Set a callback function to be called before an object entry is read from.
+     * When a callback is set, the object becomes considered as remote.
+     * A remote object will call this callback anytime a SDO attempts to read any of its entries.
+     * The request will be pending until a new value is set to the entry.
+     * This ensures that the latest data is available in the object dictionnary.
+     * The function will receive a reference to the object and the subindex.
+     * **DO NOT use time consuming calls in the provided callback.**
+     * @param callback Callback function to be called on object entry write.
+     */
+    void onReadRemote(std::function<void(Object &, unsigned)> callback);
 };
 }
