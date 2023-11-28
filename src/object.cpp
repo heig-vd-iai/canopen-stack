@@ -47,7 +47,7 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
         memcpy((void *)entry->dataSrc, bytes, sizeBytes);
         postWriteBytes(subindex, bytes, sizeBytes, node);
         if (onWriteFunc)
-            onWriteFunc(subindex);
+            onWriteFunc(*this, subindex);
         return SDOAbortCode_OK;
     case SDOAbortCode_CancelWrite:
         return SDOAbortCode_OK;
@@ -93,7 +93,7 @@ uint8_t Object::getCount()
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
 }
 
-void CANopen::Object::onWrite(std::function<void(unsigned)> callback)
+void CANopen::Object::onWrite(std::function<void(Object &, unsigned)> callback)
 {
     onWriteFunc = callback;
 }

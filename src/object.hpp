@@ -92,7 +92,7 @@ struct LimitedObjectEntry : public ObjectEntryBase
 class Object
 {
 private:
-    std::function<void(unsigned)> onWriteFunc;
+    std::function<void(Object &, unsigned)> onWriteFunc;
 
     /**
      * Read data from an object entry.
@@ -242,6 +242,6 @@ public:
      * **DO NOT use time consuming calls in the provided callback.**
      * @param callback Callback function to be called on object entry write.
      */
-    void onWrite(std::function<void(unsigned)> callback);
+    void onWrite(std::function<void(Object &, unsigned)> callback);
 };
 }
