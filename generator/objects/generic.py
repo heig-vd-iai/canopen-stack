@@ -50,7 +50,7 @@ class ObjectBase(ABC):
     def renderEntryList(self) -> str:
         """Returns the C++ entry list, ex. ObjectEntryBase *x1003[] = {&x1003sub0, ...}"""
         subs = [f"&{self.varName}sub{sub}" for sub in range(len(self.entries))]
-        return f"const {self.cppBaseEntryName} *{self.varName}[{len(self.entries)}] = {{{', '.join(subs)}}}"
+        return f"{self.cppBaseEntryName} *{self.varName}[{len(self.entries)}] = {{{', '.join(subs)}}}"
     
     @abstractmethod
     def renderData(self) -> "list[str]": return []

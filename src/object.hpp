@@ -17,7 +17,7 @@ namespace CANopen
 struct ObjectEntryBase
 {
     const void *dataSrc;
-    const MetaBitfield metaData;
+    MetaBitfield metaData;
     const uint32_t sizeBytes;
 
     /**
@@ -118,7 +118,7 @@ private:
     SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
 
 protected:
-    const ObjectEntryBase **entries;
+    ObjectEntryBase **entries;
 
     /**
      * Pre-read operation hook for processing before reading bytes.
@@ -174,7 +174,7 @@ public:
      * @param subNumber Number of subentries in the object.
      * @param entries Array of pointers to object entries belonging to that object.
      */
-    Object(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
+    Object(uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
 
     /**
      * Check if the subindex exists.

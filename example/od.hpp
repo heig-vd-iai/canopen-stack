@@ -1,10 +1,8 @@
 /**
- * [Filename]:      od.hpp
- * [Project]:       CANopen
- * [Author]:        Tristan Lieberherr
- * [Date]:          Generated on September 19, 2023
- * [Description]:   This file contains the declaration of the ObjectDictionnary class.
- *                  It is auto-generated from the device's EDS file, so manually editing is not recommended.
+ * This file contains the declaration of the ObjectDictionnary class.
+ * Generated on November 29, 2023
+ *
+ * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
  */
 #pragma once
 #include "od_include.hpp"
@@ -101,7 +99,7 @@ namespace CANopen
         uint32_t x1006 = 0;
         uint32_t x1007 = 0;
         uint8_t x1008[17] = {80, 68, 52, 45, 69, 66, 53, 57, 67, 68, 45, 69, 45, 54, 53, 45, 50};
-        uint8_t x1009[15] = {97, 109, 111, 110, 103, 32, 117, 115, 32, 195, 160, 194, 182, 197, 190};
+        uint8_t x1009[12] = {97, 109, 111, 110, 103, 32, 117, 115, 32, 224, 182, 158};
         uint8_t x100A[18] = {70, 73, 82, 45, 118, 50, 50, 49, 51, 45, 66, 49, 48, 51, 49, 49, 51, 52};
         uint16_t x100C = 0;
         uint8_t x100D = 0;
@@ -175,21 +173,21 @@ namespace CANopen
             {
                 ObjectDictionnaryData data;
                 ObjectEntry<int8_t> x2sub0 = ObjectEntry<int8_t>(&data.x2, 1);
-                const ObjectEntryBase *x2[1] = {&x2sub0};
+                ObjectEntryBase *x2[1] = {&x2sub0};
                 ObjectEntry<int16_t> x3sub0 = ObjectEntry<int16_t>(&data.x3, 1);
-                const ObjectEntryBase *x3[1] = {&x3sub0};
+                ObjectEntryBase *x3[1] = {&x3sub0};
                 ObjectEntry<int32_t> x4sub0 = ObjectEntry<int32_t>(&data.x4, 1);
-                const ObjectEntryBase *x4[1] = {&x4sub0};
+                ObjectEntryBase *x4[1] = {&x4sub0};
                 ObjectEntry<uint8_t> x5sub0 = ObjectEntry<uint8_t>(&data.x5, 1);
-                const ObjectEntryBase *x5[1] = {&x5sub0};
+                ObjectEntryBase *x5[1] = {&x5sub0};
                 ObjectEntry<uint16_t> x6sub0 = ObjectEntry<uint16_t>(&data.x6, 1);
-                const ObjectEntryBase *x6[1] = {&x6sub0};
+                ObjectEntryBase *x6[1] = {&x6sub0};
                 ObjectEntry<uint32_t> x7sub0 = ObjectEntry<uint32_t>(&data.x7, 1);
-                const ObjectEntryBase *x7[1] = {&x7sub0};
+                ObjectEntryBase *x7[1] = {&x7sub0};
                 ObjectEntry<uint32_t> x1000sub0 = ObjectEntry<uint32_t>(&data.x1000, 1);
-                const ObjectEntryBase *x1000[1] = {&x1000sub0};
+                ObjectEntryBase *x1000[1] = {&x1000sub0};
                 ObjectEntry<uint8_t> x1001sub0 = ObjectEntry<uint8_t>(&data.x1001, 5);
-                const ObjectEntryBase *x1001[1] = {&x1001sub0};
+                ObjectEntryBase *x1001[1] = {&x1001sub0};
                 ObjectEntry<uint8_t> x1003sub0 = ObjectEntry<uint8_t>(&data.x1003sub0, 3);
                 ObjectEntry<uint32_t> x1003sub1 = ObjectEntry<uint32_t>(&data.x1003[0], 1);
                 ObjectEntry<uint32_t> x1003sub2 = ObjectEntry<uint32_t>(&data.x1003[1], 1);
@@ -199,23 +197,23 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1003sub6 = ObjectEntry<uint32_t>(&data.x1003[5], 1);
                 ObjectEntry<uint32_t> x1003sub7 = ObjectEntry<uint32_t>(&data.x1003[6], 1);
                 ObjectEntry<uint32_t> x1003sub8 = ObjectEntry<uint32_t>(&data.x1003[7], 1);
-                const ObjectEntryBase *x1003[9] = {&x1003sub0, &x1003sub1, &x1003sub2, &x1003sub3, &x1003sub4, &x1003sub5, &x1003sub6, &x1003sub7, &x1003sub8};
+                ObjectEntryBase *x1003[9] = {&x1003sub0, &x1003sub1, &x1003sub2, &x1003sub3, &x1003sub4, &x1003sub5, &x1003sub6, &x1003sub7, &x1003sub8};
                 ObjectEntry<uint32_t> x1005sub0 = ObjectEntry<uint32_t>(&data.x1005, 3);
-                const ObjectEntryBase *x1005[1] = {&x1005sub0};
+                ObjectEntryBase *x1005[1] = {&x1005sub0};
                 ObjectEntry<uint32_t> x1006sub0 = ObjectEntry<uint32_t>(&data.x1006, 3);
-                const ObjectEntryBase *x1006[1] = {&x1006sub0};
+                ObjectEntryBase *x1006[1] = {&x1006sub0};
                 ObjectEntry<uint32_t> x1007sub0 = ObjectEntry<uint32_t>(&data.x1007, 3);
-                const ObjectEntryBase *x1007[1] = {&x1007sub0};
+                ObjectEntryBase *x1007[1] = {&x1007sub0};
                 ObjectEntry<uint8_t[17]> x1008sub0 = ObjectEntry<uint8_t[17]>(&data.x1008, 1);
-                const ObjectEntryBase *x1008[1] = {&x1008sub0};
-                ObjectEntry<uint8_t[15]> x1009sub0 = ObjectEntry<uint8_t[15]>(&data.x1009, 1);
-                const ObjectEntryBase *x1009[1] = {&x1009sub0};
+                ObjectEntryBase *x1008[1] = {&x1008sub0};
+                ObjectEntry<uint8_t[12]> x1009sub0 = ObjectEntry<uint8_t[12]>(&data.x1009, 1);
+                ObjectEntryBase *x1009[1] = {&x1009sub0};
                 ObjectEntry<uint8_t[18]> x100Asub0 = ObjectEntry<uint8_t[18]>(&data.x100A, 1);
-                const ObjectEntryBase *x100A[1] = {&x100Asub0};
+                ObjectEntryBase *x100A[1] = {&x100Asub0};
                 ObjectEntry<uint16_t> x100Csub0 = ObjectEntry<uint16_t>(&data.x100C, 3);
-                const ObjectEntryBase *x100C[1] = {&x100Csub0};
+                ObjectEntryBase *x100C[1] = {&x100Csub0};
                 ObjectEntry<uint8_t> x100Dsub0 = ObjectEntry<uint8_t>(&data.x100D, 3);
-                const ObjectEntryBase *x100D[1] = {&x100Dsub0};
+                ObjectEntryBase *x100D[1] = {&x100Dsub0};
                 ObjectEntry<uint8_t> x1010sub0 = ObjectEntry<uint8_t>(&data.x1010sub0, 1);
                 ObjectEntry<uint32_t> x1010sub1 = ObjectEntry<uint32_t>(&data.x1010[0], 3);
                 ObjectEntry<uint32_t> x1010sub2 = ObjectEntry<uint32_t>(&data.x1010[1], 3);
@@ -230,7 +228,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1010sub11 = ObjectEntry<uint32_t>(&data.x1010[10], 3);
                 ObjectEntry<uint32_t> x1010sub12 = ObjectEntry<uint32_t>(&data.x1010[11], 3);
                 ObjectEntry<uint32_t> x1010sub13 = ObjectEntry<uint32_t>(&data.x1010[12], 3);
-                const ObjectEntryBase *x1010[14] = {&x1010sub0, &x1010sub1, &x1010sub2, &x1010sub3, &x1010sub4, &x1010sub5, &x1010sub6, &x1010sub7, &x1010sub8, &x1010sub9, &x1010sub10, &x1010sub11, &x1010sub12, &x1010sub13};
+                ObjectEntryBase *x1010[14] = {&x1010sub0, &x1010sub1, &x1010sub2, &x1010sub3, &x1010sub4, &x1010sub5, &x1010sub6, &x1010sub7, &x1010sub8, &x1010sub9, &x1010sub10, &x1010sub11, &x1010sub12, &x1010sub13};
                 ObjectEntry<uint8_t> x1011sub0 = ObjectEntry<uint8_t>(&data.x1011sub0, 1);
                 ObjectEntry<uint32_t> x1011sub1 = ObjectEntry<uint32_t>(&data.x1011[0], 3);
                 ObjectEntry<uint32_t> x1011sub2 = ObjectEntry<uint32_t>(&data.x1011[1], 3);
@@ -245,58 +243,58 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1011sub11 = ObjectEntry<uint32_t>(&data.x1011[10], 3);
                 ObjectEntry<uint32_t> x1011sub12 = ObjectEntry<uint32_t>(&data.x1011[11], 3);
                 ObjectEntry<uint32_t> x1011sub13 = ObjectEntry<uint32_t>(&data.x1011[12], 3);
-                const ObjectEntryBase *x1011[14] = {&x1011sub0, &x1011sub1, &x1011sub2, &x1011sub3, &x1011sub4, &x1011sub5, &x1011sub6, &x1011sub7, &x1011sub8, &x1011sub9, &x1011sub10, &x1011sub11, &x1011sub12, &x1011sub13};
+                ObjectEntryBase *x1011[14] = {&x1011sub0, &x1011sub1, &x1011sub2, &x1011sub3, &x1011sub4, &x1011sub5, &x1011sub6, &x1011sub7, &x1011sub8, &x1011sub9, &x1011sub10, &x1011sub11, &x1011sub12, &x1011sub13};
                 ObjectEntry<uint32_t> x1014sub0 = ObjectEntry<uint32_t>(&data.x1014, 3);
-                const ObjectEntryBase *x1014[1] = {&x1014sub0};
+                ObjectEntryBase *x1014[1] = {&x1014sub0};
                 ObjectEntry<uint8_t> x1016sub0 = ObjectEntry<uint8_t>(&data.x1016sub0, 1);
                 ObjectEntry<uint32_t> x1016sub1 = ObjectEntry<uint32_t>(&data.x1016[0], 3);
-                const ObjectEntryBase *x1016[2] = {&x1016sub0, &x1016sub1};
+                ObjectEntryBase *x1016[2] = {&x1016sub0, &x1016sub1};
                 ObjectEntry<uint16_t> x1017sub0 = ObjectEntry<uint16_t>(&data.x1017, 3);
-                const ObjectEntryBase *x1017[1] = {&x1017sub0};
+                ObjectEntryBase *x1017[1] = {&x1017sub0};
                 ObjectEntry<uint8_t> x1018sub0 = ObjectEntry<uint8_t>(&data.x1018.sub0, 1);
                 ObjectEntry<uint32_t> x1018sub1 = ObjectEntry<uint32_t>(&data.x1018.sub1, 1);
                 ObjectEntry<uint32_t> x1018sub2 = ObjectEntry<uint32_t>(&data.x1018.sub2, 1);
                 ObjectEntry<uint32_t> x1018sub3 = ObjectEntry<uint32_t>(&data.x1018.sub3, 1);
                 ObjectEntry<uint32_t> x1018sub4 = ObjectEntry<uint32_t>(&data.x1018.sub4, 1);
-                const ObjectEntryBase *x1018[5] = {&x1018sub0, &x1018sub1, &x1018sub2, &x1018sub3, &x1018sub4};
+                ObjectEntryBase *x1018[5] = {&x1018sub0, &x1018sub1, &x1018sub2, &x1018sub3, &x1018sub4};
                 ObjectEntry<uint8_t> x1019sub0 = ObjectEntry<uint8_t>(&data.x1019, 3);
-                const ObjectEntryBase *x1019[1] = {&x1019sub0};
+                ObjectEntryBase *x1019[1] = {&x1019sub0};
                 ObjectEntry<uint8_t> x1020sub0 = ObjectEntry<uint8_t>(&data.x1020sub0, 1);
                 ObjectEntry<uint32_t> x1020sub1 = ObjectEntry<uint32_t>(&data.x1020[0], 3);
                 ObjectEntry<uint32_t> x1020sub2 = ObjectEntry<uint32_t>(&data.x1020[1], 3);
-                const ObjectEntryBase *x1020[3] = {&x1020sub0, &x1020sub1, &x1020sub2};
+                ObjectEntryBase *x1020[3] = {&x1020sub0, &x1020sub1, &x1020sub2};
                 ObjectEntry<uint8_t> x1029sub0 = ObjectEntry<uint8_t>(&data.x1029sub0, 1);
                 ObjectEntry<uint8_t> x1029sub1 = ObjectEntry<uint8_t>(&data.x1029[0], 3);
                 ObjectEntry<uint8_t> x1029sub2 = ObjectEntry<uint8_t>(&data.x1029[1], 3);
-                const ObjectEntryBase *x1029[3] = {&x1029sub0, &x1029sub1, &x1029sub2};
+                ObjectEntryBase *x1029[3] = {&x1029sub0, &x1029sub1, &x1029sub2};
                 ObjectEntry<uint8_t> x1400sub0 = ObjectEntry<uint8_t>(&data.x1400.sub0, 1);
                 ObjectEntry<uint32_t> x1400sub1 = ObjectEntry<uint32_t>(&data.x1400.sub1, 3);
                 ObjectEntry<uint8_t> x1400sub2 = ObjectEntry<uint8_t>(&data.x1400.sub2, 3);
                 ObjectEntry<uint16_t> x1400sub3 = ObjectEntry<uint16_t>(&data.x1400.sub3, 3);
                 ObjectEntry<uint8_t> x1400sub4 = ObjectEntry<uint8_t>(&data.x1400.sub4, 3);
                 ObjectEntry<uint16_t> x1400sub5 = ObjectEntry<uint16_t>(&data.x1400.sub5, 3);
-                const ObjectEntryBase *x1400[6] = {&x1400sub0, &x1400sub1, &x1400sub2, &x1400sub3, &x1400sub4, &x1400sub5};
+                ObjectEntryBase *x1400[6] = {&x1400sub0, &x1400sub1, &x1400sub2, &x1400sub3, &x1400sub4, &x1400sub5};
                 ObjectEntry<uint8_t> x1401sub0 = ObjectEntry<uint8_t>(&data.x1401.sub0, 1);
                 ObjectEntry<uint32_t> x1401sub1 = ObjectEntry<uint32_t>(&data.x1401.sub1, 3);
                 ObjectEntry<uint8_t> x1401sub2 = ObjectEntry<uint8_t>(&data.x1401.sub2, 3);
                 ObjectEntry<uint16_t> x1401sub3 = ObjectEntry<uint16_t>(&data.x1401.sub3, 3);
                 ObjectEntry<uint8_t> x1401sub4 = ObjectEntry<uint8_t>(&data.x1401.sub4, 3);
                 ObjectEntry<uint16_t> x1401sub5 = ObjectEntry<uint16_t>(&data.x1401.sub5, 3);
-                const ObjectEntryBase *x1401[6] = {&x1401sub0, &x1401sub1, &x1401sub2, &x1401sub3, &x1401sub4, &x1401sub5};
+                ObjectEntryBase *x1401[6] = {&x1401sub0, &x1401sub1, &x1401sub2, &x1401sub3, &x1401sub4, &x1401sub5};
                 ObjectEntry<uint8_t> x1402sub0 = ObjectEntry<uint8_t>(&data.x1402.sub0, 1);
                 ObjectEntry<uint32_t> x1402sub1 = ObjectEntry<uint32_t>(&data.x1402.sub1, 3);
                 ObjectEntry<uint8_t> x1402sub2 = ObjectEntry<uint8_t>(&data.x1402.sub2, 3);
                 ObjectEntry<uint16_t> x1402sub3 = ObjectEntry<uint16_t>(&data.x1402.sub3, 3);
                 ObjectEntry<uint8_t> x1402sub4 = ObjectEntry<uint8_t>(&data.x1402.sub4, 3);
                 ObjectEntry<uint16_t> x1402sub5 = ObjectEntry<uint16_t>(&data.x1402.sub5, 3);
-                const ObjectEntryBase *x1402[6] = {&x1402sub0, &x1402sub1, &x1402sub2, &x1402sub3, &x1402sub4, &x1402sub5};
+                ObjectEntryBase *x1402[6] = {&x1402sub0, &x1402sub1, &x1402sub2, &x1402sub3, &x1402sub4, &x1402sub5};
                 ObjectEntry<uint8_t> x1403sub0 = ObjectEntry<uint8_t>(&data.x1403.sub0, 1);
                 ObjectEntry<uint32_t> x1403sub1 = ObjectEntry<uint32_t>(&data.x1403.sub1, 3);
                 ObjectEntry<uint8_t> x1403sub2 = ObjectEntry<uint8_t>(&data.x1403.sub2, 3);
                 ObjectEntry<uint16_t> x1403sub3 = ObjectEntry<uint16_t>(&data.x1403.sub3, 3);
                 ObjectEntry<uint8_t> x1403sub4 = ObjectEntry<uint8_t>(&data.x1403.sub4, 3);
                 ObjectEntry<uint16_t> x1403sub5 = ObjectEntry<uint16_t>(&data.x1403.sub5, 3);
-                const ObjectEntryBase *x1403[6] = {&x1403sub0, &x1403sub1, &x1403sub2, &x1403sub3, &x1403sub4, &x1403sub5};
+                ObjectEntryBase *x1403[6] = {&x1403sub0, &x1403sub1, &x1403sub2, &x1403sub3, &x1403sub4, &x1403sub5};
                 ObjectEntry<uint8_t> x1600sub0 = ObjectEntry<uint8_t>(&data.x1600.sub0, 3);
                 ObjectEntry<uint32_t> x1600sub1 = ObjectEntry<uint32_t>(&data.x1600.sub1, 3);
                 ObjectEntry<uint32_t> x1600sub2 = ObjectEntry<uint32_t>(&data.x1600.sub2, 3);
@@ -306,7 +304,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1600sub6 = ObjectEntry<uint32_t>(&data.x1600.sub6, 3);
                 ObjectEntry<uint32_t> x1600sub7 = ObjectEntry<uint32_t>(&data.x1600.sub7, 3);
                 ObjectEntry<uint32_t> x1600sub8 = ObjectEntry<uint32_t>(&data.x1600.sub8, 3);
-                const ObjectEntryBase *x1600[9] = {&x1600sub0, &x1600sub1, &x1600sub2, &x1600sub3, &x1600sub4, &x1600sub5, &x1600sub6, &x1600sub7, &x1600sub8};
+                ObjectEntryBase *x1600[9] = {&x1600sub0, &x1600sub1, &x1600sub2, &x1600sub3, &x1600sub4, &x1600sub5, &x1600sub6, &x1600sub7, &x1600sub8};
                 ObjectEntry<uint8_t> x1601sub0 = ObjectEntry<uint8_t>(&data.x1601.sub0, 3);
                 ObjectEntry<uint32_t> x1601sub1 = ObjectEntry<uint32_t>(&data.x1601.sub1, 3);
                 ObjectEntry<uint32_t> x1601sub2 = ObjectEntry<uint32_t>(&data.x1601.sub2, 3);
@@ -316,7 +314,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1601sub6 = ObjectEntry<uint32_t>(&data.x1601.sub6, 3);
                 ObjectEntry<uint32_t> x1601sub7 = ObjectEntry<uint32_t>(&data.x1601.sub7, 3);
                 ObjectEntry<uint32_t> x1601sub8 = ObjectEntry<uint32_t>(&data.x1601.sub8, 3);
-                const ObjectEntryBase *x1601[9] = {&x1601sub0, &x1601sub1, &x1601sub2, &x1601sub3, &x1601sub4, &x1601sub5, &x1601sub6, &x1601sub7, &x1601sub8};
+                ObjectEntryBase *x1601[9] = {&x1601sub0, &x1601sub1, &x1601sub2, &x1601sub3, &x1601sub4, &x1601sub5, &x1601sub6, &x1601sub7, &x1601sub8};
                 ObjectEntry<uint8_t> x1602sub0 = ObjectEntry<uint8_t>(&data.x1602.sub0, 3);
                 ObjectEntry<uint32_t> x1602sub1 = ObjectEntry<uint32_t>(&data.x1602.sub1, 3);
                 ObjectEntry<uint32_t> x1602sub2 = ObjectEntry<uint32_t>(&data.x1602.sub2, 3);
@@ -326,7 +324,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1602sub6 = ObjectEntry<uint32_t>(&data.x1602.sub6, 3);
                 ObjectEntry<uint32_t> x1602sub7 = ObjectEntry<uint32_t>(&data.x1602.sub7, 3);
                 ObjectEntry<uint32_t> x1602sub8 = ObjectEntry<uint32_t>(&data.x1602.sub8, 3);
-                const ObjectEntryBase *x1602[9] = {&x1602sub0, &x1602sub1, &x1602sub2, &x1602sub3, &x1602sub4, &x1602sub5, &x1602sub6, &x1602sub7, &x1602sub8};
+                ObjectEntryBase *x1602[9] = {&x1602sub0, &x1602sub1, &x1602sub2, &x1602sub3, &x1602sub4, &x1602sub5, &x1602sub6, &x1602sub7, &x1602sub8};
                 ObjectEntry<uint8_t> x1603sub0 = ObjectEntry<uint8_t>(&data.x1603.sub0, 3);
                 ObjectEntry<uint32_t> x1603sub1 = ObjectEntry<uint32_t>(&data.x1603.sub1, 3);
                 ObjectEntry<uint32_t> x1603sub2 = ObjectEntry<uint32_t>(&data.x1603.sub2, 3);
@@ -336,7 +334,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1603sub6 = ObjectEntry<uint32_t>(&data.x1603.sub6, 3);
                 ObjectEntry<uint32_t> x1603sub7 = ObjectEntry<uint32_t>(&data.x1603.sub7, 3);
                 ObjectEntry<uint32_t> x1603sub8 = ObjectEntry<uint32_t>(&data.x1603.sub8, 3);
-                const ObjectEntryBase *x1603[9] = {&x1603sub0, &x1603sub1, &x1603sub2, &x1603sub3, &x1603sub4, &x1603sub5, &x1603sub6, &x1603sub7, &x1603sub8};
+                ObjectEntryBase *x1603[9] = {&x1603sub0, &x1603sub1, &x1603sub2, &x1603sub3, &x1603sub4, &x1603sub5, &x1603sub6, &x1603sub7, &x1603sub8};
                 ObjectEntry<uint8_t> x1800sub0 = ObjectEntry<uint8_t>(&data.x1800.sub0, 1);
                 ObjectEntry<uint32_t> x1800sub1 = ObjectEntry<uint32_t>(&data.x1800.sub1, 3);
                 ObjectEntry<uint8_t> x1800sub2 = ObjectEntry<uint8_t>(&data.x1800.sub2, 3);
@@ -344,7 +342,7 @@ namespace CANopen
                 ObjectEntry<uint8_t> x1800sub4 = ObjectEntry<uint8_t>(&data.x1800.sub4, 3);
                 ObjectEntry<uint16_t> x1800sub5 = ObjectEntry<uint16_t>(&data.x1800.sub5, 3);
                 ObjectEntry<uint8_t> x1800sub6 = ObjectEntry<uint8_t>(&data.x1800.sub6, 3);
-                const ObjectEntryBase *x1800[7] = {&x1800sub0, &x1800sub1, &x1800sub2, &x1800sub3, &x1800sub4, &x1800sub5, &x1800sub6};
+                ObjectEntryBase *x1800[7] = {&x1800sub0, &x1800sub1, &x1800sub2, &x1800sub3, &x1800sub4, &x1800sub5, &x1800sub6};
                 ObjectEntry<uint8_t> x1801sub0 = ObjectEntry<uint8_t>(&data.x1801.sub0, 1);
                 ObjectEntry<uint32_t> x1801sub1 = ObjectEntry<uint32_t>(&data.x1801.sub1, 3);
                 ObjectEntry<uint8_t> x1801sub2 = ObjectEntry<uint8_t>(&data.x1801.sub2, 3);
@@ -352,7 +350,7 @@ namespace CANopen
                 ObjectEntry<uint8_t> x1801sub4 = ObjectEntry<uint8_t>(&data.x1801.sub4, 3);
                 ObjectEntry<uint16_t> x1801sub5 = ObjectEntry<uint16_t>(&data.x1801.sub5, 3);
                 ObjectEntry<uint8_t> x1801sub6 = ObjectEntry<uint8_t>(&data.x1801.sub6, 3);
-                const ObjectEntryBase *x1801[7] = {&x1801sub0, &x1801sub1, &x1801sub2, &x1801sub3, &x1801sub4, &x1801sub5, &x1801sub6};
+                ObjectEntryBase *x1801[7] = {&x1801sub0, &x1801sub1, &x1801sub2, &x1801sub3, &x1801sub4, &x1801sub5, &x1801sub6};
                 ObjectEntry<uint8_t> x1802sub0 = ObjectEntry<uint8_t>(&data.x1802.sub0, 1);
                 ObjectEntry<uint32_t> x1802sub1 = ObjectEntry<uint32_t>(&data.x1802.sub1, 3);
                 ObjectEntry<uint8_t> x1802sub2 = ObjectEntry<uint8_t>(&data.x1802.sub2, 3);
@@ -360,7 +358,7 @@ namespace CANopen
                 ObjectEntry<uint8_t> x1802sub4 = ObjectEntry<uint8_t>(&data.x1802.sub4, 3);
                 ObjectEntry<uint16_t> x1802sub5 = ObjectEntry<uint16_t>(&data.x1802.sub5, 3);
                 ObjectEntry<uint8_t> x1802sub6 = ObjectEntry<uint8_t>(&data.x1802.sub6, 3);
-                const ObjectEntryBase *x1802[7] = {&x1802sub0, &x1802sub1, &x1802sub2, &x1802sub3, &x1802sub4, &x1802sub5, &x1802sub6};
+                ObjectEntryBase *x1802[7] = {&x1802sub0, &x1802sub1, &x1802sub2, &x1802sub3, &x1802sub4, &x1802sub5, &x1802sub6};
                 ObjectEntry<uint8_t> x1803sub0 = ObjectEntry<uint8_t>(&data.x1803.sub0, 1);
                 ObjectEntry<uint32_t> x1803sub1 = ObjectEntry<uint32_t>(&data.x1803.sub1, 3);
                 ObjectEntry<uint8_t> x1803sub2 = ObjectEntry<uint8_t>(&data.x1803.sub2, 3);
@@ -368,7 +366,7 @@ namespace CANopen
                 ObjectEntry<uint8_t> x1803sub4 = ObjectEntry<uint8_t>(&data.x1803.sub4, 3);
                 ObjectEntry<uint16_t> x1803sub5 = ObjectEntry<uint16_t>(&data.x1803.sub5, 3);
                 ObjectEntry<uint8_t> x1803sub6 = ObjectEntry<uint8_t>(&data.x1803.sub6, 3);
-                const ObjectEntryBase *x1803[7] = {&x1803sub0, &x1803sub1, &x1803sub2, &x1803sub3, &x1803sub4, &x1803sub5, &x1803sub6};
+                ObjectEntryBase *x1803[7] = {&x1803sub0, &x1803sub1, &x1803sub2, &x1803sub3, &x1803sub4, &x1803sub5, &x1803sub6};
                 ObjectEntry<uint8_t> x1A00sub0 = ObjectEntry<uint8_t>(&data.x1A00.sub0, 3);
                 ObjectEntry<uint32_t> x1A00sub1 = ObjectEntry<uint32_t>(&data.x1A00.sub1, 3);
                 ObjectEntry<uint32_t> x1A00sub2 = ObjectEntry<uint32_t>(&data.x1A00.sub2, 3);
@@ -378,7 +376,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1A00sub6 = ObjectEntry<uint32_t>(&data.x1A00.sub6, 3);
                 ObjectEntry<uint32_t> x1A00sub7 = ObjectEntry<uint32_t>(&data.x1A00.sub7, 3);
                 ObjectEntry<uint32_t> x1A00sub8 = ObjectEntry<uint32_t>(&data.x1A00.sub8, 3);
-                const ObjectEntryBase *x1A00[9] = {&x1A00sub0, &x1A00sub1, &x1A00sub2, &x1A00sub3, &x1A00sub4, &x1A00sub5, &x1A00sub6, &x1A00sub7, &x1A00sub8};
+                ObjectEntryBase *x1A00[9] = {&x1A00sub0, &x1A00sub1, &x1A00sub2, &x1A00sub3, &x1A00sub4, &x1A00sub5, &x1A00sub6, &x1A00sub7, &x1A00sub8};
                 ObjectEntry<uint8_t> x1A01sub0 = ObjectEntry<uint8_t>(&data.x1A01.sub0, 3);
                 ObjectEntry<uint32_t> x1A01sub1 = ObjectEntry<uint32_t>(&data.x1A01.sub1, 3);
                 ObjectEntry<uint32_t> x1A01sub2 = ObjectEntry<uint32_t>(&data.x1A01.sub2, 3);
@@ -388,7 +386,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1A01sub6 = ObjectEntry<uint32_t>(&data.x1A01.sub6, 3);
                 ObjectEntry<uint32_t> x1A01sub7 = ObjectEntry<uint32_t>(&data.x1A01.sub7, 3);
                 ObjectEntry<uint32_t> x1A01sub8 = ObjectEntry<uint32_t>(&data.x1A01.sub8, 3);
-                const ObjectEntryBase *x1A01[9] = {&x1A01sub0, &x1A01sub1, &x1A01sub2, &x1A01sub3, &x1A01sub4, &x1A01sub5, &x1A01sub6, &x1A01sub7, &x1A01sub8};
+                ObjectEntryBase *x1A01[9] = {&x1A01sub0, &x1A01sub1, &x1A01sub2, &x1A01sub3, &x1A01sub4, &x1A01sub5, &x1A01sub6, &x1A01sub7, &x1A01sub8};
                 ObjectEntry<uint8_t> x1A02sub0 = ObjectEntry<uint8_t>(&data.x1A02.sub0, 3);
                 ObjectEntry<uint32_t> x1A02sub1 = ObjectEntry<uint32_t>(&data.x1A02.sub1, 3);
                 ObjectEntry<uint32_t> x1A02sub2 = ObjectEntry<uint32_t>(&data.x1A02.sub2, 3);
@@ -398,7 +396,7 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1A02sub6 = ObjectEntry<uint32_t>(&data.x1A02.sub6, 3);
                 ObjectEntry<uint32_t> x1A02sub7 = ObjectEntry<uint32_t>(&data.x1A02.sub7, 3);
                 ObjectEntry<uint32_t> x1A02sub8 = ObjectEntry<uint32_t>(&data.x1A02.sub8, 3);
-                const ObjectEntryBase *x1A02[9] = {&x1A02sub0, &x1A02sub1, &x1A02sub2, &x1A02sub3, &x1A02sub4, &x1A02sub5, &x1A02sub6, &x1A02sub7, &x1A02sub8};
+                ObjectEntryBase *x1A02[9] = {&x1A02sub0, &x1A02sub1, &x1A02sub2, &x1A02sub3, &x1A02sub4, &x1A02sub5, &x1A02sub6, &x1A02sub7, &x1A02sub8};
                 ObjectEntry<uint8_t> x1A03sub0 = ObjectEntry<uint8_t>(&data.x1A03.sub0, 3);
                 ObjectEntry<uint32_t> x1A03sub1 = ObjectEntry<uint32_t>(&data.x1A03.sub1, 3);
                 ObjectEntry<uint32_t> x1A03sub2 = ObjectEntry<uint32_t>(&data.x1A03.sub2, 3);
@@ -408,60 +406,60 @@ namespace CANopen
                 ObjectEntry<uint32_t> x1A03sub6 = ObjectEntry<uint32_t>(&data.x1A03.sub6, 3);
                 ObjectEntry<uint32_t> x1A03sub7 = ObjectEntry<uint32_t>(&data.x1A03.sub7, 3);
                 ObjectEntry<uint32_t> x1A03sub8 = ObjectEntry<uint32_t>(&data.x1A03.sub8, 3);
-                const ObjectEntryBase *x1A03[9] = {&x1A03sub0, &x1A03sub1, &x1A03sub2, &x1A03sub3, &x1A03sub4, &x1A03sub5, &x1A03sub6, &x1A03sub7, &x1A03sub8};
+                ObjectEntryBase *x1A03[9] = {&x1A03sub0, &x1A03sub1, &x1A03sub2, &x1A03sub3, &x1A03sub4, &x1A03sub5, &x1A03sub6, &x1A03sub7, &x1A03sub8};
                 ObjectEntry<uint8_t[974]> x1F51sub0 = ObjectEntry<uint8_t[974]>(&data.x1F51, 3);
-                const ObjectEntryBase *x1F51[1] = {&x1F51sub0};
+                ObjectEntryBase *x1F51[1] = {&x1F51sub0};
                 ObjectEntry<uint8_t> x1F57sub0 = ObjectEntry<uint8_t>(&data.x1F57sub0, 1);
                 ObjectEntry<uint32_t> x1F57sub1 = ObjectEntry<uint32_t>(&data.x1F57[0], 1);
                 ObjectEntry<uint32_t> x1F57sub2 = ObjectEntry<uint32_t>(&data.x1F57[1], 1);
-                const ObjectEntryBase *x1F57[3] = {&x1F57sub0, &x1F57sub1, &x1F57sub2};
+                ObjectEntryBase *x1F57[3] = {&x1F57sub0, &x1F57sub1, &x1F57sub2};
                 ObjectEntry<uint32_t> x1F80sub0 = ObjectEntry<uint32_t>(&data.x1F80, 3);
-                const ObjectEntryBase *x1F80[1] = {&x1F80sub0};
+                ObjectEntryBase *x1F80[1] = {&x1F80sub0};
                 ObjectEntry<int16_t> x6007sub0 = ObjectEntry<int16_t>(&data.x6007, 3);
-                const ObjectEntryBase *x6007[1] = {&x6007sub0};
+                ObjectEntryBase *x6007[1] = {&x6007sub0};
                 ObjectEntry<uint16_t> x603Fsub0 = ObjectEntry<uint16_t>(&data.x603F, 5);
-                const ObjectEntryBase *x603F[1] = {&x603Fsub0};
+                ObjectEntryBase *x603F[1] = {&x603Fsub0};
                 ObjectEntry<uint16_t> x6040sub0 = ObjectEntry<uint16_t>(&data.x6040, 7);
-                const ObjectEntryBase *x6040[1] = {&x6040sub0};
+                ObjectEntryBase *x6040[1] = {&x6040sub0};
                 ObjectEntry<uint16_t> x6041sub0 = ObjectEntry<uint16_t>(&data.x6041, 5);
-                const ObjectEntryBase *x6041[1] = {&x6041sub0};
+                ObjectEntryBase *x6041[1] = {&x6041sub0};
                 ObjectEntry<int16_t> x6042sub0 = ObjectEntry<int16_t>(&data.x6042, 7);
-                const ObjectEntryBase *x6042[1] = {&x6042sub0};
+                ObjectEntryBase *x6042[1] = {&x6042sub0};
                 ObjectEntry<int16_t> x6043sub0 = ObjectEntry<int16_t>(&data.x6043, 5);
-                const ObjectEntryBase *x6043[1] = {&x6043sub0};
+                ObjectEntryBase *x6043[1] = {&x6043sub0};
                 ObjectEntry<int16_t> x6044sub0 = ObjectEntry<int16_t>(&data.x6044, 5);
-                const ObjectEntryBase *x6044[1] = {&x6044sub0};
+                ObjectEntryBase *x6044[1] = {&x6044sub0};
                 ObjectEntry<uint8_t> x6046sub0 = ObjectEntry<uint8_t>(&data.x6046sub0, 1);
                 ObjectEntry<uint32_t> x6046sub1 = ObjectEntry<uint32_t>(&data.x6046[0], 7);
                 ObjectEntry<uint32_t> x6046sub2 = ObjectEntry<uint32_t>(&data.x6046[1], 7);
-                const ObjectEntryBase *x6046[3] = {&x6046sub0, &x6046sub1, &x6046sub2};
+                ObjectEntryBase *x6046[3] = {&x6046sub0, &x6046sub1, &x6046sub2};
                 ObjectEntry<uint8_t> x6048sub0 = ObjectEntry<uint8_t>(&data.x6048.sub0, 1);
                 ObjectEntry<double> x6048sub1 = ObjectEntry<double>(&data.x6048.sub1, 7);
                 ObjectEntry<float> x6048sub2 = ObjectEntry<float>(&data.x6048.sub2, 7);
-                const ObjectEntryBase *x6048[3] = {&x6048sub0, &x6048sub1, &x6048sub2};
+                ObjectEntryBase *x6048[3] = {&x6048sub0, &x6048sub1, &x6048sub2};
                 ObjectEntry<uint8_t> x6049sub0 = ObjectEntry<uint8_t>(&data.x6049.sub0, 1);
                 ObjectEntry<uint32_t> x6049sub1 = ObjectEntry<uint32_t>(&data.x6049.sub1, 5);
                 ObjectEntry<uint16_t> x6049sub2 = ObjectEntry<uint16_t>(&data.x6049.sub2, 6);
-                const ObjectEntryBase *x6049[3] = {&x6049sub0, &x6049sub1, &x6049sub2};
+                ObjectEntryBase *x6049[3] = {&x6049sub0, &x6049sub1, &x6049sub2};
                 ObjectEntry<uint8_t> x604Asub0 = ObjectEntry<uint8_t>(&data.x604A.sub0, 1);
                 ObjectEntry<uint64_t> x604Asub1 = ObjectEntry<uint64_t>(&data.x604A.sub1, 7);
                 ObjectEntry<uint64_t> x604Asub2 = ObjectEntry<uint64_t>(&data.x604A.sub2, 7);
-                const ObjectEntryBase *x604A[3] = {&x604Asub0, &x604Asub1, &x604Asub2};
+                ObjectEntryBase *x604A[3] = {&x604Asub0, &x604Asub1, &x604Asub2};
                 ObjectEntry<int8_t> x6060sub0 = ObjectEntry<int8_t>(&data.x6060, 7);
-                const ObjectEntryBase *x6060[1] = {&x6060sub0};
+                ObjectEntryBase *x6060[1] = {&x6060sub0};
                 ObjectEntry<int8_t> x6061sub0 = ObjectEntry<int8_t>(&data.x6061, 5);
-                const ObjectEntryBase *x6061[1] = {&x6061sub0};
+                ObjectEntryBase *x6061[1] = {&x6061sub0};
                 ObjectEntry<int32_t> x6064sub0 = ObjectEntry<int32_t>(&data.x6064, 5);
-                const ObjectEntryBase *x6064[1] = {&x6064sub0};
+                ObjectEntryBase *x6064[1] = {&x6064sub0};
                 LimitedObjectEntry<int32_t> x607Asub0 = LimitedObjectEntry<int32_t>(&data.x607A, 7, -5000, 5000);
-                const ObjectEntryBase *x607A[1] = {&x607Asub0};
+                ObjectEntryBase *x607A[1] = {&x607Asub0};
                 ObjectEntry<uint32_t> x6081sub0 = ObjectEntry<uint32_t>(&data.x6081, 7);
-                const ObjectEntryBase *x6081[1] = {&x6081sub0};
+                ObjectEntryBase *x6081[1] = {&x6081sub0};
                 ObjectEntry<uint32_t> x60FDsub0 = ObjectEntry<uint32_t>(&data.x60FD, 5);
-                const ObjectEntryBase *x60FD[1] = {&x60FDsub0};
+                ObjectEntryBase *x60FD[1] = {&x60FDsub0};
                 ObjectEntry<uint8_t> x60FEsub0 = ObjectEntry<uint8_t>(&data.x60FEsub0, 1);
                 ObjectEntry<uint32_t> x60FEsub1 = ObjectEntry<uint32_t>(&data.x60FE[0], 7);
-                const ObjectEntryBase *x60FE[2] = {&x60FEsub0, &x60FEsub1};
+                ObjectEntryBase *x60FE[2] = {&x60FEsub0, &x60FEsub1};
             } entries;
             Object x2 = Object(2, 1, entries.x2);
             Object x3 = Object(3, 1, entries.x3);
@@ -587,3 +585,4 @@ namespace CANopen
         bool restoreData(uint8_t parameterGroup);
     };
 }
+

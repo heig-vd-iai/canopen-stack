@@ -22,6 +22,6 @@ public:
      * @param subNumber Number of subentries in the object.
      * @param entries Array of pointers to object entries belonging to that object.
      */
-    Object1010(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
+    Object1010(uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
 };
 }
