@@ -40,7 +40,6 @@ void SDO::sendAbort(uint32_t abortCode)
 
 void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
 {
-    SDOCommandByte sendCommand = {0};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
     Object *object = node._od.findObject(index);
@@ -62,36 +61,48 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     transferData.index = index;
     transferData.subindex = subindex;
     transferData.object = object;
-    uint32_t size = object->getSize(subindex);
-    transferData.remainingBytes = size;
+    transferData.remainingBytes = object->getSize(subindex);
     transferData.toggle = false;
+
+    if (object->isRemote())
+    {
+        object->requestUpdate(subindex);
+        transferData.timestamp_us = timestamp_us;
+        serverState = SDOServerState_Pending;
+    }
+    else
+        uploadInitiateSend(timestamp_us);
+}
+
+void CANopen::SDO::uploadInitiateSend(uint32_t timestamp_us)
+{
     SDOFrame response(node.nodeId);
-    if (size > SDO_INITIATE_DATA_LENGTH)
+    SDOCommandByte sendCommand = {0};
+    if (transferData.remainingBytes > SDO_INITIATE_DATA_LENGTH)
     { // Segment transfer
         sendCommand.bits_initiate.e = false;
         sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = false;
-        response.setInitiateData(size);
+        response.setInitiateData(transferData.remainingBytes);
     }
     else
     { // Expedited transfer
         sendCommand.bits_initiate.e = true;
         sendCommand.bits_initiate.s = true;
-        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
+        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - transferData.remainingBytes;
         uint32_t abortCode;
-        if ((abortCode = object->readBytes(subindex, response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) != SDOAbortCode_OK)
+        if ((abortCode = transferData.object->readBytes(transferData.subindex, response.data + SDO_INITIATE_DATA_OFFSET, transferData.remainingBytes, 0)) != SDOAbortCode_OK)
         {
-            sendAbort(index, subindex, abortCode);
+            sendAbort(transferData.index, transferData.subindex, abortCode);
             return;
         }
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
     response.setCommandByte(sendCommand.value);
-    response.setIndex(index);
-    response.setSubindex(subindex);
+    response.setIndex(transferData.index);
+    response.setSubindex(transferData.subindex);
     node.sendFrame(response);
-    if (!sendCommand.bits_initiate.e)
-        serverState = SDOServerState_Uploading;
+    serverState = sendCommand.bits_initiate.e ? SDOServerState_Ready : SDOServerState_Uploading;
     transferData.timestamp_us = timestamp_us;
 }
 
@@ -536,6 +547,10 @@ void SDO::update(uint32_t timestamp_us)
             blockDownloadEndSub(timestamp_us);
             transferData.retries++;
         }
+        break;
+    case SDOServerState_Pending:
+        if (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
+            uploadInitiateSend(timestamp_us);
         break;
     default:
         break;

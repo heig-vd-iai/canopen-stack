@@ -40,6 +40,7 @@ class SDO
     enum SDOServerStates
     {
         SDOServerState_Ready,
+        SDOServerState_Pending,
         SDOServerState_Uploading,
         SDOServerState_Downloading,
         SDOServerState_BlockUploading,
@@ -110,6 +111,13 @@ private:
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
     void uploadInitiate(class SDOFrame &request, uint32_t timestamp_us);
+
+    /**
+     * This method handles the sending of upload initiate frames.
+     * It should only be called by uploadInitiate() or update() depending on the object being remotely updated or not.
+     * @param timestamp_us Current timestamp in microseconds.
+     */
+    void uploadInitiateSend(uint32_t timestamp_us);
 
     /**
      * This method handles upload segment frames.
