@@ -95,6 +95,14 @@ private:
     std::function<void(Object &, unsigned)> onWriteFunc;
     std::function<void(Object &, unsigned)> onReadRemoteFunc;
 
+    // TODO: unsigned or uint8_t for subindex?
+    /**
+     * Request a remote update for an entry.
+     * This function will call the callback set in onReadRemote() and handle the metadata update flag.
+     * @param subindex The subindex of the read entry.
+     */
+    void readRemote(unsigned subindex);
+
     /**
      * Read data from an object entry.
      * This method should only be called by SDO class.
@@ -239,6 +247,7 @@ public:
     {
         if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
             return false;
+        entries[subindex]->metaData.bits.updateFlag = false;
         *(T *)entries[subindex]->dataSrc = value;
         return true;
     }

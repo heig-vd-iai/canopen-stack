@@ -56,6 +56,14 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
     }
 }
 
+void CANopen::Object::readRemote(unsigned subindex)
+{
+    if (!isRemote() || !isSubValid(subindex))
+        return;
+    entries[subindex]->metaData.bits.updateFlag = true;
+    onReadRemoteFunc(*this, subindex);
+}
+
 SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset)
 {
     if (!isSubValid(subindex))
