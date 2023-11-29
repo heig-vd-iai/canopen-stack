@@ -252,6 +252,26 @@ public:
     }
 
     /**
+     * Get the value of an object's entry as bytes.
+     * If the size of the buffer is smaller than the actual data, the operation will fail.
+     * @param subindex Subindex of the object entry.
+     * @param sizeBytes Size of the destination buffer, in bytes.
+     * @param bufferSize Pointer to destination buffer.
+     * @return True if the value was retrieved successfully, false otherwise.
+     */
+    bool getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer);
+
+    /**
+     * Set the value of an object's entry from bytes.
+     * If the size of the buffer is smaller than the actual data, the operation will fail.
+     * @param subindex Subindex of the object entry.
+     * @param bufferSize Size of the source buffer, in bytes.
+     * @param bytes Pointer to source buffer.
+     * @return True if the value was set successfully, false otherwise.
+     */
+    bool setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer);
+
+    /**
      * Set a callback function to be called after an object entry was written to.
      * The function will receive a reference to the object and the subindex.
      * **DO NOT use time consuming calls in the provided callback.**

@@ -106,6 +106,23 @@ bool Object::isRemote() const
     return (bool)onRequestUpdateFunc;
 }
 
+bool CANopen::Object::getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
+{
+    if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)
+        return false;
+    memcpy(buffer, entries[subindex]->dataSrc, entries[subindex]->sizeBytes);
+    return true;
+}
+
+bool CANopen::Object::setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
+{
+    if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)
+        return false;
+    memcpy((void *)entries[subindex]->dataSrc, buffer, entries[subindex]->sizeBytes);
+    entries[subindex]->metaData.bits.updateFlag = false;
+    return true;
+}
+
 void CANopen::Object::onWrite(std::function<void(Object &, uint8_t)> callback)
 {
     onWriteFunc = callback;
