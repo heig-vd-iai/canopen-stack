@@ -99,7 +99,7 @@ void updateFunc(Node &node, mutex &mtx)
     {
         if (mtx.try_lock())
         {
-            node.od()[OD_OBJECT_6048]->setValue(1, unif(engine));
+            // node.od()[OD_OBJECT_6048]->setValue(1, unif(engine));
             node.update();
             mtx.unlock();
         }
@@ -150,6 +150,10 @@ int main(int argc, char *argv[])
                          { cout << "Received RPDO" << index << endl; });
     for (int i = 0; i < node.od().length; i++)
         node.od()[i]->onWrite(onWrite);
+    node.od()[OD_OBJECT_6048]->onRequestUpdate([](Object &object, unsigned subindex)
+                                               {
+                                                       cout << "Received update request on object 6048, sub " << subindex << endl;
+                                                       if (subindex == 2) object.setValue(subindex, 3.1425f); });
 #endif
     node.od().loadData(0);
     node.init();
