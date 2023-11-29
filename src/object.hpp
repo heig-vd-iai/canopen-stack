@@ -92,16 +92,15 @@ struct LimitedObjectEntry : public ObjectEntryBase
 class Object
 {
 private:
-    std::function<void(Object &, unsigned)> onWriteFunc;
-    std::function<void(Object &, unsigned)> onRequestUpdateFunc;
+    std::function<void(Object &, uint8_t)> onWriteFunc;
+    std::function<void(Object &, uint8_t)> onRequestUpdateFunc;
 
-    // TODO: unsigned or uint8_t for subindex?
     /**
      * Request a remote update for an entry.
      * This function will call the callback set in onRequestUpdate() and handle the metadata update flag.
      * @param subindex The subindex of the read entry.
      */
-    void requestUpdate(unsigned subindex);
+    void requestUpdate(uint8_t subindex);
 
     /**
      * Read data from an object entry.
@@ -258,9 +257,8 @@ public:
      * **DO NOT use time consuming calls in the provided callback.**
      * @param callback Callback function to be called on object entry write.
      */
-    void onWrite(std::function<void(Object &, unsigned)> callback);
+    void onWrite(std::function<void(Object &, uint8_t)> callback);
 
-    // TODO: unsigned or uint8_t for subindex?
     /**
      * Set a callback function to be called when a SDO upload should trigger a value update.
      * This is useful when remote data must be fetched before responding, ensuring the data in the dictionnary is up to date.
@@ -269,6 +267,6 @@ public:
      * **DO NOT use time consuming calls in the provided callback.**
      * @param callback Callback function to be called on SDO upload.
      */
-    void onRequestUpdate(std::function<void(Object &, unsigned)> callback);
+    void onRequestUpdate(std::function<void(Object &, uint8_t)> callback);
 };
 }
