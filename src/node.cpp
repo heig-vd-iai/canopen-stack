@@ -9,17 +9,17 @@ Node::Node() : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _s
 
 ObjectDictionnary &Node::od() { return _od; }
 
-NMT &CANopen::Node::nmt() { return _nmt; }
+NMT &Node::nmt() { return _nmt; }
 
-HB &CANopen::Node::hb() { return _hb; }
+HB &Node::hb() { return _hb; }
 
-SDO &CANopen::Node::sdo() { return _sdo; }
+SDO &Node::sdo() { return _sdo; }
 
-PDO &CANopen::Node::pdo() { return _pdo; }
+PDO &Node::pdo() { return _pdo; }
 
-SYNC &CANopen::Node::sync() { return _sync; }
+SYNC &Node::sync() { return _sync; }
 
-EMCY &CANopen::Node::emcy() { return _emcy; }
+EMCY &Node::emcy() { return _emcy; }
 
 void Node::init()
 {

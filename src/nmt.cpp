@@ -13,7 +13,7 @@ void NMT::initSM()
     updateSM();
 }
 
-void CANopen::NMT::updateSM(NMTServiceCommands command)
+void NMT::updateSM(NMTServiceCommands command)
 {
     NMTStates nextState = currentState;
     switch (currentState)

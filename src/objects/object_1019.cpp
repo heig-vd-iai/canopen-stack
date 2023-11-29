@@ -5,7 +5,7 @@
 #include "../node.hpp"
 using namespace CANopen;
 
-SDOAbortCodes CANopen::Object1019::preWriteBytes(uint8_t /*subindex*/, uint8_t *bytes, uint32_t /*sizeBytes*/, Node & /*node*/)
+SDOAbortCodes Object1019::preWriteBytes(uint8_t /*subindex*/, uint8_t *bytes, uint32_t /*sizeBytes*/, Node & /*node*/)
 {
     uint8_t currentValue, newValue;
     getValue(0, &currentValue);

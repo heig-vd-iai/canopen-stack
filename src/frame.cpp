@@ -11,7 +11,7 @@ using namespace CANopen;
 
 Frame::Frame(uint8_t nodeId, uint8_t functionCode) : nodeId(nodeId), functionCode(functionCode) {}
 
-Frame CANopen::Frame::fromCobId(uint16_t cobId)
+Frame Frame::fromCobId(uint16_t cobId)
 {
     return Frame(cobId & NODEID_MASK, (cobId >> FUNCTION_OFFSET) & FUNCTION_MASK);
 }

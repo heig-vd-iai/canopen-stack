@@ -56,8 +56,7 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t size
     }
 }
 
-// TODO: remove CANopen::
-void CANopen::Object::requestUpdate(unsigned subindex)
+void Object::requestUpdate(unsigned subindex)
 {
     if (!isRemote() || !isSubValid(subindex))
         return;
@@ -102,7 +101,7 @@ uint8_t Object::getCount() const
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
 }
 
-bool CANopen::Object::isRemote() const
+bool Object::isRemote() const
 {
     return (bool)onRequestUpdateFunc;
 }
@@ -112,7 +111,7 @@ void CANopen::Object::onWrite(std::function<void(Object &, unsigned)> callback)
     onWriteFunc = callback;
 }
 
-void CANopen::Object::onRequestUpdate(std::function<void(Object &, unsigned)> callback)
+void Object::onRequestUpdate(std::function<void(Object &, unsigned)> callback)
 {
     onRequestUpdateFunc = callback;
 }

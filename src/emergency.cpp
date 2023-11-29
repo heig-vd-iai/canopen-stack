@@ -17,7 +17,7 @@ void EMCY::enable() { enabled = true; }
 
 void EMCY::disable() { enabled = false; }
 
-void CANopen::EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode)
+void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode)
 {
     EmergencyFrame frame(node.nodeId, errorCode, errorRegisterObject->getValue(), manufacturerCode);
     node.sendFrame(frame);
@@ -126,7 +126,7 @@ void EMCY::clearHistory()
 #endif
 }
 
-void CANopen::EMCY::reset()
+void EMCY::reset()
 {
     errorRegisterObject->reset();
 }
