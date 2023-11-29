@@ -93,15 +93,15 @@ class Object
 {
 private:
     std::function<void(Object &, unsigned)> onWriteFunc;
-    std::function<void(Object &, unsigned)> onReadRemoteFunc;
+    std::function<void(Object &, unsigned)> onRequestUpdateFunc;
 
     // TODO: unsigned or uint8_t for subindex?
     /**
      * Request a remote update for an entry.
-     * This function will call the callback set in onReadRemote() and handle the metadata update flag.
+     * This function will call the callback set in onRequestUpdate() and handle the metadata update flag.
      * @param subindex The subindex of the read entry.
      */
-    void readRemote(unsigned subindex);
+    void requestUpdate(unsigned subindex);
 
     /**
      * Read data from an object entry.
@@ -212,7 +212,7 @@ public:
     uint8_t getCount();
 
     /**
-     * Check if the object is considered as remote, that is if a callback was set using onReadRemote().
+     * Check if the object is considered as remote, that is if a callback was set using onRequestUpdate().
      * @return True is the object is considered as remote, false otherwise.
      */
     bool isRemote();
@@ -262,15 +262,13 @@ public:
 
     // TODO: unsigned or uint8_t for subindex?
     /**
-     * Set a callback function to be called before an object entry is read from.
-     * When a callback is set, the object becomes considered as remote.
-     * A remote object will call this callback anytime a SDO attempts to read any of its entries.
-     * The request will be pending until a new value is set to the entry.
-     * This ensures that the latest data is available in the object dictionnary.
+     * Set a callback function to be called when a SDO upload should trigger a value update.
+     * This is useful when remote data must be fetched before responding, ensuring the data in the dictionnary is up to date.
+     * The SDO request will be pending until timeout occurs or entry data is updated.
      * The function will receive a reference to the object and the subindex.
      * **DO NOT use time consuming calls in the provided callback.**
-     * @param callback Callback function to be called on object entry write.
+     * @param callback Callback function to be called on SDO upload.
      */
-    void onReadRemote(std::function<void(Object &, unsigned)> callback);
+    void onRequestUpdate(std::function<void(Object &, unsigned)> callback);
 };
 }
