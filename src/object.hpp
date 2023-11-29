@@ -246,8 +246,8 @@ public:
     {
         if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
             return false;
-        entries[subindex]->metaData.bits.updateFlag = false;
         *(T *)entries[subindex]->dataSrc = value;
+        entries[subindex]->metaData.bits.updateFlag = false;
         return true;
     }
 
