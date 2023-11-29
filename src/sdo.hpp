@@ -4,7 +4,8 @@
 #pragma once
 #include "od.hpp"
 #include <cstdint>
-#define SDO_TIMEOUT_US 30000
+// #define SDO_TIMEOUT_US 30000
+#define SDO_TIMEOUT_US 3000000 // TODO: Debug value
 #define SDO_BLOCK_DOWNLOAD_TIMEOUT_US 10000
 #define SDO_DLC 8
 #define SDO_BUFFSIZE OD_ENTRY_SIZE_MAX
