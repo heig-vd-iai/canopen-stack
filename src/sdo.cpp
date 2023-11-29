@@ -74,24 +74,25 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
         uploadInitiateSend(timestamp_us);
 }
 
-void CANopen::SDO::uploadInitiateSend(uint32_t timestamp_us)
+void SDO::uploadInitiateSend(uint32_t timestamp_us)
 {
     SDOFrame response(node.nodeId);
     SDOCommandByte sendCommand = {0};
-    if (transferData.remainingBytes > SDO_INITIATE_DATA_LENGTH)
+    int32_t size = transferData.object->getSize(transferData.subindex);
+    if (size > SDO_INITIATE_DATA_LENGTH)
     { // Segment transfer
         sendCommand.bits_initiate.e = false;
         sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = false;
-        response.setInitiateData(transferData.remainingBytes);
+        response.setInitiateData(size);
     }
     else
     { // Expedited transfer
         sendCommand.bits_initiate.e = true;
         sendCommand.bits_initiate.s = true;
-        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - transferData.remainingBytes;
+        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
         uint32_t abortCode;
-        if ((abortCode = transferData.object->readBytes(transferData.subindex, response.data + SDO_INITIATE_DATA_OFFSET, transferData.remainingBytes, 0)) != SDOAbortCode_OK)
+        if ((abortCode = transferData.object->readBytes(transferData.subindex, response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) != SDOAbortCode_OK)
         {
             sendAbort(transferData.index, transferData.subindex, abortCode);
             return;
