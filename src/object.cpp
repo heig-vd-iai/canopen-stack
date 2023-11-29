@@ -82,27 +82,27 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeB
     return SDOAbortCode_OK;
 }
 
-bool Object::isSubValid(uint8_t subindex)
+bool Object::isSubValid(uint8_t subindex) const
 {
     return subindex < subNumber;
 }
 
-uint32_t Object::getSize(uint8_t subindex)
+uint32_t Object::getSize(uint8_t subindex) const
 {
     return isSubValid(subindex) ? entries[subindex]->sizeBytes : 0;
 }
 
-MetaBitfield Object::getMetadata(uint8_t subindex)
+MetaBitfield Object::getMetadata(uint8_t subindex) const
 {
     return isSubValid(subindex) ? entries[subindex]->metaData : MetaBitfield{0};
 }
 
-uint8_t Object::getCount()
+uint8_t Object::getCount() const
 {
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;
 }
 
-bool CANopen::Object::isRemote()
+bool CANopen::Object::isRemote() const
 {
     return (bool)onRequestUpdateFunc;
 }

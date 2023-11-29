@@ -78,7 +78,7 @@ struct LimitedObjectEntry : public ObjectEntryBase
      * @param data Pointer to the raw data to be checked.
      * @return 0 if data is within limits, -1 if below, 1 if above.
      */
-    inline int checkLimits(void *data)
+    inline int checkLimits(void *data) const
     {
         T value = *(T *)data;
         return value < minVal ? -1 : (value > maxVal ? 1 : 0);
@@ -189,33 +189,33 @@ public:
      * @param subindex Subindex to check.
      * @return True if the subindex exists, false otherwise.
      */
-    bool isSubValid(uint8_t subindex);
+    bool isSubValid(uint8_t subindex) const;
 
     /**
      * Get the size of an object's entry data.
      * @param subindex Subindex of the object entry.
      * @return Size in bytes of the object entry data.
      */
-    uint32_t getSize(uint8_t subindex);
+    uint32_t getSize(uint8_t subindex) const;
 
     /**
      * Get the metadata of an object's entry.
      * @param subindex Subindex of the object entry.
      * @return Metadata bitfield of the object entry.
      */
-    MetaBitfield getMetadata(uint8_t subindex);
+    MetaBitfield getMetadata(uint8_t subindex) const;
 
     /**
      * Get the number of entries in the object, **if object is not of type VAR**.
      * @return Number of entries.
      */
-    uint8_t getCount();
+    uint8_t getCount() const;
 
     /**
      * Check if the object is considered as remote, that is if a callback was set using onRequestUpdate().
      * @return True is the object is considered as remote, false otherwise.
      */
-    bool isRemote();
+    bool isRemote() const;
 
     /**
      * Get the value of an object's entry.
@@ -226,7 +226,7 @@ public:
      * @return True if the value was retrieved successfully, false otherwise.
      */
     template <typename T>
-    inline bool getValue(uint8_t subindex, T *value)
+    inline bool getValue(uint8_t subindex, T *value) const
     {
         if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
             return false;
