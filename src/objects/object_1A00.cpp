@@ -30,8 +30,8 @@ SDOAbortCodes Object1A00::preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32
         Object *object = node.od().findObject(entry.bits.index);
         if (!object || !object->isSubValid(entry.bits.subindex))
             return SDOAbortCode_ObjectNonExistent;
-        AccessType access = object->getAccessType(entry.bits.subindex);
-        if (!access.bits.mappable || !access.bits.readable)
+        MetaBitfield meta = object->getMetadata(entry.bits.subindex);
+        if (!meta.bits.mappable || !meta.bits.readable)
             return SDOAbortCode_CannotMapToPDO;
     }
     return SDOAbortCode_OK;

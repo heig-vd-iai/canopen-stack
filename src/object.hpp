@@ -17,16 +17,16 @@ namespace CANopen
 struct ObjectEntryBase
 {
     const void *dataSrc;
-    const AccessType accessType;
+    const MetaBitfield metaData;
     const uint32_t sizeBytes;
 
     /**
      * Constructor for the base object entry.
      * @param src Pointer to the data source.
-     * @param accessType Access type of the object entry.
+     * @param metaData Metadata of the object entry, see MetaBitfield union.
      * @param sizeBytes Size in bytes of the data associated with the entry.
      */
-    ObjectEntryBase(void *src, uint8_t accessType, uint32_t sizeBytes) : dataSrc(src), accessType{accessType}, sizeBytes(sizeBytes) {}
+    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -49,9 +49,9 @@ struct ObjectEntry : public ObjectEntryBase
     /**
      * Constructor for the ObjectEntry.
      * @param src Pointer to the data source.
-     * @param accessType Access type of the object entry.
+     * @param metaData Metadata of the object entry, see MetaBitfield union.
      */
-    ObjectEntry(void *src, uint8_t accessType) : ObjectEntryBase(src, accessType, sizeof(T)) {}
+    ObjectEntry(void *src, uint8_t metaData) : ObjectEntryBase(src, metaData, sizeof(T)) {}
 };
 
 /**
@@ -67,11 +67,11 @@ struct LimitedObjectEntry : public ObjectEntryBase
     /**
      * Constructor for the LimitedObjectEntry.
      * @param src Pointer to the data source.
-     * @param accessType Access type of the object entry.
+     * @param metaData Metadata of the object entry, see MetaBitfield union.
      * @param minVal Minimum allowed value.
      * @param maxVal Maximum allowed value.
      */
-    LimitedObjectEntry(void *src, uint8_t accessType, T minVal, T maxVal) : ObjectEntryBase(src, accessType, sizeof(T)), minVal(minVal), maxVal(maxVal) {}
+    LimitedObjectEntry(void *src, uint8_t metaData, T minVal, T maxVal) : ObjectEntryBase(src, metaData, sizeof(T)), minVal(minVal), maxVal(maxVal) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -191,11 +191,11 @@ public:
     uint32_t getSize(uint8_t subindex);
 
     /**
-     * Get the access type of an object's entry.
+     * Get the metadata of an object's entry.
      * @param subindex Subindex of the object entry.
-     * @return Access type of the object entry.
+     * @return Metadata bitfield of the object entry.
      */
-    AccessType getAccessType(uint8_t subindex);
+    MetaBitfield getMetadata(uint8_t subindex);
 
     /**
      * Get the number of entries in the object, **if object is not of type VAR**.

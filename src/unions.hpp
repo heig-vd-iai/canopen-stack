@@ -7,10 +7,10 @@
 namespace CANopen
 {
 /**
- * Access type of an ObjectEntry.
- * The access type specifies the read and write permissions, as well as the PDO mappability.
+ * Metadata bitfield of an ObjectEntry.
+ * The metadata specifies the read and write permissions, PDO mappability and remote data update flag.
  */
-union AccessType
+union MetaBitfield
 {
     uint8_t value;
     struct
@@ -18,6 +18,7 @@ union AccessType
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
+        bool updateFlag : 1;
     } bits;
 };
 
