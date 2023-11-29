@@ -43,6 +43,7 @@ class SDO
         SDOServerState_Pending,
         SDOServerState_Uploading,
         SDOServerState_Downloading,
+        SDOServerState_BlockPending,
         SDOServerState_BlockUploading,
         SDOServerState_BlockDownloading,
         SDOServerState_BlockDownloadingEnding
@@ -146,6 +147,13 @@ private:
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
     void blockUploadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
+
+    /**
+     * This method handles the sending of block upload initiate frames.
+     * It should only be called by blockUploadInitiate() or update() depending on the object being remotely updated or not.
+     * @param timestamp_us Current timestamp in microseconds.
+     */
+    void blockUploadInitiateSend(uint32_t timestamp_us);
 
     /**
      * This method handles the reception of client block upload response and client block upload end block.
