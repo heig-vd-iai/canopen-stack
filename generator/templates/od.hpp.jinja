@@ -14,100 +14,100 @@
 
 namespace {{namespace}}
 {
-    /**
-     * This struct represents the object dictionary raw data.
-     * It is an auto-generated struct that should not be manually edited.
-     */
-    struct ObjectDictionnaryData
-    {
-        {% for object in objects %}
-        {% for data in object.renderData() %}
-        {{data}};
-        {% endfor %}
-        {% endfor %}
-    };
+/**
+ * This struct represents the object dictionary raw data.
+ * It is an auto-generated struct that should not be manually edited.
+ */
+struct ObjectDictionnaryData
+{
+    {% for object in objects %}
+    {% for data in object.renderData() %}
+    {{data}};
+    {% endfor %}
+    {% endfor %}
+};
 
-    /**
-     * Object Dictionary.
-     * It is an auto-generated class that should not be manually edited.
-     */
-    class ObjectDictionnary
+/**
+ * Object Dictionary.
+ * It is an auto-generated class that should not be manually edited.
+ */
+class ObjectDictionnary
+{
+// @cond
+private:
+    struct
     {
-    // @cond
-    private:
         struct
         {
-            struct
-            {
-                ObjectDictionnaryData data;
-                {% for object in objects %}
-                {% for entry in object.renderEntry() %}
-                {{entry}};
-                {% endfor %}
-                {{object.renderEntryList()}};
-                {% endfor %}
-            } entries;
+            ObjectDictionnaryData data;
             {% for object in objects %}
-            {{object.renderObject()}};
+            {% for entry in object.renderEntry() %}
+            {{entry}};
             {% endfor %}
-        } objects;
-        Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
-        class Node &node;
-        // @endcond
-    public:
-        const uint16_t length = OD_OBJECTS_COUNT;
+            {{object.renderEntryList()}};
+            {% endfor %}
+        } entries;
+        {% for object in objects %}
+        {{object.renderObject()}};
+        {% endfor %}
+    } objects;
+    Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
+    class Node &node;
+    // @endcond
+public:
+    const uint16_t length = OD_OBJECTS_COUNT;
 
-        /**
-         * Constructor for the Object Dictionary.
-         * @param node The parent Node reference.
-         */
-        ObjectDictionnary(class Node &node);
+    /**
+     * Constructor for the Object Dictionary.
+     * @param node The parent Node reference.
+     */
+    ObjectDictionnary(class Node &node);
 
-        /**
-        * Find an object in the dictionary.
-        * @param index The hex index of the object to find.
-        * @return Pointer to the found object, or nullptr if not found.
-        */
-        Object *findObject(uint16_t index);
+    /**
+     * Find an object in the dictionary.
+     * @param index The hex index of the object to find.
+     * @return Pointer to the found object, or nullptr if not found.
+     */
+    Object *findObject(uint16_t index);
 
-        /**
-         * Access an object in the dictionary by array index.
-         * @param index The array index of the object.
-         * This parameter should always use one of the generated defines.
-         * @return Pointer to the accessed object, or nullptr if not found.
-         */
-        Object *at(uint16_t index);
+    /**
+     * Access an object in the dictionary by array index.
+     * @param index The array index of the object.
+     * This parameter should always use one of the generated defines.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *at(uint16_t index);
 
-        /**
-         * Access an object in the dictionary by array index using the subscript operator.
-         * Under the hood, this method uses the at() method.
-         * @param index The array index of the object to access.
-         * @return Pointer to the accessed object, or nullptr if not found.
-         */
-        Object *operator[](uint16_t index);
+    /**
+     * Access an object in the dictionary by array index using the subscript operator.
+     * Under the hood, this method uses the at() method.
+     * @param index The array index of the object to access.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *operator[](uint16_t index);
 
-        /**
-         * Save data to non-volatile storage for a specified parameter group.
-         * This method is called by object 0x1010.
-         * @param parameterGroup The parameter group number.
-         * @return True if saving was successful, false otherwise.
-         */
-        bool saveData(uint8_t parameterGroup);
+    /**
+     * Save data to non-volatile storage for a specified parameter group.
+     * This method is called by object 0x1010.
+     * @param parameterGroup The parameter group number.
+     * @return True if saving was successful, false otherwise.
+     */
+    bool saveData(uint8_t parameterGroup);
 
-        /**
-         * Load data from non-volatile storage for a specified parameter group.
-         * This method should be called on application startup to load the object dictionnary.
-         * @param parameterGroup The parameter group number.
-         * @return True if loading was successful, false otherwise.
-         */
-        bool loadData(uint8_t parameterGroup);
+    /**
+     * Load data from non-volatile storage for a specified parameter group.
+     * This method should be called on application startup to load the object dictionnary.
+     * @param parameterGroup The parameter group number.
+     * @return True if loading was successful, false otherwise.
+     */
+    bool loadData(uint8_t parameterGroup);
 
-        /**
-         * Restore data to default for a specified parameter group.
-         * This method is called by object 0x1011.
-         * @param parameterGroup The parameter group number.
-         * @return True if restoring was successful, false otherwise.
-         */
-        bool restoreData(uint8_t parameterGroup);
-    };
+    /**
+     * Restore data to default for a specified parameter group.
+     * This method is called by object 0x1011.
+     * @param parameterGroup The parameter group number.
+     * @return True if restoring was successful, false otherwise.
+     */
+    bool restoreData(uint8_t parameterGroup);
+};
 }
