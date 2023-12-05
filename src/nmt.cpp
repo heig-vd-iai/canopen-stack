@@ -38,8 +38,7 @@ void NMT::updateSM(NMTServiceCommands command)
         node._pdo.reloadTPDO();
         node._pdo.reloadRPDO();
         nextState = NMTState_PreOperational;
-        // explicit fallthrough [[fallthrough]];
-        [[fallthrough]]; // TODO: non standard in C++14
+        [[fallthrough]]; // explicit fallthrough
     case NMTState_PreOperational:
         node._pdo.disable();
         node._sdo.enable();
