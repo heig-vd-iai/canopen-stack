@@ -172,16 +172,18 @@ protected:
 public:
     friend class SDO;
     friend class PDO;
+    const uint16_t arrayIndex;
     const uint16_t index;
     const uint8_t subNumber;
 
     /**
      * Constructor for the Object class.
-     * @param index Index of the object.
+     * @param arrayIndex Array index of the object (position in dictionnary array).
+     * @param index Index of the object (dictionnary address).
      * @param subNumber Number of subentries in the object.
      * @param entries Array of pointers to object entries belonging to that object.
      */
-    Object(uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : entries(entries), index(index), subNumber(subNumber) {}
+    Object(uint16_t arrayIndex, uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : entries(entries), arrayIndex(arrayIndex), index(index), subNumber(subNumber) {}
 
     /**
      * Check if the subindex exists.

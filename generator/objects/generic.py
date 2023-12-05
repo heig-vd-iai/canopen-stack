@@ -45,7 +45,7 @@ class ObjectBase(ABC):
 
     def renderObject(self) -> str:
         """Returns the C++ object declaration, ex. Object x1003 = Object(...)"""
-        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({self.index}, {self.subNumber}, entries.{self.varName})"
+        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({f'OD_OBJECT_{self.index:X}'}, {self.index}, {self.subNumber}, entries.{self.varName})"
     
     def renderEntryList(self) -> str:
         """Returns the C++ entry list, ex. ObjectEntryBase *x1003[] = {&x1003sub0, ...}"""

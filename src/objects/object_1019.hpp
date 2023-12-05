@@ -20,10 +20,11 @@ private:
 public:
     /**
      * Constructor for the Object class.
-     * @param index Index of the object.
+     * @param arrayIndex Array index of the object (position in dictionnary array).
+     * @param index Index of the object (dictionnary address).
      * @param subNumber Number of subentries in the object.
      * @param entries Array of pointers to object entries belonging to that object.
      */
-    Object1019(uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
+    Object1019(uint16_t arrayIndex, uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : Object(arrayIndex, index, subNumber, entries) {}
 };
 }
