@@ -113,12 +113,16 @@ class ObjectGenerator:
         objects_index = [f"OD_OBJECT_{obj.index:X} {i}"
                          for i, obj in enumerate(self.objects_values)]
 
+        objects_mux = [f"OD_MUX_{obj.index:X}_SUB_{sub} 0x{(obj.index << 8) | sub:X}"
+                       for obj in self.objects_values
+                       for sub in range(len(obj.entries))]
+
         defines = [
             f"OD_NODE_ID {self.id}",
             f"OD_OBJECTS_COUNT {len(self.objects_values)}",
             f"OD_ENTRY_SIZE_MAX {ENTRY_MAX_SIZE}",
             f"OD_TPDO_COUNT {len(tpdo)}",
-            f"OD_RPDO_COUNT {len(rpdo)}"] + objects_index
+            f"OD_RPDO_COUNT {len(rpdo)}"] + objects_index + objects_mux
 
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR),
                                  trim_blocks=True,
