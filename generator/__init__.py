@@ -110,15 +110,15 @@ class ObjectGenerator:
         rpdo = [obj for obj in self.objects_values
                 if isinstance(obj, Object1400)]
 
-        objects = [f"OD_OBJECT_{obj.index:X} {i}"
-                   for i, obj in enumerate(self.objects_values)]
+        objects_index = [f"OD_OBJECT_{obj.index:X} {i}"
+                         for i, obj in enumerate(self.objects_values)]
 
         defines = [
             f"OD_NODE_ID {self.id}",
             f"OD_OBJECTS_COUNT {len(self.objects_values)}",
             f"OD_ENTRY_SIZE_MAX {ENTRY_MAX_SIZE}",
             f"OD_TPDO_COUNT {len(tpdo)}",
-            f"OD_RPDO_COUNT {len(rpdo)}"] + objects
+            f"OD_RPDO_COUNT {len(rpdo)}"] + objects_index
 
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR),
                                  trim_blocks=True,
