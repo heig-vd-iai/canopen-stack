@@ -5,12 +5,23 @@
  * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
  */
 #pragma once
-#include "od_include.hpp"
 #define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
 {% for define in defines %}
 #define {{define}}
 {% endfor %}
+/* These defines map an object to its dictionnary array index */
+{% for define in defines_index %}
+#define {{define}}
+{% endfor %}
+/* These defines map an entry to its multiplexed address (parent object index and entry subindex) */
+{% for define in defines_mux %}
+#define {{define}}
+{% endfor %}
+
+/* Useful if only the defines from this file are needed */ 
+#ifndef _OD_DEFINES_ONLY
+#include "od_include.hpp"
 
 namespace {{namespace}}
 {
@@ -111,3 +122,4 @@ public:
     bool restoreData(uint8_t parameterGroup);
 };
 }
+#endif // _OD_DEFINES_ONLY

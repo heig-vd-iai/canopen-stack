@@ -122,7 +122,7 @@ class ObjectGenerator:
             f"OD_OBJECTS_COUNT {len(self.objects_values)}",
             f"OD_ENTRY_SIZE_MAX {ENTRY_MAX_SIZE}",
             f"OD_TPDO_COUNT {len(tpdo)}",
-            f"OD_RPDO_COUNT {len(rpdo)}"] + objects_index + objects_mux
+            f"OD_RPDO_COUNT {len(rpdo)}"]
 
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR),
                                  trim_blocks=True,
@@ -132,6 +132,8 @@ class ObjectGenerator:
         template = env.get_template(TEMPLATE_FILENAME)
         return template.render(
             defines=defines,
+            defines_index=objects_index,
+            defines_mux=objects_mux,
             namespace="CANopen",
             objects=self.objects_values,
             objectNames=[obj.varName for obj in self.objects_values],
