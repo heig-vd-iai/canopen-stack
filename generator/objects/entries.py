@@ -2,8 +2,10 @@ from abc import ABC
 
 accesstypes = ["rw", "rww", "rwr", "ro", "wo", "const"]
 
+
 class AccessType:
     """Represents an entrie's access type + ability do be PDO mapped value in a convenient way"""
+
     def __init__(self, accessType: str, PDOMappable: bool) -> None:
         self._READ = 1 << 0
         self._WRITE = 1 << 1
@@ -15,29 +17,34 @@ class AccessType:
     @property
     def value(self) -> int:
         return self._value
-    
+
     @property
     def readable(self) -> bool:
         return bool(self._value & self._READ)
-    
+
     @property
     def writeable(self) -> bool:
         return bool(self._value & self._WRITE)
-    
+
     @property
     def mappable(self) -> bool:
         return self._mappable
-    
+
     def set(self, name: str) -> None:
-        if name in ["rw", "rww", "rwr"]: self._value = self._WRITE | self._READ
-        elif name in ["ro", "const"]: self._value = self._READ
-        elif name == "wo": self._value = self._WRITE
-        if self._mappable: self._value |= self._MAPPABLE
+        if name in ["rw", "rww", "rwr"]:
+            self._value = self._WRITE | self._READ
+        elif name in ["ro", "const"]:
+            self._value = self._READ
+        elif name == "wo":
+            self._value = self._WRITE
+        if self._mappable:
+            self._value |= self._MAPPABLE
 
 
 class ObjectEntry(ABC):
     """This class serves as the base class for all object entries, that must be subclassed for each data type"""
-    def __init__(self, dataType: int, ctype: str, size: int, accessType: str, PDOMappable: bool, defaultValue, value, lowLimit = None, highLimit = None, cppEntryName: str = "ObjectEntry", cppLimitedEntryName: str = "LimitedObjectEntry") -> None:
+
+    def __init__(self, dataType: int, ctype: str, size: int, accessType: str, PDOMappable: bool, defaultValue, value, lowLimit=None, highLimit=None, cppEntryName: str = "ObjectEntry", cppLimitedEntryName: str = "LimitedObjectEntry") -> None:
         self.dataType: int = dataType
         self.ctype: str = ctype
         self.size: int = size
@@ -55,55 +62,80 @@ class ObjectEntry(ABC):
     def renderData(self, name: str) -> str:
         """Returns the C++ data declaration, ex. uint16_t x1003 = 42"""
         return f"{self.ctype} {name} = {self.value}"
-    
+
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(&data.x1003, 3)"""
-        if self.isLimited: return f"{self.cppLimitedEntryName}<{self.ctype}> {entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
-        else: return f"{self.cppEntryName}<{self.ctype}> {entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
+        if self.isLimited:
+            return f"{self.cppLimitedEntryName}<{self.ctype}> {entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
+        else:
+            return f"{self.cppEntryName}<{self.ctype}> {entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
+
 
 class BooleanEntry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: bool, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x01, "bool", 1, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: bool, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x01, "bool", 1, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Integer8Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x02, "int8_t", 1, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x02, "int8_t", 1, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Integer16Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x03, "int16_t", 2, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x03, "int16_t", 2, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Integer32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x04, "int32_t", 4, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x04, "int32_t", 4, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Integer64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x15, "int64_t", 8, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x15, "int64_t", 8, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Unsigned8Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x05, "uint8_t", 1, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x05, "uint8_t", 1, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Unsigned16Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x06, "uint16_t", 2, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x06, "uint16_t", 2, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Unsigned32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x07, "uint32_t", 4, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x07, "uint32_t", 4, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Unsigned64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x1B, "uint64_t", 8, accessType, PDOMappable, 0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x1B, "uint64_t", 8, accessType,
+                         PDOMappable, 0, value, lowLimit, highLimit)
+
 
 class Real32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x08, "float", 4, accessType, PDOMappable, 0.0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x08, "float", 4, accessType,
+                         PDOMappable, 0.0, value, lowLimit, highLimit)
+
 
 class Real64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit = None, highLimit = None) -> None:
-        super().__init__(0x11, "double", 8, accessType, PDOMappable, 0.0, value, lowLimit, highLimit)
+    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit=None, highLimit=None) -> None:
+        super().__init__(0x11, "double", 8, accessType,
+                         PDOMappable, 0.0, value, lowLimit, highLimit)
+
 
 class VisibleStringEntry(ObjectEntry):
     def __init__(self, accessType: str, PDOMappable: bool, value: str, *_) -> None:
@@ -113,10 +145,11 @@ class VisibleStringEntry(ObjectEntry):
     def renderData(self, name: str) -> str:
         """Returns the C++ data declaration, ex. uint8_t x1003[6] = {97, 109, 111, 103, 117, 115}"""
         return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.value])}}}"
-    
+
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<uint8_t[125]> x1003sub0 = ObjectEntry<uint8_t[125]>(&data.x1003, 3)"""
         return f"{self.cppEntryName}<{self.ctype}[{self.size}]> {entryVarName} = {self.cppEntryName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
+
 
 datatype2entryclass = {
     0x01: BooleanEntry,

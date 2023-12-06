@@ -28,6 +28,7 @@ MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
 class ObjectGenerator:
     """ Generates the header file from the EDS file """
+
     def __init__(self, filename, id):
         self.filename = filename
         self.id = id
@@ -77,10 +78,10 @@ class ObjectGenerator:
                 click.echo(f"Failed to parse object {index:X}", err=True)
 
         objects_dict = {index: object
-                       for index, object in objects_dict.items()
-                       if not isinstance(object, (Object1600, Object1A00))
-                       or isinstance(object, (Object1600, Object1A00))
-                       and object.verify(objects_dict)}
+                        for index, object in objects_dict.items()
+                        if not isinstance(object, (Object1600, Object1A00))
+                        or isinstance(object, (Object1600, Object1A00))
+                        and object.verify(objects_dict)}
         objects_values = list(objects_dict.values())
         failed_objects = set(od.keys()) - set(objects_dict.keys())
         missing_objects = set(MANDATORY_OBJECTS) - set(objects_dict.keys())
