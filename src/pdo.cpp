@@ -113,7 +113,7 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
     TPDO *tpdo = tpdos + index;
     if (!enabled || !tpdo->commObject->isEnabled())
         return;
-    Frame frame(tpdo->commObject->getActualCobId());
+    Frame frame = Frame::fromCobId(tpdo->commObject->getActualCobId());
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
