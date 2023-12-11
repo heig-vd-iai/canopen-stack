@@ -38,8 +38,7 @@ void PDO::remapTPDO(unsigned index)
 {
     TPDO *tpdo = tpdos + index;
     unsigned count = tpdo->mapObject->getCount();
-    tpdo->count = 0;
-    uint32_t sizeSum = 0;
+    uint32_t sizeSum = tpdo->size = tpdo->count = 0;
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
@@ -58,8 +57,7 @@ void PDO::remapRPDO(unsigned index)
 {
     RPDO *rpdo = rpdos + index;
     unsigned count = rpdo->mapObject->getCount();
-    rpdo->count = 0;
-    uint32_t sizeSum = 0;
+    uint32_t sizeSum = rpdo->size = rpdo->count = 0;
     for (unsigned i = 0; i < count; i++)
     {
         PDOMapEntry content = {rpdo->mapObject->getMappedValue(i)};
@@ -93,7 +91,7 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer)
 void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us)
 {
     RPDO *rpdo = rpdos + index;
-    if (!enabled || !rpdo->commObject->isEnabled())
+    if (!enabled || !rpdo->commObject->isEnabled() || rpdo->count == 0)
         return;
     uint32_t bytesTransferred = 0;
     for (unsigned i = 0; i < rpdo->count; i++)
@@ -111,7 +109,7 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us)
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us)
 {
     TPDO *tpdo = tpdos + index;
-    if (!enabled || !tpdo->commObject->isEnabled())
+    if (!enabled || !tpdo->commObject->isEnabled() || tpdo->count == 0)
         return;
     Frame frame = Frame::fromCobId(tpdo->commObject->getActualCobId());
     frame.dlc = tpdo->size;
