@@ -19,10 +19,7 @@
 #define {{define}}
 {% endfor %}
 
-/* Useful if only the defines from this file are needed */ 
-#ifndef _OD_DEFINES_ONLY
-#include "od_include.hpp"
-
+#include <cstdint>
 namespace {{namespace}}
 {
 /**
@@ -37,7 +34,13 @@ struct ObjectDictionnaryData
     {% endfor %}
     {% endfor %}
 };
+}
 
+/* Useful if the ObjectDictionnary definition is not needed */ 
+#ifndef _OD_NO_DICTIONNARY
+#include "od_include.hpp"
+namespace {{namespace}}
+{
 /**
  * Object Dictionary.
  * It is an auto-generated class that should not be manually edited.
@@ -117,4 +120,4 @@ public:
     bool restoreData(uint8_t parameterGroup);
 };
 }
-#endif // _OD_DEFINES_ONLY
+#endif // _OD_NO_DICTIONNARY

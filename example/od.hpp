@@ -303,10 +303,7 @@
 #define OD_MUX_60FE_SUB_0 0x60FE00
 #define OD_MUX_60FE_SUB_1 0x60FE01
 
-/* Useful if only the defines from this file are needed */ 
-#ifndef _OD_DEFINES_ONLY
-#include "od_include.hpp"
-
+#include <cstdint>
 namespace CANopen
 {
 /**
@@ -388,7 +385,13 @@ struct ObjectDictionnaryData
     uint8_t x60FEsub0 = 1;
     uint32_t x60FE[1] = {0};
 };
+}
 
+/* Useful if the ObjectDictionnary definition is not needed */ 
+#ifndef _OD_NO_DICTIONNARY
+#include "od_include.hpp"
+namespace CANopen
+{
 /**
  * Object Dictionary.
  * It is an auto-generated class that should not be manually edited.
@@ -810,4 +813,4 @@ public:
     bool restoreData(uint8_t parameterGroup);
 };
 }
-#endif // _OD_DEFINES_ONLY
+#endif // _OD_NO_DICTIONNARY
