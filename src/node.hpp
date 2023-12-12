@@ -53,8 +53,10 @@ public:
 
     /**
      * Constructor for the Node class.
+     * @param data Reference to the object dictionnary data.
+     * The data object is instanciated separately from the node, allowing for greater storage flexibility.
      */
-    Node();
+    Node(ObjectDictionnaryData &data);
 
     /**
      * Get the Object Dictionnary object.
