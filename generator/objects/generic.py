@@ -56,12 +56,12 @@ class ObjectBase(ABC):
 
     def renderObject(self) -> str:
         """Returns the C++ object declaration, ex. Object x1003 = Object(...)"""
-        return f"{self.cppObjectName} {self.varName} = {self.cppObjectName}({f'OD_OBJECT_{self.index:X}'}, {self.index}, {self.subNumber}, entries.{self.varName})"
+        return f"{self.cppObjectName} object_{self.varName} = {self.cppObjectName}({f'OD_OBJECT_{self.index:X}'}, {self.index}, {self.subNumber}, entries_{self.varName})"
 
     def renderEntryList(self) -> str:
         """Returns the C++ entry list, ex. ObjectEntryBase *x1003[] = {&x1003sub0, ...}"""
-        subs = [f"&{self.varName}sub{sub}" for sub in range(len(self.entries))]
-        return f"{self.cppBaseEntryName} *{self.varName}[{len(self.entries)}] = {{{', '.join(subs)}}}"
+        subs = [f"&entry_{self.varName}sub{sub}" for sub in range(len(self.entries))]
+        return f"{self.cppBaseEntryName} *entries_{self.varName}[{len(self.entries)}] = {{{', '.join(subs)}}}"
 
     @abstractmethod
     def renderData(self) -> "list[str]": return []

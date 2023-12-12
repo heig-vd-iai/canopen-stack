@@ -46,23 +46,17 @@ class ObjectDictionnary
 {
 // @cond
 private:
-    struct
-    {
-        struct
-        {
-            ObjectDictionnaryData data;
-            {% for object in objects %}
-            {% for entry in object.renderEntry() %}
-            {{entry}};
-            {% endfor %}
-            {{object.renderEntryList()}};
-            {% endfor %}
-        } entries;
-        {% for object in objects %}
-        {{object.renderObject()}};
-        {% endfor %}
-    } objects;
-    Object *objectsArray[OD_OBJECTS_COUNT] = {&objects.{{objectNames|join(', &objects.')}}};
+    ObjectDictionnaryData data;
+    {% for object in objects %}
+    {% for entry in object.renderEntry() %}
+    {{entry}};
+    {% endfor %}
+    {{object.renderEntryList()}};
+    {% endfor %}
+    {% for object in objects %}
+    {{object.renderObject()}};
+    {% endfor %}
+    Object *objectsArray[OD_OBJECTS_COUNT] = {&object_{{objectNames|join(', &object_')}}};
     class Node &node;
     // @endcond
 public:

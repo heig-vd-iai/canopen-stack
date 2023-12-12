@@ -268,7 +268,7 @@ bool ObjectDictionnary::saveData(uint8_t /*parameterGroup*/)
     ofstream f(FILENAME, ios::out | ios::binary);
     if (!f)
         return false;
-    f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
+    f.write((char *)&data, sizeof(data));
     f.close();
     return true;
 }
@@ -278,7 +278,7 @@ bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/)
     ifstream f(FILENAME, ios::in | ios::binary);
     if (!f)
         return false;
-    f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
+    f.read((char *)&data, sizeof(data));
     f.close();
     node.pdo().reloadTPDO();
     node.pdo().reloadRPDO();
@@ -287,7 +287,7 @@ bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/)
 
 bool ObjectDictionnary::restoreData(uint8_t /*parameterGroup*/)
 {
-    objects.entries.data = ObjectDictionnaryData();
+    data = ObjectDictionnaryData();
     node.pdo().reloadTPDO();
     node.pdo().reloadRPDO();
     return true;

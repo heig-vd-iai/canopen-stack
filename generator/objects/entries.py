@@ -66,9 +66,9 @@ class ObjectEntry(ABC):
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(&data.x1003, 3)"""
         if self.isLimited:
-            return f"{self.cppLimitedEntryName}<{self.ctype}> {entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
+            return f"{self.cppLimitedEntryName}<{self.ctype}> entry_{entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
         else:
-            return f"{self.cppEntryName}<{self.ctype}> {entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
+            return f"{self.cppEntryName}<{self.ctype}> entry_{entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
 
 
 class BooleanEntry(ObjectEntry):
@@ -148,7 +148,7 @@ class VisibleStringEntry(ObjectEntry):
 
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<uint8_t[125]> x1003sub0 = ObjectEntry<uint8_t[125]>(&data.x1003, 3)"""
-        return f"{self.cppEntryName}<{self.ctype}[{self.size}]> {entryVarName} = {self.cppEntryName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
+        return f"{self.cppEntryName}<{self.ctype}[{self.size}]> entry_{entryVarName} = {self.cppEntryName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
 
 
 datatype2entryclass = {
