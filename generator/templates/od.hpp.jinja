@@ -46,7 +46,7 @@ class ObjectDictionnary
 {
 // @cond
 private:
-    ObjectDictionnaryData data;
+    ObjectDictionnaryData &data;
     {% for object in objects %}
     {% for entry in object.renderEntry() %}
     {{entry}};
