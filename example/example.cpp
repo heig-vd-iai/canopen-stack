@@ -62,7 +62,6 @@ const ErrorCodeInfo errorInfo[] = {
     {0xF000, "Additional functions - generic error"},
     {0xFF00, "Device specific - generic error"}};
 const int errorInfoLength = sizeof(errorInfo) / sizeof(errorInfo[0]);
-ObjectDictionnaryData dictionnaryData;
 bool quit = false;
 int sock = -1;
 
@@ -142,7 +141,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    Node node(dictionnaryData);
+    Node node;
     cout << "Starting node with ID " << (int)node.nodeId << " on interface " << argv[1] << endl;
 #ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)

@@ -758,9 +758,8 @@ public:
     /**
      * Constructor for the Object Dictionary.
      * @param node The parent Node reference.
-     * @param data The object dictionnary data structure reference.
      */
-    ObjectDictionnary(class Node &node, ObjectDictionnaryData &data);
+    ObjectDictionnary(class Node &node);
 
     /**
      * Find an object in the dictionary.
