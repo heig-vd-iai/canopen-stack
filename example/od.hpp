@@ -397,7 +397,7 @@ class ObjectDictionnary
 {
 // @cond
 private:
-    ObjectDictionnaryData &data;
+    ObjectDictionnaryData data;
     ObjectEntry<int8_t> entry_x2sub0 = ObjectEntry<int8_t>(&data.x2, 1);
     ObjectEntryBase *entries_x2[1] = {&entry_x2sub0};
     ObjectEntry<int16_t> entry_x3sub0 = ObjectEntry<int16_t>(&data.x3, 1);
