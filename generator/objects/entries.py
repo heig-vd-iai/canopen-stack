@@ -68,7 +68,7 @@ class ObjectEntry(ABC):
         if self.isLimited:
             return f"{self.cppLimitedEntryName}<{self.ctype}> entry_{entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
         else:
-            return f"{self.cppEntryName}<{self.ctype}> entry_{entryVarName} = {self.cppEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value})"
+            return f"{self.cppEntryName} entry_{entryVarName} = {self.cppEntryName}(&data.{entrySrcName}, {self.accessType.value}, {self.size})"
 
 
 class BooleanEntry(ObjectEntry):
@@ -148,7 +148,7 @@ class VisibleStringEntry(ObjectEntry):
 
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry<uint8_t[125]> x1003sub0 = ObjectEntry<uint8_t[125]>(&data.x1003, 3)"""
-        return f"{self.cppEntryName}<{self.ctype}[{self.size}]> entry_{entryVarName} = {self.cppEntryName}<{self.ctype}[{self.size}]>(&data.{entrySrcName}, {self.accessType.value})"
+        return f"{self.cppEntryName} entry_{entryVarName} = {self.cppEntryName}(&data.{entrySrcName}, {self.accessType.value}, {self.size})"
 
 
 datatype2entryclass = {

@@ -43,7 +43,6 @@ struct ObjectEntryBase
  * An object entry is identified by a sub-index, and belongs to an object.
  * @tparam T Data type associated with the object entry.
  */
-template <typename T>
 struct ObjectEntry : public ObjectEntryBase
 {
     /**
@@ -51,7 +50,7 @@ struct ObjectEntry : public ObjectEntryBase
      * @param src Pointer to the data source.
      * @param metaData Metadata of the object entry, see MetaBitfield union.
      */
-    ObjectEntry(void *src, uint8_t metaData) : ObjectEntryBase(src, metaData, sizeof(T)) {}
+    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes) : ObjectEntryBase(src, metaData, sizeBytes) {}
 };
 
 /**
