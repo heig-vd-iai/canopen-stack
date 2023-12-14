@@ -111,6 +111,9 @@ void onWrite(Object &object, unsigned subindex)
     printf("Object %X at subindex %d was written to\n", object.index, subindex);
 }
 
+ObjectDictionnaryData data;
+Node node(data);
+
 int main(int argc, char *argv[])
 {
     signal(SIGINT, [](int /*signum*/)
@@ -141,7 +144,6 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    Node node;
     cout << "Starting node with ID " << (int)node.nodeId << " on interface " << argv[1] << endl;
 #ifndef INTERACTIVE
     node.pdo().onTimeout([](unsigned index)

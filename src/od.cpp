@@ -5,7 +5,7 @@
 #include "node.hpp"
 using namespace CANopen;
 
-ObjectDictionnary::ObjectDictionnary(Node &node) : node(node) {}
+ObjectDictionnary::ObjectDictionnary(Node &node, ObjectDictionnaryData &data) : data(data), node(node) {}
 
 Object *ObjectDictionnary::findObject(uint16_t objectIndex)
 {
