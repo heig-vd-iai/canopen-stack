@@ -29,9 +29,10 @@ MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 class ObjectGenerator:
     """ Generates the header file from the EDS file """
 
-    def __init__(self, filename, id):
-        self.filename = filename
-        self.id = id
+    def __init__(self, filename: str, id: int, entriesGranularity: int = 1):
+        self.filename: str = filename
+        self.id: int = id
+        self.granularity: int = entriesGranularity
         self.objects_values = []
         self._parse()
 
@@ -41,30 +42,30 @@ class ObjectGenerator:
         ArrayObject and RecordObject, or any specific object subclass"""
         if isinstance(object, Variable):
             if object.index == 0x1001:
-                return Object1001(object.index, [object])
+                return Object1001(object.index, [object], self.granularity)
             if object.index == 0x1019:
-                return Object1019(object.index, [object])
-            return VarObject(object.index, [object])
+                return Object1019(object.index, [object], self.granularity)
+            return VarObject(object.index, [object], entriesGranularity=self.granularity)
         if isinstance(object, Array):
             entries = list(object.values())
             if object.index == 0x1003:
-                return Object1003(object.index, entries)
+                return Object1003(object.index, entries, self.granularity)
             if object.index == 0x1010:
-                return Object1010(object.index, entries)
+                return Object1010(object.index, entries, self.granularity)
             if object.index == 0x1011:
-                return Object1011(object.index, entries)
-            return ArrayObject(object.index, entries)
+                return Object1011(object.index, entries, self.granularity)
+            return ArrayObject(object.index, entries, entriesGranularity=self.granularity)
         if isinstance(object, Record):
             entries = list(object.values())
             if 0x1400 <= object.index <= 0x15FF:
-                return Object1400(object.index, entries)
+                return Object1400(object.index, entries, self.granularity)
             if 0x1600 <= object.index <= 0x17FF:
-                return Object1600(object.index, entries)
+                return Object1600(object.index, entries, self.granularity)
             if 0x1800 <= object.index <= 0x19FF:
-                return Object1800(object.index, entries)
+                return Object1800(object.index, entries, self.granularity)
             if 0x1A00 <= object.index <= 0x1BFF:
-                return Object1A00(object.index, entries)
-            return RecordObject(object.index, entries)
+                return Object1A00(object.index, entries, self.granularity)
+            return RecordObject(object.index, entries, entriesGranularity=self.granularity)
 
     def _parse(self):
         """ Parses the EDS file and returns a list of objects """

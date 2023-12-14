@@ -72,83 +72,91 @@ class ObjectEntry(ABC):
 
 
 class BooleanEntry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: bool, lowLimit=None, highLimit=None) -> None:
-        super().__init__(0x01, "bool", 1, accessType,
+    def __init__(self, accessType: str, PDOMappable: bool, value: bool, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
+        granTypes = {1: "bool", 2: "uint16_t", 4: "uint32_t"}
+        super().__init__(0x01, granTypes[granularity], 1, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Integer8Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
-        super().__init__(0x02, "int8_t", 1, accessType,
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
+        granTypes = {1: "int8_t", 2: "int16_t", 4: "int32_t"}
+        super().__init__(0x02, granTypes[granularity], 1, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Integer16Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
-        super().__init__(0x03, "int16_t", 2, accessType,
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
+        granTypes = {1: "int16_t", 2: "int16_t", 4: "int32_t"}
+        super().__init__(0x03, granTypes[granularity], 2, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Integer32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x04, "int32_t", 4, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Integer64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x15, "int64_t", 8, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Unsigned8Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
-        super().__init__(0x05, "uint8_t", 1, accessType,
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
+        granTypes = {1: "uint8_t", 2: "uint16_t", 4: "uint32_t"}
+        super().__init__(0x05, granTypes[granularity], 1, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Unsigned16Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
-        super().__init__(0x06, "uint16_t", 2, accessType,
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
+        granTypes = {1: "uint16_t", 2: "uint16_t", 4: "uint32_t"}
+        super().__init__(0x06, granTypes[granularity], 2, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Unsigned32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x07, "uint32_t", 4, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Unsigned64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: int, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: int, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x1B, "uint64_t", 8, accessType,
                          PDOMappable, 0, value, lowLimit, highLimit)
 
 
 class Real32Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: float, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x08, "float", 4, accessType,
                          PDOMappable, 0.0, value, lowLimit, highLimit)
 
 
 class Real64Entry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: float, lowLimit=None, highLimit=None) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: float, granularity: int = 1, lowLimit=None, highLimit=None) -> None:
         super().__init__(0x11, "double", 8, accessType,
                          PDOMappable, 0.0, value, lowLimit, highLimit)
 
 
 class VisibleStringEntry(ObjectEntry):
-    def __init__(self, accessType: str, PDOMappable: bool, value: str, *_) -> None:
+    def __init__(self, accessType: str, PDOMappable: bool, value: str, granularity: int = 1, *_) -> None:
+        granTypes = {1: "uint8_t", 2: "uint16_t", 4: "uint32_t"}
         default = "".encode() if value is None else str(value).encode()
-        super().__init__(0x09, "uint8_t", len(default), accessType, PDOMappable, "", default)
+        length = (len(default) + granularity - 1) // granularity
+        self.granularity: int = granularity
+        super().__init__(0x09, granTypes[granularity], length, accessType, PDOMappable, "", default)
 
     def renderData(self, name: str) -> str:
         """Returns the C++ data declaration, ex. uint8_t x1003[6] = {97, 109, 111, 103, 117, 115}"""
-        return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.value])}}}"
+        return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(int.from_bytes(self.value[i:i+self.granularity], 'little')) for i in range(0, len(self.value), self.granularity)])}}}"
 
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
         """Returns the C++ object entry declaration, ex. ObjectEntry x1003sub0 = ObjectEntry(&data.x1003, 3)"""
-        return f"{self.cppEntryName} entry_{entryVarName} = {self.cppEntryName}(&data.{entrySrcName}, {self.accessType.value}, {self.size})"
+        return f"{self.cppEntryName} entry_{entryVarName} = {self.cppEntryName}(&data.{entrySrcName}, {self.accessType.value}, {len(self.value)})"
 
 
 datatype2entryclass = {

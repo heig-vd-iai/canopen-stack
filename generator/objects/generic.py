@@ -8,11 +8,12 @@ ENTRY_MAX_SIZE = 1024
 class ObjectBase(ABC):
     """This is the base class for OD's objects"""
 
-    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase") -> None:
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", cppBaseEntryName: str = "ObjectEntryBase", entriesGranularity: int = 1) -> None:
         self.index: int = index
         self.subNumber: int = len(entries)
         self.cppObjectName: str = cppObjectName
         self.cppBaseEntryName: str = cppBaseEntryName
+        self.granularity: int = entriesGranularity
         self.varName: str = "x%X" % self.index
         self.entries: "list[ObjectEntry]" = []
         # Check for valid data type, access type and data size (for strings)
@@ -33,7 +34,7 @@ class ObjectBase(ABC):
                 entryValid = False
             if entryValid:
                 self.entries.append(datatype2entryclass[entry.data_type](
-                    entry.access_type, entry.pdo_mappable, entry.default, entry.min, entry.max))
+                    entry.access_type, entry.pdo_mappable, entry.default, self.granularity, entry.min, entry.max))
             else:
                 errors = True
         for i, entry in enumerate(self.entries):
@@ -71,8 +72,8 @@ class ObjectBase(ABC):
 
 
 class VarObject(ObjectBase):
-    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
-        super().__init__(index, entries, cppObjectName=cppObjectName)
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", entriesGranularity: int = 1) -> None:
+        super().__init__(index, entries, cppObjectName=cppObjectName, entriesGranularity=entriesGranularity)
         self.entry = self.entries[0]
 
     def renderData(self) -> "list[str]":
@@ -85,8 +86,8 @@ class VarObject(ObjectBase):
 
 
 class ArrayObject(ObjectBase):
-    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
-        super().__init__(index, entries, cppObjectName=cppObjectName)
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", entriesGranularity: int = 1) -> None:
+        super().__init__(index, entries, cppObjectName=cppObjectName, entriesGranularity=entriesGranularity)
         self.sub0Name = self.varName + "sub0"
         # Check for data type consistency based on first entry
         errors = False
@@ -112,8 +113,8 @@ class ArrayObject(ObjectBase):
 
 
 class RecordObject(ObjectBase):
-    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object") -> None:
-        super().__init__(index, entries, cppObjectName=cppObjectName)
+    def __init__(self, index: int, entries: "list[Variable]", cppObjectName: str = "Object", entriesGranularity: int = 1) -> None:
+        super().__init__(index, entries, cppObjectName=cppObjectName, entriesGranularity=entriesGranularity)
         self.sub0Name = self.varName + "sub0"
 
     def renderData(self) -> "list[str]":

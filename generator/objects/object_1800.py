@@ -5,8 +5,8 @@ from .generic import RecordObject
 class Object1800(RecordObject):
     """Object 1800: TPDO communication parameter"""
 
-    def __init__(self, index: int, entries: "list[Variable]") -> None:
-        super().__init__(index, entries, "Object1800")
+    def __init__(self, index: int, entries: "list[Variable]", entriesGranularity: int = 1) -> None:
+        super().__init__(index, entries, "Object1800", entriesGranularity)
         # Check for valid sub number
         errors = False
         if self.subNumber < 3:
