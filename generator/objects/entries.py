@@ -64,7 +64,7 @@ class ObjectEntry(ABC):
         return f"{self.ctype} {name} = {self.value}"
 
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
-        """Returns the C++ object entry declaration, ex. ObjectEntry<T> x1003sub0 = ObjectEntry<T>(&data.x1003, 3)"""
+        """Returns the C++ object entry declaration, ex. ObjectEntry x1003sub0 = ObjectEntry(&data.x1003, 3)"""
         if self.isLimited:
             return f"{self.cppLimitedEntryName}<{self.ctype}> entry_{entryVarName} = {self.cppLimitedEntryName}<{self.ctype}>(&data.{entrySrcName}, {self.accessType.value}, {self.lowLimit}, {self.highLimit})"
         else:
@@ -147,7 +147,7 @@ class VisibleStringEntry(ObjectEntry):
         return f"{self.ctype} {name}[{self.size}] = {{{', '.join([str(b) for b in self.value])}}}"
 
     def renderEntry(self, entryVarName: str, entrySrcName: str) -> str:
-        """Returns the C++ object entry declaration, ex. ObjectEntry<uint8_t[125]> x1003sub0 = ObjectEntry<uint8_t[125]>(&data.x1003, 3)"""
+        """Returns the C++ object entry declaration, ex. ObjectEntry x1003sub0 = ObjectEntry(&data.x1003, 3)"""
         return f"{self.cppEntryName} entry_{entryVarName} = {self.cppEntryName}(&data.{entrySrcName}, {self.accessType.value}, {self.size})"
 
 
