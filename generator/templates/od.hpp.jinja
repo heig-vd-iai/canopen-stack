@@ -19,7 +19,10 @@
 #define {{define}}
 {% endfor %}
 
-#include <stdint.h>
+/* Useful if only the defines from this file are needed */ 
+#ifndef _OD_DEFINES_ONLY
+#include "od_include.hpp"
+
 namespace {{namespace}}
 {
 /**
@@ -34,13 +37,7 @@ struct ObjectDictionnaryData
     {% endfor %}
     {% endfor %}
 };
-}
 
-/* Useful if only the defines from this file are needed */ 
-#ifndef _OD_DEFINES_ONLY
-#include "od_include.hpp"
-namespace {{namespace}}
-{
 /**
  * Object Dictionary.
  * It is an auto-generated class that should not be manually edited.
@@ -49,7 +46,7 @@ class ObjectDictionnary
 {
 // @cond
 private:
-    ObjectDictionnaryData &data;
+    ObjectDictionnaryData data;
     {% for object in objects %}
     {% for entry in object.renderEntry() %}
     {{entry}};
@@ -68,9 +65,8 @@ public:
     /**
      * Constructor for the Object Dictionary.
      * @param node The parent Node reference.
-     * @param data The dictionnary data structure reference.
      */
-    ObjectDictionnary(class Node &node, ObjectDictionnaryData &data);
+    ObjectDictionnary(class Node &node);
 
     /**
      * Find an object in the dictionary.

@@ -53,10 +53,8 @@ public:
 
     /**
      * Constructor for the Node class.
-     * @param data A reference to the dictionnary data structure.
-     * This is useful if the data must be in a specific memory region.
      */
-    Node(ObjectDictionnaryData &data);
+    Node();
 
     /**
      * Get the Object Dictionnary object.

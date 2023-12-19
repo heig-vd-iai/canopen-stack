@@ -5,7 +5,7 @@
 #include "frame.hpp"
 using namespace CANopen;
 
-Node::Node(ObjectDictionnaryData &data) : _od(*this, data), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this) {}
+Node::Node() : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this) {}
 
 ObjectDictionnary &Node::od() { return _od; }
 

@@ -303,7 +303,10 @@
 #define OD_MUX_60FE_SUB_0 0x60FE00
 #define OD_MUX_60FE_SUB_1 0x60FE01
 
-#include <stdint.h>
+/* Useful if only the defines from this file are needed */ 
+#ifndef _OD_DEFINES_ONLY
+#include "od_include.hpp"
+
 namespace CANopen
 {
 /**
@@ -385,13 +388,7 @@ struct ObjectDictionnaryData
     uint8_t x60FEsub0 = 1;
     uint32_t x60FE[1] = {0};
 };
-}
 
-/* Useful if only the defines from this file are needed */ 
-#ifndef _OD_DEFINES_ONLY
-#include "od_include.hpp"
-namespace CANopen
-{
 /**
  * Object Dictionary.
  * It is an auto-generated class that should not be manually edited.
@@ -400,7 +397,7 @@ class ObjectDictionnary
 {
 // @cond
 private:
-    ObjectDictionnaryData &data;
+    ObjectDictionnaryData data;
     ObjectEntry entry_x2sub0 = ObjectEntry(&data.x2, 1, 1);
     ObjectEntryBase *entries_x2[1] = {&entry_x2sub0};
     ObjectEntry entry_x3sub0 = ObjectEntry(&data.x3, 1, 2);
@@ -761,9 +758,8 @@ public:
     /**
      * Constructor for the Object Dictionary.
      * @param node The parent Node reference.
-     * @param data The dictionnary data structure reference.
      */
-    ObjectDictionnary(class Node &node, ObjectDictionnaryData &data);
+    ObjectDictionnary(class Node &node);
 
     /**
      * Find an object in the dictionary.
