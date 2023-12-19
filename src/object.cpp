@@ -106,12 +106,12 @@ bool Object::isRemote() const
     return (bool)onRequestUpdateFunc;
 }
 
-int32_t CANopen::Object::getUid(uint8_t subindex) const
+int32_t Object::getUid(uint8_t subindex) const
 {
     return isSubValid(subindex) ? entries[subindex]->uid : -1;
 }
 
-bool CANopen::Object::getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
+bool Object::getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
 {
     if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)
         return false;
@@ -119,7 +119,7 @@ bool CANopen::Object::getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *b
     return true;
 }
 
-bool CANopen::Object::setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
+bool Object::setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
 {
     if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)
         return false;
@@ -128,7 +128,7 @@ bool CANopen::Object::setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *b
     return true;
 }
 
-void CANopen::Object::onWrite(std::function<void(Object &, uint8_t)> callback)
+void Object::onWrite(std::function<void(Object &, uint8_t)> callback)
 {
     onWriteFunc = callback;
 }
