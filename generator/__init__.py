@@ -99,7 +99,12 @@ class ObjectGenerator:
                 click.echo(f"- {index:X}", err=True)
             raise Exception("Some mandatory objects are missing")
 
+        uid = 0
         self.objects_values = objects_values
+        for obj in objects_values:
+            for entry in obj.entries:
+                entry.set_uid(uid)
+                uid += 1
 
     def generate_od_header(self):
         """This function generates the header file"""
