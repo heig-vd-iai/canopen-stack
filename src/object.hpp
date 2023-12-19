@@ -19,14 +19,16 @@ struct ObjectEntryBase
     const void *dataSrc;
     MetaBitfield metaData;
     const uint32_t sizeBytes;
+    const uint16_t uid;
 
     /**
      * Constructor for the base object entry.
      * @param src Pointer to the data source.
      * @param metaData Metadata of the object entry, see MetaBitfield union.
      * @param sizeBytes Size in bytes of the data associated with the entry.
+     * @param uid Unique incremental identifier of the entry.
      */
-    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes) {}
+    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes), uid(uid) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -49,8 +51,9 @@ struct ObjectEntry : public ObjectEntryBase
      * Constructor for the ObjectEntry.
      * @param src Pointer to the data source.
      * @param metaData Metadata of the object entry, see MetaBitfield union.
+     * @param uid Unique incremental identifier of the entry.
      */
-    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes) : ObjectEntryBase(src, metaData, sizeBytes) {}
+    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : ObjectEntryBase(src, metaData, sizeBytes, uid) {}
 };
 
 /**
@@ -69,8 +72,9 @@ struct LimitedObjectEntry : public ObjectEntryBase
      * @param metaData Metadata of the object entry, see MetaBitfield union.
      * @param minVal Minimum allowed value.
      * @param maxVal Maximum allowed value.
+     * @param uid Unique incremental identifier of the entry.
      */
-    LimitedObjectEntry(void *src, uint8_t metaData, T minVal, T maxVal) : ObjectEntryBase(src, metaData, sizeof(T)), minVal(minVal), maxVal(maxVal) {}
+    LimitedObjectEntry(void *src, uint8_t metaData, T minVal, T maxVal, uint16_t uid) : ObjectEntryBase(src, metaData, sizeof(T), uid), minVal(minVal), maxVal(maxVal) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -216,6 +220,13 @@ public:
      * @return True is the object is considered as remote, false otherwise.
      */
     bool isRemote() const;
+
+    /**
+     * Returns the incrementally assigned unique identifier of an entry.
+     * @param subindex Subindex of the object entry.
+     * @return The uid of the entry, -1 if subindex is invalid.
+     */
+    int32_t getUid(uint8_t subindex) const;
 
     /**
      * Get the value of an object's entry.
