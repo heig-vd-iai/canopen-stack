@@ -106,6 +106,11 @@ bool Object::isRemote() const
     return (bool)onRequestUpdateFunc;
 }
 
+int32_t CANopen::Object::getUid(uint8_t subindex) const
+{
+    return isSubValid(subindex) ? entries[subindex]->uid : -1;
+}
+
 bool CANopen::Object::getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
 {
     if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)

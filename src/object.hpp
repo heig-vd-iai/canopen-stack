@@ -222,6 +222,13 @@ public:
     bool isRemote() const;
 
     /**
+     * Returns the incrementally assigned unique identifier of an entry.
+     * @param subindex Subindex of the object entry.
+     * @return The uid of the entry, -1 if subindex is invalid.
+     */
+    int32_t getUid(uint8_t subindex) const;
+
+    /**
      * Get the value of an object's entry.
      * If the size of the data type does not match that of the actual data, the operation will fail.
      * @tparam T Data type of the value.
