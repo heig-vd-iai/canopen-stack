@@ -1,0 +1,749 @@
+---
+NodeId: 1
+FileInfo:
+  FileName: example.eds
+  FileVersion: "1"
+  FileRevision: "0"
+  Description: This is an example EDS file generated from a YAML file
+  CreatedBy: Tristan Lieberherr
+  ModifiedBy: Yves Chevallier, Adrien Cardinale
+DeviceInfo:
+  VendorName: HEIG-VD
+  VendorNumber: "735668"
+  ProductName: Servopresse
+  ProductNumber: "0563"
+  RevisionNumber: ""
+  OrderCode: ""
+MandatoryObjects:
+  - Index: "1001"
+    ParameterName: Error Register
+    ObjectType: VAR
+    DataType: UNSIGNED8
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+    Getter: sys.getters.getErrorRegister
+  - Index: "1000"
+    ParameterName: Device Type
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 0
+    Getter: sys.getters.getDeviceType
+  - Index: "1018"
+    ParameterName: Identity Object
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: "0x04"
+      - ParameterName: Vendor-ID
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: "0x0000026C"
+        Getter: device.getVendorId
+        Setter: device.setVendorId
+      - ParameterName: Product code
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: "0x00000046"
+        Getter: device.getProductCode
+        Setter: device.setProductCode
+      - ParameterName: Revision number
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: "0x08A50000"
+        Getter: device.getRevisionNumber
+        Setter: device.setRevisionNumber
+      - ParameterName: Serial number
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: 32
+OptionalObjects:
+  - Index: "1002"
+    ParameterName: Manufacturer status register
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: ro
+    DefaultValue: 0
+  - Index: "1003"
+    ParameterName: Pre-defined error field
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Number of errors
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: "0x00"
+        Getter: sys.getters.getErrorCount
+      - ParameterName: 1st Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField1
+      - ParameterName: 2nd Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField2
+      - ParameterName: 3rd Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField3
+      - ParameterName: 4th Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField4
+      - ParameterName: 5th Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField5
+      - ParameterName: 6th Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField6
+      - ParameterName: 7th Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField7
+      - ParameterName: 8th Standard error field
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: ""
+        Setter: sys.setters.setErrorField8
+  - Index: "1007"
+    ParameterName: Synchronous window length
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    DefaultValue: "0x100"
+  - Index: "1008"
+    ParameterName: Manufacturer Device Name
+    ObjectType: VAR
+    DataType: VISIBLE_STRING
+    AccessType: ro
+    DefaultValue: "Test"
+  - Index: "1010"
+    ParameterName: Store parameters
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 3
+      - ParameterName: Save all parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Save communication parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Save application parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1011"
+    ParameterName: Restore default parameters
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 3
+      - ParameterName: Restore all parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Restore communication parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Restore application parameters
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1015"
+    ParameterName: Inhibit time EMCY
+    ObjectType: VAR
+    DataType: UNSIGNED16
+    AccessType: rw
+    DefaultValue: 0x100
+  - Index: "1017"
+    ParameterName: Producer heartbeat time
+    ObjectType: VAR
+    DataType: UNSIGNED16
+    AccessType: rw
+    DefaultValue: 0
+  - Index: "1018"
+    ParameterName: Synchronous counter overflow value
+    ObjectType: VAR
+    DataType: UNSIGNED8
+    AccessType: rw
+    DefaultValue: 0xFF
+  - Index: "1400"
+    ParameterName: Receive PDO 1 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 5
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x200
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1401"
+    ParameterName: Receive PDO 2 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 5
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x300
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1402"
+    ParameterName: Receive PDO 3 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 5
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x400
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1403"
+    ParameterName: Receive PDO 4 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 5
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x500
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1600"
+    ParameterName: Receive PDO 1 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1601"
+    ParameterName: Receive PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1602"
+    ParameterName: Receive PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1603"
+    ParameterName: Receive PDO 4 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1800"
+    ParameterName: Transmit PDO 1 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 6
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x180
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: SYNC start value
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1801"
+    ParameterName: Transmit PDO 2 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 6
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x280
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: SYNC start value
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1802"
+    ParameterName: Transmit PDO 3 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 6
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x380
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: SYNC start value
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1803"
+    ParameterName: Transmit PDO 4 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: const
+        DefaultValue: 6
+      - ParameterName: COB-ID
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x480
+      - ParameterName: Transmission type
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0xFF
+      - ParameterName: Inhibit time
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x64
+      - ParameterName: Compatibility entry
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: Event timer
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: SYNC start value
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1A00"
+    ParameterName: Transmit PDO 1 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1A01"
+    ParameterName: Transmit PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1A02"
+    ParameterName: Transmit PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+  - Index: "1A03"
+    ParameterName: Transmit PDO 4 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Highest sub-index supported
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 1st object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 2nd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 3rd object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 4th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 5th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 6th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 7th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0
+      - ParameterName: 8th object to be mapped
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0

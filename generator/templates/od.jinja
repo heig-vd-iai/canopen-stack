@@ -5,72 +5,47 @@
  * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
  */
 #pragma once
+#define OD_NODE_ID {{ node_id }}
 #define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
-{% for define in defines %}
-#define {{define}}
-{% endfor %}
+#define OD_ENTRY_SIZE_MAX 1024
+#define OD_OBJECTS_COUNT {{ objects | length }}
+#define OD_TPDO_COUNT {{ tpdo_count }}
+#define OD_RPDO_COUNT {{ rpdo_count }}
 /* These defines map an object to its dictionnary array index */
-{% for define in defines_index %}
-#define {{define}}
-{% endfor %}
-/* These defines map an entry to its multiplexed address (parent object index and entry subindex) */
-{% for define in defines_mux %}
-#define {{define}}
+{% for object in objects %}
+#define OD_OBJECT_{{ object.index_hexstr }} {{ loop.index0 }}
 {% endfor %}
 
-#include <stdint.h>
-namespace {{namespace}}
-{
-/**
- * This struct represents the object dictionary raw data.
- * It is an auto-generated struct that should not be manually edited.
- */
-struct ObjectDictionnaryData
-{
-    {% for object in objects %}
-    {% for data in object.renderData() %}
-    {{data}};
-    {% endfor %}
-    {% endfor %}
-};
-}
-
-/* Useful if only the defines from this file are needed */ 
-#ifndef _OD_DEFINES_ONLY
 #include "od_include.hpp"
-namespace {{namespace}}
+
+{% for object in objects if (object.cpp_class_name not in existing_classes) %}
+// {{ object.parameter_name }}
+class {{ object.cpp_class_name }} : public Object
 {
-/**
- * Object Dictionary.
- * It is an auto-generated class that should not be manually edited.
- */
+private:
+{% for entry in object.entries %}
+    LocalObjectEntry<{{ entry.ctype_name }}> {{ entry.cpp_instance_name }} = LocalObjectEntry<{{ entry.ctype_name }}>({{ entry.eval_value(node_id) }});
+{% endfor %}
+    IObjectEntry *_entries[{{ object.entries | length }}] = {&{{ object.entries | map(attribute='cpp_instance_name') | join(', &') }}};
+
+public:
+    {{ object.cpp_class_name }}() : Object({{ object.index_hexstr2 }}, {{ object.entries | length }}, _entries) {}
+};
+
+{% endfor %}
 class ObjectDictionnary
 {
-// @cond
 private:
-    ObjectDictionnaryData &data;
-    {% for object in objects %}
-    {% for entry in object.renderEntry() %}
-    {{entry}};
-    {% endfor %}
-    {{object.renderEntryList()}};
-    {% endfor %}
-    {% for object in objects %}
-    {{object.renderObject()}};
-    {% endfor %}
-    Object *objectsArray[OD_OBJECTS_COUNT] = {&object_{{objectNames|join(', &object_')}}};
-    class Node &node;
-    // @endcond
-public:
-    const uint16_t length = OD_OBJECTS_COUNT;
+{% for object in objects %}
+    {{ object.cpp_class_name }} {{ object.cpp_instance_name }};
+{% endfor %}
+    Object *objects[{{ objects | length }}] = {&{{ objects | map(attribute='cpp_instance_name') | join(', &') }}};
 
-    /**
-     * Constructor for the Object Dictionary.
-     * @param node The parent Node reference.
-     * @param data The dictionnary data structure reference.
-     */
-    ObjectDictionnary(class Node &node, ObjectDictionnaryData &data);
+public:
+    const uint16_t length = {{ objects | length }};
+
+    ObjectDictionnary();
 
     /**
      * Find an object in the dictionary.
@@ -119,5 +94,3 @@ public:
      */
     bool restoreData(uint8_t parameterGroup);
 };
-}
-#endif // _OD_DEFINES_ONLY

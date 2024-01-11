@@ -1,0 +1,25 @@
+[FileInfo]
+{% for key, value in file_info.items() %}
+{{ key }}={{ value }}
+{% endfor %}
+
+[DeviceInfo]
+{% for key, value in device_info.items() %}
+{{ key }}={{ value }}
+{% endfor %}
+
+[MandatoryObjects]
+SupportedObjects={{ mandatory_objects | length }}
+{% for object in mandatory_objects %}
+{{ loop.index }}={{ object.index_hexstr2 }}
+{% endfor %}
+
+{{ mandatory_objects | join('\n\n') }}
+
+[OptionalObjects]
+SupportedObjects={{ optional_objects | length }}
+{% for object in optional_objects %}
+{{ loop.index }}={{ object.index_hexstr2 }}
+{% endfor %}
+
+{{ optional_objects | join('\n\n') }}
