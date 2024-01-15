@@ -17,6 +17,7 @@
 #define OD_OBJECT_{{ object.index_hexstr }} {{ loop.index0 }}
 {% endfor %}
 
+#ifndef _OD_DEFINES_ONLY
 #include "od_include.hpp"
 
 {% for object in objects if (object.cpp_class_name not in existing_classes) %}
@@ -94,3 +95,4 @@ public:
      */
     bool restoreData(uint8_t parameterGroup);
 };
+#endif // _OD_DEFINES_ONLY

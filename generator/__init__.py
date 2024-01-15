@@ -53,6 +53,14 @@ class ObjectDictionary:
             "NrOfTXPDO": "4",
             "LSS_Supported": "0"
         }
+        ### use for debug yaml
+        if(0):
+            for obj in data.get("OptionalObjects", []):
+                try:
+                    Object.get_instance(obj.get("ObjectType"), obj)
+                except Exception as e:
+                    print(obj.get("ParameterName"))
+        ###
         self.mandatory_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("MandatoryObjects", [])], key=self._get_key)
         self.optional_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("OptionalObjects", [])], key=self._get_key)
         self.all_objects = sorted(self.mandatory_objects + self.optional_objects, key=self._get_key)
