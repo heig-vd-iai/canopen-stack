@@ -16,6 +16,7 @@ from .objects.object_1400 import Object1400
 from .objects.object_1600 import Object1600
 from .objects.object_1800 import Object1800
 from .objects.object_1A00 import Object1A00
+from .object_types import Object
 
 script_dir = os.path.dirname(__file__)
 
@@ -23,8 +24,78 @@ TEMPLATES_DIR = script_dir + "/templates"
 
 HEADER_FILENAME = "od.hpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
+EDS_TEMPLATE = "eds.jinja"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
+
+#TODO: test yaml
+class ObjectDictionary:
+    def __init__(self, data: dict) -> None:
+        now = datetime.now()
+        self.node_id: int = data.get("NodeId", 1)
+        dico: dict = data.get("FileInfo", {})
+        self.file_info = {
+            "FileName": dico.get("FileName", ""),
+            "FileVersion": dico.get("FileVersion", ""),
+            "FileRevision": dico.get("FileRevision", ""),
+            "EDSVersion": "4.0",
+            "Description": dico.get("Description", ""),
+            "CreationTime": now.strftime("%H:%M"),
+            "CreationDate": now.strftime("%Y-%m-%d"),
+            "CreatedBy": dico.get("CreatedBy", ""),
+            "ModificationTime": now.strftime("%H:%M"),
+            "ModificationDate": now.strftime("%Y-%m-%d"),
+            "ModifiedBy": dico.get("ModifiedBy", "")
+        }
+        dico: dict = data.get("DeviceInfo", {})
+        self.device_info = {
+            "VendorName": dico.get("VendorName", ""),
+            "VendorNumber": dico.get("VendorNumber", ""),
+            "ProductName": dico.get("ProductName", ""),
+            "ProductNumber": dico.get("ProductNumber", ""),
+            "RevisionNumber": dico.get("RevisionNumber", ""),
+            "OrderCode": dico.get("OrderCode", ""),
+            "BaudRate_10": "1",
+            "BaudRate_20": "1",
+            "BaudRate_50": "1",
+            "BaudRate_125": "1",
+            "BaudRate_250": "1",
+            "BaudRate_500": "1",
+            "BaudRate_800": "1",
+            "BaudRate_1000": "1",
+            "SimpleBootUpMaster": "0",
+            "SimpleBootUpSlave": "1",
+            "Granularity": "8",
+            "DynamicChannelsSupported": "0",
+            "CompactPDO": "0",
+            "GroupMessaging": "0",
+            "NrOfRXPDO": "4",
+            "NrOfTXPDO": "4",
+            "LSS_Supported": "0"
+        }
+        ### use for debug yaml
+        if(0):
+            for obj in data.get("OptionalObjects", []):
+                try:
+                    Object.get_instance(obj.get("ObjectType"), obj)
+                except Exception as e:
+                    print(obj.get("ParameterName"))
+        ###
+        self.mandatory_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("MandatoryObjects", [])], key=self._get_key)
+        self.optional_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("OptionalObjects", [])], key=self._get_key)
+        self.all_objects = sorted(self.mandatory_objects + self.optional_objects, key=self._get_key)
+    
+    def to_eds(self) -> str:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(EDS_TEMPLATE).render(
+            file_info=self.file_info,
+            device_info=self.device_info,
+            mandatory_objects=self.mandatory_objects,
+            optional_objects=self.optional_objects
+        )
+    
+    def _get_key(self, object: Object) -> int:
+        return object.index
 
 class ObjectGenerator:
     """ Generates the header file from the EDS file """

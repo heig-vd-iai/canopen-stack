@@ -1,15 +1,26 @@
 import click
-from . import ObjectGenerator
+from . import ObjectGenerator, ObjectDictionary
+import yaml
 
 
 @click.command()
 @click.argument('filename', type=click.Path(exists=True))
+@click.argument('eds', type=click.Path(exists=False), default="od.eds")
+@click.argument('hpp', type=click.Path(exists=False), default="od.hpp")
 @click.option('--id', type=click.IntRange(1, 127), default=1, help='Node ID')
 @click.option('--granularity', type=click.Choice(['1', '2', '4']), default='1', help='The smallest size that should be used for entries types')
-def cli(filename=None, id=1, granularity='1'):
-    """ This program converts a valid EDS file into an C++ header file."""
-    og = ObjectGenerator(filename, id, int(granularity))
-    click.echo(og.generate_od_header())
+def cli(filename=None, eds=None, hpp=None, id=1, granularity='1'):
+    """ This program converts a valid YAML file into an C++ EDS file and a C++ header file. """
+    with open(filename) as f:
+        od = ObjectDictionary(yaml.safe_load(f))
+
+    with open(eds, "w") as f:
+        f.write(od.to_eds())
+
+    og = ObjectGenerator(eds, od.node_id, int(granularity))
+
+    with open(hpp, "w") as f:
+        f.write(og.generate_od_header())
 
 
 if __name__ == '__main__':

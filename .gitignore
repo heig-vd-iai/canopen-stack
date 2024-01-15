@@ -46,3 +46,4 @@ doc/latex
 # OD save file
 *.dat
 od.hpp
+*.eds

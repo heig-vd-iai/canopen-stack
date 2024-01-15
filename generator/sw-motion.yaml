@@ -1,0 +1,1264 @@
+---
+NodeId: 1
+FileInfo:
+  FileName: sw-motion.eds
+  FileVersion: "1"
+  FileRevision: "0"
+  Description: This is an EDS file for the Servopresse
+  CreatedBy: Adrien Cardinale
+  ModifiedBy: Adrien Cardinale
+DeviceInfo:
+  VendorName: HEIG-VD
+  VendorNumber: "0x00"
+  ProductName: Servopresse
+  ProductNumber: "0x00"
+  RevisionNumber: "0"
+  OrderCode: "0"
+MandatoryObjects:  
+  - Index: "1000"
+    ParameterName: Device Type
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: ro
+    DefaultValue: 0x00020192
+    PDOMapping: 0
+  - Index: "1001"
+    ParameterName: Error Register
+    ObjectType: VAR
+    DataType: UNSIGNED8
+    AccessType: ro
+    DefaultValue: 0x00
+    PDOMapping: 1
+  - Index: "1018"
+    ParameterName: Identity Object
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x04
+        PDOMapping: 0
+      - ParameterName: Vendor-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: 0x0000026C
+        PDOMapping: 0
+      - ParameterName: Product code
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: 0x00000046
+        PDOMapping: 0
+      - ParameterName: Revision number
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: 0x08A50000
+        PDOMapping: 0
+      - ParameterName: Serial number
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        DefaultValue: 0
+        PDOMapping: 0
+OptionalObjects:
+  - Index: "1003"
+    ParameterName: Pre-defined error field
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Number of errors
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 2nd Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 3th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 4th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 5th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 6th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 7th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+      - ParameterName: 8th Standard error field
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: ro
+        PDOMapping: 0
+  - Index: "1007"
+    ParameterName: Synchronous Window Length
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    DefaultValue: 0x00000000
+    PDOMapping: 0
+  - Index: "1008"
+    ParameterName: Manufacturer Device Name
+    ObjectType: VAR
+    DataType: VISIBLE_STRING
+    AccessType: const
+    DefaultValue: Servopresse
+    PDOMapping: 0
+  - Index: "1009"
+    ParameterName: Manufacturer Hardware Version
+    ObjectType: VAR
+    DataType: VISIBLE_STRING
+    AccessType: const
+    DefaultValue: among us ඞ
+    PDOMapping: 0
+  - Index: "100A"
+    ParameterName: Manufacturer Software Version
+    ObjectType: VAR
+    DataType: VISIBLE_STRING
+    AccessType: const
+    DefaultValue: FIR-v2213-B1031134
+    PDOMapping: 0
+  - Index: "1010"
+    ParameterName: Store parameters
+    ObjectType: ARRAY
+    SubEntries:
+    - ParameterName: Number of entries
+      ObjectType: VAR
+      DataType: UNSIGNED8
+      AccessType: ro
+      DefaultValue: 0x01
+      PDOMapping: 0
+    - ParameterName: Save all parameters to non-volatile memory
+      ObjectType: VAR
+      DataType: UNSIGNED32
+      AccessType: rw
+      DefaultValue: 0x00000001
+      PDOMapping: 0
+  - Index: "1011"
+    ParameterName: Restore default parameters
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x01
+        PDOMapping: 0
+      - ParameterName: Restore all default parameters
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000001
+        PDOMapping: 0
+  - Index: "1017"
+    ParameterName: Producer heartbeat time
+    ObjectType: VAR
+    DataType: UNSIGNED16
+    AccessType: rw
+    DefaultValue: 0x0000
+    PDOMapping: 0
+  - Index: "1019"
+    ParameterName: Synchronous counter overflow value
+    ObjectType: VAR
+    DataType: UNSIGNED8
+    AccessType: rw
+    DefaultValue: 0x00
+    PDOMapping: 0
+  - Index: "1029"
+    ParameterName: Error behavior
+    ObjectType: ARRAY
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: Communication error
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Internal device error
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x01
+        PDOMapping: 0
+  - Index: "1400"
+    ParameterName: Receive PDO 1 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000200
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+  - Index: "1401"
+    ParameterName: Receive PDO 2 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x05
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000300
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0064
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+  - Index: "1402"
+    ParameterName: Receive PDO 3 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x05
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000400
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0064
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+  - Index: "1403"
+    ParameterName: Receive PDO 4 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x05
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000500
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0064
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+  - Index: "1600"
+    ParameterName: Receive PDO 1 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1601"
+    ParameterName: Receive PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1602"
+    ParameterName: Receive PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1603"
+    ParameterName: Receive PDO 4 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1800"
+    ParameterName: Transmit PDO 1 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000180
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+  - Index: "1801"
+    ParameterName: Transmit PDO 2 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000280
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x000A
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+  - Index: "1802"
+    ParameterName: Transmit PDO 3 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000380
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+  - Index: "1803"
+    ParameterName: Transmit PDO 4 Communication Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000480
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0032
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+  - Index: "1A00"
+    ParameterName: Transmit PDO 1 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1A01"
+    ParameterName: Transmit PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1A02"
+    ParameterName: Transmit PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1A03"
+    ParameterName: Transmit PDO 4 Mapping Parameter
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "30A0"
+    ParameterName: 
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x0C
+        PDOMapping: 0
+      - ParameterName: TKp
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TKi
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TKd
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TKr
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TC1
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TC2
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TC3
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TP1
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TP2
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TP3
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TUmax
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: TUmin
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "30A1"
+    ParameterName: 
+    ObjectType: RECORD
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x0C
+        PDOMapping: 0
+      - ParameterName: PKp
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PKi
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PKd
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PKr
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PC1
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PC2
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PC3
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PP1
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PP2
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PP3
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PUmax
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: PUmin
+        ObjectType: VAR
+        DataType: INTEGER32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "6040"
+    ParameterName: Controlword
+    ObjectType: VAR
+    DataType: UNSIGNED16
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6041"
+    ParameterName: Statusword
+    ObjectType: VAR
+    DataType: UNSIGNED16
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6060"
+    ParameterName: Modes of operation
+    ObjectType: VAR
+    DataType: INTEGER8
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6061"
+    ParameterName: Modes of operation display
+    ObjectType: VAR
+    DataType: INTEGER8
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6062"
+    ParameterName: Position demand value
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6064"
+    ParameterName: Position actual value
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "606C"
+    ParameterName: Velocity actual value
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6071"
+    ParameterName: Target torque
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6077"
+    ParameterName: Torque actual value
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6078"
+    ParameterName: Current actual value
+    ObjectType: VAR
+    DataType: INTEGER16
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "607A"
+    ParameterName: Target position
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6081"
+    ParameterName: Profile velocity
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6083"
+    ParameterName: Profile acceleration
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
+  - Index: "6084"
+    ParameterName: Profile deceleration
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    DefaultValue: 0
+    PDOMapping: 1
