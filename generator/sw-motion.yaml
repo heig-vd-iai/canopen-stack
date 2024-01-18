@@ -1001,7 +1001,7 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
   - Index: "30A0"
-    ParameterName: 
+    ParameterName:
     ObjectType: RECORD
     SubEntries:
       - ParameterName: Number of entries

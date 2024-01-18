@@ -33,6 +33,7 @@ class ObjectDictionary:
     def __init__(self, data: dict) -> None:
         now = datetime.now()
         self.node_id: int = data.get("NodeId", 1)
+        ## get file info from yaml
         dico: dict = data.get("FileInfo", {})
         self.file_info = {
             "FileName": dico.get("FileName", ""),
@@ -47,6 +48,7 @@ class ObjectDictionary:
             "ModificationDate": now.strftime("%Y-%m-%d"),
             "ModifiedBy": dico.get("ModifiedBy", "")
         }
+        ## get device info from yaml
         dico: dict = data.get("DeviceInfo", {})
         self.device_info = {
             "VendorName": dico.get("VendorName", ""),
@@ -81,11 +83,14 @@ class ObjectDictionary:
                 except Exception as e:
                     print(obj.get("ParameterName"))
         ###
+
+        ## get objects from yaml
         self.mandatory_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("MandatoryObjects", [])], key=self._get_key)
         self.optional_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("OptionalObjects", [])], key=self._get_key)
         self.all_objects = sorted(self.mandatory_objects + self.optional_objects, key=self._get_key)
     
     def to_eds(self) -> str:
+        """Converts the object dictionary to an EDS file"""
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
         return env.get_template(EDS_TEMPLATE).render(
             file_info=self.file_info,
@@ -95,6 +100,7 @@ class ObjectDictionary:
         )
     
     def _get_key(self, object: Object) -> int:
+        """Returns the index of the object"""
         return object.index
 
 class ObjectGenerator:
@@ -110,7 +116,7 @@ class ObjectGenerator:
     def _to_canopen_object(self, object: Union[Variable, Array, Record]):
         """ Converts canopen. Variable, canopen.
         Array and canopen.Record to VarObject,
-        ArrayObject and RecordObject, or any specific object subclass"""
+        ArrayObject and RecordObject, or any specific object subclass """
         if isinstance(object, Variable):
             if object.index == 0x1001:
                 return Object1001(object.index, [object], self.granularity)
@@ -141,19 +147,22 @@ class ObjectGenerator:
     def _parse(self):
         """ Parses the EDS file and returns a list of objects """
 
+        # Parse the EDS file
         od: ObjectDictionary = Node(self.id, self.filename).object_dictionary
         objects_dict = {}
+
+        # read object dictionnary and convert to canopen objects
         for index, object in od.items():
             try:
                 objects_dict[index] = self._to_canopen_object(object)
             except:
                 click.echo(f"Failed to parse object {index:X}", err=True)
 
+        # check if objects are valid
         objects_dict = {index: object
                         for index, object in objects_dict.items()
-                        if not isinstance(object, (Object1600, Object1A00))
-                        or isinstance(object, (Object1600, Object1A00))
-                        and object.verify(objects_dict)}
+                        if not isinstance(object, (Object1600, Object1A00)) ## add to dic if not 1600 or 1A00
+                        or isinstance(object, (Object1600, Object1A00)) and object.verify(objects_dict)} ## or if 1600 or 1A00 and verify
         objects_values = list(objects_dict.values())
         failed_objects = set(od.keys()) - set(objects_dict.keys())
         missing_objects = set(MANDATORY_OBJECTS) - set(objects_dict.keys())
@@ -178,7 +187,7 @@ class ObjectGenerator:
                 uid += 1
 
     def generate_od_header(self):
-        """This function generates the header file"""
+        """Generates the .hpp header file"""
         if len(self.objects_values) == 0:
             raise Exception("No objects to generate")
 
