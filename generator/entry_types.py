@@ -31,6 +31,7 @@ class Entry:
         self.getter: str = str(data.get("Getter", None))
         self.setter: str = str(data.get("Setter", None))
         self.subindex: int = subindex
+        self.isRemote: bool = data.get("isRemote", False)
 
     def __str__(self) -> str:
         return '\n'.join([f"{k}={v}" for k, v in {

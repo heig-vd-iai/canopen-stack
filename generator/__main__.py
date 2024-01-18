@@ -20,7 +20,7 @@ def cli(filename=None, eds=None, hpp=None, id=1, granularity='1'):
     og = ObjectGenerator(eds, od.node_id, int(granularity))
 
     with open(hpp, "w") as f:
-        f.write(og.generate_od_header())
+        f.write(od.to_cpp())
 
 
 if __name__ == '__main__':
