@@ -2,30 +2,47 @@
  * Contains the declaration of the PDO class.
  */
 #pragma once
-#include "od.hpp"
 #include <cstdint>
 #include <functional>
+
+#include "od.hpp"
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
 #define RPDO_COMMUNICATION_INDEX 0x1400
 #define RPDO_MAPPING_INDEX 0x1600
 #define PDO_DLC 8
 
-namespace CANopen
-{
+namespace CANopen {
+
+class MapParameter {
+   private:
+    IObjectDictionnary &od;
+    Object odID;
+
+   protected:
+    uint8_t entriesNumber;
+    uint32_t mappedObjects[OD_PDO_MAPPING_MAX];
+    uint8_t getData(Data &data, uint16_t id, SDOAbortCodes &abortCode);
+    uint8_t setData(Data data, uint16_t id, SDOAbortCodes &abortCode);
+
+   public:
+    friend class PDO;
+    friend class IObjectDictionary;
+    MapParameter(IObjectDictionnary &od, uint16_t index);
+    uint8_t getCount();
+    uint32_t getMappedValue(uint8_t entry);
+}
 
 /**
  * PDO object.
- * It handles the emission and reception of TPDOs and RPDOs, as well as their mapping and communication parameters.
- * See CiA301:2011§7.2.2 (p. 31)
+ * It handles the emission and reception of TPDOs and RPDOs, as well as their
+ * mapping and communication parameters. See CiA301:2011§7.2.2 (p. 31)
  */
-class PDO
-{
+class PDO {
     /**
      * Structure to hold a pair of an object and subindex for PDO mapping.
      */
-    struct PDOPair
-    {
+    struct PDOPair {
         class Object *object;
         uint8_t subindex;
     };
@@ -33,8 +50,7 @@ class PDO
     /**
      * Structure to represent a Transmit PDO.
      */
-    struct TPDO
-    {
+    struct TPDO {
         class Object1800 *commObject;
         class Object1A00 *mapObject;
         PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
@@ -47,8 +63,7 @@ class PDO
     /**
      * Structure to represent a Receive PDO.
      */
-    struct RPDO
-    {
+    struct RPDO {
         class Object1400 *commObject;
         class Object1600 *mapObject;
         PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
@@ -60,7 +75,7 @@ class PDO
         bool watchTimeoutFlag = false;
     };
 
-private:
+   private:
     bool enabled = false;
     class Node &node;
     TPDO tpdos[OD_TPDO_COUNT];
@@ -92,14 +107,16 @@ private:
 
     /**
      * Remap the Transmit PDO at the specified index.
-     * The object-subindex pair array will be rebuilt from the current PDO mapping parameter.
+     * The object-subindex pair array will be rebuilt from the current PDO
+     * mapping parameter.
      * @param index Index of the TPDO to remap.
      */
     void remapTPDO(unsigned index);
 
     /**
      * Remap the Receive PDO at the specified index.
-     * The object-subindex pair array will be rebuilt from the current PDO mapping parameter.
+     * The object-subindex pair array will be rebuilt from the current PDO
+     * mapping parameter.
      * @param index Index of the RPDO to remap.
      */
     void remapRPDO(unsigned index);
@@ -161,7 +178,7 @@ private:
      */
     uint32_t getSyncWindow_us();
 
-public:
+   public:
     friend class SYNC;
     friend class NMT;
     friend class Node;
@@ -207,4 +224,4 @@ public:
      */
     void onTimeout(std::function<void(unsigned)> callback);
 };
-}
+}  // namespace CANopen
