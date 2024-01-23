@@ -23,6 +23,8 @@ MandatoryObjects:
     DefaultValue: 0x00020192
     PDOMapping: 0
     isRemote: 0
+    Getter: getDeviceType
+    Setter: setDeviceType
   - Index: "1001"
     ParameterName: Error Register
     ObjectType: VAR
@@ -41,7 +43,9 @@ MandatoryObjects:
         AccessType: ro
         DefaultValue: 0x04
         PDOMapping: 0
-        isRemote: 0
+        isRemote: 1
+        RemoteGetter: onSdoRequestUpdate
+        RemoteSetter: onSdoWrite
       - ParameterName: Vendor-ID
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -1348,6 +1352,8 @@ OptionalObjects:
     DefaultValue: 0
     PDOMapping: 1
     isRemote: 1
+    RemoteGetter: onSdoRequestUpdate
+    RemoteSetter: onSdoWrite
   - Index: "6041"
     ParameterName: Statusword
     ObjectType: VAR
@@ -1356,6 +1362,8 @@ OptionalObjects:
     DefaultValue: 0
     PDOMapping: 1
     isRemote: 1
+    RemoteGetter: onSdoRequestUpdate
+    RemoteSetter: onSdoWrite
   - Index: "6060"
     ParameterName: Modes of operation
     ObjectType: VAR
@@ -1364,6 +1372,8 @@ OptionalObjects:
     DefaultValue: 0
     PDOMapping: 1
     isRemote: 1
+    RemoteGetter: onSdoRequestUpdate
+    RemoteSetter: onSdoWrite
   - Index: "6061"
     ParameterName: Modes of operation display
     ObjectType: VAR

@@ -99,6 +99,10 @@ class ObjectDictionary:
             mandatory_objects=self.mandatory_objects,
             optional_objects=self.optional_objects
         )
+
+    @property
+    def subindex_count(self) -> int:
+        return sum([obj.sub_number for obj in self.all_objects])
     
     def to_cpp(self) -> str:
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
@@ -108,6 +112,7 @@ class ObjectDictionary:
             date=datetime.now(),
             rpdo_count=self.rpdo_count,
             tpdo_count=self.tpdo_count,
+            subindex_count=self.subindex_count,
             existing_classes=[
                 "Object1A00",
                 "Object1001",

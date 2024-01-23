@@ -10,6 +10,8 @@ class Entry:
     type_name: str
     ctype_name: str
     subindex: int
+    getter: str
+    setter: str
 
     @classmethod
     def _get_subclasses(cls) -> "list[type]":
@@ -19,19 +21,26 @@ class Entry:
             classes.extend(c._get_subclasses())
         return classes
 
+    
     @classmethod
     def get_instance(cls, type_name: str, data: dict, subindex: int = 0):
         return next(c(data, subindex) for c in cls._get_subclasses() if c.type_name == type_name)
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         self.parameter_name: str = str(data.get("ParameterName", ""))
+        self.object_type = str(data.get("ObjectType", ""))
         self.default_value: str = str(data.get("DefaultValue", ""))
         self.pdo_mapping: bool = data.get("PDOMapping", False)
         self.access_type: str = str(data.get("AccessType", ""))
         self.getter: str = str(data.get("Getter", None))
         self.setter: str = str(data.get("Setter", None))
         self.subindex: int = subindex
-        self.isRemote: bool = data.get("isRemote", False)
+        self.is_remote: bool = data.get("isRemote", False)
+        self.remote_getter: str = str(data.get("RemoteGetter", None))
+        self.remote_setter: str = str(data.get("RemoteSetter", None))
+        self.getter: str = str(data.get("Getter", "getLocalData"))
+        self.setter: str = str(data.get("Setter", "setLocalData"))
+        ##TODO: add metadata
 
     def __str__(self) -> str:
         return '\n'.join([f"{k}={v}" for k, v in {

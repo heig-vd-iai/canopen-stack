@@ -63,7 +63,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
     transferData.object = object;
     transferData.remainingBytes = object->getSize(subindex);
     transferData.toggle = false;
-    if (object->isRemote())
+    if (object->isRemote()) //TODO: isRemote subindex
     {
         object->requestUpdate(subindex);
         transferData.timestamp_us = timestamp_us;

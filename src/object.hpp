@@ -2,303 +2,202 @@
  * Contains the declarations of OD objects and entries.
  */
 #pragma once
-#include "enums.hpp"
-#include "unions.hpp"
 #include <cstdint>
 #include <functional>
+
+#include "enums.hpp"
+#include "unions.hpp"
 #define OBJECT_INDEX_COUNT 0
 
-namespace CANopen
-{
-/**
- * base object entry in the Object Dictionnary.
- * An object entry is identified by a sub-index, and belongs to an object.
- */
-struct ObjectEntryBase
-{
-    const void *dataSrc;
-    MetaBitfield metaData;
-    const uint32_t sizeBytes;
-    const uint16_t uid;
+namespace CANopen {
 
-    /**
-     * Constructor for the base object entry.
-     * @param src Pointer to the data source.
-     * @param metaData Metadata of the object entry, see MetaBitfield union.
-     * @param sizeBytes Size in bytes of the data associated with the entry.
-     * @param uid Unique incremental identifier of the entry.
-     */
-    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes), uid(uid) {}
+class IObject;
 
-    /**
-     * Check if incoming data is within defined range.
-     * This method is not virtual despite being overridden in some subclasses.
-     * The reason is to eliminate the function pointer that would be useless and heavy, in our case.
-     * @param data Pointer to the raw data to be checked.
-     * @return 0 for unbound entries. For limited entries, 0 if data is within limits, -1 if below, 1 if above.
-     */
-    inline int checkLimits(void * /*data*/) const { return 0; }
+class ISubObject {
+   public:
+    virtual MetaBitfield getMetadata() = 0;
+    virtual uint16_t getSize() = 0;
+    virtual uint8_t* getDefaultValue() = 0;
+    virtual void getData(uint8_t* buffer, uint16_t size) = 0;
+    virtual void setData(uint8_t* buffer, uint16_t size) = 0;
 };
 
-/**
- * This class represents an object entry in the Object Dictionary.
- * An object entry is identified by a sub-index, and belongs to an object.
- * @tparam T Data type associated with the object entry.
- */
-struct ObjectEntry : public ObjectEntryBase
-{
-    /**
-     * Constructor for the ObjectEntry.
-     * @param src Pointer to the data source.
-     * @param metaData Metadata of the object entry, see MetaBitfield union.
-     * @param uid Unique incremental identifier of the entry.
-     */
-    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : ObjectEntryBase(src, metaData, sizeBytes, uid) {}
-};
-
-/**
- * This class represents a limited object entry in the Object Dictionary with value constraints.
- * An object entry is identified by a sub-index, and belongs to an object.
- * @tparam T Data type associated with the object entry.
- */
 template <typename T>
-struct LimitedObjectEntry : public ObjectEntryBase
-{
-    const T minVal, maxVal;
+class LocalSubObject : public ISubObject {
+   private:
+    uint8_t subindex;
+    MetaBitfield metaData;
+    T defaultValue;
+    T value;
+    IObject& object;
 
-    /**
-     * Constructor for the LimitedObjectEntry.
-     * @param src Pointer to the data source.
-     * @param metaData Metadata of the object entry, see MetaBitfield union.
-     * @param minVal Minimum allowed value.
-     * @param maxVal Maximum allowed value.
-     * @param uid Unique incremental identifier of the entry.
-     */
-    LimitedObjectEntry(void *src, uint8_t metaData, T minVal, T maxVal, uint16_t uid) : ObjectEntryBase(src, metaData, sizeof(T), uid), minVal(minVal), maxVal(maxVal) {}
-
-    /**
-     * Check if incoming data is within defined range.
-     * @param data Pointer to the raw data to be checked.
-     * @return 0 if data is within limits, -1 if below, 1 if above.
-     */
-    inline int checkLimits(void *data) const
-    {
-        T value = *(T *)data;
-        return value < minVal ? -1 : (value > maxVal ? 1 : 0);
+   public:
+    LocalSubObject(uint16_t index, uint8_t subindex, MetaBitfield metaData,
+                   uint8_t* defaultValue)
+        : index(index),
+          subindex(subindex),
+          metaData(metaData),
+          defaultValue(defaultValue),
+          object(object) {}
+    MetaBitfield getMetadata() { return metaData; }
+    uint16_t getSize() { return sizeof(T); }
+    uint8_t* getDefaultValue();
+    void getData(uint8_t* buffer, uint16_t size) {
+        memcpy(buffer, &value, size);
+    }
+    void setData(uint8_t* buffer, uint16_t size) {
+        memcpy(&value, buffer, size);
     }
 };
 
-/**
- * This class represents an object in the Object Dictionnary.
- * An object is identified by an index, and owns multiple entries.
- */
-class Object
-{
-private:
-    std::function<void(Object &, uint8_t)> onWriteFunc;
-    std::function<void(Object &, uint8_t)> onRequestUpdateFunc;
+template <typename T>
+class RemoteSubObject : public ISubObject {
+   private:
+    uint8_t subindex;
+    std::function<T(uint16_t, uint8_t)> getRemoteData;
+    std::function<void(T, uint16_t, uint8_t)> setRemoteData;
+    MetaBitfield metaData;
+    T defaultValue;
+    IObject& object;
 
-    /**
-     * Request a remote update for an entry.
-     * This function will call the callback set in onRequestUpdate() and handle the metadata update flag.
-     * @param subindex The subindex of the read entry.
-     */
-    void requestUpdate(uint8_t subindex);
-
-    /**
-     * Read data from an object entry.
-     * This method should only be called by SDO class.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the destination buffer.
-     * @param sizeBytes Number of bytes to read.
-     * @param offset Offset within the object entry data.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    SDOAbortCodes readBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
-
-    /**
-     * Write bytes to an object entry.
-     * This method should only be called by SDO class.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the source buffer.
-     * @param sizeBytes Number of bytes to write.
-     * @param node Reference to the Node instance.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    SDOAbortCodes writeBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
-
-protected:
-    ObjectEntryBase **entries;
-
-    /**
-     * Pre-read operation hook for processing before reading bytes.
-     * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise readBytes will be cancelled.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the destination buffer.
-     * @param sizeBytes Number of bytes to read.
-     * @param offset Offset within the object entry data.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    virtual SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
-
-    /**
-     * Post-read operation hook for processing after reading bytes.
-     * This function is called after a sucessful readBytes operation.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the destination buffer.
-     * @param sizeBytes Number of bytes read.
-     * @param offset Offset within the object entry data.
-     */
-    virtual void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, uint32_t offset);
-
-    /**
-     * Pre-write operation hook for processing before writing bytes.
-     * If the operation is allowed, the function must return SDOAbortCode_OK, otherwise writeBytes will be cancelled.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the source buffer.
-     * @param sizeBytes Number of bytes to write.
-     * @param node Reference to the Node instance.
-     * @return SDOAbortCodes indicating operation status.
-     */
-    virtual SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
-
-    /**
-     * Post-write operation hook for processing after writing bytes.
-     * Called after a sucessful writeBytes operation.
-     * @param subindex Subindex of the object entry.
-     * @param bytes Pointer to the source buffer.
-     * @param sizeBytes Number of bytes written.
-     * @param node Reference to the Node instance.
-     */
-    virtual void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t sizeBytes, class Node &node);
-
-public:
-    friend class SDO;
-    friend class PDO;
-    const uint16_t arrayIndex;
-    const uint16_t index;
-    const uint8_t subNumber;
-
-    /**
-     * Constructor for the Object class.
-     * @param arrayIndex Array index of the object (position in dictionnary array).
-     * @param index Index of the object (dictionnary address).
-     * @param subNumber Number of subentries in the object.
-     * @param entries Array of pointers to object entries belonging to that object.
-     */
-    Object(uint16_t arrayIndex, uint16_t index, uint8_t subNumber, ObjectEntryBase *entries[]) : entries(entries), arrayIndex(arrayIndex), index(index), subNumber(subNumber) {}
-
-    /**
-     * Check if the subindex exists.
-     * @param subindex Subindex to check.
-     * @return True if the subindex exists, false otherwise.
-     */
-    bool isSubValid(uint8_t subindex) const;
-
-    /**
-     * Get the size of an object's entry data.
-     * @param subindex Subindex of the object entry.
-     * @return Size in bytes of the object entry data.
-     */
-    uint32_t getSize(uint8_t subindex) const;
-
-    /**
-     * Get the metadata of an object's entry.
-     * @param subindex Subindex of the object entry.
-     * @return Metadata bitfield of the object entry.
-     */
-    MetaBitfield getMetadata(uint8_t subindex) const;
-
-    /**
-     * Get the number of entries in the object, **if object is not of type VAR**.
-     * @return Number of entries.
-     */
-    uint8_t getCount() const;
-
-    /**
-     * Check if the object is considered as remote, that is if a callback was set using onRequestUpdate().
-     * @return True is the object is considered as remote, false otherwise.
-     */
-    bool isRemote() const;
-
-    /**
-     * Returns the incrementally assigned unique identifier of an entry.
-     * @param subindex Subindex of the object entry.
-     * @return The uid of the entry, -1 if subindex is invalid.
-     */
-    int32_t getUid(uint8_t subindex) const;
-
-    /**
-     * Get the value of an object's entry.
-     * If the size of the data type does not match that of the actual data, the operation will fail.
-     * @tparam T Data type of the value.
-     * @param subindex Subindex of the object entry.
-     * @param value Pointer to store the retrieved value.
-     * @return True if the value was retrieved successfully, false otherwise.
-     */
-    template <typename T>
-    inline bool getValue(uint8_t subindex, T *value) const
-    {
-        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
-            return false;
-        *value = *(T *)entries[subindex]->dataSrc;
-        return true;
+   public:
+    RemoteSubObject(
+        uint16_t index, uint8_t subindex, MetaBitfield metaData,
+        uint8_t* defaultValue,
+        std::function<T(uint8_t*, uint16_t, uint16_t, uint8_t)> getRemoteData,
+        std::function<void(uint8_t*, uint16_t, uint16_t, uint8_t)>
+            setRemoteData)
+        : getRemoteData(getRemoteData),
+          setRemoteData(setRemoteData),
+          index(index),
+          subindex(subindex),
+          metaData(metaData),
+          defaultValue(defaultValue) {}
+    MetaBitfield getMetadata() { return metaData; }
+    uint16_t getSize() { return sizeof(T); }
+    uint8_t* getDefaultValue() { return defaultValue; }
+    void getData(uint8_t* buffer, uint16_t size) {
+        getRemoteData(buffer, sizeof(T), object.getIndex(), subindex);
     }
-
-    /**
-     * Set the value of an object's entry.
-     * If the size of the data type does not match that of the actual data, the operation will fail.
-     * @tparam T Data type of the value.
-     * @param subindex Subindex of the object entry.
-     * @param value New value to set.
-     * @return True if the value was set successfully, false otherwise.
-     */
-    template <typename T>
-    inline bool setValue(uint8_t subindex, T value)
-    {
-        if (!isSubValid(subindex) || sizeof(T) != entries[subindex]->sizeBytes)
-            return false;
-        *(T *)entries[subindex]->dataSrc = value;
-        entries[subindex]->metaData.bits.updateFlag = false;
-        return true;
+    void setData(uint8_t* buffer, uint16_t size) {
+        setRemoteData(buffer, sizeof(T), object.getIndex(), subindex);
     }
-
-    /**
-     * Get the value of an object's entry as bytes.
-     * If the size of the buffer is smaller than the actual data, the operation will fail.
-     * @param subindex Subindex of the object entry.
-     * @param sizeBytes Size of the destination buffer, in bytes.
-     * @param bufferSize Pointer to destination buffer.
-     * @return True if the value was retrieved successfully, false otherwise.
-     */
-    bool getBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer);
-
-    /**
-     * Set the value of an object's entry from bytes.
-     * If the size of the buffer is smaller than the actual data, the operation will fail.
-     * @param subindex Subindex of the object entry.
-     * @param bufferSize Size of the source buffer, in bytes.
-     * @param bytes Pointer to source buffer.
-     * @return True if the value was set successfully, false otherwise.
-     */
-    bool setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer);
-
-    /**
-     * Set a callback function to be called after an object entry was written to.
-     * The function will receive a reference to the object and the subindex.
-     * **DO NOT use time consuming calls in the provided callback.**
-     * @param callback Callback function to be called on object entry write.
-     */
-    void onWrite(std::function<void(Object &, uint8_t)> callback);
-
-    /**
-     * Set a callback function to be called when a SDO upload should trigger a value update.
-     * This is useful when remote data must be fetched before responding, ensuring the data in the dictionnary is up to date.
-     * The SDO request will be pending until timeout occurs or entry data is updated.
-     * The function will receive a reference to the object and the subindex.
-     * **DO NOT use time consuming calls in the provided callback.**
-     * @param callback Callback function to be called on SDO upload.
-     */
-    void onRequestUpdate(std::function<void(Object &, uint8_t)> callback);
 };
-}
+
+class IObject {
+   private:
+    SDOAbortCodes beforeSetData(uint8_t subIndex, uint8_t* buffer,
+                                uint16_t sizeBytes);
+    void afterSetData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes);
+    SDOAbortCodes beforeGetData(uint8_t subIndex, uint8_t* buffer,
+                                uint16_t sizeBytes);
+    void afterGetData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes);
+
+   public:
+    virtual void getData(uint8_t subIndex, uint8_t* buffer,
+                         uint16_t sizeBytes) = 0;
+    virtual void setData(uint8_t subIndex, uint8_t* buffer,
+                         uint16_t sizeBytes) = 0;
+    virtual bool isSubValid(uint8_t subIndex) = 0;
+    virtual uint16_t getSize(uint8_t subIndex) = 0;
+    virtual uint16_t getSubObjectCount() = 0;
+    virtual uint16_t getIndex() = 0;
+};
+
+template <typename T>
+class LocalVarObject : public IObject {
+   private:
+    MetaBitfield metaData;
+    T defaultValue;
+    T value;
+    uint16_t index;
+
+   public:
+    VarObject(uint16_t index, MetaBitfield metaData, T defaultValue)
+        : index(index), metaData(metaData), defaultValue(defaultValue) {}
+    void setData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes) {
+        if (subIndex == 0) {
+            memcpy(&value, buffer, sizeBytes);
+        }
+    }
+    void getData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes) {
+        if (subIndex == 0) {
+            memcpy(buffer, &value, sizeBytes);
+        }
+    }
+    bool isSubValid(uint8_t subIndex) { return subIndex == 0; }
+    uint16_t getSize(uint8_t subIndex) { return sizeof(T); }
+    uint16_t getSubObjectCount() { return 0; }
+    uint16_t getIndex() { return index; }
+    MetaBitfield getMetadata() { return metaData; }
+};
+
+template <typename T>
+class RemoteVarObject : public IObject {
+   private:
+    std::function<T(uint8_t*, uint16_t, uint16_t, uint8_t)> getRemoteData;
+    std::function<void(uint8_t*, uint16_t, uint16_t, uint8_t)> setRemoteData;
+    MetaBitfield metaData;
+    T defaultValue;
+    T value;
+    uint16_t index;
+
+   public:
+    VarObject(
+        uint16_t index, MetaBitfield metaData, T defaultValue,
+        std::function<T(uint8_t*, uint16_t, uint16_t, uint8_t)> getRemoteData,
+        std::function<void(uint8_t*, uint16_t, uint16_t, uint8_t)>
+            setRemoteData)
+        : index(index),
+          metaData(metaData),
+          defaultValue(defaultValue),
+          setRemoteData(setRemoteData),
+          getRemoteData(getRemoteData) {}
+    void setData(uint8_t subIndex, uint8_t* buffer, uint16_t size) {
+        if (subIndex == 0) {
+            setRemoteData(buffer, size, index, subIndex);
+        }
+    }
+    void getData(uint8_t subIndex, uint8_t* buffer, uint16_t size) {
+        if (subIndex == 0) {
+            getRemoteData(buffer, size, index, subIndex);
+        }
+    }
+    bool isSubValid(uint8_t subIndex) { return subIndex == 0; }
+    uint16_t getSize(uint8_t subIndex) { return sizeof(T); }
+    uint16_t getSubObjectCount() { return 0; }
+    uint16_t getIndex() { return index; }
+    MetaBitfield getMetadata() { return metaData; }
+};
+
+class RecordObject : public IObject {
+   private:
+    uint16_t index;
+    uint16_t subObjectCount;
+    ISubObject** subObjects;
+
+   public:
+    RecordObject(uint16_t index, uint16_t subObjectCount,
+                 ISubObject** subObjects);
+    void setData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes);
+    void getData(uint8_t subIndex, uint8_t* buffer, uint16_t sizeBytes);
+    bool isSubValid(uint8_t subIndex);
+    uint16_t getSize(uint8_t subIndex);
+    uint16_t getSubObjectCount();
+    uint16_t getIndex();
+    MetaBitfield getMetadata(uint8_t subIndex);
+};
+
+template <typename T>
+class ArrayObject : public RecordObject {
+   private:
+    uint16_t index;
+    uint16_t subObjectCount;
+    ISubObject** subObjects;
+
+   public:
+    ArrayObject(uint16_t index, uint16_t subObjectCount,
+                ISubObject** subObjects);
+};
+
+}  // namespace CANopen
