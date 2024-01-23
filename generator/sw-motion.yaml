@@ -23,8 +23,6 @@ MandatoryObjects:
     DefaultValue: 0x00020192
     PDOMapping: 0
     isRemote: 0
-    Getter: getDeviceType
-    Setter: setDeviceType
   - Index: "1001"
     ParameterName: Error Register
     ObjectType: VAR
@@ -33,6 +31,7 @@ MandatoryObjects:
     DefaultValue: 0x00
     PDOMapping: 1
     isRemote: 0
+    Getter: get1001
   - Index: "1018"
     ParameterName: Identity Object
     ObjectType: RECORD
@@ -897,6 +896,8 @@ OptionalObjects:
         DefaultValue: 0x00
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 1st object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -904,6 +905,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 2nd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -911,6 +914,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 3rd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -918,6 +923,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 4th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -925,6 +932,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 5th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -932,6 +941,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 6th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -939,6 +950,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 7th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -946,6 +959,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
       - ParameterName: 8th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -953,6 +968,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
+        Getter: get1A00
+        Setter: set1A00
   - Index: "1A01"
     ParameterName: Transmit PDO 2 Mapping Parameter
     ObjectType: RECORD

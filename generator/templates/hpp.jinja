@@ -1,0 +1,133 @@
+/**
+ * This file contains the declaration of the ObjectDictionnary class.
+ * Generated on {{date.strftime("%B %d, %Y")}}
+ *
+ * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
+ */
+#pragma once
+
+#include "object.hpp"
+
+#define OD_NODE_ID {{ node_id }}
+#define OD_GRANULARITY 8
+#define OD_PDO_MAPPING_MAX 8
+#define OD_ENTRY_SIZE_MAX 1024
+#define OD_OBJECTS_COUNT {{ objects | length }}
+#define OD_TPDO_COUNT {{ tpdo_count }}
+#define OD_RPDO_COUNT {{ rpdo_count }}
+#define OBJECT_INDEX_COUNT 0
+
+#define X1A00_MAP_DISABLED 0
+#define X1A00_SAM_MPDO 0xFE
+#define X1A00_DAM_MPDO 0xFF
+
+/* These defines map an object to its dictionnary array index */
+{% for object in objects %}
+#define OD_OBJECT_{{ object.index_hexstr }} {{ loop.index0 }}
+{% endfor %}
+
+#ifndef _OD_DEFINES_ONLY
+#include "od_include.hpp"
+
+using namespace CANopen;
+
+class ObjectDictionnary {
+
+private:
+
+    // This table is used to find an object by its index.
+    std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        std::make_pair(0x{{ object.index_hexstr }}, {{ subobject.subindex }}),
+        {% endfor %}
+        {% endfor %}
+    };
+
+    // This table contain all the objects getter
+    std::function<Data(void)> objectGetterTable[{{ subindex_count }}] = {
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        {{ subobject.getter }},
+        {% endfor %}
+        {% endfor %}
+    };
+
+    // This table contain all the objects setter
+    std::function<void(Data)> objectSetterTable[{{ subindex_count }}] = {
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        {{ subobject.setter }},
+        {% endfor %}
+        {% endfor %}
+    };
+
+
+public:
+    const uint16_t length = {{ objects | length }};
+
+    ObjectDictionnary();
+
+    /**
+     * Find an object in the dictionary.
+     * @param index The hex index of the object to find.
+     * @return Pointer to the found object, or nullptr if not found.
+     */
+    Object *findObject(uint16_t index);
+
+    /**
+     * Access an object in the dictionary by array index.
+     * @param index The array index of the object.
+     * This parameter should always use one of the generated defines.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *at(uint16_t index);
+
+    /**
+     * Access an object in the dictionary by array index using the subscript operator.
+     * Under the hood, this method uses the at() method.
+     * @param index The array index of the object to access.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *operator[](uint16_t index);
+
+    /**
+     * Save data to non-volatile storage for a specified parameter group.
+     * This method is called by object 0x1010.
+     * @param parameterGroup The parameter group number.
+     * @return True if saving was successful, false otherwise.
+     */
+    bool saveData(uint8_t parameterGroup);
+
+    /**
+     * Load data from non-volatile storage for a specified parameter group.
+     * This method should be called on application startup to load the object dictionnary.
+     * @param parameterGroup The parameter group number.
+     * @return True if loading was successful, false otherwise.
+     */
+    bool loadData(uint8_t parameterGroup);
+
+    /**
+     * Restore data to default for a specified parameter group.
+     * This method is called by object 0x1011.
+     * @param parameterGroup The parameter group number.
+     * @return True if restoring was successful, false otherwise.
+     */
+    bool restoreData(uint8_t parameterGroup);
+
+    /**
+     * Return local data from the object dictionnary.
+     * @param index The hex index of the object to access.
+     * @param subIndex The sub-index of the object to access.
+    */
+    Data getLocalData(uint16_t index, uint8_t subIndex);
+
+    /**
+     * Set local data in the object dictionnary.
+     * @param index The hex index of the object to access.
+     * @param subIndex The sub-index of the object to access.
+     * @param data The data to set.
+    */
+    void setLocalData(Data data, uint16_t index, uint8_t subIndex);
+};
+#endif // _OD_DEFINES_ONLY

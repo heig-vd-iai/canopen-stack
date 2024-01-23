@@ -13,6 +13,7 @@
 
 namespace CANopen
 {
+
 /**
  * PDO object.
  * It handles the emission and reception of TPDOs and RPDOs, as well as their mapping and communication parameters.
