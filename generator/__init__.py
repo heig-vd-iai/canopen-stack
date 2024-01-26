@@ -16,15 +16,161 @@ from .objects.object_1400 import Object1400
 from .objects.object_1600 import Object1600
 from .objects.object_1800 import Object1800
 from .objects.object_1A00 import Object1A00
+from .object_types import Object
 
 script_dir = os.path.dirname(__file__)
 
 TEMPLATES_DIR = script_dir + "/templates"
 
 HEADER_FILENAME = "od.hpp"
+CPP_FILENAME = "od.cpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
+EDS_TEMPLATE = "eds.jinja"
+HEADER_TEMPLATE = "hpp.jinja"
+CPP_TEMPLATE = "cpp.jinja"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
+
+#TODO: test yaml
+class ObjectDictionary:
+    def __init__(self, data: dict) -> None:
+        now = datetime.now()
+        self.node_id: int = data.get("NodeId", 1)
+        ## get file info from yaml
+        dico: dict = data.get("FileInfo", {})
+        self.file_info = {
+            "FileName": dico.get("FileName", ""),
+            "FileVersion": dico.get("FileVersion", ""),
+            "FileRevision": dico.get("FileRevision", ""),
+            "EDSVersion": "4.0",
+            "Description": dico.get("Description", ""),
+            "CreationTime": now.strftime("%H:%M"),
+            "CreationDate": now.strftime("%Y-%m-%d"),
+            "CreatedBy": dico.get("CreatedBy", ""),
+            "ModificationTime": now.strftime("%H:%M"),
+            "ModificationDate": now.strftime("%Y-%m-%d"),
+            "ModifiedBy": dico.get("ModifiedBy", "")
+        }
+        ## get device info from yaml
+        dico: dict = data.get("DeviceInfo", {})
+        self.device_info = {
+            "VendorName": dico.get("VendorName", ""),
+            "VendorNumber": dico.get("VendorNumber", ""),
+            "ProductName": dico.get("ProductName", ""),
+            "ProductNumber": dico.get("ProductNumber", ""),
+            "RevisionNumber": dico.get("RevisionNumber", ""),
+            "OrderCode": dico.get("OrderCode", ""),
+            "BaudRate_10": "1",
+            "BaudRate_20": "1",
+            "BaudRate_50": "1",
+            "BaudRate_125": "1",
+            "BaudRate_250": "1",
+            "BaudRate_500": "1",
+            "BaudRate_800": "1",
+            "BaudRate_1000": "1",
+            "SimpleBootUpMaster": "0",
+            "SimpleBootUpSlave": "1",
+            "Granularity": "8",
+            "DynamicChannelsSupported": "0",
+            "CompactPDO": "0",
+            "GroupMessaging": "0",
+            "NrOfRXPDO": "4",
+            "NrOfTXPDO": "4",
+            "LSS_Supported": "0"
+        }
+        ### use for debug yaml
+        if(0):
+            for obj in data.get("OptionalObjects", []):
+                try:
+                    Object.get_instance(obj.get("ObjectType"), obj)
+                except Exception as e:
+                    print(obj.get("ParameterName"))
+        ###
+
+        ## get objects from yaml
+        self.mandatory_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("MandatoryObjects", [])], key=self._get_key)
+        self.optional_objects = sorted([Object.get_instance(obj_data.get("ObjectType"), obj_data) for obj_data in data.get("OptionalObjects", [])], key=self._get_key)
+        self.all_objects = sorted(self.mandatory_objects + self.optional_objects, key=self._get_key)
+    
+    def to_eds(self) -> str:
+        """Converts the object dictionary to an EDS file"""
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(EDS_TEMPLATE).render(
+            file_info=self.file_info,
+            device_info=self.device_info,
+            mandatory_objects=self.mandatory_objects,
+            optional_objects=self.optional_objects
+        )
+
+    @property
+    def subindex_count(self) -> int:
+        return sum([obj.sub_number for obj in self.all_objects])
+    
+    def to_hpp(self) -> str:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(HEADER_TEMPLATE).render(
+            objects=self.all_objects,
+            node_id=self.node_id,
+            date=datetime.now(),
+            rpdo_count=self.rpdo_count,
+            tpdo_count=self.tpdo_count,
+            subindex_count=self.subindex_count,
+            existing_classes=[
+                "Object1A00",
+                "Object1001",
+                "Object1003",
+                "Object1010",
+                "Object1011",
+                "Object1019",
+                "Object1400",
+                "Object1600",
+                "Object1800"
+            ]
+        )
+
+    def to_cpp(self) -> str:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(CPP_TEMPLATE).render(
+            objects=self.all_objects,
+            node_id=self.node_id,
+            date=datetime.now(),
+            rpdo_count=self.rpdo_count,
+            tpdo_count=self.tpdo_count,
+            subindex_count=self.subindex_count,
+            existing_classes=[
+                "Object1A00",
+                "Object1001",
+                "Object1003",
+                "Object1010",
+                "Object1011",
+                "Object1019",
+                "Object1400",
+                "Object1600",
+                "Object1800"
+            ]
+        )
+    
+    def _get_key(self, object: Object) -> int:
+        """Returns the index of the object"""
+        return object.index
+    
+    @property
+    def rpdo_count(self) -> int:
+        return len([obj for obj in self.all_objects if obj.cpp_class_name == "Object1400"])
+
+    @property
+    def tpdo_count(self) -> int:
+        return len([obj for obj in self.all_objects if obj.cpp_class_name == "Object1800"])
+
+    @property
+    def getters(self) -> "list[tuple[int, int, str]]":
+        """Returns the list of object entry getters, as a tuple: (index: int, subindex: int, getter: str | None)"""
+        return [(object.index, entry.subindex, entry.getter) for object in self.all_objects for entry in object.entries]
+
+    @property
+    def setters(self) -> "list[tuple[int, int, str]]":
+        """Returns the list of object entry setters, as a tuple: (index: int, subindex: int, getter: str | None)"""
+        return [(object.index, entry.subindex, entry.setter) for object in self.all_objects for entry in object.entries]
 
 class ObjectGenerator:
     """ Generates the header file from the EDS file """
@@ -39,7 +185,7 @@ class ObjectGenerator:
     def _to_canopen_object(self, object: Union[Variable, Array, Record]):
         """ Converts canopen. Variable, canopen.
         Array and canopen.Record to VarObject,
-        ArrayObject and RecordObject, or any specific object subclass"""
+        ArrayObject and RecordObject, or any specific object subclass """
         if isinstance(object, Variable):
             if object.index == 0x1001:
                 return Object1001(object.index, [object], self.granularity)
@@ -70,19 +216,22 @@ class ObjectGenerator:
     def _parse(self):
         """ Parses the EDS file and returns a list of objects """
 
+        # Parse the EDS file
         od: ObjectDictionary = Node(self.id, self.filename).object_dictionary
         objects_dict = {}
+
+        # read object dictionnary and convert to canopen objects
         for index, object in od.items():
             try:
                 objects_dict[index] = self._to_canopen_object(object)
             except:
                 click.echo(f"Failed to parse object {index:X}", err=True)
 
+        # check if objects are valid
         objects_dict = {index: object
                         for index, object in objects_dict.items()
-                        if not isinstance(object, (Object1600, Object1A00))
-                        or isinstance(object, (Object1600, Object1A00))
-                        and object.verify(objects_dict)}
+                        if not isinstance(object, (Object1600, Object1A00)) ## add to dic if not 1600 or 1A00
+                        or isinstance(object, (Object1600, Object1A00)) and object.verify(objects_dict)} ## or if 1600 or 1A00 and verify
         objects_values = list(objects_dict.values())
         failed_objects = set(od.keys()) - set(objects_dict.keys())
         missing_objects = set(MANDATORY_OBJECTS) - set(objects_dict.keys())
@@ -107,7 +256,7 @@ class ObjectGenerator:
                 uid += 1
 
     def generate_od_header(self):
-        """This function generates the header file"""
+        """Generates the .hpp header file"""
         if len(self.objects_values) == 0:
             raise Exception("No objects to generate")
 
