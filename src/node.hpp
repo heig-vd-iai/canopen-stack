@@ -9,6 +9,7 @@
 #include "pdo.hpp"
 #include "sdo.hpp"
 #include "sync.hpp"
+#include "object.hpp" //TODO: remove this include
 #include <cstdint>
 
 namespace CANopen
@@ -117,4 +118,5 @@ public:
      */
     void update();
 };
+extern Node node;
 }

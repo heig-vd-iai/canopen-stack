@@ -42,7 +42,8 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us)
 {
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    Object *object = node._od.findObject(index);
+//    Object *object = node._od.findObject(index);
+    Object *object = nullptr; //TODO change
     if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
@@ -140,7 +141,8 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us)
     SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    Object *object = node._od.findObject(index);
+//    Object *object = node._od.findObject(index);
+    Object *object = nullptr; //TODO change
     if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
@@ -244,7 +246,8 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
     {
         uint16_t index = request.getIndex();
         uint8_t subindex = request.getSubindex();
-        Object *object = node._od.findObject(index);
+//        Object *object = node._od.findObject(index);
+        Object *object = nullptr; //TODO change
         if (!object)
         {
             sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
@@ -390,7 +393,8 @@ void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us)
     }
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    Object *object = node._od.findObject(index);
+//    Object *object = node._od.findObject(index);
+    Object *object = nullptr; //TODO change
     if (!object)
     {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
@@ -562,12 +566,12 @@ void SDO::update(uint32_t timestamp_us)
         }
         break;
     case SDOServerState_Pending:
-        if (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
-            uploadInitiateSend(timestamp_us);
+//        if (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
+//            uploadInitiateSend(timestamp_us); //TODO : check with getter/setter return
         break;
     case SDOServerState_BlockPending:
-        if (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
-            blockUploadInitiateSend(timestamp_us);
+//        if (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
+//            blockUploadInitiateSend(timestamp_us); //TODO : check with getter/setter return
         break;
     default:
         break;

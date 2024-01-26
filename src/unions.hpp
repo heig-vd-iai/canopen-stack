@@ -18,8 +18,8 @@ union MetaBitfield
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
-        bool updateFlag : 1;
     } bits;
+    MetaBitfield(Metadata metadata) : value(metadata) {}
 };
 
 /**

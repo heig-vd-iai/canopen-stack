@@ -28,7 +28,7 @@ struct ObjectEntryBase
      * @param sizeBytes Size in bytes of the data associated with the entry.
      * @param uid Unique incremental identifier of the entry.
      */
-    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes), uid(uid) {}
+//    ObjectEntryBase(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : dataSrc(src), metaData{metaData}, sizeBytes(sizeBytes), uid(uid) {}
 
     /**
      * Check if incoming data is within defined range.
@@ -53,7 +53,7 @@ struct ObjectEntry : public ObjectEntryBase
      * @param metaData Metadata of the object entry, see MetaBitfield union.
      * @param uid Unique incremental identifier of the entry.
      */
-    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : ObjectEntryBase(src, metaData, sizeBytes, uid) {}
+//    ObjectEntry(void *src, uint8_t metaData, uint32_t sizeBytes, uint16_t uid) : ObjectEntryBase(src, metaData, sizeBytes, uid) {}
 };
 
 /**

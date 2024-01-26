@@ -3,9 +3,15 @@
  */
 #include "node.hpp"
 #include "frame.hpp"
+
+namespace CANopen
+{
+    Node node;
+} // namespace CANopen
+
 using namespace CANopen;
 
-Node::Node() : _od(*this), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this) {}
+Node::Node() : _od(), _nmt(*this), _hb(*this), _sdo(*this), _pdo(*this), _sync(*this), _emcy(*this) {}
 
 ObjectDictionnary &Node::od() { return _od; }
 

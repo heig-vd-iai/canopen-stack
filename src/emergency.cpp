@@ -10,7 +10,7 @@ using namespace CANopen;
 
 EMCY::EMCY(Node &node) : node(node)
 {
-    errorRegisterObject = (Object1001 *)node._od.at(OD_OBJECT_1001);
+//    errorRegisterObject = (Object1001 *)node._od.at(OD_OBJECT_1001); //TODO add error register local
 }
 
 void EMCY::enable() { enabled = true; }

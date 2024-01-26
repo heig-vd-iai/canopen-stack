@@ -60,7 +60,7 @@ void Object::requestUpdate(uint8_t subindex)
 {
     if (!isRemote() || !isSubValid(subindex))
         return;
-    entries[subindex]->metaData.bits.updateFlag = true;
+//    entries[subindex]->metaData.bits.updateFlag = true; //TODO: change
     onRequestUpdateFunc(*this, subindex);
 }
 
@@ -93,7 +93,7 @@ uint32_t Object::getSize(uint8_t subindex) const
 
 MetaBitfield Object::getMetadata(uint8_t subindex) const
 {
-    return isSubValid(subindex) ? entries[subindex]->metaData : MetaBitfield{0};
+//    return isSubValid(subindex) ? entries[subindex]->metaData : MetaBitfield{0};
 }
 
 uint8_t Object::getCount() const
@@ -124,7 +124,7 @@ bool Object::setBytes(uint8_t subindex, unsigned bufferSize, uint8_t *buffer)
     if (!isSubValid(subindex) || bufferSize < entries[subindex]->sizeBytes)
         return false;
     memcpy((void *)entries[subindex]->dataSrc, buffer, entries[subindex]->sizeBytes);
-    entries[subindex]->metaData.bits.updateFlag = false;
+//    entries[subindex]->metaData.bits.updateFlag = false; //TODO: change
     return true;
 }
 

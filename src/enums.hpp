@@ -217,3 +217,12 @@ enum ParameterGroups
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3
 };
+
+enum Metadata {
+    Metadata_ReadOnlyNotMappable = 0x01,
+    Metadata_WriteOnlyNotMappable = 0x02,
+    Metadata_ReadWriteNotMappable = 0x03,
+    Metadata_ReadOnlyMappable = 0x05,
+    Metadata_WriteOnlyMappable = 0x06,
+    Metadata_ReadWriteMappable = 0x07
+};
