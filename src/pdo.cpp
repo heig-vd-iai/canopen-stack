@@ -10,6 +10,249 @@
 #include "node.hpp"
 using namespace CANopen;
 
+MapParameter::MapParameter(uint32_t id)
+    : odID(id) {
+    if (odID < 0) {
+        entriesNumber = 0;
+    } else {
+        entriesNumber = node.od().objectDataTable[id].value.u8;
+        for (uint8_t i = 0; i < entriesNumber; i++) {
+            mappedObjects[i] = node.od().objectDataTable[id + i + 1].value.u32;
+        }
+    }
+}
+
+MapParameter::MapParameter() {
+    odID = -1;
+    entriesNumber = 0;
+    for (uint8_t i = 0; i < OD_PDO_MAPPING_MAX; i++) {
+        mappedObjects[i] = 0;
+    }
+}
+
+uint8_t MapParameter::getCount() { return entriesNumber; }
+
+uint32_t MapParameter::getMappedValue(uint8_t entry) {
+    return mappedObjects[entry];
+}
+
+int8_t MapParameter::getData(Data &data, uint32_t id,
+                             SDOAbortCodes &abortCode) {
+    if (odID == 0) {
+        data.value.u8 = entriesNumber;
+        return 0;
+    } else if (id > odID && id < odID + entriesNumber + 1) {
+        data.value.u32 = mappedObjects[id - odID - 1];
+        return 0;
+    } else {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+}
+
+int8_t MapParameter::setData(Data data, uint32_t id, SDOAbortCodes &abortCode) {
+    if (id == odID) {
+        uint8_t value = data.value.u8;
+        if (value > OD_PDO_MAPPING_MAX) {
+            abortCode = SDOAbortCodes::SDOAbortCode_DownloadValueTooHigh;
+            return -1;
+        }
+        if (value > X1A00_MAP_DISABLED) {
+            uint32_t sizeSum = 0;
+            for (unsigned i = 0; i < value; i++) {
+                PDOMapEntry entry = {getMappedValue(i)};
+                sizeSum +=
+                    node.od().objectDataTable[node.od().findObject(entry.bits.index,
+                                                     entry.bits.subindex)]
+                        .size;
+            }
+            if (sizeSum > PDO_DLC) {
+                abortCode = SDOAbortCodes::SDOAbortCode_MappedPDOLengthExceeded;
+                return -1;
+            }
+            entriesNumber = value;
+        }
+    } else {
+        PDOMapEntry entry;
+        entry.value = data.value.u32;
+        if (!node.od().isSubValid(entry.bits.index, entry.bits.subindex)) {
+            abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
+            return -1;
+        }
+        MetaBitfield meta = node.od().getMetadata(entry.bits.index, entry.bits.subindex);
+        if (!meta.bits.mappable || !meta.bits.readable) {
+            abortCode = SDOAbortCodes::SDOAbortCode_CannotMapToPDO;
+            return -1;
+        }
+        mappedObjects[id - odID - 1] = entry.value;
+    }
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
+    return 0;
+}
+
+CANopen::MapParameter &CANopen::MapParameter::operator=(const MapParameter &other) {
+    entriesNumber = other.entriesNumber;
+    odID = other.odID;
+    for (uint8_t i = 0; i < entriesNumber; i++) {
+        mappedObjects[i] = other.mappedObjects[i];
+    }
+    return *this;
+}
+
+CommParameter::CommParameter(uint32_t id)
+    : odID(id) {
+    if (odID < 0) {
+        entriesNumber = 6;
+        cobId = 0;
+        transmissionType = 0;
+        inhibitTime = 0;
+        eventTimer = 0;
+        syncStartValue = 0;  // TODO: add default value by define
+
+    } else {
+        entriesNumber = node.od().objectDataTable[id].value.u8;
+        cobId = node.od().objectDataTable[id + 1].value.u32;
+        transmissionType = node.od().objectDataTable[id + 2].value.u8;
+        inhibitTime = node.od().objectDataTable[id + 3].value.u32;
+        compatibilityEntry = node.od().objectDataTable[id + 4].value.u32;
+        eventTimer = node.od().objectDataTable[id + 5].value.u32;
+        syncStartValue = node.od().objectDataTable[id + 6].value.u8;
+    }
+}
+
+CommParameter::CommParameter() {
+    odID = -1;
+    entriesNumber = 6;
+    cobId = 0;
+    transmissionType = 0;
+    inhibitTime = 0;
+    eventTimer = 0;
+    syncStartValue = 0;
+}
+
+uint32_t CommParameter::getCobId() { return cobId; }
+
+uint16_t CommParameter::getActualCobId() { return cobId & COBID_MASK; }
+
+uint8_t CommParameter::getTransmissionType() { return transmissionType; }
+
+uint16_t CommParameter::getInhibitTime_us() { return inhibitTime * 100; }
+
+uint16_t CommParameter::getEventTimer_us() { return eventTimer * 1000; }
+
+uint8_t CommParameter::getSyncStart() { return syncStartValue; }
+
+bool CommParameter::isSynchronous() { return transmissionType <= SYNC_MAX; }
+
+bool CommParameter::isTimerSupported() { return entriesNumber >= INDEX_EVENT; }
+
+bool CommParameter::isInhibitSupported() {
+    return entriesNumber >= INDEX_INHIBIT;
+}
+
+bool CommParameter::isEnabled() { return cobId & COBID_VALID_MASK; }
+
+int8_t CommParameter::getData(Data &data, uint32_t id,
+                              SDOAbortCodes &abortCode) {
+    if (id - odID > entriesNumber) {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    if (id == odID) {
+        data.value.u8 = entriesNumber;
+        return 0;
+    } else if (id == odID + INDEX_COBID) {
+        data.value.u32 = cobId;
+        return 0;
+    } else if (id == odID + INDEX_TRANSMISSION) {
+        data.value.u8 = transmissionType;
+        return 0;
+    } else if (id == odID + INDEX_INHIBIT) {
+        data.value.u16 = inhibitTime;
+        return 0;
+    } else if (id == odID + INDEX_EVENT) {
+        data.value.u16 = eventTimer;
+        return 0;
+    } else if (id == odID + INDEX_SYNC) {
+        data.value.u8 = syncStartValue;
+        return 0;
+    } else {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+}
+
+int8_t CommParameter::setData(Data data, uint32_t id,
+                              SDOAbortCodes &abortCode) {
+    bool enabled = isEnabled();
+    if (id - odID > entriesNumber) {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    if (id == odID) {
+        uint8_t value = data.value.u8;
+        if (value > OD_PDO_COMM_PARAM_MAX) {
+            abortCode = SDOAbortCodes::SDOAbortCode_DownloadValueTooHigh;
+            return -1;
+        }
+        entriesNumber = value;
+    } else if (id == odID + INDEX_COBID) {
+        PDOCobidEntry current = {cobId};
+        PDOCobidEntry dataEntry = {data.value.u32};
+        // Check if bits 0 to 30 are modified
+        if (enabled && (current.value ^ dataEntry.value) & ~COBID_VALID_MASK) {
+            abortCode =
+                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
+            return -1;
+        }
+        // If a PDO was enabled
+        if (current.bits.valid && dataEntry.bits.valid) {
+            remap = true;
+        }
+        cobId = data.value.u32;
+    } else if (id == odID + INDEX_TRANSMISSION) {
+        if (SYNC_MAX < data.value.u8 && data.value.u8 < EVENT1) {
+            abortCode =
+                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
+            return -1;
+        }
+        transmissionType = data.value.u8;
+    } else if (id == odID + INDEX_INHIBIT) {
+        if (enabled) {
+            abortCode = SDOAbortCodes::SDOAbortCode_UnsupportedObjectAccess;
+            return -1;
+        }
+        inhibitTime = data.value.u16;
+    } else if (id == odID + INDEX_EVENT) {
+        eventTimer = data.value.u16;
+    } else if (id == odID + INDEX_SYNC) {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    } else {
+        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
+
+    if (remap) {
+        node.pdo().reloadTPDO();
+        node.pdo().reloadRPDO();
+    }
+    return 0;
+}
+
+CommParameter &CommParameter::operator=(const CommParameter &other) {
+    entriesNumber = other.entriesNumber;
+    odID = other.odID;
+    cobId = other.cobId;
+    transmissionType = other.transmissionType;
+    inhibitTime = other.inhibitTime;
+    compatibilityEntry = other.compatibilityEntry;
+    eventTimer = other.eventTimer;
+    syncStartValue = other.syncStartValue;
+    return *this;
+}
+
 PDO::PDO() {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) initTPDO(i);
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) initRPDO(i);
@@ -20,18 +263,18 @@ void PDO::enable() { enabled = true; }
 void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index) {
-    tpdos[index].commObject =
-        (Object1800 *)node._od.findObject(TPDO_COMMUNICATION_INDEX + index);
-    tpdos[index].mapObject =
-        (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index);
+//    tpdos[index].commObject =
+//        (Object1800 *)node._od.findObject(TPDO_COMMUNICATION_INDEX + index);
+//    tpdos[index].mapObject =
+//        (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
-    rpdos[index].commObject =
-        (Object1400 *)node._od.findObject(RPDO_COMMUNICATION_INDEX + index);
-    rpdos[index].mapObject =
-        (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index);
+//    rpdos[index].commObject =
+//        (Object1400 *)node._od.findObject(RPDO_COMMUNICATION_INDEX + index);
+//    rpdos[index].mapObject =
+//        (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
 

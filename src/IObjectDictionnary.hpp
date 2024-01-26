@@ -53,7 +53,7 @@ class IObjectDictionnary {
 
    public:
     Data *objectDataTable;
-    MetaBitfield *objectMetadataTable;
+    // MetaBitfield *objectMetadataTable;
     friend class MapParameter;
     friend class CommParameter;
     virtual int8_t readData(Data &data, uint16_t index, uint8_t subindex,
