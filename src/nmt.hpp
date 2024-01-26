@@ -19,7 +19,6 @@ class NMT
 private:
     NMTStates currentState = NMTState_Initialisation;
     NMTResetStates resetState = NMTResetState_Initialising;
-    class Node &node;
 
     /**
      * Initialize the NMT state machine.
@@ -43,11 +42,6 @@ private:
 
 public:
     friend class Node;
-    /**
-     * Constructor for the NMT class.
-     * @param node The parent Node reference.
-     */
-    NMT(class Node &node);
 
     /**
      * Issue a state machine transition based on the given command.

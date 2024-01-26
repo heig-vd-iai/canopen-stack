@@ -23,9 +23,11 @@ script_dir = os.path.dirname(__file__)
 TEMPLATES_DIR = script_dir + "/templates"
 
 HEADER_FILENAME = "od.hpp"
+CPP_FILENAME = "od.cpp"
 TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
 EDS_TEMPLATE = "eds.jinja"
 HEADER_TEMPLATE = "hpp.jinja"
+CPP_TEMPLATE = "cpp.jinja"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
 
@@ -104,9 +106,31 @@ class ObjectDictionary:
     def subindex_count(self) -> int:
         return sum([obj.sub_number for obj in self.all_objects])
     
-    def to_cpp(self) -> str:
+    def to_hpp(self) -> str:
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
         return env.get_template(HEADER_TEMPLATE).render(
+            objects=self.all_objects,
+            node_id=self.node_id,
+            date=datetime.now(),
+            rpdo_count=self.rpdo_count,
+            tpdo_count=self.tpdo_count,
+            subindex_count=self.subindex_count,
+            existing_classes=[
+                "Object1A00",
+                "Object1001",
+                "Object1003",
+                "Object1010",
+                "Object1011",
+                "Object1019",
+                "Object1400",
+                "Object1600",
+                "Object1800"
+            ]
+        )
+
+    def to_cpp(self) -> str:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(CPP_TEMPLATE).render(
             objects=self.all_objects,
             node_id=self.node_id,
             date=datetime.now(),

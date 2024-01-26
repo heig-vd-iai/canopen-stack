@@ -2,24 +2,25 @@
  * Contains the declaration of the Node class.
  */
 #pragma once
+#include <cstdint>
+
 #include "emergency.hpp"
+#include "frame.hpp"
 #include "heartbeat.hpp"
 #include "nmt.hpp"
-#include "od.hpp"
 #include "pdo.hpp"
 #include "sdo.hpp"
 #include "sync.hpp"
-#include <cstdint>
 
-namespace CANopen
-{
+namespace CANopen {
+
+
 /**
  * Represents a CANopen slave node.
  * This is the main class of this library.
  */
-class Node
-{
-private:
+class Node {
+   protected:
     ObjectDictionnary _od;
     NMT _nmt;
     HB _hb;
@@ -28,6 +29,7 @@ private:
     SYNC _sync;
     EMCY _emcy;
 
+   private:
     /**
      * Send a CANopen frame to the CAN network.
      * @param frame The CANopen frame to send.
@@ -37,18 +39,20 @@ private:
     /**
      * Get the relative clock time.
      * This value is used internally and doesn't have to be absolute.
-     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking issues.
+     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking
+     * issues.
      * @return Current clock time in microseconds.
      */
     uint32_t getTime_us();
 
-public:
+   public:
     friend NMT;
     friend HB;
     friend SDO;
     friend PDO;
     friend SYNC;
     friend EMCY;
+    friend IObjectDictionnary;
     const uint8_t nodeId = OD_NODE_ID;
 
     /**
@@ -100,7 +104,9 @@ public:
 
     /**
      * Initialize the CANopen node.
-     * This method will initialize the NMT state machine, so it should be called when the node is ready to accept incoming frames.
+     * This method will initialize the NMT state machine, so it should be called
+     * when the node is ready to accept incoming frames.
+     * @param od The ObjectDictionnary instance to use.
      */
     void init();
 
@@ -117,4 +123,4 @@ public:
      */
     void update();
 };
-}
+}  // namespace CANopen

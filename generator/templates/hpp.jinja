@@ -6,8 +6,6 @@
  */
 #pragma once
 
-#include "IObjectDictionnary.hpp"
-
 #define OD_NODE_ID {{ node_id }}
 #define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
@@ -21,20 +19,42 @@
 #define X1A00_SAM_MPDO 0xFE
 #define X1A00_DAM_MPDO 0xFF
 
+
 /* These defines map an object to its dictionnary array index */
+{% set counter = namespace(value=0) %}
 {% for object in objects %}
-#define OD_OBJECT_{{ object.index_hexstr }} {{ loop.index0 }}
+{% for subobject in object.entries %}
+#define OD_OBJECT_{{ object.index_hexstr }}_SUB{{ subobject.subindex}} {{ counter.value }}
+{% set counter.value = counter.value + 1 %}
+{% endfor %}
 {% endfor %}
 
 #ifndef _OD_DEFINES_ONLY
-#include "od_include.hpp"
+#include "IObjectDictionnary.hpp"
 
 using namespace CANopen;
 
-class ObjectDictionnary {
+int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+
+{% for object in objects %}
+{% for subobject in object.entries %}
+{% if subobject.getter != "getLocalData" %}
+int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+{% endif %}
+{% if subobject.setter != "setLocalData" %}
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data data, uint32_t id, SDOAbortCodes &abortCode);
+{% endif %}
+{%endfor%}
+{%endfor%}
+
+class ObjectDictionnary : IObjectDictionnary{
 
 private:
+    const uint32_t length = {{ subindex_count }};
 
+public:
     // This table is used to find an object by its index.
     std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
         {% for object in objects %}
@@ -45,51 +65,79 @@ private:
     };
 
     // This table contain all the objects getter
-    std::function<Data(void)> objectGetterTable[{{ subindex_count }}] = {
+    const std::function<uint8_t(Data&, uint32_t, SDOAbortCodes&)> objectGetterTable[{{ subindex_count }}] = {
         {% for object in objects %}
         {% for subobject in object.entries %}
-        {{ subobject.getter }},
+        {% if subobject.getter != "getLocalData" %}
+        get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        {% else %}
+        getLocalData,
+        {% endif %}
         {% endfor %}
         {% endfor %}
     };
 
     // This table contain all the objects setter
-    std::function<void(Data)> objectSetterTable[{{ subindex_count }}] = {
+    const std::function<uint8_t(Data, uint32_t, SDOAbortCodes&)> objectSetterTable[{{ subindex_count }}] = {
         {% for object in objects %}
         {% for subobject in object.entries %}
-        {{ subobject.setter }},
+        {% if subobject.setter != "setLocalData" %}
+        set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        {% else %}
+        setLocalData,
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    };
+
+    // This variables contain all the objects visible_string
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        {% if subobject.type_value == 0x09 %}
+        char {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}[{{subobject.size//8}}] = { {{ subobject.value | join(', ') }} };
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+
+    // This table contain all the objects data
+    Data objectDataTable[{{ subindex_count }}] = {
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        {% if subobject.type_value == 0x09 %}
+        Data((int64_t)&{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}, {{ subobject.type_name}}, {{subobject.size}}),   // {{ object.cpp_instance_name }}.{{ subobject.cpp_instance_name }}
+        {% else %}
+        Data({{ subobject.value }}, {{ subobject.type_name}}, {{subobject.size}}),   // {{ object.cpp_instance_name }}.{{ subobject.cpp_instance_name }}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    };
+
+    // This table contain all metadata for the objects
+    const MetaBitfield ObjectmetadataTable[{{ subindex_count }}] = {
+        {% for object in objects %}
+        {% for subobject in object.entries %}
+        MetaBitfield({{subobject.meta_data}}),   // {{ object.cpp_instance_name }}.{{ subobject.cpp_instance_name }}
         {% endfor %}
         {% endfor %}
     };
 
 
-public:
-    const uint16_t length = {{ objects | length }};
-
-    ObjectDictionnary();
 
     /**
      * Find an object in the dictionary.
      * @param index The hex index of the object to find.
-     * @return Pointer to the found object, or nullptr if not found.
+     * @return index in objectDataTable if found, -1 otherwise.
      */
-    Object *findObject(uint16_t index);
-
-    /**
-     * Access an object in the dictionary by array index.
-     * @param index The array index of the object.
-     * This parameter should always use one of the generated defines.
-     * @return Pointer to the accessed object, or nullptr if not found.
-     */
-    Object *at(uint16_t index);
+    int64_t findObject(uint16_t index);
+    int64_t findObject(uint16_t index, uint8_t subIndex);
 
     /**
      * Access an object in the dictionary by array index using the subscript operator.
      * Under the hood, this method uses the at() method.
      * @param index The array index of the object to access.
-     * @return Pointer to the accessed object, or nullptr if not found.
+     * @return index in objectDataTable if found, -1 otherwise.
      */
-    Object *operator[](uint16_t index);
+    int64_t operator[](uint16_t index);
 
     /**
      * Save data to non-volatile storage for a specified parameter group.
@@ -116,18 +164,39 @@ public:
     bool restoreData(uint8_t parameterGroup);
 
     /**
-     * Return local data from the object dictionnary.
-     * @param index The hex index of the object to access.
-     * @param subIndex The sub-index of the object to access.
+     * Test if an object exists in the dictionary.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @return True if the object exists, false otherwise.
     */
-    Data getLocalData(uint16_t index, uint8_t subIndex);
+    bool isSubValid(uint16_t index, uint8_t subIndex);
 
     /**
-     * Set local data in the object dictionnary.
-     * @param index The hex index of the object to access.
-     * @param subIndex The sub-index of the object to access.
-     * @param data The data to set.
+     * Get the value of an object in the dictionary.
+     * @param data The data object to store the value in.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @param abortCode The abort code to set if the object is not found.
+     * @return 0 if the object was found, 1 if a request is pending, -1 otherwise.
     */
-    void setLocalData(Data data, uint16_t index, uint8_t subIndex);
+    int8_t readData(Data &data, uint16_t index, uint8_t subIndex, SDOAbortCodes &abortCode);
+
+    /**
+     * Set the value of an object in the dictionary.
+     * @param data The data object to store the value in.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @param abortCode The abort code to set if the object is not found.
+     * @return 0 if the object was found, 1 if a request is pending, -1 otherwise.
+    */
+    int8_t writeData(Data data, uint16_t index, uint8_t subIndex, SDOAbortCodes &abortCode);
+
+    /**
+     * Get the metadata of an object in the dictionary.
+     * @param index The index to the object
+     * @param subIndex The subindex to the object
+     * @return The metadata of the object.
+    */
+    MetaBitfield getMetadata(uint16_t index, uint8_t subIndex);
 };
 #endif // _OD_DEFINES_ONLY

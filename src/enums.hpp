@@ -3,14 +3,12 @@
  */
 #pragma once
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * Enumeration representing the CANopen function codes.
  * See CiA301:2011§7.3.3 (p. 81)
  */
-enum FunctionCodes
-{
+enum FunctionCodes {
     FunctionCode_NMT = 0b0000,
     FunctionCode_SYNC = 0b0001,
     FunctionCode_EMCY = 0b0001,
@@ -32,8 +30,7 @@ enum FunctionCodes
  * Enumeration representing the states of the NMT state machine.
  * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
-enum NMTStates
-{
+enum NMTStates {
     NMTState_Initialisation = 0x00,
     NMTState_PreOperational = 0x7F,
     NMTState_Operational = 0x05,
@@ -44,8 +41,7 @@ enum NMTStates
  * Enumeration representing the NMT initialisation state substeps.
  * See CiA301:2011§7.3.2.2.1 (p. 79)
  */
-enum NMTResetStates
-{
+enum NMTResetStates {
     NMTResetState_Initialising,
     NMTResetState_ResetApplication,
     NMTResetState_ResetCommunication
@@ -55,8 +51,7 @@ enum NMTResetStates
  * Enumeration representing the NMT command specifiers sent by the master.
  * See CiA301:2011§7.2.8.3.1 (p. 72)
  */
-enum NMTServiceCommands
-{
+enum NMTServiceCommands {
     NMTServiceCommand_None = 0x00,
     NMTServiceCommand_Start = 0x01,
     NMTServiceCommand_Stop = 0x02,
@@ -69,8 +64,7 @@ enum NMTServiceCommands
  * Enumeration representing the command specifier part in the SDO command byte.
  * See CiA301:2011§7.2.4.3 (p. 49)
  */
-enum SDOCommandSpecifiers
-{
+enum SDOCommandSpecifiers {
     SDOCommandSpecifier_ClientDownloadInitiate = 0x01,
     SDOCommandSpecifier_ServerDownloadInitiate = 0x03,
     SDOCommandSpecifier_ClientDownloadSegment = 0x00,
@@ -90,8 +84,7 @@ enum SDOCommandSpecifiers
  * Enumeration representing the subcommand part in the SDO block command byte.
  * See CiA301:2011§7.2.4.3 (p. 54)
  */
-enum SDOSubCommands
-{
+enum SDOSubCommands {
     SDOSubCommand_ClientDownloadInitiate = 0x00,
     SDOSubCommand_ServerDownloadInitiate = 0x00,
     SDOSubCommand_ServerDownloadResponse = 0x02,
@@ -107,11 +100,10 @@ enum SDOSubCommands
 
 /**
  * Enumeration representing all of the available SDO abort codes available.
- * Some special abort codes were added, but are only used internally and should never be sent.
- * See CiA301:2011§7.2.4.3.17 (p. 61)
+ * Some special abort codes were added, but are only used internally and should
+ * never be sent. See CiA301:2011§7.2.4.3.17 (p. 61)
  */
-enum SDOAbortCodes
-{
+enum SDOAbortCodes {
     SDOAbortCode_OK = 0,
     SDOAbortCode_CancelWrite = 1,
     SDOAbortCode_ToggleBitNotAlternated = 0x05030000,
@@ -145,14 +137,13 @@ enum SDOAbortCodes
     SDOAbortCode_CannotStoreOrTransfer_DeviceState = 0x08000022,
     SDOAbortCode_NoDataAvailable = 0x08000024
 };
-}
+}  // namespace CANopen
 
 /**
  * Enumeration representing all of the available EMCY error codes.
  * See CiA301:2011§7.2.7.1 (p. 64)
  */
-enum EMCYErrorCodes
-{
+enum EMCYErrorCodes {
     EMCYErrorCode_Reset = 0x0000,
     EMCYErrorCode_Generic = 0x1000,
     EMCYErrorCode_Current = 0x2000,
@@ -194,8 +185,7 @@ enum EMCYErrorCodes
  * Enumeration representing the bit number of each bit in the error register.
  * See CiA301:2011§7.5.2.2 (p. 92)
  */
-enum ErrorRegisterBits
-{
+enum ErrorRegisterBits {
     ErrorRegisterBit_Generic = 0,
     ErrorRegisterBit_Current = 1,
     ErrorRegisterBit_Voltage = 2,
@@ -206,14 +196,23 @@ enum ErrorRegisterBits
 };
 
 /**
- * Enumeration representing the parameter groups for saving and restoring the object dictionnary.
- * This enum only accounts for 3 first default groups.
- * Up to 255 groups can be implemented, depending on the device profile or manufacturer.
- * See CiA301:2011§7.5.2.13 (p. 101)
+ * Enumeration representing the parameter groups for saving and restoring the
+ * object dictionnary. This enum only accounts for 3 first default groups. Up to
+ * 255 groups can be implemented, depending on the device profile or
+ * manufacturer. See CiA301:2011§7.5.2.13 (p. 101)
  */
-enum ParameterGroups
-{
+enum ParameterGroups {
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3
 };
+
+enum Metadata {
+    Metadata_ReadOnlyNotMappable = 0x01,
+    Metadata_WriteOnlyNotMappable = 0x02,
+    Metadata_ReadWriteNotMappable = 0x03,
+    Metadata_ReadOnlyMappable = 0x05,
+    Metadata_WriteOnlyMappable = 0x06,
+    Metadata_ReadWriteMappable = 0x07
+};
+

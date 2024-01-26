@@ -12,19 +12,16 @@
 #define EMCY_ERRREG_OFFSET 2
 #define EMCY_MANUFACTURER_OFFSET 3
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * Emergency object.
- * It handles the emission of emergency messages, as well as the pre-defined error field and error register.
- * See CiA301:2011§7.2.7 (p. 64)
+ * It handles the emission of emergency messages, as well as the pre-defined
+ * error field and error register. See CiA301:2011§7.2.7 (p. 64)
  */
-class EMCY
-{
-private:
+class EMCY {
+   private:
     bool enabled = false;
     bool errorFree = true;
-    class Node &node;
     class Object1001 *errorRegisterObject;
 
     /**
@@ -33,7 +30,8 @@ private:
     void enable();
 
     /**
-     * Disable EMCY functionality, should only be called internally by NMT class.
+     * Disable EMCY functionality, should only be called internally by NMT
+     * class.
      */
     void disable();
 
@@ -44,17 +42,18 @@ private:
      */
     void sendError(uint16_t errorCode, uint32_t manufacturerCode);
 
-public:
+   public:
     friend class NMT;
     /**
      * Constructor for EMCY class.
      * @param node The parent Node reference.
      */
-    EMCY(class Node &node);
+    EMCY();
 
     /**
-     * Sends an emergency message on the bus, and automatically sets the corresponding bits in the error register.
-     * The generic error bit is always set when using this method.
+     * Sends an emergency message on the bus, and automatically sets the
+     * corresponding bits in the error register. The generic error bit is always
+     * set when using this method.
      * @param errorCode The error code to send.
      * @param manufacturerCode The optional manufacturer-specific error code.
      */
@@ -62,7 +61,8 @@ public:
 
     /**
      * Clear a specific error bit from the error register.
-     * The generic error bit can only be cleared if all other bits are already cleared.
+     * The generic error bit can only be cleared if all other bits are already
+     * cleared.
      * @param bit The index of the error bit to clear.
      */
     void clearErrorBit(unsigned bit);
@@ -83,4 +83,4 @@ public:
      */
     void reset();
 };
-}
+}  // namespace CANopen

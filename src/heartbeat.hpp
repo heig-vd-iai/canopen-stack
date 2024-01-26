@@ -18,7 +18,6 @@ namespace CANopen
 class HB
 {
 private:
-    class Node &node;
     uint32_t lastPublish = 0;
     uint8_t toggleBit = 0;
 

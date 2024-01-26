@@ -186,14 +186,14 @@ int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode){
     return 0;
 }
 
-int64_t ObjectDictionnary::findObject(uint16_t index) {
+int64_t ObjectDictionnary::findObject(uint16_t objectIndex) {
     int32_t lower = 0;
     int32_t upper = length - 1;
     while (lower <= upper) {
         int32_t mid = lower + (upper - lower) / 2;
-        if (objectIndexTable[mid].first == index)
+        if (objectIndexTable[mid].first == objectIndex)
             return mid;
-        else if (objectIndexTable[mid].first < index)
+        else if (objectIndexTable[mid].first < objectIndex)
             lower = mid + 1;
         else
             upper = mid - 1;

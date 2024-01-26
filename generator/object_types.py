@@ -10,7 +10,7 @@ class Object(ABC):
     entries: "list[Entry]"
 
     @classmethod
-    def get_instance(cls, type_name: str, data: dict):
+    def get_instance(cls, type_name: str, data: dict, node_id: int = 0):
         return next(c(data) for c in cls.__subclasses__() if c.type_name == type_name)
 
     def __init__(self, data: dict) -> None:

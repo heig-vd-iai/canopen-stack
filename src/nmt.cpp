@@ -6,7 +6,6 @@
 #include "node.hpp"
 using namespace CANopen;
 
-NMT::NMT(Node &node) : node(node) {}
 
 void NMT::initSM()
 {
@@ -28,10 +27,10 @@ void NMT::updateSM(NMTServiceCommands command)
         case NMTResetState_Initialising:
             break;
         case NMTResetState_ResetApplication:
-            node._od.restoreData(ParameterGroup_All);
+//            node._od.restoreData(ParameterGroup_All); TODO: fix restoreData
             break;
         case NMTResetState_ResetCommunication:
-            node._od.restoreData(ParameterGroup_Communication);
+//            node._od.restoreData(ParameterGroup_Communication); TODO: fix restoreData
             node._hb.resetToggleBit();
             break;
         }

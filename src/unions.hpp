@@ -3,32 +3,31 @@
  */
 #pragma once
 #include <cstdint>
+#include "enums.hpp"
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * Metadata bitfield of an ObjectEntry.
- * The metadata specifies the read and write permissions, PDO mappability and remote data update flag.
+ * The metadata specifies the read and write permissions, PDO mappability and
+ * remote data update flag.
  */
-union MetaBitfield
-{
+union MetaBitfield {
     uint8_t value;
-    struct
-    {
+    struct {
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
     } bits;
+
+    MetaBitfield(Metadata metadata) : value(metadata) {}
 };
 
 /**
  * COB-ID entry in PDO communication parameter (0x1400, 0x1800)
  */
-union PDOCobidEntry
-{
+union PDOCobidEntry {
     uint32_t value;
-    struct
-    {
+    struct {
         uint32_t canId : 29;
         bool frame : 1;
         bool rtr : 1;
@@ -37,13 +36,12 @@ union PDOCobidEntry
 };
 
 /**
- * Union representing the mapping value in PDO mapping parameter (0x1600, 0x1A00).
+ * Union representing the mapping value in PDO mapping parameter (0x1600,
+ * 0x1A00).
  */
-union PDOMapEntry
-{
+union PDOMapEntry {
     uint32_t value;
-    struct
-    {
+    struct {
         uint32_t length : 8;
         uint32_t subindex : 8;
         uint32_t index : 16;
@@ -53,11 +51,9 @@ union PDOMapEntry
 /**
  * Union representing the error register value in error register (0x1001).
  */
-union ErrorRegister
-{
+union ErrorRegister {
     uint8_t value;
-    struct
-    {
+    struct {
         bool genericError : 1;
         bool current : 1;
         bool voltage : 1;
@@ -73,23 +69,20 @@ union ErrorRegister
  * Union representing the SDO command byte (byte 0) in SDO transactions.
  * Multiple structures are used depending on the operation.
  */
-union SDOCommandByte
-{
+union SDOCommandByte {
     uint8_t value;
-    struct
-    {
-        bool s : 1;     // size indicator
-        bool e : 1;     // expedited transfer
-        unsigned n : 2; // n bytes that do not contain data
+    struct {
+        bool s : 1;      // size indicator
+        bool e : 1;      // expedited transfer
+        unsigned n : 2;  // n bytes that do not contain data
         unsigned reserved : 1;
-        unsigned ccs : 3; // client command specifier
+        unsigned ccs : 3;  // client command specifier
     } bits_initiate;
-    struct
-    {
-        bool c : 1;       // final segment
-        unsigned n : 3;   // n bytes that do not contain data
-        bool t : 1;       // toggle bit
-        unsigned ccs : 3; // client command specifier
+    struct {
+        bool c : 1;        // final segment
+        unsigned n : 3;    // n bytes that do not contain data
+        bool t : 1;        // toggle bit
+        unsigned ccs : 3;  // client command specifier
     } bits_segment;
 };
 
@@ -97,61 +90,52 @@ union SDOCommandByte
  * Union representing the SDO command byte (byte 0) in SDO block transactions.
  * Multiple structures are used depending on the operation.
  */
-union SDOBlockCommandByte
-{
+union SDOBlockCommandByte {
     uint8_t value;
-    struct
-    {
-        bool cs : 1; // client subcommand
-        bool s : 1;  // size indicator
-        bool cc : 1; // client CRC support
+    struct {
+        bool cs : 1;  // client subcommand
+        bool s : 1;   // size indicator
+        bool cc : 1;  // client CRC support
         unsigned reserved : 2;
-        unsigned ccs : 3; // client command specifier
+        unsigned ccs : 3;  // client command specifier
     } bits_downClientInitiate;
-    struct
-    {
-        unsigned seqno : 7; // sequence number
-        bool c : 1;         // final segment
+    struct {
+        unsigned seqno : 7;  // sequence number
+        bool c : 1;          // final segment
     } bits_downClientSub;
-    struct
-    {
-        bool cs : 1; // client subcommand
+    struct {
+        bool cs : 1;  // client subcommand
         bool reserved : 1;
-        unsigned n : 3;   // n bytes that do not contain data
-        unsigned ccs : 3; // client command specifier
+        unsigned n : 3;    // n bytes that do not contain data
+        unsigned ccs : 3;  // client command specifier
     } bits_downClientEnd;
-    struct
-    {
-        unsigned ss : 2; // server subcommand
-        bool sc : 1;     // server CRC support
-        unsigned reserved : 2;
-        unsigned scs : 3; // server command specifier
-    } bits_downServer;
-    struct
-    {
-        unsigned cs : 2; // client subcommand
-        bool cc : 1;     // client CRC support
-        unsigned reserved : 2;
-        unsigned ccs : 3; // client command specifier
-    } bits_upClient;
-    struct
-    {
-        bool ss : 1; // server subcommand
-        bool s : 1;  // size indicator
-        bool sc : 1; // server CRC support
-        unsigned reserved : 2;
-        unsigned scs : 3; // server command specifier
-    } bits_upServerInitiate;
-    struct
-    {
-        unsigned seqno : 7; // sequence number
-        bool c : 1;         // final segment
-    } bits_upServerSub;
-    struct
-    {
+    struct {
         unsigned ss : 2;  // server subcommand
-        unsigned n : 3;   // n bytes that do not contain data
-        unsigned scs : 3; // server command specifier
+        bool sc : 1;      // server CRC support
+        unsigned reserved : 2;
+        unsigned scs : 3;  // server command specifier
+    } bits_downServer;
+    struct {
+        unsigned cs : 2;  // client subcommand
+        bool cc : 1;      // client CRC support
+        unsigned reserved : 2;
+        unsigned ccs : 3;  // client command specifier
+    } bits_upClient;
+    struct {
+        bool ss : 1;  // server subcommand
+        bool s : 1;   // size indicator
+        bool sc : 1;  // server CRC support
+        unsigned reserved : 2;
+        unsigned scs : 3;  // server command specifier
+    } bits_upServerInitiate;
+    struct {
+        unsigned seqno : 7;  // sequence number
+        bool c : 1;          // final segment
+    } bits_upServerSub;
+    struct {
+        unsigned ss : 2;   // server subcommand
+        unsigned n : 3;    // n bytes that do not contain data
+        unsigned scs : 3;  // server command specifier
     } bits_upServerEnd;
 };
-}
+}  // namespace CANopen

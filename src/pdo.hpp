@@ -5,33 +5,82 @@
 #include <cstdint>
 #include <functional>
 
-#include "od.hpp"
+// #include "IObjectDictionnary.hpp"
+ #include "enums.hpp"
+//  #include "od.hpp"
 #define TPDO_COMMUNICATION_INDEX 0x1800
 #define TPDO_MAPPING_INDEX 0x1A00
 #define RPDO_COMMUNICATION_INDEX 0x1400
 #define RPDO_MAPPING_INDEX 0x1600
+#define OD_PDO_COMM_PARAM_MAX 6
 #define PDO_DLC 8
+#define MASK 0x7FF
+#define ACYCLIC 0x0
+#define SYNC_MAX 0xF0
+#define RTR_SYNC 0xFC
+#define RTR_EVENT 0xFD
+#define EVENT1 0xFE
+#define EVENT2 0xFF
+#define COBID_VALID_MASK 0x80000000
+#define INDEX_COBID 1
+#define INDEX_TRANSMISSION 2
+#define INDEX_INHIBIT 3
+#define INDEX_RESERVED 4
+#define INDEX_EVENT 5
+#define INDEX_SYNC 6
+
+#define OD_PDO_MAPPING_MAX 8
+#define OD_TPDO_COUNT 4
+#define OD_RPDO_COUNT 4
+
 
 namespace CANopen {
 
 class MapParameter {
    private:
-    IObjectDictionnary &od;
-    Object odID;
-
-   protected:
+    class IObjectDictionnary &od;
+    int64_t odID;
     uint8_t entriesNumber;
     uint32_t mappedObjects[OD_PDO_MAPPING_MAX];
-    uint8_t getData(Data &data, uint16_t id, SDOAbortCodes &abortCode);
-    uint8_t setData(Data data, uint16_t id, SDOAbortCodes &abortCode);
 
    public:
-    friend class PDO;
-    friend class IObjectDictionary;
-    MapParameter(IObjectDictionnary &od, uint16_t index);
+    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+    MapParameter(IObjectDictionnary &od, uint32_t id);
+    MapParameter &operator=(const MapParameter &other);
     uint8_t getCount();
     uint32_t getMappedValue(uint8_t entry);
-}
+};
+
+class CommParameter {
+   private:
+    IObjectDictionnary &od;
+    int64_t odID;
+    uint32_t cobId;
+    uint8_t transmissionType;
+    uint16_t inhibitTime;
+    uint8_t compatibilityEntry;
+    uint16_t eventTimer;
+    uint8_t syncStartValue;
+    bool remap = false;
+    uint8_t entriesNumber;
+
+   public:
+    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+    CommParameter(IObjectDictionnary &od, uint32_t id);
+    CommParameter &operator=(const CommParameter &other);
+    uint32_t getCobId();
+    uint16_t getActualCobId();
+    uint8_t getTransmissionType();
+    uint16_t getInhibitTime_us();
+    uint16_t getEventTimer_us();
+    uint8_t getSyncStart();
+    bool isEnabled();
+    bool isInhibitSupported();
+    bool isTimerSupported();
+    bool isSynchronous();
+};
 
 /**
  * PDO object.
@@ -51,8 +100,8 @@ class PDO {
      * Structure to represent a Transmit PDO.
      */
     struct TPDO {
-        class Object1800 *commObject;
-        class Object1A00 *mapObject;
+        class CommParameter commParameter;
+        class MapParameter mapParameter;
         PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t count = 0;
         uint8_t size = 0;
@@ -64,8 +113,8 @@ class PDO {
      * Structure to represent a Receive PDO.
      */
     struct RPDO {
-        class Object1400 *commObject;
-        class Object1600 *mapObject;
+        class CommParameter commParameter;
+        class MapParameter mapParameter;
         PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t buffer[PDO_DLC] = {0};
         uint8_t count = 0;
@@ -75,11 +124,17 @@ class PDO {
         bool watchTimeoutFlag = false;
     };
 
-   private:
-    bool enabled = false;
-    class Node &node;
+   public:
     TPDO tpdos[OD_TPDO_COUNT];
     RPDO rpdos[OD_RPDO_COUNT];
+
+   private:
+    bool enabled = false;
+    MapParameter tpdoMapParameter;
+    MapParameter rpdoMapParameter;
+    CommParameter tpdoCommParameter;
+    CommParameter rpdoCommParameter;
+
     std::function<void(unsigned)> onReceiveFunc;
     std::function<void(unsigned)> onTimeoutFunc;
 
@@ -185,9 +240,8 @@ class PDO {
 
     /**
      * Constructor for the PDO class.
-     * @param node The parent Node reference.
      */
-    PDO(class Node &node);
+    PDO();
 
     /**
      * Transmit the specified Transmit PDO.

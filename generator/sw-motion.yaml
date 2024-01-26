@@ -31,7 +31,6 @@ MandatoryObjects:
     DefaultValue: 0x00
     PDOMapping: 1
     isRemote: 0
-    Getter: get1001
   - Index: "1018"
     ParameterName: Identity Object
     ObjectType: RECORD
@@ -144,7 +143,7 @@ OptionalObjects:
   - Index: "1008"
     ParameterName: Manufacturer Device Name
     ObjectType: VAR
-    DataType: VISIBLE_STRING
+    DataType: VISIBLE_STRING11
     AccessType: const
     DefaultValue: Servopresse
     PDOMapping: 0
@@ -152,7 +151,7 @@ OptionalObjects:
   - Index: "1009"
     ParameterName: Manufacturer Hardware Version
     ObjectType: VAR
-    DataType: VISIBLE_STRING
+    DataType: VISIBLE_STRING10
     AccessType: const
     DefaultValue: among us ඞ
     PDOMapping: 0
@@ -160,7 +159,7 @@ OptionalObjects:
   - Index: "100A"
     ParameterName: Manufacturer Software Version
     ObjectType: VAR
-    DataType: VISIBLE_STRING
+    DataType: VISIBLE_STRING18
     AccessType: const
     DefaultValue: FIR-v2213-B1031134
     PDOMapping: 0
@@ -252,21 +251,24 @@ OptionalObjects:
         AccessType: ro
         DefaultValue: 0x02
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: COB-ID
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: $NODEID+0x80000200
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: Transmission Type
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
         DefaultValue: 0xFF
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
   - Index: "1401"
     ParameterName: Receive PDO 2 Communication Parameter
     ObjectType: RECORD
@@ -415,63 +417,72 @@ OptionalObjects:
         AccessType: rw
         DefaultValue: 0x00
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 1st object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 2nd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 3rd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 4th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 5th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 6th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 7th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
       - ParameterName: 8th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: 0x00000000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().rpdos[0].mapParameter.getData
+        Setter: node.pdo().rpdos[0].mapParameter.setData
   - Index: "1601"
     ParameterName: Receive PDO 2 Mapping Parameter
     ObjectType: RECORD
@@ -683,49 +694,56 @@ OptionalObjects:
         AccessType: ro
         DefaultValue: 0x06
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: COB-ID
         ObjectType: VAR
         DataType: UNSIGNED32
         AccessType: rw
         DefaultValue: $NODEID+0x80000180
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: Transmission Type
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
         DefaultValue: 0xFF
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: Inhibit Time
         ObjectType: VAR
         DataType: UNSIGNED16
         AccessType: rw
         DefaultValue: 0x0000
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: Compatibility Entry
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
         DefaultValue: 0x00
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: Event Timer
         ObjectType: VAR
         DataType: UNSIGNED16
         AccessType: rw
         DefaultValue: 0x02
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
       - ParameterName: SYNC start value
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
         DefaultValue: 0x00
         PDOMapping: 0
-        isRemote: 0
+        Getter: node.pdo().tpdos[0].commParameter.getData
+        Setter: node.pdo().tpdos[0].commParameter.setData
   - Index: "1801"
     ParameterName: Transmit PDO 2 Communication Parameter
     ObjectType: RECORD
@@ -896,8 +914,8 @@ OptionalObjects:
         DefaultValue: 0x00
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 1st object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -905,8 +923,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 2nd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -914,8 +932,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 3rd object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -923,8 +941,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 4th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -932,8 +950,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 5th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -941,8 +959,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 6th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -950,8 +968,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 7th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -959,8 +977,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
       - ParameterName: 8th object to be mapped
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -968,8 +986,8 @@ OptionalObjects:
         DefaultValue: 0x00000000
         PDOMapping: 0
         isRemote: 0
-        Getter: get1A00
-        Setter: set1A00
+        Getter: node.pdo().tpdos[0].mapParameter.getData
+        Setter: node.pdo().tpdos[0].mapParameter.setData
   - Index: "1A01"
     ParameterName: Transmit PDO 2 Mapping Parameter
     ObjectType: RECORD
