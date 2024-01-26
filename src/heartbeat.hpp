@@ -2,23 +2,21 @@
  * Contains the declaration of the HB class.
  */
 #pragma once
-#include "enums.hpp"
 #include <cstdint>
+
+#include "enums.hpp"
 #define HEARTBEAT_DLC 1
 #define HEARTBEAT_STATE_OFFSET 0
 #define TOGGLE_OFFSET 7
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * Heartbeat object.
- * It automatically handles the following protocols: node guarding, heartbeat, boot-up.
- * See CiA301:2011§7.2.8.3.2.2 (p. 76)
+ * It automatically handles the following protocols: node guarding, heartbeat,
+ * boot-up. See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
-class HB
-{
-private:
-    class Node &node;
+class HB {
+   private:
     uint32_t lastPublish = 0;
     uint8_t toggleBit = 0;
 
@@ -31,7 +29,8 @@ private:
 
     /**
      * Update this object.
-     * If producer heartbeat time (0x1017) is configured, the state will be published at said rate.
+     * If producer heartbeat time (0x1017) is configured, the state will be
+     * published at said rate.
      * @param timestamp_us Current timestamp in microseconds.
      */
     void update(uint32_t timestamp_us);
@@ -48,13 +47,8 @@ private:
      */
     void resetToggleBit();
 
-public:
+   public:
     friend class NMT;
     friend class Node;
-    /**
-     * Constructor for the HB class.
-     * @param node The parent Node reference.
-     */
-    HB(class Node &node);
 };
-}
+}  // namespace CANopen

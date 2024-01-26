@@ -1,13 +1,3 @@
 ---
-BasedOnStyle: LLVM
-Language: Cpp
-UseTab: Never
+BasedOnStyle: Google
 IndentWidth: 4
-TabWidth: 4
-BreakBeforeBraces: Allman
-AllowShortIfStatementsOnASingleLine: false
-IndentCaseLabels: false
-ColumnLimit: 0
-AccessModifierOffset: -4
-FixNamespaceComments: false
-...

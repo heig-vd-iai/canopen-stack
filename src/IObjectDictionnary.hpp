@@ -45,7 +45,7 @@ struct Data {
 namespace CANopen {
 
 class IObjectDictionnary {
-//    protected:
+    //    protected:
     // virtual uint8_t getData(Data &data, uint16_t id,
     //                         SDOAbortCodes &abortCode) = 0;
     // virtual uint8_t setData(Data data, uint16_t id,
@@ -57,9 +57,9 @@ class IObjectDictionnary {
     friend class MapParameter;
     friend class CommParameter;
     virtual int8_t readData(Data &data, uint16_t index, uint8_t subindex,
-                        SDOAbortCodes &abortCode) = 0;
+                            SDOAbortCodes &abortCode) = 0;
     virtual int8_t writeData(Data data, uint16_t index, uint8_t subindex,
-                         SDOAbortCodes &abortCode) = 0;
+                             SDOAbortCodes &abortCode) = 0;
     virtual bool saveData(uint8_t parameterGroup) = 0;
     virtual bool loadData(uint8_t parameterGroup) = 0;
     virtual bool restoreData(uint8_t parameterGroup) = 0;

@@ -2,8 +2,9 @@
  * Contains the declaration of the SDO class.
  */
 #pragma once
-#include "od.hpp"
 #include <cstdint>
+
+#include "od.hpp"
 #define SDO_TIMEOUT_US 30000
 #define SDO_BLOCK_DOWNLOAD_TIMEOUT_US 10000
 #define SDO_DLC 8
@@ -28,17 +29,14 @@
 #define SDO_BLOCK_SEQNO_MAX 127
 #define SDO_BLOCK_MAX_RETRIES 1
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * SDO object.
  * It handles data upload and download, in regular and block mode transfer.
  * See CiA301:2011§7.2.4 (p. 37)
  */
-class SDO
-{
-    enum SDOServerStates
-    {
+class SDO {
+    enum SDOServerStates {
         SDOServerState_Ready,
         SDOServerState_Pending,
         SDOServerState_Uploading,
@@ -49,12 +47,10 @@ class SDO
         SDOServerState_BlockDownloadingEnding
     };
 
-private:
+   private:
     bool enabled = false;
-    class Node &node;
     SDOServerStates serverState = SDOServerState_Ready;
-    struct
-    {
+    struct {
         class Object *object;
         uint16_t index;
         uint8_t subindex;
@@ -68,8 +64,7 @@ private:
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
     } transferData;
-    struct
-    {
+    struct {
         uint8_t data[SDO_BUFFSIZE] = {0};
         uint32_t offset = 0;
     } buffer;
@@ -93,7 +88,8 @@ private:
     bool isTimeout(uint32_t timestamp_us, uint32_t timeout_us);
 
     /**
-     * Send an abort frame with specified abort code and object index and subindex.
+     * Send an abort frame with specified abort code and object index and
+     * subindex.
      * @param index Index of the current object.
      * @param subindex Subindex of the current object.
      * @param abortCode SDO abort code.
@@ -115,7 +111,8 @@ private:
 
     /**
      * This method handles the sending of upload initiate frames.
-     * It should only be called by uploadInitiate() or update() depending on the object being remotely updated or not.
+     * It should only be called by uploadInitiate() or update() depending on the
+     * object being remotely updated or not.
      * @param timestamp_us Current timestamp in microseconds.
      */
     void uploadInitiateSend(uint32_t timestamp_us);
@@ -146,21 +143,25 @@ private:
      * @param request SDOBlockFrame to be processed.
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
-    void blockUploadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
+    void blockUploadInitiate(class SDOBlockFrame &request,
+                             uint32_t timestamp_us);
 
     /**
      * This method handles the sending of block upload initiate frames.
-     * It should only be called by blockUploadInitiate() or update() depending on the object being remotely updated or not.
+     * It should only be called by blockUploadInitiate() or update() depending
+     * on the object being remotely updated or not.
      * @param timestamp_us Current timestamp in microseconds.
      */
     void blockUploadInitiateSend(uint32_t timestamp_us);
 
     /**
-     * This method handles the reception of client block upload response and client block upload end block.
+     * This method handles the reception of client block upload response and
+     * client block upload end block.
      * @param request SDOBlockFrame to be processed.
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
-    void blockUploadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
+    void blockUploadReceive(class SDOBlockFrame &request,
+                            uint32_t timestamp_us);
 
     /**
      * Periodically upload sub-blocks in succession during block upload stage.
@@ -173,14 +174,16 @@ private:
      * @param request SDOBlockFrame to be processed.
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
-    void blockDownloadInitiate(class SDOBlockFrame &request, uint32_t timestamp_us);
+    void blockDownloadInitiate(class SDOBlockFrame &request,
+                               uint32_t timestamp_us);
 
     /**
      * This method handles successions of download sub-block frames.
      * @param request SDOBlockFrame to be processed.
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
-    void blockDownloadReceive(class SDOBlockFrame &request, uint32_t timestamp_us);
+    void blockDownloadReceive(class SDOBlockFrame &request,
+                              uint32_t timestamp_us);
 
     /**
      * This method handles block download end frames.
@@ -190,7 +193,8 @@ private:
     void blockDownloadEnd(class SDOBlockFrame &request, uint32_t timestamp_us);
 
     /**
-     * This method is called when the last sub-block of a block was received, or when a download timeout occurs (missing sub-blocks).
+     * This method is called when the last sub-block of a block was received, or
+     * when a download timeout occurs (missing sub-blocks).
      * @param timestamp_us Current timestamp in microseconds.
      */
     void blockDownloadEndSub(uint32_t timestamp_us);
@@ -203,7 +207,8 @@ private:
     void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
 
     /**
-     * Check for general SDO or block download timeouts and send block upload sub-blocks.
+     * Check for general SDO or block download timeouts and send block upload
+     * sub-blocks.
      * @param timestamp_us Current timestamp in microseconds.
      */
     void update(uint32_t timestamp_us);
@@ -220,7 +225,7 @@ private:
      */
     void bufferAppend(uint8_t *data, uint32_t sizeBytes);
 
-public:
+   public:
     friend class NMT;
     friend class Node;
 
@@ -228,6 +233,5 @@ public:
      * Constructor for the SDO class.
      * @param node The parent Node reference.
      */
-    SDO(class Node &node);
 };
-}
+}  // namespace CANopen

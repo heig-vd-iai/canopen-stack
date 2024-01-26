@@ -2,25 +2,24 @@
  * Contains the declaration of the Node class.
  */
 #pragma once
+#include <cstdint>
+
 #include "emergency.hpp"
 #include "heartbeat.hpp"
 #include "nmt.hpp"
+#include "object.hpp"  //TODO: remove this include
 #include "od.hpp"
 #include "pdo.hpp"
 #include "sdo.hpp"
 #include "sync.hpp"
-#include "object.hpp" //TODO: remove this include
-#include <cstdint>
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * Represents a CANopen slave node.
  * This is the main class of this library.
  */
-class Node
-{
-private:
+class Node {
+   private:
     ObjectDictionnary _od;
     NMT _nmt;
     HB _hb;
@@ -38,12 +37,13 @@ private:
     /**
      * Get the relative clock time.
      * This value is used internally and doesn't have to be absolute.
-     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking issues.
+     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking
+     * issues.
      * @return Current clock time in microseconds.
      */
     uint32_t getTime_us();
 
-public:
+   public:
     friend NMT;
     friend HB;
     friend SDO;
@@ -101,7 +101,8 @@ public:
 
     /**
      * Initialize the CANopen node.
-     * This method will initialize the NMT state machine, so it should be called when the node is ready to accept incoming frames.
+     * This method will initialize the NMT state machine, so it should be called
+     * when the node is ready to accept incoming frames.
      */
     void init();
 
@@ -119,4 +120,4 @@ public:
     void update();
 };
 extern Node node;
-}
+}  // namespace CANopen

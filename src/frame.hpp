@@ -1,5 +1,6 @@
 /**
- * Contains the declaration of the basic, generic CANopen frame, as well as all specialized subclasses.
+ * Contains the declaration of the basic, generic CANopen frame, as well as all
+ * specialized subclasses.
  */
 #pragma once
 #include <cstdint>
@@ -9,19 +10,17 @@
 #define FUNCTION_MASK 0xF
 #define NODEID_MASK 0x7F
 
-namespace CANopen
-{
+namespace CANopen {
 /**
  * CANopen generic frame that is used to send and receive messages.
  * It has to be converted to a CAN frame before it can be sent on the bus.
  */
-struct Frame
-{
+struct Frame {
     uint8_t nodeId = 0;
     uint8_t functionCode = 0;
     uint8_t data[CAN_DATA_LENGTH] = {0};
-    uint8_t dlc = 0;  // Data length
-    bool rtr = false; // Remote transmission request
+    uint8_t dlc = 0;   // Data length
+    bool rtr = false;  // Remote transmission request
 
     /**
      * Constructor for a generic CANopen frame from node ID and function code.
@@ -47,8 +46,7 @@ struct Frame
  * This is a specialized Frame used by the HB class.
  * See CiA301:2011§7.2.8.3.2.2 (p. 76)
  */
-struct HeartbeatFrame : public Frame
-{
+struct HeartbeatFrame : public Frame {
     /**
      * Constructor for specialized CANopen heartbeat frame.
      * @param nodeId Node ID.
@@ -67,16 +65,17 @@ struct HeartbeatFrame : public Frame
  * This is a specialized Frame used by the EMCY class.
  * See CiA301:2011§7.2.7.3.1 (p. 68)
  */
-struct EmergencyFrame : public Frame
-{
+struct EmergencyFrame : public Frame {
     /**
      * Constructor for specialized CANopen emergency frame.
      * @param nodeId Node ID.
      * @param errorCode Error code, should be a value from EMCYErrorCodes enum.
-     * @param errorRegister Error register value, should come from object 0x1001.
+     * @param errorRegister Error register value, should come from object
+     * 0x1001.
      * @param manufacturerCode Manufacturer-specific error code.
      */
-    EmergencyFrame(uint8_t nodeId, uint16_t errorCode, uint8_t errorRegister, uint32_t manufacturerCode);
+    EmergencyFrame(uint8_t nodeId, uint16_t errorCode, uint8_t errorRegister,
+                   uint32_t manufacturerCode);
 
     /**
      * Set the error code.
@@ -103,8 +102,7 @@ struct EmergencyFrame : public Frame
  * It contains common accessors for both its subclasses.
  * CiA301:2011§7.2.4.3 (p. 48)
  */
-struct SDOFrameBase : public Frame
-{
+struct SDOFrameBase : public Frame {
     /**
      * Constructor for specialized CANopen SDO base frame.
      * @param nodeId Node ID.
@@ -112,7 +110,8 @@ struct SDOFrameBase : public Frame
     SDOFrameBase(uint8_t nodeId);
 
     /**
-     * Constructor for specialized CANopen SDO base frame from node ID and SDO command byte.
+     * Constructor for specialized CANopen SDO base frame from node ID and SDO
+     * command byte.
      * @param nodeId Node ID.
      * @param commandByte SDO command byte.
      */
@@ -168,12 +167,12 @@ struct SDOFrameBase : public Frame
 };
 
 /**
- * This is a specialized Frame used by the SDO class when dealing with SDO transactions.
+ * This is a specialized Frame used by the SDO class when dealing with SDO
+ * transactions.
  *
  * CiA301:2011§7.2.4.3 (p. 48)
  */
-struct SDOFrame : public SDOFrameBase
-{
+struct SDOFrame : public SDOFrameBase {
     /**
      * Constructor for specialized CANopen SDO frame.
      * @param nodeId Node ID.
@@ -181,7 +180,8 @@ struct SDOFrame : public SDOFrameBase
     SDOFrame(uint8_t nodeId);
 
     /**
-     * Constructor for specialized CANopen SDO frame from node ID and command byte.
+     * Constructor for specialized CANopen SDO frame from node ID and command
+     * byte.
      * @param nodeId Node ID.
      * @param commandByte Command byte.
      */
@@ -201,11 +201,10 @@ struct SDOFrame : public SDOFrameBase
 };
 
 /**
- * This is a specialized Frame used by the SDO class when dealing with SDO block transactions.
- * CiA301:2011§7.2.4.3 (p. 53)
+ * This is a specialized Frame used by the SDO class when dealing with SDO block
+ * transactions. CiA301:2011§7.2.4.3 (p. 53)
  */
-struct SDOBlockFrame : public SDOFrameBase
-{
+struct SDOBlockFrame : public SDOFrameBase {
     /**
      * Constructor for specialized CANopen SDO block frame.
      * @param nodeId Node ID.
@@ -213,7 +212,8 @@ struct SDOBlockFrame : public SDOFrameBase
     SDOBlockFrame(uint8_t nodeId);
 
     /**
-     * Constructor for specialized CANopen SDO block frame from node ID and command byte.
+     * Constructor for specialized CANopen SDO block frame from node ID and
+     * command byte.
      * @param nodeId Node ID.
      * @param commandByte Command byte.
      */
@@ -244,13 +244,15 @@ struct SDOBlockFrame : public SDOFrameBase
     uint8_t getInitiateBlockSize() const;
 
     /**
-     * Set the block size (blksize) field (byte 2) to a block download/upload sub-block frame.
+     * Set the block size (blksize) field (byte 2) to a block download/upload
+     * sub-block frame.
      * @param blockSizeBytes Block size to set.
      */
     void setSubBlockSize(uint8_t blockSizeBytes);
 
     /**
-     * Get the block size (blksize) field (byte 2) from a block download/upload sub-block frame.
+     * Get the block size (blksize) field (byte 2) from a block download/upload
+     * sub-block frame.
      * @return The block size in bytes.
      */
     uint8_t getSubBlockSize() const;
@@ -268,19 +270,22 @@ struct SDOBlockFrame : public SDOFrameBase
     uint16_t getCRC() const;
 
     /**
-     * Set the last sequence number (ackseq) field (byte 1) to a block download/upload sub-block frame.
+     * Set the last sequence number (ackseq) field (byte 1) to a block
+     * download/upload sub-block frame.
      * @param ackseq Ackseq value to set.
      */
     void setAckseq(uint8_t ackseq);
 
     /**
-     * Get the last sequence number (ackseq) field (byte 1) from a block download/upload sub-block frame.
+     * Get the last sequence number (ackseq) field (byte 1) from a block
+     * download/upload sub-block frame.
      * @return The ackseq value.
      */
     uint8_t getAckseq() const;
 
     /**
-     * Get the protocol switch threshold (pst) field (byte 5) from a block upload initiate frame.
+     * Get the protocol switch threshold (pst) field (byte 5) from a block
+     * upload initiate frame.
      * @return The pst value.
      */
     uint8_t getPST() const;
@@ -290,8 +295,7 @@ struct SDOBlockFrame : public SDOFrameBase
  * This is a specialized Frame used by the NMT class.
  * CiA301:2011§7.2.8.3.1 (p. 72)
  */
-struct NMTFrame : public Frame
-{
+struct NMTFrame : public Frame {
     /**
      * Constructor for specialized CANopen NMT frame.
      * @param nodeId Node ID.
@@ -315,8 +319,7 @@ struct NMTFrame : public Frame
  * This is a specialized Frame used by the SYNC class.
  * CiA301:2011§7.2.5.3.1 (p. 63)
  */
-struct SYNCFrame : public Frame
-{
+struct SYNCFrame : public Frame {
     /**
      * Constructor for specialized CANopen SYNC frame.
      * @param nodeId Node ID.
@@ -335,4 +338,4 @@ struct SYNCFrame : public Frame
      */
     uint8_t getCounter() const;
 };
-}
+}  // namespace CANopen
