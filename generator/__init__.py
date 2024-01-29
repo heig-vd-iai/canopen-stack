@@ -17,6 +17,7 @@ from .objects.object_1600 import Object1600
 from .objects.object_1800 import Object1800
 from .objects.object_1A00 import Object1A00
 from .object_types import Object
+from collections import namedtuple
 
 script_dir = os.path.dirname(__file__)
 
@@ -105,8 +106,55 @@ class ObjectDictionary:
     @property
     def subindex_count(self) -> int:
         return sum([obj.sub_number for obj in self.all_objects])
-    
+
+    class TypeNum:
+        def __init__(self) -> None:
+            self.bool = 0
+            self.i8 = 0
+            self.i16 = 0
+            self.i32 = 0
+            self.i64 = 0
+            self.u8 = 0
+            self.u16 = 0
+            self.u32 = 0
+            self.u64 = 0
+            self.f32 = 0
+            self.f64 = 0
+            self.str = 0    
+
+    @property
+    def type_count(self) -> TypeNum:
+        type_num = self.TypeNum()
+        for obj in self.all_objects:
+            for entry in obj.entries:
+                if entry.type_value == 0x01:
+                    type_num.bool += 1
+                elif entry.type_value == 0x02:
+                    type_num.i8 += 1
+                elif entry.type_value == 0x03:
+                    type_num.i16 += 1
+                elif entry.type_value == 0x04:
+                    type_num.i32 += 1
+                elif entry.type_value == 0x15:
+                    type_num.i64 += 1
+                elif entry.type_value == 0x05:
+                    type_num.u8 += 1
+                elif entry.type_value == 0x06:
+                    type_num.u16 += 1
+                elif entry.type_value == 0x07:
+                    type_num.u32 += 1
+                elif entry.type_value == 0x1B:
+                    type_num.u64 += 1
+                elif entry.type_value == 0x08:
+                    type_num.f32 += 1
+                elif entry.type_value == 0x11:
+                    type_num.f64 += 1
+                elif entry.type_value == 0x09:
+                    type_num.str += 1
+        return type_num
+        
     def to_hpp(self) -> str:
+                
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
         return env.get_template(HEADER_TEMPLATE).render(
             objects=self.all_objects,
@@ -115,6 +163,7 @@ class ObjectDictionary:
             rpdo_count=self.rpdo_count,
             tpdo_count=self.tpdo_count,
             subindex_count=self.subindex_count,
+            type_count=self.type_count,
             existing_classes=[
                 "Object1A00",
                 "Object1001",

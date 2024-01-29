@@ -217,6 +217,7 @@ enum Metadata {
 };
 
 enum DataType {
+    BOOL,
     INTEGER8,
     INTEGER16,
     INTEGER32,

@@ -254,7 +254,7 @@ bool CANopen::ObjectDictionnary::loadData(uint8_t parameterGroup)
 ```cpp
 bool CANopen::ObjectDictionnary::restoreData(uint8_t parameterGroup)
 {
-    // This example uses the ObjectDictionnaryData constructor to reset data.
+    // This example uses the ObjectDictionnaryconst Dataructor to reset data.
     // It will reset everything, independent of the parameterGroup argument.
     objects.entries.data = ObjectDictionnaryData();
     // Reload PDOs according to potentially updated mapping parameters.

@@ -36,7 +36,7 @@ using namespace CANopen;
 
 int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData(Data const &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
 {% for object in objects %}
 {% for subobject in object.entries %}
@@ -44,7 +44,7 @@ int8_t setLocalData(Data const &data, uint32_t id, SDOAbortCodes &abortCode);
 int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {% if subobject.setter != "setLocalData" %}
-int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data const &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
 {%endfor%}
@@ -78,7 +78,7 @@ public:
     };
 
     // This table contain all the objects setter
-    int8_t (*objectSetterTable[{{ subindex_count }}])(Data const &data, uint32_t id, SDOAbortCodes &abortCode) = { 
+    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, uint32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.entries %}
         {% if subobject.setter != "setLocalData" %}
@@ -92,105 +92,127 @@ public:
 
     //DATA
     // bool type data table
+    bool boolTable[{{ type_count.bool }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x01 %}
-    bool {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // int8_t type data table
+    int8_t i8Table[{{ type_count.i8 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x02 %}
-    int8_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // int16_t type data table
+    int16_t i16Table[{{ type_count.i16 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x03 %}
-    int16_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // int32_t type data table
+    int32_t i32Table[{{ type_count.i32 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x04 %}
-    int32_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // int64_t type data table
+    int64_t i64Table[{{ type_count.i64 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x15 %}
-    int64_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // uint8_t type data table
+    uint8_t u8Table[{{ type_count.u8 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x05 %}
-    uint8_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // uint16_t type data table
+    uint16_t u16Table[{{ type_count.u16 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x06 %}
-    uint16_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // uint32_t type data table
+    uint32_t u32Table[{{ type_count.u32 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x07 %}
-    uint32_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // uint64_t type data table
+    uint64_t u64Table[{{ type_count.u64 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x1B %}
-    uint64_t {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
-    // float32 type data table
+    // float type data table
+    float f32Table[{{ type_count.f32 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x08 %}
-    float32 {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
     // float64 type data table
+    double f64Table[{{ type_count.f64 }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x11 %}
-    float64 {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}} = {{ subobject.value }};
+    {{ subobject.value }},
     {% endif %}
     {% endfor %}
     {% endfor %}
+    };
 
-    // This variables contain all the objects visible_string
+    // string type data variable
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x09 %}
@@ -199,29 +221,97 @@ public:
     {% endfor %}
     {% endfor %}
 
-    // Data pointer table
-    void * dataPtrTable[{{ subindex_count }}] = {
+    // string type data table
+    char *stringTable[{{ type_count.str }}] = {
     {% for object in objects %}
     {% for subobject in object.entries %}
-    &{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+    {% if subobject.type_value == 0x09 %}
+    {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+    };
+
+    // index data table
+    {% set counterBool = namespace(value=0) %}
+    {% set counterI8 = namespace(value=0) %}
+    {% set counterI16 = namespace(value=0) %}
+    {% set counterI32 = namespace(value=0) %}
+    {% set counterI64 = namespace(value=0) %}
+    {% set counterU8 = namespace(value=0) %}
+    {% set counterU16 = namespace(value=0) %}
+    {% set counterU32 = namespace(value=0) %}
+    {% set counterU64 = namespace(value=0) %}
+    {% set counterF32 = namespace(value=0) %}
+    {% set counterF64 = namespace(value=0) %}
+    {% set counterString = namespace(value=0) %}
+
+    uint8_t dataIndexTable[{{ subindex_count }}] = {
+    {% for object in objects %}
+    {% for subobject in object.entries %}
+    {% if subobject.type_value == 0x01 %}
+    {{ counterBool.value }},
+    {% set counterBool.value = counterBool.value + 1 %}
+    {% elif subobject.type_value == 0x02 %}
+    {{ counterI8.value }},
+    {% set counterI8.value = counterI8.value + 1 %}
+    {% elif subobject.type_value == 0x03 %}
+    {{ counterI16.value }},
+    {% set counterI16.value = counterI16.value + 1 %}
+    {% elif subobject.type_value == 0x04 %}
+    {{ counterI32.value }},
+    {% set counterI32.value = counterI32.value + 1 %}
+    {% elif subobject.type_value == 0x15 %}
+    {{ counterI64.value }},
+    {% set counterI64.value = counterI64.value + 1 %}
+    {% elif subobject.type_value == 0x05 %}
+    {{ counterU8.value }},
+    {% set counterU8.value = counterU8.value + 1 %}
+    {% elif subobject.type_value == 0x06 %}
+    {{ counterU16.value }},
+    {% set counterU16.value = counterU16.value + 1 %}
+    {% elif subobject.type_value == 0x07 %}
+    {{ counterU32.value }},
+    {% set counterU32.value = counterU32.value + 1 %}
+    {% elif subobject.type_value == 0x16 %}
+    {{ counterU64.value }},
+    {% set counterU64.value = counterU64.value + 1 %}
+    {% elif subobject.type_value == 0x08 %}
+    {{ counterF32.value }},
+    {% set counterF32.value = counterF32.value + 1 %}
+    {% elif subobject.type_value == 0x09 %}
+    {{ counterF64.value }},
+    {% set counterF64.value = counterF64.value + 1 %}
+    {% elif subobject.type_value == 0x0A %}
+    {{ counterString.value }},
+    {% set counterString.value = counterString.value + 1 %}
+    {% endif %}
     {% endfor %}
     {% endfor %}
     };
     //END DATA
 
+    //METADATA
     {% for object in objects %}
     {% for subobject in object.entries %}
-    struct MetaData{
+    struct Metadata{
         MetaBitfield metaData = {.value = {{subobject.meta_data}}};
         DataType dataType = {{ subobject.type_name }};
         {{subobject.ctype_name}} value {% if subobject.type_value == 0x09 %}[{{subobject.size//8}}]{% endif %} =  {% if subobject.type_value == 0x09 %}{ {{ subobject.value | join(', ') }} } {% else %} {{subobject.value}} {% endif %};
         {{subobject.ctype_name}} min = {{subobject.value_min}};
         {{subobject.ctype_name}} max = {{subobject.value_max}};
-    } {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}MetaData;
+    } {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata;
     {% endfor %}
     {% endfor %}
 
-
+    Metadata objectMetadataTable[{{ subindex_count }}] = {
+    {% for object in objects %}
+    {% for subobject in object.entries %}
+    {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata,
+    {% endfor %}
+    {% endfor %}
+    };
+    //END METADATA
 
     /**
      * Find an object in the dictionary.

@@ -41,7 +41,6 @@ class Entry:
         self.setter: str = str(data.get("Setter", "setLocalData"))
         self.min_value: str = str(data.get("MinValue", None))
         self.max_value: str = str(data.get("MaxValue", None))
-        ##TODO: add metadata
 
     def __str__(self) -> str:
         return '\n'.join([f"{k}={v}" for k, v in {
