@@ -2,7 +2,7 @@
  * This file contains the declaration of the ObjectDictionnary class.
  * Generated on {{date.strftime("%B %d, %Y")}}
  *
- * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
+ * NOTICE: Auto-generated from the device's yaml file, do not edit manually!
  */
 #pragma once
 
@@ -36,7 +36,7 @@ using namespace CANopen;
 
 int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData(Data const &data, uint32_t id, SDOAbortCodes &abortCode);
 
 {% for object in objects %}
 {% for subobject in object.entries %}
@@ -44,7 +44,7 @@ int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode);
 int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {% if subobject.setter != "setLocalData" %}
-int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data const &data, uint32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
 {%endfor%}
@@ -64,29 +64,27 @@ public:
         {% endfor %}
     };
 
-    //TODO: change to func pointer
     // This table contain all the objects getter
-    const std::function<uint8_t(Data&, uint32_t, SDOAbortCodes&)> objectGetterTable[{{ subindex_count }}] = {
+    int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, uint32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.entries %}
         {% if subobject.getter != "getLocalData" %}
-        get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        &get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
         {% else %}
-        getLocalData,
+        &getLocalData,
         {% endif %}
         {% endfor %}
         {% endfor %}
     };
 
-    //TODO: change to func pointer
     // This table contain all the objects setter
-    const std::function<uint8_t(Data, uint32_t, SDOAbortCodes&)> objectSetterTable[{{ subindex_count }}] = { 
+    int8_t (*objectSetterTable[{{ subindex_count }}])(Data const &data, uint32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.entries %}
         {% if subobject.setter != "setLocalData" %}
-        set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        &set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
         {% else %}
-        setLocalData,
+        &setLocalData,
         {% endif %}
         {% endfor %}
         {% endfor %}

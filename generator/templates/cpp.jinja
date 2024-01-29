@@ -17,7 +17,7 @@ int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &da
 }
 {% endif %}
 {% if subobject.setter != "setLocalData" %}
-int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data data, uint32_t id, SDOAbortCodes &abortCode){
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data const &data, uint32_t id, SDOAbortCodes &abortCode){
     return {{ subobject.setter }}(data, id, abortCode);
 }
 {% endif %}
@@ -29,7 +29,7 @@ int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode){
     return 0;
 }
 
-int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode){
+int8_t setLocalData(Data const &data, uint32_t id, SDOAbortCodes &abortCode){
     node.od().objectDataTable[id] = data;
     return 0;
 }

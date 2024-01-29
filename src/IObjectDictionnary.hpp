@@ -11,7 +11,7 @@ namespace CANopen {
 
 struct MetaData{
     MetaBitfield bitfield;
-    DataTypes dataType;
+    DataType dataType;
     void* defaultValue;
     void* min;
     void* max;
