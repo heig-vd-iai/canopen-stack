@@ -215,3 +215,18 @@ enum Metadata {
     Metadata_WriteOnlyMappable = 0x06,
     Metadata_ReadWriteMappable = 0x07
 };
+
+enum DataType {
+    INTEGER8,
+    INTEGER16,
+    INTEGER32,
+    INTEGER64,
+    UNSIGNED8,
+    UNSIGNED16,
+    UNSIGNED32,
+    UNSIGNED64,
+    REAL32,
+    REAL64,
+    VISIBLE_STRING,
+    ARRAY
+};

@@ -181,7 +181,7 @@ int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode) { //TODO: add const ref
     node.od().objectDataTable[id] = data;
     return 0;
 }
@@ -199,4 +199,67 @@ int64_t ObjectDictionnary::findObject(uint16_t index) {
             upper = mid - 1;
     }
     return -1;
+}
+
+int64_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
+    int64_t indexPos = findObject(index);
+    int64_t id = indexPos + subindex;
+    if (objectIndexTable[id].first == index &&
+        objectIndexTable[id].second == subindex)
+        return id;
+    return -1;
+}
+
+int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
+                                   SDOAbortCodes &abortCode) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return readData(data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::writeData(Data data, uint16_t index, uint8_t subindex,
+                                    SDOAbortCodes &abortCode) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return writeData(data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::writeData(Data data, int64_t id,
+                                    SDOAbortCodes &abortCode) {
+    return objectGetterTable[id](data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::readData(Data &data, int64_t id,
+                                   SDOAbortCodes &abortCode) {
+    return objectSetterTable[id](data, id, abortCode);
+}
+
+bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
+    return findObject(index, subindex) != -1;
+}
+
+MetaBitfield ObjectDictionnary::getMetadata(uint16_t index, uint8_t subindex) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        return MetaBitfield(0);
+    }
+    return objectMetadataTable[id];
 }

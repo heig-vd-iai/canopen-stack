@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=15:23
-CreationDate=2024-01-25
+CreationTime=09:41
+CreationDate=2024-01-29
 CreatedBy=Adrien Cardinale
-ModificationTime=15:23
-ModificationDate=2024-01-25
+ModificationTime=09:41
+ModificationDate=2024-01-29
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -47,7 +47,7 @@ ParameterName=Device Type
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00020192
+DefaultValue=131474
 PDOMapping=0
 
 [1001]
@@ -55,7 +55,7 @@ ParameterName=Error Register
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=1
 
 [1018]
@@ -68,7 +68,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x04
+DefaultValue=4
 PDOMapping=0
 
 [1018sub1]
@@ -76,7 +76,7 @@ ParameterName=Vendor-ID
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x0000026C
+DefaultValue=620
 PDOMapping=0
 
 [1018sub2]
@@ -84,7 +84,7 @@ ParameterName=Product code
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000046
+DefaultValue=70
 PDOMapping=0
 
 [1018sub3]
@@ -92,7 +92,7 @@ ParameterName=Revision number
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x08A50000
+DefaultValue=145031168
 PDOMapping=0
 
 [1018sub4]
@@ -100,7 +100,7 @@ ParameterName=Serial number
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [OptionalObjects]
@@ -158,7 +158,7 @@ ParameterName=Number of errors
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1003sub1]
@@ -166,7 +166,7 @@ ParameterName=1st Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub2]
@@ -174,7 +174,7 @@ ParameterName=2nd Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub3]
@@ -182,7 +182,7 @@ ParameterName=3th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub4]
@@ -190,7 +190,7 @@ ParameterName=4th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub5]
@@ -198,7 +198,7 @@ ParameterName=5th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub6]
@@ -206,7 +206,7 @@ ParameterName=6th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub7]
@@ -214,7 +214,7 @@ ParameterName=7th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1003sub8]
@@ -222,7 +222,7 @@ ParameterName=8th Standard error field
 ObjectType=0x07
 DataType=0x0007
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1007]
@@ -230,7 +230,7 @@ ParameterName=Synchronous Window Length
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1008]
@@ -267,7 +267,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x01
+DefaultValue=1
 PDOMapping=0
 
 [1010sub1]
@@ -275,7 +275,7 @@ ParameterName=Save all parameters to non-volatile memory
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000001
+DefaultValue=1
 PDOMapping=0
 
 [1011]
@@ -288,7 +288,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x01
+DefaultValue=1
 PDOMapping=0
 
 [1011sub1]
@@ -296,7 +296,7 @@ ParameterName=Restore all default parameters
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000001
+DefaultValue=1
 PDOMapping=0
 
 [1017]
@@ -304,7 +304,7 @@ ParameterName=Producer heartbeat time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1019]
@@ -312,7 +312,7 @@ ParameterName=Synchronous counter overflow value
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1029]
@@ -325,7 +325,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=2
 PDOMapping=0
 
 [1029sub1]
@@ -333,7 +333,7 @@ ParameterName=Communication error
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1029sub2]
@@ -341,7 +341,7 @@ ParameterName=Internal device error
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x01
+DefaultValue=1
 PDOMapping=0
 
 [1400]
@@ -354,7 +354,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x02
+DefaultValue=2
 PDOMapping=0
 
 [1400sub1]
@@ -370,7 +370,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1401]
@@ -383,7 +383,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x05
+DefaultValue=5
 PDOMapping=0
 
 [1401sub1]
@@ -399,7 +399,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1401sub3]
@@ -407,7 +407,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0064
+DefaultValue=100
 PDOMapping=0
 
 [1401sub4]
@@ -415,7 +415,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1401sub5]
@@ -423,7 +423,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1402]
@@ -436,7 +436,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x05
+DefaultValue=5
 PDOMapping=0
 
 [1402sub1]
@@ -452,7 +452,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1402sub3]
@@ -460,7 +460,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0064
+DefaultValue=100
 PDOMapping=0
 
 [1402sub4]
@@ -468,7 +468,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1402sub5]
@@ -476,7 +476,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1403]
@@ -489,7 +489,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x05
+DefaultValue=5
 PDOMapping=0
 
 [1403sub1]
@@ -505,7 +505,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1403sub3]
@@ -513,7 +513,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0064
+DefaultValue=100
 PDOMapping=0
 
 [1403sub4]
@@ -521,7 +521,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1403sub5]
@@ -529,7 +529,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1600]
@@ -542,7 +542,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1600sub1]
@@ -550,7 +550,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub2]
@@ -558,7 +558,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub3]
@@ -566,7 +566,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub4]
@@ -574,7 +574,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub5]
@@ -582,7 +582,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub6]
@@ -590,7 +590,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub7]
@@ -598,7 +598,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1600sub8]
@@ -606,7 +606,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601]
@@ -619,7 +619,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1601sub1]
@@ -627,7 +627,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub2]
@@ -635,7 +635,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub3]
@@ -643,7 +643,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub4]
@@ -651,7 +651,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub5]
@@ -659,7 +659,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub6]
@@ -667,7 +667,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub7]
@@ -675,7 +675,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1601sub8]
@@ -683,7 +683,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602]
@@ -696,7 +696,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1602sub1]
@@ -704,7 +704,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub2]
@@ -712,7 +712,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub3]
@@ -720,7 +720,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub4]
@@ -728,7 +728,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub5]
@@ -736,7 +736,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub6]
@@ -744,7 +744,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub7]
@@ -752,7 +752,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1602sub8]
@@ -760,7 +760,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603]
@@ -773,7 +773,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1603sub1]
@@ -781,7 +781,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub2]
@@ -789,7 +789,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub3]
@@ -797,7 +797,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub4]
@@ -805,7 +805,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub5]
@@ -813,7 +813,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub6]
@@ -821,7 +821,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub7]
@@ -829,7 +829,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1603sub8]
@@ -837,7 +837,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1800]
@@ -850,7 +850,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x06
+DefaultValue=6
 PDOMapping=0
 
 [1800sub1]
@@ -866,7 +866,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1800sub3]
@@ -874,7 +874,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1800sub4]
@@ -882,7 +882,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1800sub5]
@@ -890,7 +890,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0002
+DefaultValue=2
 PDOMapping=0
 
 [1800sub6]
@@ -898,7 +898,7 @@ ParameterName=SYNC start value
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1801]
@@ -911,7 +911,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x06
+DefaultValue=6
 PDOMapping=0
 
 [1801sub1]
@@ -927,7 +927,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1801sub3]
@@ -935,7 +935,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1801sub4]
@@ -943,7 +943,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1801sub5]
@@ -951,7 +951,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x000A
+DefaultValue=10
 PDOMapping=0
 
 [1801sub6]
@@ -959,7 +959,7 @@ ParameterName=SYNC start value
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1802]
@@ -972,7 +972,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x06
+DefaultValue=6
 PDOMapping=0
 
 [1802sub1]
@@ -988,7 +988,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1802sub3]
@@ -996,7 +996,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1802sub4]
@@ -1004,7 +1004,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1802sub5]
@@ -1012,7 +1012,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1802sub6]
@@ -1020,7 +1020,7 @@ ParameterName=SYNC start value
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1803]
@@ -1033,7 +1033,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x06
+DefaultValue=6
 PDOMapping=0
 
 [1803sub1]
@@ -1049,7 +1049,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0xFF
+DefaultValue=255
 PDOMapping=0
 
 [1803sub3]
@@ -1057,7 +1057,7 @@ ParameterName=Inhibit Time
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=0
 
 [1803sub4]
@@ -1065,7 +1065,7 @@ ParameterName=Compatibility Entry
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1803sub5]
@@ -1073,7 +1073,7 @@ ParameterName=Event Timer
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0032
+DefaultValue=50
 PDOMapping=0
 
 [1803sub6]
@@ -1081,7 +1081,7 @@ ParameterName=SYNC start value
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1A00]
@@ -1094,7 +1094,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub1]
@@ -1102,7 +1102,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub2]
@@ -1110,7 +1110,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub3]
@@ -1118,7 +1118,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub4]
@@ -1126,7 +1126,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub5]
@@ -1134,7 +1134,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub6]
@@ -1142,7 +1142,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub7]
@@ -1150,7 +1150,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A00sub8]
@@ -1158,7 +1158,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01]
@@ -1171,7 +1171,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub1]
@@ -1179,7 +1179,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub2]
@@ -1187,7 +1187,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub3]
@@ -1195,7 +1195,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub4]
@@ -1203,7 +1203,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub5]
@@ -1211,7 +1211,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub6]
@@ -1219,7 +1219,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub7]
@@ -1227,7 +1227,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A01sub8]
@@ -1235,7 +1235,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02]
@@ -1248,7 +1248,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub1]
@@ -1256,7 +1256,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub2]
@@ -1264,7 +1264,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub3]
@@ -1272,7 +1272,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub4]
@@ -1280,7 +1280,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub5]
@@ -1288,7 +1288,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub6]
@@ -1296,7 +1296,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub7]
@@ -1304,7 +1304,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A02sub8]
@@ -1312,7 +1312,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03]
@@ -1325,7 +1325,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub1]
@@ -1333,7 +1333,7 @@ ParameterName=1st object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub2]
@@ -1341,7 +1341,7 @@ ParameterName=2nd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub3]
@@ -1349,7 +1349,7 @@ ParameterName=3rd object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub4]
@@ -1357,7 +1357,7 @@ ParameterName=4th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub5]
@@ -1365,7 +1365,7 @@ ParameterName=5th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub6]
@@ -1373,7 +1373,7 @@ ParameterName=6th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub7]
@@ -1381,7 +1381,7 @@ ParameterName=7th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [1A03sub8]
@@ -1389,7 +1389,7 @@ ParameterName=8th object to be mapped
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0]
@@ -1402,7 +1402,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x0C
+DefaultValue=12
 PDOMapping=0
 
 [30A0sub1]
@@ -1410,7 +1410,7 @@ ParameterName=TKp
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub2]
@@ -1418,7 +1418,7 @@ ParameterName=TKi
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub3]
@@ -1426,7 +1426,7 @@ ParameterName=TKd
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub4]
@@ -1434,7 +1434,7 @@ ParameterName=TKr
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub5]
@@ -1442,7 +1442,7 @@ ParameterName=TC1
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub6]
@@ -1450,7 +1450,7 @@ ParameterName=TC2
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub7]
@@ -1458,7 +1458,7 @@ ParameterName=TC3
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub8]
@@ -1466,7 +1466,7 @@ ParameterName=TP1
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub9]
@@ -1474,7 +1474,7 @@ ParameterName=TP2
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub10]
@@ -1482,7 +1482,7 @@ ParameterName=TP3
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub11]
@@ -1490,7 +1490,7 @@ ParameterName=TUmax
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A0sub12]
@@ -1498,7 +1498,7 @@ ParameterName=TUmin
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1]
@@ -1511,7 +1511,7 @@ ParameterName=Number of entries
 ObjectType=0x07
 DataType=0x0005
 AccessType=ro
-DefaultValue=0x0C
+DefaultValue=12
 PDOMapping=0
 
 [30A1sub1]
@@ -1519,7 +1519,7 @@ ParameterName=PKp
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub2]
@@ -1527,7 +1527,7 @@ ParameterName=PKi
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub3]
@@ -1535,7 +1535,7 @@ ParameterName=PKd
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub4]
@@ -1543,7 +1543,7 @@ ParameterName=PKr
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub5]
@@ -1551,7 +1551,7 @@ ParameterName=PC1
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub6]
@@ -1559,7 +1559,7 @@ ParameterName=PC2
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub7]
@@ -1567,7 +1567,7 @@ ParameterName=PC3
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub8]
@@ -1575,7 +1575,7 @@ ParameterName=PP1
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub9]
@@ -1583,7 +1583,7 @@ ParameterName=PP2
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub10]
@@ -1591,7 +1591,7 @@ ParameterName=PP3
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub11]
@@ -1599,7 +1599,7 @@ ParameterName=PUmax
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [30A1sub12]
@@ -1607,7 +1607,7 @@ ParameterName=PUmin
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=0
 
 [6040]
@@ -1615,7 +1615,7 @@ ParameterName=Controlword
 ObjectType=0x07
 DataType=0x0006
 AccessType=rw
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=1
 
 [6041]
@@ -1623,7 +1623,7 @@ ParameterName=Statusword
 ObjectType=0x07
 DataType=0x0006
 AccessType=ro
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=1
 
 [6060]
@@ -1631,7 +1631,7 @@ ParameterName=Modes of operation
 ObjectType=0x07
 DataType=0x0002
 AccessType=rw
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=1
 
 [6061]
@@ -1639,7 +1639,7 @@ ParameterName=Modes of operation display
 ObjectType=0x07
 DataType=0x0002
 AccessType=ro
-DefaultValue=0x00
+DefaultValue=0
 PDOMapping=1
 
 [6062]
@@ -1647,7 +1647,7 @@ ParameterName=Position demand value
 ObjectType=0x07
 DataType=0x0004
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6064]
@@ -1655,7 +1655,7 @@ ParameterName=Position actual value
 ObjectType=0x07
 DataType=0x0004
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [606C]
@@ -1663,7 +1663,7 @@ ParameterName=Velocity actual value
 ObjectType=0x07
 DataType=0x0004
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6071]
@@ -1671,7 +1671,7 @@ ParameterName=Target torque
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6077]
@@ -1679,7 +1679,7 @@ ParameterName=Torque actual value
 ObjectType=0x07
 DataType=0x0004
 AccessType=ro
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6078]
@@ -1687,7 +1687,7 @@ ParameterName=Current actual value
 ObjectType=0x07
 DataType=0x0003
 AccessType=ro
-DefaultValue=0x0000
+DefaultValue=0
 PDOMapping=1
 
 [607A]
@@ -1695,7 +1695,7 @@ ParameterName=Target position
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6081]
@@ -1703,7 +1703,7 @@ ParameterName=Profile velocity
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6083]
@@ -1711,7 +1711,7 @@ ParameterName=Profile acceleration
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1
 
 [6084]
@@ -1719,5 +1719,5 @@ ParameterName=Profile deceleration
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0x00000000
+DefaultValue=0
 PDOMapping=1

@@ -1,0 +1,50 @@
+/**
+ * Contains the declarations of the ObjectDictionnary class.
+ */
+#include "od.hpp"
+#include "node.hpp"
+
+
+using namespace CANopen;
+
+//TODO: add const ref
+
+{% for object in objects %}
+{% for subobject in object.entries %}
+{% if subobject.getter != "getLocalData" %}
+int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, uint32_t id, SDOAbortCodes &abortCode){
+    return {{ subobject.getter }}(data, id, abortCode);
+}
+{% endif %}
+{% if subobject.setter != "setLocalData" %}
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data data, uint32_t id, SDOAbortCodes &abortCode){
+    return {{ subobject.setter }}(data, id, abortCode);
+}
+{% endif %}
+{%endfor%}
+{%endfor%}
+
+int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode){
+    data = node.od().objectDataTable[id];
+    return 0;
+}
+
+int8_t setLocalData(Data data, uint32_t id, SDOAbortCodes &abortCode){
+    node.od().objectDataTable[id] = data;
+    return 0;
+}
+
+int64_t ObjectDictionnary::findObject(uint16_t objectIndex) {
+    int32_t lower = 0;
+    int32_t upper = length - 1;
+    while (lower <= upper) {
+        int32_t mid = lower + (upper - lower) / 2;
+        if (objectIndexTable[mid].first == objectIndex)
+            return mid;
+        else if (objectIndexTable[mid].first < objectIndex)
+            lower = mid + 1;
+        else
+            upper = mid - 1;
+    }
+    return -1;
+}

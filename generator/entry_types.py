@@ -14,6 +14,8 @@ class Entry:
     getter: str
     setter: str
     meta_data: int
+    min_value: str
+    max_value: str
 
     @classmethod
     def _get_subclasses(cls) -> "list[type]":
@@ -37,6 +39,8 @@ class Entry:
         self.subindex: int = subindex
         self.getter: str = str(data.get("Getter", "getLocalData"))
         self.setter: str = str(data.get("Setter", "setLocalData"))
+        self.min_value: str = str(data.get("MinValue", None))
+        self.max_value: str = str(data.get("MaxValue", None))
         ##TODO: add metadata
 
     def __str__(self) -> str:
@@ -89,18 +93,19 @@ class Entry:
 
 class IntegerEntry(Entry):
     type_name: str = "INTEGERENTRYBASE"
+    
     def __init__(self, data: dict, subindex: int = 0, precision: int = 0) -> None:
         super().__init__(data, subindex)
         self._isexpr: bool = False
         self._precision: int = precision
-        if len(self.default_value):
-            pattern = "\$NODEID\+(0x[0-9a-fA-F]+|\d+)"
-            result = re.search(pattern, self.default_value)
-            if result is None:
-                self.default_value = f"0x{int(self.default_value, 0):0{self._precision}X}"
-            else:
-                self.default_value = result.group()
-                self._isexpr = True
+        # if len(self.default_value):
+        #     pattern = "\$NODEID\+(0x[0-9a-fA-F]+|\d+)"
+        #     result = re.search(pattern, self.default_value)
+        #     if result == "None":
+        #         self.default_value = f"0x{int(self.default_value, 0):0{self._precision}X}"
+        #     else:
+        #         self.default_value = result.group()
+        #         self._isexpr = True
 
     def eval_value(self, node_id: int) -> str:
         if self._isexpr:
@@ -118,6 +123,12 @@ class BooleanEntry(Entry):
         super().__init__(data, subindex)
         if len(self.default_value):
             self.default_value = str(int(self.default_value) > 0).lower()
+    @property
+    def value_min(self) -> str:
+        return "0"
+    @property
+    def value_max(self) -> str:
+        return "1"
 
 
 class Integer8Entry(IntegerEntry):
@@ -128,6 +139,18 @@ class Integer8Entry(IntegerEntry):
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, precision=2)
+    
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-128"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "127"
+        return self.max_value
 
 
 class Integer16Entry(IntegerEntry):
@@ -139,6 +162,18 @@ class Integer16Entry(IntegerEntry):
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 4)
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-32768"
+        return self.min_value
+    
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "32767"
+        return self.max_value
+
 
 class Integer32Entry(IntegerEntry):
     type_value: int = 0x04
@@ -148,6 +183,18 @@ class Integer32Entry(IntegerEntry):
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 8)
+
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-2147483648"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "2147483647"
+        return self.max_value
 
 
 class Integer64Entry(IntegerEntry):
@@ -159,6 +206,19 @@ class Integer64Entry(IntegerEntry):
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 16)
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-9223372036854775808"
+        return self.min_value
+    
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "9223372036854775807"
+        return self.max_value
+
+
 
 class Unsigned8Entry(IntegerEntry):
     type_value: int = 0x05
@@ -168,6 +228,18 @@ class Unsigned8Entry(IntegerEntry):
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 2)
+
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "0"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "255"
+        return self.max_value
 
 
 class Unsigned16Entry(IntegerEntry):
@@ -179,6 +251,18 @@ class Unsigned16Entry(IntegerEntry):
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 4)
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "0"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "65535"
+        return self.max_value
+
 
 class Unsigned32Entry(IntegerEntry):
     type_value: int = 0x07
@@ -189,6 +273,18 @@ class Unsigned32Entry(IntegerEntry):
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 8)
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "0"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "4294967295"
+        return self.max_value
+
 
 class Unsigned64Entry(IntegerEntry):
     type_value: int = 0x1B
@@ -198,6 +294,18 @@ class Unsigned64Entry(IntegerEntry):
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex, 16)
+
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "0"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "18446744073709551615"
+        return self.max_value
 
 
 class Float32Entry(Entry):
@@ -211,6 +319,18 @@ class Float32Entry(Entry):
         if len(self.default_value):
             self.default_value = f"{float(self.default_value)}f"
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-3.402823466e+38"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "3.402823466e+38"
+        return self.max_value
+
 
 class Float64Entry(Entry):
     type_value: int = 0x11
@@ -223,10 +343,23 @@ class Float64Entry(Entry):
         if len(self.default_value):
             self.default_value = str(float(self.default_value))
 
+    @property
+    def value_min(self) -> str:
+        if self.min_value == "None":
+            return "-1.7976931348623158e+308"
+        return self.min_value
+
+    @property
+    def value_max(self) -> str:
+        if self.max_value == "None":
+            return "1.7976931348623158e+308"
+        return self.max_value
+
 
 class StringEntry(Entry):
     type_value: int = 0x09
     type_name: str = "VISIBLE_STRING"
+    ctype_name: str = "char"
 
     @property
     def value(self) -> str:
@@ -238,7 +371,14 @@ class StringEntry(Entry):
 
     def __init__(self, data: dict, subindex: int = 0) -> None:
         super().__init__(data, subindex)
-        self.ctype_name = f"char[{len(self.default_value.encode()) + 1}]"
 
     def eval_value(self, node_id: int) -> str:
         return f"\"{self.default_value}\""
+
+    @property
+    def value_min(self) -> str:
+        return "'\\0'"
+
+    @property
+    def value_max(self) -> str:
+        return "'\\0'"

@@ -15,7 +15,7 @@ MapParameter::MapParameter(uint32_t id)
     if (odID < 0) {
         entriesNumber = 0;
     } else {
-        entriesNumber = node.od().objectDataTable[id].value.u8;
+        entriesNumber = node.od().objectDataTable[id].value.u8; //TODO: acces by method
         for (uint8_t i = 0; i < entriesNumber; i++) {
             mappedObjects[i] = node.od().objectDataTable[id + i + 1].value.u32;
         }
@@ -266,7 +266,7 @@ void PDO::initTPDO(unsigned index) {
 //    tpdos[index].commObject =
 //        (Object1800 *)node._od.findObject(TPDO_COMMUNICATION_INDEX + index);
 //    tpdos[index].mapObject =
-//        (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index);
+//        (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index); //TODO: add parameter
     remapTPDO(index);
 }
 
@@ -274,7 +274,7 @@ void PDO::initRPDO(unsigned index) {
 //    rpdos[index].commObject =
 //        (Object1400 *)node._od.findObject(RPDO_COMMUNICATION_INDEX + index);
 //    rpdos[index].mapObject =
-//        (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index);
+//        (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index); //TODO: add parameter
     remapRPDO(index);
 }
 
