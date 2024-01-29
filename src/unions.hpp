@@ -10,7 +10,7 @@ namespace CANopen {
  * The metadata specifies the read and write permissions, PDO mappability and
  * remote data update flag.
  */
-union MetaBitfield {
+union Access {
     uint8_t value;
     struct {
         bool readable : 1;

@@ -49,14 +49,21 @@ int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Da
 {%endfor%}
 {%endfor%}
 
+{% for object in objects %}
+{% for subobject in object.entries %}
+const Metadata{{subobject.ctype_name}} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata({{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if subobject.type_value != 0x09 and subobject.type_value != 0x11 %}, {{subobject.value_min}}, {{subobject.value_max}}{% endif %});
+{% endfor %}
+{% endfor %}
+
 class ObjectDictionnary : IObjectDictionnary{
 
 private:
     const uint32_t length = {{ subindex_count }};
 
 public:
+    // INDEX
     // This table is used to find an object by its index.
-    std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
+    const std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
         {% for object in objects %}
         {% for subobject in object.entries %}
         std::make_pair(0x{{ object.index_hexstr }}, {{ subobject.subindex }}),
@@ -64,6 +71,16 @@ public:
         {% endfor %}
     };
 
+    const Metadata *objectMetadataTable[{{ subindex_count }}] = {
+    {% for object in objects %}
+    {% for subobject in object.entries %}
+    &{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata,
+    {% endfor %}
+    {% endfor %}
+    };
+    // END INDEX
+
+    // GETTER/SETTER
     // This table contain all the objects getter
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, uint32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
@@ -89,6 +106,7 @@ public:
         {% endfor %}
         {% endfor %}
     };
+    // END GETTER/SETTER
 
     //DATA
     // bool type data table
@@ -216,7 +234,7 @@ public:
     {% for object in objects %}
     {% for subobject in object.entries %}
     {% if subobject.type_value == 0x09 %}
-    char {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}[{{subobject.size//8}}] ={ {{ subobject.value | join(', ') }} };
+    char {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}[{{subobject.size//8}}] ={ {{ subobject.value }} };
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -291,28 +309,6 @@ public:
     };
     //END DATA
 
-    //METADATA
-    {% for object in objects %}
-    {% for subobject in object.entries %}
-    struct Metadata{
-        MetaBitfield metaData = {.value = {{subobject.meta_data}}};
-        DataType dataType = {{ subobject.type_name }};
-        {{subobject.ctype_name}} value {% if subobject.type_value == 0x09 %}[{{subobject.size//8}}]{% endif %} =  {% if subobject.type_value == 0x09 %}{ {{ subobject.value | join(', ') }} } {% else %} {{subobject.value}} {% endif %};
-        {{subobject.ctype_name}} min = {{subobject.value_min}};
-        {{subobject.ctype_name}} max = {{subobject.value_max}};
-    } {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata;
-    {% endfor %}
-    {% endfor %}
-
-    Metadata objectMetadataTable[{{ subindex_count }}] = {
-    {% for object in objects %}
-    {% for subobject in object.entries %}
-    {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata,
-    {% endfor %}
-    {% endfor %}
-    };
-    //END METADATA
-
     /**
      * Find an object in the dictionary.
      * @param index The hex index of the object to find.
@@ -372,7 +368,7 @@ public:
     int8_t readData(Data &data, uint16_t index, uint8_t subIndex,
                     SDOAbortCodes &abortCode);
 
-    int8_t readData(Data &data, uint64_t id, SDOAbortCodes &abortCode);
+    int8_t readData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
     /**
      * Set the value of an object in the dictionary.
@@ -383,10 +379,10 @@ public:
      * @return 0 if the object was found, 1 if a request is pending, -1
      * otherwise.
      */
-    int8_t writeData(Data data, uint16_t index, uint8_t subIndex,
+    int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex,
                      SDOAbortCodes &abortCode);
 
-    int8_t writeData(Data data, uint64_t id, SDOAbortCodes &abortCode);
+    int8_t writeData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
     /**
      * Get the metadata of an object in the dictionary.
@@ -394,6 +390,16 @@ public:
      * @param subIndex The subindex to the object
      * @return The metadata of the object.
      */
-    MetaBitfield getMetadata(uint16_t index, uint8_t subIndex);
+    Metadata getMetadata(uint16_t index, uint8_t subindex);
+
+    int8_t getData(Data &data, uint16_t index, uint8_t subindex,
+                   SDOAbortCodes &abortCode);
+    
+    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+    int8_t setData(const Data &data, uint16_t index, uint8_t subindex,
+                   SDOAbortCodes &abortCode);
+
+    int8_t setData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
 };
 #endif // _OD_DEFINES_ONLY

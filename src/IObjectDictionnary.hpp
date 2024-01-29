@@ -10,11 +10,165 @@
 namespace CANopen {
 
 struct Metadata {
-    MetaBitfield bitfield;
+    Access access;
     DataType dataType;
-    void *defaultValue;
-    void *min;
-    void *max;
+};
+
+struct Metadatabool : public Metadata {
+    bool defaultValue;
+    Metadatabool(bool defaultValue, AccessType access) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::BOOL;
+    }
+};
+
+struct Metadatauint8_t : public Metadata {
+    uint8_t defaultValue;
+    uint8_t min;
+    uint8_t max;
+    Metadatauint8_t(AccessType access, uint8_t defaultValue, uint8_t min,
+                    uint8_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED8;
+    }
+};
+
+struct Metadatauint16_t : public Metadata {
+    uint16_t defaultValue;
+    uint16_t min;
+    uint16_t max;
+    Metadatauint16_t(AccessType access, uint16_t defaultValue, uint16_t min,
+                     uint16_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED16;
+    }
+};
+
+struct Metadatauint32_t : public Metadata {
+    uint32_t defaultValue;
+    uint32_t min;
+    uint32_t max;
+    Metadatauint32_t(AccessType access, uint32_t defaultValue, uint32_t min,
+                     uint32_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED32;
+    }
+};
+
+struct Metadatauint64_t : public Metadata {
+    uint64_t defaultValue;
+    uint64_t min;
+    uint64_t max;
+    Metadatauint64_t(AccessType access, uint64_t defaultValue, uint64_t min,
+                     uint64_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED64;
+    }
+};
+
+struct Metadataint8_t : public Metadata {
+    int8_t defaultValue;
+    int8_t min;
+    int8_t max;
+    Metadataint8_t(AccessType access, int8_t defaultValue, int8_t min,
+                   int8_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER8;
+    }
+};
+
+struct Metadataint16_t : public Metadata {
+    int16_t defaultValue;
+    int16_t min;
+    int16_t max;
+    Metadataint16_t(AccessType access, int16_t defaultValue, int16_t min,
+                    int16_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER16;
+    }
+};
+
+struct Metadataint32_t : public Metadata {
+    int32_t defaultValue;
+    int32_t min;
+    int32_t max;
+    Metadataint32_t(AccessType access, int32_t defaultValue, int32_t min,
+                    int32_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER32;
+    }
+};
+
+struct Metadataint64_t : public Metadata {
+    int64_t defaultValue;
+    int64_t min;
+    int64_t max;
+    Metadataint64_t(AccessType access, int64_t defaultValue, int64_t min,
+                    int64_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER64;
+    }
+};
+
+struct Metadatafloat : public Metadata {
+    float defaultValue;
+    float min;
+    float max;
+    Metadatafloat(AccessType access, float defaultValue, float min, float max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::REAL32;
+    }
+};
+
+struct Metadatadouble : public Metadata {
+    double defaultValue;
+    double min;
+    double max;
+    Metadatadouble(AccessType access, double defaultValue, double min,
+                   double max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::REAL64;
+    }
+};
+
+struct Metadatachar : public Metadata {
+    char defaultValue[];
+    Metadatachar(AccessType access, char defaultValue[]) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::VISIBLE_STRING;
+    }
 };
 
 class IObjectDictionnary {
@@ -23,16 +177,13 @@ class IObjectDictionnary {
                             SDOAbortCodes &abortCode) = 0;
     virtual int8_t writeData(const Data &data, uint16_t index, uint8_t subindex,
                              SDOAbortCodes &abortCode) = 0;
-    virtual int8_t readData(Data &data, uint32_t id, SDOAbortCodes &abortCode) = 0;
-    virtual int8_t writeData(const Data &data, uint32_t id,
-                             SDOAbortCodes &abortCode) = 0;
     virtual bool saveData(uint8_t parameterGroup) = 0;
     virtual bool loadData(uint8_t parameterGroup) = 0;
     virtual bool restoreData(uint8_t parameterGroup) = 0;
     virtual bool isSubValid(uint16_t index, uint8_t subindex) = 0;
     virtual int64_t findObject(uint16_t index) = 0;
     virtual int64_t findObject(uint16_t index, uint8_t subindex) = 0;
-    virtual MetaBitfield getMetadata(uint16_t index, uint8_t subindex) = 0;
+    virtual Metadata getMetadata(uint16_t index, uint8_t subindex) = 0;
     virtual void getData(Data &data, uint16_t index, uint8_t subindex) = 0;
     virtual void getData(Data &data, uint16_t id) = 0;
     virtual void setData(const Data &data, uint16_t index,

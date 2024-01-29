@@ -362,7 +362,7 @@ class StringEntry(Entry):
 
     @property
     def value(self) -> str:
-        return [ord(c) for c in str(self.default_value)]
+        return f"\"{self.default_value}\""
 
     @property #TODO: size from type_name
     def size(self) -> int:

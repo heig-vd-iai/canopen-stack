@@ -207,7 +207,7 @@ enum ParameterGroups {
     ParameterGroup_Application = 3
 };
 
-enum Metadata {
+enum AccessType {
     Metadata_ReadOnlyNotMappable = 0x01,
     Metadata_WriteOnlyNotMappable = 0x02,
     Metadata_ReadWriteNotMappable = 0x03,

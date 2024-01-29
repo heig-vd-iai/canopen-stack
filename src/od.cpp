@@ -7,6 +7,7 @@
 
 using namespace CANopen;
 
+// TODO : add cast for type
 int8_t getobject1400sub0(Data &data, uint32_t id, SDOAbortCodes &abortCode) {
     // return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
 }
@@ -286,7 +287,7 @@ int8_t setLocalDataF64(Data data, uint32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-//TODO: add get/set for string
+// TODO: add get/set for string
 
 int64_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t lower = 0;
@@ -322,7 +323,7 @@ int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
     return readData(data, id, abortCode);
 }
 
-int8_t ObjectDictionnary::writeData(Data data, uint16_t index, uint8_t subindex,
+int8_t ObjectDictionnary::writeData(const Data &data, uint16_t index, uint8_t subindex,
                                     SDOAbortCodes &abortCode) {
     int64_t id = findObject(index, subindex);
     if (id == -1) {
@@ -332,13 +333,13 @@ int8_t ObjectDictionnary::writeData(Data data, uint16_t index, uint8_t subindex,
     return writeData(data, id, abortCode);
 }
 
-int8_t ObjectDictionnary::writeData(const Data &data, int64_t id,
-                                    SDOAbortCodes &abortCode) {
+int8_t ObjectDictionnary::readData(Data &data, uint32_t id,
+                                   SDOAbortCodes &abortCode) {
     return objectGetterTable[id](data, id, abortCode);
 }
 
-int8_t ObjectDictionnary::readData(Data &data, int64_t id,
-                                   SDOAbortCodes &abortCode) {
+int8_t ObjectDictionnary::writeData(const Data &data, uint32_t id,
+                                    SDOAbortCodes &abortCode) {
     return objectSetterTable[id](data, id, abortCode);
 }
 
@@ -358,10 +359,11 @@ bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
     return findObject(index, subindex) != -1;
 }
 
-MetaData ObjectDictionnary::getMetadata(uint16_t index, uint8_t subindex) {
+struct Metadata ObjectDictionnary::getMetadata(uint16_t index, uint8_t subindex) {
     int64_t id = findObject(index, subindex);
     if (id == -1) {
-        return MetaData();
+        Metadata metadata;
+        return metadata;
     }
-    return objectMetadataTable[id];
+    return *objectMetadataTable[id];
 }
