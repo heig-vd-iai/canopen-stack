@@ -16,7 +16,7 @@ namespace CANopen {
  */
 struct ObjectEntryBase {
     const void *dataSrc;
-    MetaBitfield metaData;
+//    MetaBitfield metaData;
     const uint32_t sizeBytes;
     const uint16_t uid;
 
@@ -228,7 +228,7 @@ class Object {
      * @param subindex Subindex of the object entry.
      * @return Metadata bitfield of the object entry.
      */
-    MetaBitfield getMetadata(uint8_t subindex) const;
+//    MetaBitfield getMetadata(uint8_t subindex) const;
 
     /**
      * Get the number of entries in the object, **if object is not of type

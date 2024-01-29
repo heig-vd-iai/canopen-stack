@@ -32,8 +32,8 @@ SDOAbortCodes Object::writeBytes(uint8_t subindex, uint8_t *bytes,
                                  uint32_t sizeBytes, Node &node) {
     if (!isSubValid(subindex)) return SDOAbortCode_SubindexNonExistent;
     ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
-    if (!entry->metaData.bits.writeable)
-        return SDOAbortCode_AttemptWriteOnReadOnly;
+//    if (!entry->metaData.bits.writeable)
+//        return SDOAbortCode_AttemptWriteOnReadOnly;
     if (sizeBytes != entry->sizeBytes)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     int limits = entry->checkLimits(bytes);
@@ -63,8 +63,8 @@ SDOAbortCodes Object::readBytes(uint8_t subindex, uint8_t *bytes,
                                 uint32_t sizeBytes, uint32_t offset) {
     if (!isSubValid(subindex)) return SDOAbortCode_SubindexNonExistent;
     ObjectEntryBase *entry = (ObjectEntryBase *)entries[subindex];
-    if (!entry->metaData.bits.readable)
-        return SDOAbortCode_AttemptReadOnWriteOnly;
+//    if (!entry->metaData.bits.readable)
+//        return SDOAbortCode_AttemptReadOnWriteOnly;
     if (sizeBytes + offset > entry->sizeBytes)
         return SDOAbortCode_DataTypeMismatch_LengthParameterMismatch;
     SDOAbortCodes code = preReadBytes(subindex, bytes, sizeBytes, offset);
@@ -80,10 +80,10 @@ uint32_t Object::getSize(uint8_t subindex) const {
     return isSubValid(subindex) ? entries[subindex]->sizeBytes : 0;
 }
 
-MetaBitfield Object::getMetadata(uint8_t subindex) const {
-    //    return isSubValid(subindex) ? entries[subindex]->metaData :
-    //    MetaBitfield{0};
-}
+//MetaBitfield Object::getMetadata(uint8_t subindex) const {
+//    //    return isSubValid(subindex) ? entries[subindex]->metaData :
+//    //    MetaBitfield{0};
+//}
 
 uint8_t Object::getCount() const {
     return *(uint8_t *)entries[OBJECT_INDEX_COUNT]->dataSrc;

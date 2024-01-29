@@ -46,10 +46,10 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!object->getMetadata(subindex).bits.readable) {
-        sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
-        return;
-    }
+//    if (!object->getMetadata(subindex).bits.readable) {
+//        sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
+//        return;
+//    }
     transferData.index = index;
     transferData.subindex = subindex;
     transferData.object = object;
@@ -140,10 +140,10 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!object->getMetadata(subindex).bits.writeable) {
-        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-        return;
-    }
+//    if (!object->getMetadata(subindex).bits.writeable) {
+//        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
+//        return;
+//    }
     transferData.index = index;
     transferData.subindex = subindex;
     transferData.object = object;
@@ -239,10 +239,10 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
                 sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
                 return;
             }
-            if (!object->getMetadata(subindex).bits.readable) {
-                sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
-                return;
-            }
+//            if (!object->getMetadata(subindex).bits.readable) {
+//                sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
+//                return;
+//            }
             transferData.index = index;
             transferData.subindex = subindex;
             transferData.object = object;
@@ -382,10 +382,10 @@ void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!object->getMetadata(subindex).bits.writeable) {
-        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-        return;
-    }
+//    if (!object->getMetadata(subindex).bits.writeable) {
+//        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
+//        return;
+//    }
     uint32_t size = object->getSize(subindex);
     if (recvCommand.bits_downClientInitiate.s && size != request.getSize()) {
         sendAbort(index, subindex,

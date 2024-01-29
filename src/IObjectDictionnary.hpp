@@ -163,8 +163,8 @@ struct Metadatadouble : public Metadata {
 };
 
 struct Metadatachar : public Metadata {
-    char defaultValue[];
-    Metadatachar(AccessType access, char defaultValue[]) {
+    char *defaultValue;
+    Metadatachar(AccessType access, char *defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
         this->dataType = DataType::VISIBLE_STRING;
@@ -184,10 +184,12 @@ class IObjectDictionnary {
     virtual int64_t findObject(uint16_t index) = 0;
     virtual int64_t findObject(uint16_t index, uint8_t subindex) = 0;
     virtual Metadata getMetadata(uint16_t index, uint8_t subindex) = 0;
-    virtual void getData(Data &data, uint16_t index, uint8_t subindex) = 0;
-    virtual void getData(Data &data, uint16_t id) = 0;
+    virtual Data *getData(uint16_t index, uint8_t subindex) = 0;
+    virtual Data *getData(uint32_t id) = 0;
     virtual void setData(const Data &data, uint16_t index,
                          uint8_t subindex) = 0;
-    virtual void setData(const Data &data, uint16_t id) = 0;
+    virtual void setData(const Data &data, uint32_t id) = 0;
+    virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
+    virtual uint16_t getSize(uint32_t id) = 0;
 };
 }  // namespace CANopen

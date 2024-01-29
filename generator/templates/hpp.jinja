@@ -392,14 +392,16 @@ public:
      */
     Metadata getMetadata(uint16_t index, uint8_t subindex);
 
-    int8_t getData(Data &data, uint16_t index, uint8_t subindex,
-                   SDOAbortCodes &abortCode);
-    
-    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    Data* getData(uint16_t index, uint8_t subindex);
 
-    int8_t setData(const Data &data, uint16_t index, uint8_t subindex,
-                   SDOAbortCodes &abortCode);
+    Data* getData(uint32_t id);
 
-    int8_t setData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    void setData(const Data &data, uint16_t index, uint8_t subindex);
+
+    void setData(const Data &data, uint32_t id);
+
+    uint16_t getSize(uint16_t index, uint8_t subindex);
+
+    uint16_t getSize(uint32_t id);
 };
 #endif // _OD_DEFINES_ONLY

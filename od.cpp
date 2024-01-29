@@ -288,17 +288,150 @@ int8_t setLocalDataF64(Data data, uint32_t id, SDOAbortCodes &abortCode) {
 
 //TODO: add get/set for string
 
-int64_t ObjectDictionnary::findObject(uint16_t objectIndex) {
+int64_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t lower = 0;
     int32_t upper = length - 1;
     while (lower <= upper) {
         int32_t mid = lower + (upper - lower) / 2;
-        if (objectIndexTable[mid].first == objectIndex)
+        if (objectIndexTable[mid].first == index)
             return mid;
-        else if (objectIndexTable[mid].first < objectIndex)
+        else if (objectIndexTable[mid].first < index)
             lower = mid + 1;
         else
             upper = mid - 1;
     }
     return -1;
+}
+
+int64_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
+    int64_t indexPos = findObject(index);
+    int64_t id = indexPos + subindex;
+    if (objectIndexTable[id].first == index &&
+        objectIndexTable[id].second == subindex)
+        return id;
+    return -1;
+}
+
+int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
+                                   SDOAbortCodes &abortCode) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return readData(data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::writeData(const Data &data, uint16_t index, uint8_t subindex,
+                                    SDOAbortCodes &abortCode) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return writeData(data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::readData(Data &data, uint32_t id,
+                                   SDOAbortCodes &abortCode) {
+    return objectGetterTable[id](data, id, abortCode);
+}
+
+int8_t ObjectDictionnary::writeData(const Data &data, uint32_t id,
+                                    SDOAbortCodes &abortCode) {
+    return objectSetterTable[id](data, id, abortCode);
+}
+
+bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
+    return true;  // TODO: implement
+}
+
+bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
+    return findObject(index, subindex) != -1;
+}
+
+struct Metadata ObjectDictionnary::getMetadata(uint16_t index,
+                                               uint8_t subindex) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        Metadata metadata;
+        return metadata;
+    }
+    return *objectMetadataTable[id];
+}
+
+Data *ObjectDictionnary::getData(uint16_t index, uint8_t subindex) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        return nullptr;
+    }
+    return getData((uint32_t)id);
+}
+
+Data *ObjectDictionnary::getData(uint32_t id) {
+    Data data;
+    SDOAbortCodes abortCode;
+    objectGetterTable[id](data, id, abortCode);
+    return &data;
+}
+
+void ObjectDictionnary::setData(const Data &data, uint16_t index,
+                                uint8_t subindex) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        return;
+    }
+    setData(data, (uint32_t)id);
+}
+
+void ObjectDictionnary::setData(const Data &data, uint32_t id) {
+    SDOAbortCodes abortCode;
+    objectSetterTable[id](data, id, abortCode);
+}
+
+uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
+    int64_t id = findObject(index, subindex);
+    if (id == -1) {
+        return -1;
+    }
+    return getSize((uint32_t)id);
+}
+
+uint16_t ObjectDictionnary::getSize(uint32_t id) {
+    switch (objectMetadataTable[id]->dataType) {
+        case DataType::BOOL:
+            return sizeof(bool);
+        case DataType::INTEGER8:
+            return sizeof(int8_t);
+        case DataType::INTEGER16:
+            return sizeof(int16_t);
+        case DataType::INTEGER32:
+            return sizeof(int32_t);
+        case DataType::INTEGER64:
+            return sizeof(int64_t);
+        case DataType::UNSIGNED8:
+            return sizeof(uint8_t);
+        case DataType::UNSIGNED16:
+            return sizeof(uint16_t);
+        case DataType::UNSIGNED32:
+            return sizeof(uint32_t);
+        case DataType::UNSIGNED64:
+            return sizeof(uint64_t);
+        case DataType::REAL32:
+            return sizeof(float);
+        case DataType::REAL64:
+            return sizeof(double);
+        case DataType::VISIBLE_STRING:
+            return sizeof(char);  // TODO: read string length
+        default:
+            return 0;
+    }
 }
