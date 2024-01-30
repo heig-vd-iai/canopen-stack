@@ -159,11 +159,12 @@ int32_t ObjectDictionnary::findObject(uint16_t index) {
 
 int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
     int32_t indexPos = findObject(index);
+    if (indexPos == -1) return -1;
     int32_t id = indexPos + subindex;
     if (objectIndexTable[id].first == index &&
         objectIndexTable[id].second == subindex)
         return id;
-    return -1;
+    return -2;
 }
 
 int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
@@ -244,10 +245,14 @@ bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
 struct Metadata ObjectDictionnary::getMetadata(uint16_t index,
                                                uint8_t subindex) {
     int32_t id = findObject(index, subindex);
-    if (id == -1) {
+    if (id < 0) {
         Metadata metadata;
         return metadata;
     }
+    return *objectMetadataTable[id];
+}
+
+struct Metadata ObjectDictionnary::getMetadata(int32_t id) {
     return *objectMetadataTable[id];
 }
 

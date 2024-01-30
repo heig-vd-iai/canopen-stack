@@ -51,9 +51,10 @@ class SDO {
     bool enabled = false;
     SDOServerStates serverState = SDOServerState_Ready;
     struct {
-        class Object *object;
+        int32_t odID;
         uint16_t index;
         uint8_t subindex;
+        uint16_t size;
         uint32_t remainingBytes;
         uint32_t timestamp_us;
         uint8_t toggle;
@@ -64,10 +65,7 @@ class SDO {
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
     } transferData;
-    struct {
-        uint8_t data[SDO_BUFFSIZE] = {0};
-        uint32_t offset = 0;
-    } buffer;
+    Data buffer;
 
     /**
      * Enable SDO functionality, should only be called internally by NMT class.

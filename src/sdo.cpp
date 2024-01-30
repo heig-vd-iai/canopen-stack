@@ -8,7 +8,6 @@
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
-//#include "object.hpp"
 #include "unions.hpp"
 using namespace CANopen;
 
@@ -36,55 +35,65 @@ void SDO::sendAbort(uint32_t abortCode) { sendAbort(0, 0, abortCode); }
 void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
-    //    Object *object = node._od.findObject(index);
-    Object *object = nullptr;  // TODO change
-    if (!object) {
+    int32_t id = node.od().findObject(index, subindex);
+    if (id == -1) {
         sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
         return;
     }
-//    if (!object->isSubValid(subindex)) {
-//        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
-//        return;
-//    }
-//    if (!object->getMetadata(subindex).bits.readable) {
-//        sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
-//        return;
-//    }
+    if (id == -2) {
+        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+        return;
+    }
+    if (node.od().getMetadata(id).access.bits.writeable) {
+        sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
+        return;
+    }
+    uint16_t size = node.od().getSize(id);
     transferData.index = index;
     transferData.subindex = subindex;
-    transferData.object = object;
-//    transferData.remainingBytes = object->getSize(subindex);
+    transferData.odID = id;
+    transferData.remainingBytes = size;
+    transferData.size = size;
     transferData.toggle = false;
-//    if (object->isRemote()) {
-//        object->requestUpdate(subindex);
-//        transferData.timestamp_us = timestamp_us;
-//        serverState = SDOServerState_Pending;
-//    } else
-//        uploadInitiateSend(timestamp_us);
+    //    if (object->isRemote()) {
+    //        object->requestUpdate(subindex);
+    //        transferData.timestamp_us = timestamp_us;
+    //        serverState = SDOServerState_Pending;
+    //    } else
+    //        uploadInitiateSend(timestamp_us);
+
+    // TODO: iniate send
 }
 
 void SDO::uploadInitiateSend(uint32_t timestamp_us) {
     SDOFrame response(node.nodeId);
     SDOCommandByte sendCommand = {0};
-//    int32_t size = transferData.object->getSize(transferData.subindex);
-//    if (size > SDO_INITIATE_DATA_LENGTH) {  // Segment transfer
-//        sendCommand.bits_initiate.e = false;
-//        sendCommand.bits_initiate.s = true;
-//        sendCommand.bits_initiate.n = false;
-//        response.setInitiateData(size);
-//    } else {  // Expedited transfer
-//        sendCommand.bits_initiate.e = true;
-//        sendCommand.bits_initiate.s = true;
-//        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
-//        uint32_t abortCode;
-//        if ((abortCode = transferData.object->readBytes(
-//                 transferData.subindex,
-//                 response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) !=
-//            SDOAbortCode_OK) {
-//            sendAbort(transferData.index, transferData.subindex, abortCode);
-//            return;
-//        }
-//    }
+       int16_t size = transferData.size;
+       if (size > SDO_INITIATE_DATA_LENGTH) {  // Segment transfer
+           sendCommand.bits_initiate.e = false;
+           sendCommand.bits_initiate.s = true;
+           sendCommand.bits_initiate.n = false;
+           response.setInitiateData(size);
+       } else {  // Expedited transfer
+           sendCommand.bits_initiate.e = true;
+           sendCommand.bits_initiate.s = true;
+           sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
+           uint32_t abortCode;
+        //    if ((abortCode = transferData.object->readBytes(
+        //             transferData.subindex,
+        //             response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) !=
+        //        SDOAbortCode_OK) {
+        //        sendAbort(transferData.index, transferData.subindex,
+        //        abortCode); return;
+        //    }
+            Data tmp;
+            node.od().readData(tmp, transferData.odID, abortCode);
+            memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &tmp.u8, size); //TODO: check if this is correct
+            if(abortCode != SDOAbortCode_OK) {
+                sendAbort(transferData.index, transferData.subindex, abortCode);
+                return;
+            }
+       }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
     response.setCommandByte(sendCommand.value);
     response.setIndex(transferData.index);
@@ -106,20 +115,22 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     uint32_t payloadSize = transferData.remainingBytes > SDO_SEGMENT_DATA_LENGTH
                                ? SDO_SEGMENT_DATA_LENGTH
                                : transferData.remainingBytes;
-//    uint32_t bytesSent = transferData.object->getSize(transferData.subindex) -
-//                         transferData.remainingBytes;
+    //    uint32_t bytesSent =
+    //    transferData.object->getSize(transferData.subindex) -
+    //                         transferData.remainingBytes;
     sendCommand.bits_segment.ccs = SDOCommandSpecifier_ServerUploadSegment;
     sendCommand.bits_segment.t = recvCommand.bits_segment.t;
     sendCommand.bits_segment.n = SDO_SEGMENT_DATA_LENGTH - payloadSize;
     sendCommand.bits_segment.c = !transferData.remainingBytes;
     SDOFrame response(node.nodeId, sendCommand.value);
     uint32_t abortCode;
-//    if ((abortCode = transferData.object->readBytes(
-//             transferData.subindex, response.data + SDO_SEGMENT_DATA_OFFSET,
-//             payloadSize, bytesSent)) != SDOAbortCode_OK) {
-//        sendAbort(transferData.index, transferData.subindex, abortCode);
-//        return;
-//    }
+    //    if ((abortCode = transferData.object->readBytes(
+    //             transferData.subindex, response.data +
+    //             SDO_SEGMENT_DATA_OFFSET, payloadSize, bytesSent)) !=
+    //             SDOAbortCode_OK) {
+    //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    //        return;
+    //    }
     transferData.remainingBytes -= payloadSize;
     node.sendFrame(response);
     if (sendCommand.bits_segment.c) serverState = SDOServerState_Ready;
@@ -131,41 +142,42 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
     //    Object *object = node._od.findObject(index);
-    Object *object = nullptr;  // TODO change
-    if (!object) {
-        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-        return;
-    }
-//    if (!object->isSubValid(subindex)) {
-//        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+//    Object *object = nullptr;  // TODO change
+//    if (!object) {
+//        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
 //        return;
 //    }
-//    if (!object->getMetadata(subindex).bits.writeable) {
-//        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-//        return;
-//    }
+    //    if (!object->isSubValid(subindex)) {
+    //        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+    //        return;
+    //    }
+    //    if (!object->getMetadata(subindex).bits.writeable) {
+    //        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
+    //        return;
+    //    }
     transferData.index = index;
     transferData.subindex = subindex;
-    transferData.object = object;
-//    uint32_t size = object->getSize(subindex);
+    // transferData.object = object;
+    //    uint32_t size = object->getSize(subindex);
     transferData.toggle = false;
     if (recvCommand.bits_initiate.e) {  // Expedited transfer
-//        transferData.remainingBytes =
-//            recvCommand.bits_initiate.s
-//                ? SDO_INITIATE_DATA_LENGTH - recvCommand.bits_initiate.n
-//                : size;
+                                        //        transferData.remainingBytes =
+        //            recvCommand.bits_initiate.s
+        //                ? SDO_INITIATE_DATA_LENGTH -
+        //                recvCommand.bits_initiate.n : size;
         if (transferData.remainingBytes > SDO_INITIATE_DATA_LENGTH) {
             sendAbort(index, subindex,
                       SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
             return;
         }
         uint32_t abortCode;
-//        if ((abortCode = object->writeBytes(
-//                 subindex, request.data + SDO_INITIATE_DATA_OFFSET,
-//                 transferData.remainingBytes, node)) != SDOAbortCode_OK) {
-//            sendAbort(index, subindex, abortCode);
-//            return;
-//        }
+        //        if ((abortCode = object->writeBytes(
+        //                 subindex, request.data + SDO_INITIATE_DATA_OFFSET,
+        //                 transferData.remainingBytes, node)) !=
+        //                 SDOAbortCode_OK) {
+        //            sendAbort(index, subindex, abortCode);
+        //            return;
+        //        }
     } else {  // Segment transfer
         if (!recvCommand.bits_initiate.s) {
             sendAbort(index, subindex,
@@ -173,11 +185,11 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
             return;
         }
         transferData.remainingBytes = request.getInitiateData();
-//        if (transferData.remainingBytes != size) {
-//            sendAbort(index, subindex,
-//                      SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
-//            return;
-//        }
+        //        if (transferData.remainingBytes != size) {
+        //            sendAbort(index, subindex,
+        //                      SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
+        //            return;
+        //        }
         bufferReset();
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerDownloadInitiate;
@@ -191,29 +203,29 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
 
 void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
     SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
-//    uint32_t size = transferData.object->getSize(transferData.subindex);
+    //    uint32_t size = transferData.object->getSize(transferData.subindex);
     uint32_t payloadSize = SDO_SEGMENT_DATA_LENGTH - recvCommand.bits_segment.n;
-//    uint32_t bytesReceived = size - transferData.remainingBytes;
+    //    uint32_t bytesReceived = size - transferData.remainingBytes;
     if (transferData.toggle != recvCommand.bits_segment.t) {
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_ToggleBitNotAlternated);
         return;
     }
     transferData.toggle = !recvCommand.bits_segment.t;
-//    if (bytesReceived + payloadSize > size) {
-//        sendAbort(transferData.index, transferData.subindex,
-//                  SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
-//        return;
-//    }
+    //    if (bytesReceived + payloadSize > size) {
+    //        sendAbort(transferData.index, transferData.subindex,
+    //                  SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
+    //        return;
+    //    }
     bufferAppend(request.data + SDO_SEGMENT_DATA_OFFSET, payloadSize);
     uint32_t abortCode;
-//    if (recvCommand.bits_segment.c &&
-//        (abortCode = transferData.object->writeBytes(
-//             transferData.subindex, buffer.data, size, node)) !=
-//            SDOAbortCode_OK) {
-//        sendAbort(transferData.index, transferData.subindex, abortCode);
-//        return;
-//    }
+    //    if (recvCommand.bits_segment.c &&
+    //        (abortCode = transferData.object->writeBytes(
+    //             transferData.subindex, buffer.data, size, node)) !=
+    //            SDOAbortCode_OK) {
+    //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    //        return;
+    //    }
     transferData.remainingBytes -= payloadSize;
     sendCommand.bits_segment.ccs = SDOCommandSpecifier_ServerDownloadSegment;
     sendCommand.bits_segment.t = recvCommand.bits_segment.t;
@@ -230,33 +242,34 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
             uint16_t index = request.getIndex();
             uint8_t subindex = request.getSubindex();
             //        Object *object = node._od.findObject(index);
-            Object *object = nullptr;  // TODO change
-            if (!object) {
-                sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-                return;
-            }
-//            if (!object->isSubValid(subindex)) {
-//                sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+            // Object *object = nullptr;  // TODO change
+//            if (!object) {
+//                sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
 //                return;
 //            }
-//            if (!object->getMetadata(subindex).bits.readable) {
-//                sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
-//                return;
-//            }
+            //            if (!object->isSubValid(subindex)) {
+            //                sendAbort(index, subindex,
+            //                SDOAbortCode_SubindexNonExistent); return;
+            //            }
+            //            if (!object->getMetadata(subindex).bits.readable) {
+            //                sendAbort(index, subindex,
+            //                SDOAbortCode_AttemptReadOnWriteOnly); return;
+            //            }
             transferData.index = index;
             transferData.subindex = subindex;
-            transferData.object = object;
-//            transferData.remainingBytes = transferData.lastBlockRemainingBytes =
-//                object->getSize(subindex);
+            // transferData.object = object;
+            //            transferData.remainingBytes =
+            //            transferData.lastBlockRemainingBytes =
+            //                object->getSize(subindex);
             transferData.blksize = request.getInitiateBlockSize();
             transferData.seqno = SDO_BLOCK_SEQNO_MIN;
-//            if (object->isRemote()) {
-//                object->requestUpdate(subindex);
-//                transferData.timestamp_us = timestamp_us;
-//                serverState = SDOServerState_BlockPending;
-//            } else
-//                blockUploadInitiateSend(timestamp_us);
-//            break;
+            //            if (object->isRemote()) {
+            //                object->requestUpdate(subindex);
+            //                transferData.timestamp_us = timestamp_us;
+            //                serverState = SDOServerState_BlockPending;
+            //            } else
+            //                blockUploadInitiateSend(timestamp_us);
+            //            break;
         }
         case SDOSubCommand_ClientUploadStart: {
             serverState = SDOServerState_BlockUploading;
@@ -279,7 +292,7 @@ void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {
     SDOBlockFrame response(node.nodeId, sendCommand.value);
     response.setIndex(transferData.index);
     response.setSubindex(transferData.subindex);
-//    response.setSize(transferData.object->getSize(transferData.subindex));
+    //    response.setSize(transferData.object->getSize(transferData.subindex));
     node.sendFrame(response);
     serverState = SDOServerState_Ready;
     transferData.timestamp_us = timestamp_us;
@@ -347,16 +360,17 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
         payloadSize = transferData.remainingBytes;
         cmd.bits_upServerSub.c = true;
     }
-//    uint32_t bytesSent = transferData.object->getSize(transferData.subindex) -
-//                         transferData.remainingBytes;
+    //    uint32_t bytesSent =
+    //    transferData.object->getSize(transferData.subindex) -
+    //                         transferData.remainingBytes;
     SDOBlockFrame frame(node.nodeId, cmd.value);
     uint32_t abortCode;
-//    if ((abortCode = transferData.object->readBytes(
-//             transferData.subindex, frame.data + SDO_BLOCK_DATA_OFFSET,
-//             payloadSize, bytesSent)) != SDOAbortCode_OK) {
-//        sendAbort(transferData.index, transferData.subindex, abortCode);
-//        return;
-//    }
+    //    if ((abortCode = transferData.object->readBytes(
+    //             transferData.subindex, frame.data + SDO_BLOCK_DATA_OFFSET,
+    //             payloadSize, bytesSent)) != SDOAbortCode_OK) {
+    //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    //        return;
+    //    }
     transferData.remainingBytes -= payloadSize;
     node.sendFrame(frame);
     transferData.timestamp_us = timestamp_us;
@@ -373,29 +387,31 @@ void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
     //    Object *object = node._od.findObject(index);
-    Object *object = nullptr;  // TODO change
-    if (!object) {
-        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-        return;
-    }
-//    if (!object->isSubValid(subindex)) {
-//        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+    // Object *object = nullptr;  // TODO change
+//    if (!object) {
+//        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
 //        return;
 //    }
-//    if (!object->getMetadata(subindex).bits.writeable) {
-//        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-//        return;
-//    }
-//    uint32_t size = object->getSize(subindex);
-//    if (recvCommand.bits_downClientInitiate.s && size != request.getSize()) {
-//        sendAbort(index, subindex,
-//                  SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
-//        return;
-//    }
+    //    if (!object->isSubValid(subindex)) {
+    //        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+    //        return;
+    //    }
+    //    if (!object->getMetadata(subindex).bits.writeable) {
+    //        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
+    //        return;
+    //    }
+    //    uint32_t size = object->getSize(subindex);
+    //    if (recvCommand.bits_downClientInitiate.s && size !=
+    //    request.getSize()) {
+    //        sendAbort(index, subindex,
+    //                  SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
+    //        return;
+    //    }
     transferData.index = index;
     transferData.subindex = subindex;
-    transferData.object = object;
-//    transferData.remainingBytes = transferData.lastBlockRemainingBytes = size;
+    // transferData.object = object;
+    //    transferData.remainingBytes = transferData.lastBlockRemainingBytes =
+    //    size;
     transferData.blksize = SDO_BLOCK_SEQNO_MAX;
     transferData.seqno = transferData.ackseq = 0;
     transferData.retries = 0;
@@ -443,13 +459,14 @@ void SDO::blockDownloadEnd(class SDOBlockFrame &request,
         return;
     }
     uint32_t abortCode;
-//    if ((abortCode = transferData.object->writeBytes(
-//             transferData.subindex, buffer.data,
-//             transferData.object->getSize(transferData.subindex), node)) !=
-//        SDOAbortCode_OK) {
-//        sendAbort(transferData.index, transferData.subindex, abortCode);
-//        return;
-//    }
+    //    if ((abortCode = transferData.object->writeBytes(
+    //             transferData.subindex, buffer.data,
+    //             transferData.object->getSize(transferData.subindex), node))
+    //             !=
+    //        SDOAbortCode_OK) {
+    //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    //        return;
+    //    }
     sendCommand.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
     sendCommand.bits_downServer.ss = SDOSubCommand_ServerDownloadEnd;
     SDOBlockFrame frame(node.nodeId, sendCommand.value);
@@ -561,14 +578,14 @@ void SDO::update(uint32_t timestamp_us) {
 }
 
 void SDO::bufferReset() {
-    memset(buffer.data, 0, sizeof(buffer.data));
-    buffer.offset = 0;
+    // memset(buffer.data, 0, sizeof(buffer.data));
+    // buffer.offset = 0;
 }
 
 void SDO::bufferAppend(uint8_t *data, uint32_t size) {
-    uint32_t availableSize = sizeof(buffer.data) - buffer.offset;
-    uint32_t transferSize = size < availableSize ? size : availableSize;
-    if (!transferSize) return;
-    memcpy(buffer.data + buffer.offset, data, transferSize);
-    buffer.offset += transferSize;
+    // uint32_t availableSize = sizeof(buffer.data) - buffer.offset;
+    // uint32_t transferSize = size < availableSize ? size : availableSize;
+    // if (!transferSize) return;
+    // memcpy(buffer.data + buffer.offset, data, transferSize);
+    // buffer.offset += transferSize;
 }

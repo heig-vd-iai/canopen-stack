@@ -18,7 +18,7 @@ namespace CANopen {
 struct Frame {
     uint8_t nodeId = 0;
     uint8_t functionCode = 0;
-    uint8_t data[CAN_DATA_LENGTH] = {0};
+    uint8_t data[CAN_DATA_LENGTH] = {0}; //TODO: change to Data type ?
     uint8_t dlc = 0;   // Data length
     bool rtr = false;  // Remote transmission request
 
