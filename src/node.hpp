@@ -7,7 +7,6 @@
 #include "emergency.hpp"
 #include "heartbeat.hpp"
 #include "nmt.hpp"
-//#include "object.hpp"  //TODO: remove this include
 #include "od.hpp"
 #include "pdo.hpp"
 #include "sdo.hpp"
