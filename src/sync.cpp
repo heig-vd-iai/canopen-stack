@@ -3,7 +3,7 @@
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
-#include "objects/object_1019.hpp"
+//#include "objects/object_1019.hpp"
 using namespace CANopen;
 
 SYNC::SYNC() {
@@ -12,7 +12,7 @@ SYNC::SYNC() {
     node._od.at(OD_OBJECT_1019)->getValue(0, &tmp);
     maxCounter = tmp < X1019_MIN_COUNTER ? X1019_MAX_COUNTER : tmp;
 #else
-    maxCounter = X1019_MAX_COUNTER;
+//    maxCounter = X1019_MAX_COUNTER;
 #endif
 }
 

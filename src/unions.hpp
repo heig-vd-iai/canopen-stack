@@ -13,6 +13,7 @@ namespace CANopen {
 union Access {
     uint8_t value;
     struct {
+        uint8_t dummy : 5;  
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;

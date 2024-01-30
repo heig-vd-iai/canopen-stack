@@ -9,6 +9,7 @@
 
 namespace CANopen {
 
+#pragma pack(push, 1)
 struct Metadata {
     Access access;
     DataType dataType;
@@ -23,11 +24,11 @@ struct Metadatabool : public Metadata {
     }
 };
 
-struct Metadatauint8_t : public Metadata {
+struct Metadata_uint8_t : public Metadata {
     uint8_t defaultValue;
     uint8_t min;
     uint8_t max;
-    Metadatauint8_t(AccessType access, uint8_t defaultValue, uint8_t min,
+    Metadata_uint8_t(AccessType access, uint8_t defaultValue, uint8_t min,
                     uint8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -37,11 +38,11 @@ struct Metadatauint8_t : public Metadata {
     }
 };
 
-struct Metadatauint16_t : public Metadata {
+struct Metadata_uint16_t : public Metadata {
     uint16_t defaultValue;
     uint16_t min;
     uint16_t max;
-    Metadatauint16_t(AccessType access, uint16_t defaultValue, uint16_t min,
+    Metadata_uint16_t(AccessType access, uint16_t defaultValue, uint16_t min,
                      uint16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -51,11 +52,11 @@ struct Metadatauint16_t : public Metadata {
     }
 };
 
-struct Metadatauint32_t : public Metadata {
+struct Metadata_uint32_t : public Metadata {
     uint32_t defaultValue;
     uint32_t min;
     uint32_t max;
-    Metadatauint32_t(AccessType access, uint32_t defaultValue, uint32_t min,
+    Metadata_uint32_t(AccessType access, uint32_t defaultValue, uint32_t min,
                      uint32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -65,11 +66,11 @@ struct Metadatauint32_t : public Metadata {
     }
 };
 
-struct Metadatauint64_t : public Metadata {
+struct Metadata_uint64_t : public Metadata {
     uint64_t defaultValue;
     uint64_t min;
     uint64_t max;
-    Metadatauint64_t(AccessType access, uint64_t defaultValue, uint64_t min,
+    Metadata_uint64_t(AccessType access, uint64_t defaultValue, uint64_t min,
                      uint64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -79,11 +80,11 @@ struct Metadatauint64_t : public Metadata {
     }
 };
 
-struct Metadataint8_t : public Metadata {
+struct Metadata_int8_t : public Metadata {
     int8_t defaultValue;
     int8_t min;
     int8_t max;
-    Metadataint8_t(AccessType access, int8_t defaultValue, int8_t min,
+    Metadata_int8_t(AccessType access, int8_t defaultValue, int8_t min,
                    int8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -93,11 +94,11 @@ struct Metadataint8_t : public Metadata {
     }
 };
 
-struct Metadataint16_t : public Metadata {
+struct Metadata_int16_t : public Metadata {
     int16_t defaultValue;
     int16_t min;
     int16_t max;
-    Metadataint16_t(AccessType access, int16_t defaultValue, int16_t min,
+    Metadata_int16_t(AccessType access, int16_t defaultValue, int16_t min,
                     int16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -107,11 +108,11 @@ struct Metadataint16_t : public Metadata {
     }
 };
 
-struct Metadataint32_t : public Metadata {
+struct Metadata_int32_t : public Metadata {
     int32_t defaultValue;
     int32_t min;
     int32_t max;
-    Metadataint32_t(AccessType access, int32_t defaultValue, int32_t min,
+    Metadata_int32_t(AccessType access, int32_t defaultValue, int32_t min,
                     int32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -121,11 +122,11 @@ struct Metadataint32_t : public Metadata {
     }
 };
 
-struct Metadataint64_t : public Metadata {
+struct Metadata_int64_t : public Metadata {
     int64_t defaultValue;
     int64_t min;
     int64_t max;
-    Metadataint64_t(AccessType access, int64_t defaultValue, int64_t min,
+    Metadata_int64_t(AccessType access, int64_t defaultValue, int64_t min,
                     int64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -135,11 +136,11 @@ struct Metadataint64_t : public Metadata {
     }
 };
 
-struct Metadatafloat : public Metadata {
+struct Metadata_float : public Metadata {
     float defaultValue;
     float min;
     float max;
-    Metadatafloat(AccessType access, float defaultValue, float min, float max) {
+    Metadata_float(AccessType access, float defaultValue, float min, float max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -148,11 +149,11 @@ struct Metadatafloat : public Metadata {
     }
 };
 
-struct Metadatadouble : public Metadata {
+struct Metadata_double : public Metadata {
     double defaultValue;
     double min;
     double max;
-    Metadatadouble(AccessType access, double defaultValue, double min,
+    Metadata_double(AccessType access, double defaultValue, double min,
                    double max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -162,14 +163,15 @@ struct Metadatadouble : public Metadata {
     }
 };
 
-struct Metadatachar : public Metadata {
+struct Metadata_char : public Metadata {
     char *defaultValue;
-    Metadatachar(AccessType access, char *defaultValue) {
+    Metadata_char(AccessType access, char *defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
         this->dataType = DataType::VISIBLE_STRING;
     }
 };
+#pragma pack(pop)
 
 class IObjectDictionnary {
    public:

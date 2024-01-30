@@ -34,9 +34,54 @@
 
 using namespace CANopen;
 
-int8_t getLocalData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_bool(Data &data, uint32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_bool(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_int8_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_int8_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_int16_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_int16_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_int32_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_int32_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_int64_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_int64_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_uint8_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_uint8_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_uint16_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_uint16_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_uint32_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_uint32_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_uint64_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_uint64_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_float(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_float(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_double(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_double(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t getLocalData_char(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
+int8_t setLocalData_char(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+
 
 {% for object in objects %}
 {% for subobject in object.entries %}
@@ -51,7 +96,7 @@ int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Da
 
 {% for object in objects %}
 {% for subobject in object.entries %}
-const Metadata{{subobject.ctype_name}} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata({{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if subobject.type_value != 0x09 and subobject.type_value != 0x11 %}, {{subobject.value_min}}, {{subobject.value_max}}{% endif %});
+const Metadata_{{subobject.ctype_name}} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata({{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if subobject.type_value != 0x09 and subobject.type_value != 0x11 %}, {{subobject.value_min}}, {{subobject.value_max}}{% endif %});
 {% endfor %}
 {% endfor %}
 
@@ -88,7 +133,7 @@ public:
         {% if subobject.getter != "getLocalData" %}
         &get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
         {% else %}
-        &getLocalData,
+        &getLocalData_{{subobject.ctype_name}},
         {% endif %}
         {% endfor %}
         {% endfor %}
@@ -101,7 +146,7 @@ public:
         {% if subobject.setter != "setLocalData" %}
         &set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
         {% else %}
-        &setLocalData,
+        &setLocalData_{{subobject.ctype_name}},
         {% endif %}
         {% endfor %}
         {% endfor %}

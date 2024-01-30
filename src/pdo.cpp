@@ -342,9 +342,9 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
     for (unsigned i = 0; i < rpdo->count; i++) {
         Object *object = rpdo->mappedEntries[i].object;
         uint8_t subindex = rpdo->mappedEntries[i].subindex;
-        uint32_t size = object->getSize(subindex);
-        object->writeBytes(subindex, buffer + bytesTransferred, size, node);
-        bytesTransferred += size;
+//        uint32_t size = object->getSize(subindex);
+//        object->writeBytes(subindex, buffer + bytesTransferred, size, node);
+//        bytesTransferred += size;
     }
     rpdo->timestamp_us = timestamp_us;
     rpdo->watchTimeoutFlag = true;

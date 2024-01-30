@@ -1,7 +1,7 @@
 /**
  * Contains the definitions of the Object class.
  */
-#include "object.hpp"
+//#include "object.hpp"
 
 #include <cstring>
 

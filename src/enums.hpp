@@ -217,17 +217,17 @@ enum AccessType {
 };
 
 enum DataType {
-    BOOL,
-    INTEGER8,
-    INTEGER16,
-    INTEGER32,
-    INTEGER64,
-    UNSIGNED8,
-    UNSIGNED16,
-    UNSIGNED32,
-    UNSIGNED64,
-    REAL32,
-    REAL64,
-    VISIBLE_STRING,
+    BOOL = 0x01,
+    INTEGER8 = 0x02,
+    INTEGER16 = 0x03,
+    INTEGER32 = 0x04,
+    INTEGER64 = 0x15,
+    UNSIGNED8 = 0x05,
+    UNSIGNED16 = 0x06,
+    UNSIGNED32 = 0x07,
+    UNSIGNED64 = 0x1B,
+    REAL32 = 0x08,
+    REAL64 = 0x11,
+    VISIBLE_STRING = 0x09,
     ARRAY
 };

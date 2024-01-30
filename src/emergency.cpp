@@ -5,8 +5,8 @@
 
 #include "frame.hpp"
 #include "node.hpp"
-#include "objects/object_1001.hpp"
-#include "objects/object_1003.hpp"
+//#include "objects/object_1001.hpp"
+//#include "objects/object_1003.hpp"
 using namespace CANopen;
 
 EMCY::EMCY() {
@@ -19,9 +19,9 @@ void EMCY::enable() { enabled = true; }
 void EMCY::disable() { enabled = false; }
 
 void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
-    EmergencyFrame frame(node.nodeId, errorCode,
-                         errorRegisterObject->getValue(), manufacturerCode);
-    node.sendFrame(frame);
+//    EmergencyFrame frame(node.nodeId, errorCode,
+//                         errorRegisterObject->getValue(), manufacturerCode);
+//    node.sendFrame(frame);
 }
 
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
@@ -43,24 +43,24 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
         case EMCYErrorCode_Protocol_SyncDataLength:
         case EMCYErrorCode_Protocol_RPDOTimeout:
         case EMCYErrorCode_ExternalError:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Generic);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Generic);
             break;
         case EMCYErrorCode_Current:
         case EMCYErrorCode_Current_InputSide:
         case EMCYErrorCode_Current_InsideDevice:
         case EMCYErrorCode_Current_OutputSide:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Current);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Current);
             break;
         case EMCYErrorCode_Voltage:
         case EMCYErrorCode_Voltage_Main:
         case EMCYErrorCode_Voltage_InsideDevice:
         case EMCYErrorCode_Voltage_Output:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Voltage);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Voltage);
             break;
         case EMCYErrorCode_Temperature:
         case EMCYErrorCode_Temperature_Ambient:
         case EMCYErrorCode_Temperature_Device:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Temperature);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Temperature);
             break;
         case EMCYErrorCode_Communication:
         case EMCYErrorCode_Communication_CANOverrun:
@@ -68,17 +68,17 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
         case EMCYErrorCode_Communication_HeartbeatError:
         case EMCYErrorCode_Communication_RecoveredBusOFF:
         case EMCYErrorCode_Communication_CANIDCollision:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Communication);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Communication);
 #ifdef OD_OBJECT_1029
             node._od.at(OD_OBJECT_1029)
                 ->getValue(X1029_SUB_COMMUNICATION, &behaviour);
 #endif
             break;
         case EMCYErrorCode_DeviceSpecific:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_DeviceProfile);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_DeviceProfile);
             break;
         case EMCYErrorCode_AdditionalFunctions:
-            errorRegisterObject->setErrorBit(ErrorRegisterBit_Manufacturer);
+//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Manufacturer);
             break;
         default:
             break;
@@ -106,13 +106,13 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
 }
 
 void EMCY::clearErrorBit(unsigned bit) {
-    bool tmp = errorRegisterObject->isErrorfree();
-    errorRegisterObject->clearErrorBit(bit);
-    if (errorRegisterObject->isErrorfree() && !tmp)
-        sendError(EMCYErrorCode_Reset, 0);
+//    bool tmp = errorRegisterObject->isErrorfree();
+//    errorRegisterObject->clearErrorBit(bit);
+//    if (errorRegisterObject->isErrorfree() && !tmp)
+//        sendError(EMCYErrorCode_Reset, 0);
 }
 
-uint8_t EMCY::getErrorRegister() { return errorRegisterObject->getValue(); }
+//uint8_t EMCY::getErrorRegister() { return errorRegisterObject->getValue(); }
 
 void EMCY::clearHistory() {
 #ifdef OD_OBJECT_1003
@@ -120,4 +120,4 @@ void EMCY::clearHistory() {
 #endif
 }
 
-void EMCY::reset() { errorRegisterObject->reset(); }
+//void EMCY::reset() { errorRegisterObject->reset(); }

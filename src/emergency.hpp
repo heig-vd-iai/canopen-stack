@@ -22,7 +22,7 @@ class EMCY {
    private:
     bool enabled = false;
     bool errorFree = true;
-    class Object1001 *errorRegisterObject;
+    // class Object1001 *errorRegisterObject;
 
     /**
      * Enable EMCY functionality, should only be called internally by NMT class.
