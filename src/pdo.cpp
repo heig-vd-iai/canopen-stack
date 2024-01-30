@@ -60,8 +60,8 @@ int8_t MapParameter::setData(Data data, uint32_t id, SDOAbortCodes &abortCode) {
             uint32_t sizeSum = 0;
             for (unsigned i = 0; i < value; i++) {
                 PDOMapEntry entry = {getMappedValue(i)};
-                sizeSum += node.od().getSize(entry.bits.index,
-                                              entry.bits.subindex);
+                sizeSum +=
+                    node.od().getSize(entry.bits.index, entry.bits.subindex);
             }
             if (sizeSum > PDO_DLC) {
                 abortCode = SDOAbortCodes::SDOAbortCode_MappedPDOLengthExceeded;
@@ -261,40 +261,30 @@ void PDO::enable() { enabled = true; }
 void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index) {
-    //    tpdos[index].commObject =
-    //        (Object1800 *)node._od.findObject(TPDO_COMMUNICATION_INDEX +
-    //        index);
-    //    tpdos[index].mapObject =
-    //        (Object1A00 *)node._od.findObject(TPDO_MAPPING_INDEX + index);
-    //        //TODO: add parameter
+    tpdos[index].commParameter =
+        CommParameter(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
-    //    rpdos[index].commObject =
-    //        (Object1400 *)node._od.findObject(RPDO_COMMUNICATION_INDEX +
-    //        index);
-    //    rpdos[index].mapObject =
-    //        (Object1600 *)node._od.findObject(RPDO_MAPPING_INDEX + index);
-    //        //TODO: add parameter
+    rpdos[index].commParameter =
+        CommParameter(RPDO_COMMUNICATION_INDEX + index);
+    rpdos[index].mapParameter = MapParameter(RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
 
 void PDO::remapTPDO(unsigned index) {
     TPDO *tpdo = tpdos + index;
-    //    unsigned count = tpdo->mapObject->getCount();
-    unsigned count = 0;   // TODO: pdo
-    PDOMapEntry content;  // TODO change
+    unsigned count = tpdo->mapParameter.getCount();
     uint32_t sizeSum = tpdo->size = tpdo->count = 0;
     for (unsigned i = 0; i < count; i++) {
-        //        PDOMapEntry content = {tpdo->mapObject->getMappedValue(i)};
-        PDOMapEntry content;  // TODO pdo
-        //        Object *object = node._od.findObject(content.bits.index);
-        Object *object = nullptr;  // TODO change to id
-        //        sizeSum += object->getSize(content.bits.subindex);
+        PDOMapEntry content = {tpdo->mapParameter.getMappedValue(i)};
+        int32_t id =
+            node.od().findObject(content.bits.index, content.bits.subindex);
+        sizeSum += node.od().getSize(id);
         if (sizeSum > PDO_DLC) break;
-        tpdo->mappedEntries[i].object = object;
-        tpdo->mappedEntries[i].subindex = content.bits.subindex;
+        tpdo->mappedEntries[i] = id;
         tpdo->size = sizeSum;
         tpdo->count++;
     }
@@ -302,18 +292,15 @@ void PDO::remapTPDO(unsigned index) {
 
 void PDO::remapRPDO(unsigned index) {
     RPDO *rpdo = rpdos + index;
-    //    unsigned count = rpdo->mapObject->getCount(); //TODO: pdo
-    unsigned count = 0;  // TODO: change
+    unsigned count = rpdo->mapParameter.getCount();
     uint32_t sizeSum = rpdo->size = rpdo->count = 0;
     for (unsigned i = 0; i < count; i++) {
-        //        PDOMapEntry content = {rpdo->mapObject->getMappedValue(i)};
-        PDOMapEntry content;  // TODO: change
-        //        Object *object = node._od.findObject(content.bits.index);
-        Object *object = nullptr;  // TODO change
-        //        sizeSum += object->getSize(content.bits.subindex);
+        PDOMapEntry content = {rpdo->mapParameter.getMappedValue(i)};
+        int32_t id =
+            node.od().findObject(content.bits.index, content.bits.subindex);
+        sizeSum += node.od().getSize(id);
         if (sizeSum > PDO_DLC) break;
-        rpdo->mappedEntries[i].object = object;
-        rpdo->mappedEntries[i].subindex = content.bits.subindex;
+        rpdo->mappedEntries[i] = id;
         rpdo->size = sizeSum;
         rpdo->count++;
     }
@@ -323,28 +310,29 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
     TPDO *tpdo = tpdos + index;
     uint32_t bytesTransferred = 0;
     for (unsigned i = 0; i < tpdo->count; i++) {
-        Object *object = tpdo->mappedEntries[i].object;
-        uint8_t subindex = tpdo->mappedEntries[i].subindex;
-        //        uint32_t size = object->getSize(subindex);
-        uint32_t size = 0;  // TODO: change
+        int32_t id = tpdo->mappedEntries[i];
+        uint32_t size = node.od().getSize(id);
         if (bytesTransferred + size > PDO_DLC) break;
-        //        object->readBytes(subindex, buffer + bytesTransferred, size,
-        //        0);
+        Data tmp;
+        int8_t result = node.od().readData(tmp, id);  // TODO: wait remote data
+        // TODO: add data to buffer
         bytesTransferred += size;
     }
 }
 
 void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
     RPDO *rpdo = rpdos + index;
-    //    if (!enabled || !rpdo->commObject->isEnabled() || rpdo->count == 0)
-    //        return; //TODO: pdo
+    if (!enabled || !rpdo->commParameter.isEnabled() || rpdo->count == 0)
+        return;
     uint32_t bytesTransferred = 0;
     for (unsigned i = 0; i < rpdo->count; i++) {
-        Object *object = rpdo->mappedEntries[i].object;
-        uint8_t subindex = rpdo->mappedEntries[i].subindex;
-//        uint32_t size = object->getSize(subindex);
-//        object->writeBytes(subindex, buffer + bytesTransferred, size, node);
-//        bytesTransferred += size;
+        int32_t id = rpdo->mappedEntries[i];
+        uint32_t size = node.od().getSize(id);
+        Data tmp;
+        tmp.u64 =
+            *(buffer + bytesTransferred + size);  // TODO: check if it is right
+        int8_t result = node.od().writeData(tmp, id);  // TODO: wait remote data
+        bytesTransferred += size;
     }
     rpdo->timestamp_us = timestamp_us;
     rpdo->watchTimeoutFlag = true;
@@ -352,14 +340,14 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
 
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us) {
     TPDO *tpdo = tpdos + index;
-    //    if (!enabled || !tpdo->commObject->isEnabled() || tpdo->count == 0)
-    //        return; //Todo: pdo
-    //    Frame frame = Frame::fromCobId(tpdo->commObject->getActualCobId());
-    //    frame.dlc = tpdo->size;
-    //    bufferizeTPDO(index, frame.data);
-    //    tpdo->syncFlag = false;
-    //    node.sendFrame(frame);
-    //    tpdo->timestamp_us = timestamp_us; //TODO : pdo
+    if (!enabled || !tpdo->commParameter.isEnabled() || tpdo->count == 0)
+        return;
+    Frame frame = Frame::fromCobId(tpdo->commParameter.getActualCobId());
+    frame.dlc = tpdo->size;
+    bufferizeTPDO(index, frame.data);
+    tpdo->syncFlag = false;
+    node.sendFrame(frame);
+    tpdo->timestamp_us = timestamp_us;
 }
 
 void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us) {
@@ -382,11 +370,11 @@ void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us) {
             return;
     }
     TPDO *tpdo = tpdos + index;
-    //    uint8_t transmission = tpdo->commObject->getTransmissionType();
-    //    if (transmission == X1800_RTR_SYNC)
-    //        tpdo->syncFlag = true;
-    //    else if (transmission == X1800_RTR_EVENT)
-    //        sendTPDO(index, timestamp_us); //TODO: pdo
+    uint8_t transmission = tpdo->commParameter.getTransmissionType();
+    if (transmission == RTR_SYNC)
+        tpdo->syncFlag = true;
+    else if (transmission == RTR_EVENT)
+        sendTPDO(index, timestamp_us);
 }
 
 void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us) {
@@ -410,14 +398,12 @@ void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us) {
     }
     RPDO *rpdo = rpdos + index;
     if (rpdo->size != frame.dlc) return;
-    //    uint8_t transmission = rpdo->commObject->getTransmissionType();
-    //    if (transmission <= X1400_SYNC_MAX)
-    //    {
-    //        memcpy(rpdo->buffer, frame.data, frame.dlc);
-    //        rpdo->syncFlag = true;
-    //    }
-    //    else
-    //        unpackRPDO(index, frame.data, timestamp_us); //TODO: pdo
+    uint8_t transmission = rpdo->commParameter.getTransmissionType();
+    if (transmission <= SYNC_MAX) {
+        memcpy(rpdo->buffer, frame.data, frame.dlc);
+        rpdo->syncFlag = true;
+    } else
+        unpackRPDO(index, frame.data, timestamp_us);
     if (onReceiveFunc) onReceiveFunc(index + 1);
 }
 
@@ -425,26 +411,23 @@ void PDO::update(uint32_t timestamp_us) {
     if (!enabled) return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) {
         TPDO *tpdo = tpdos + i;
-        //        uint8_t transmission =
-        //        tpdo->commObject->getTransmissionType(); if ((transmission !=
-        //        X1800_EVENT1 && transmission != X1800_EVENT2) ||
-        //        !tpdo->commObject->isTimerSupported())
-        //            continue;
-        //        uint32_t timer_us = tpdo->commObject->getEventTimer_us();
-        //        if (timer_us == 0 || timestamp_us - tpdo->timestamp_us <
-        //        timer_us)
-        //            continue; //TODO: pdo
+        uint8_t transmission = tpdo->commParameter.getTransmissionType();
+        if ((transmission != EVENT1 && transmission != EVENT2) ||
+            !tpdo->commParameter.isTimerSupported())
+            continue;
+        uint32_t timer_us = tpdo->commParameter.getEventTimer_us();
+        if (timer_us == 0 || timestamp_us - tpdo->timestamp_us < timer_us)
+            continue;
         // Only event-driven PDOs can be sent periodically
         sendTPDO(i, timestamp_us);
     }
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) {
         RPDO *rpdo = rpdos + i;
-        //        if (!rpdo->commObject->isTimerSupported())
-        //            continue;
-        //        uint32_t timer_us = rpdo->commObject->getEventTimer_us();
-        //        if (!rpdo->watchTimeoutFlag || timer_us == 0 || timestamp_us -
-        //        rpdo->timestamp_us < timer_us)
-        //            continue; //TODO: pdo
+        if (!rpdo->commParameter.isTimerSupported()) continue;
+        uint32_t timer_us = rpdo->commParameter.getEventTimer_us();
+        if (!rpdo->watchTimeoutFlag || timer_us == 0 ||
+            timestamp_us - rpdo->timestamp_us < timer_us)
+            continue;
         rpdo->watchTimeoutFlag = false;
         if (onTimeoutFunc) onTimeoutFunc(i + 1);
     }
@@ -454,15 +437,13 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
     if (!enabled) return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) {
         TPDO *tpdo = tpdos + i;
-        //        if (!tpdo->commObject->isSynchronous())
-        //            continue;
-        //        uint8_t transmission =
-        //        tpdo->commObject->getTransmissionType();
-        //        // synchronous acyclic || synchronous cyclic || RTR
-        //        synchronous bool send = transmission == 0 || (transmission <=
-        //        X1800_SYNC_MAX && (counter && !(counter % transmission))) ||
-        //        (transmission == X1800_RTR_SYNC && tpdo->syncFlag);
-        bool send = false;  // TODO: pdo
+        if (!tpdo->commParameter.isSynchronous()) continue;
+        uint8_t transmission = tpdo->commParameter.getTransmissionType();
+        // synchronous acyclic || synchronous cyclic || RTR synchronous
+        bool send = transmission == 0 ||
+                    (transmission <= SYNC_MAX &&
+                     (counter && !(counter % transmission))) ||
+                    (transmission == RTR_SYNC && tpdo->syncFlag);
         if (send) {
             uint32_t syncWindow = getSyncWindow_us();
             if (syncWindow != 0 &&
@@ -473,8 +454,8 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
     }
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) {
         RPDO *rpdo = rpdos + i;
-        //        if (!rpdo->commObject->isSynchronous() || !rpdo->syncFlag)
-        //            continue; //TODO: pdo
+               if (!rpdo->commParameter.isSynchronous() || !rpdo->syncFlag)
+                   continue;
         unpackRPDO(i, rpdo->buffer, timestamp_us);
         rpdo->syncFlag = false;
     }
@@ -482,31 +463,33 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
 
 uint32_t PDO::getSyncWindow_us() {
     uint32_t value = 0;
-#ifdef OD_OBJECT_1007
-    node._od.at(OD_OBJECT_1007)->getValue(0, &value);
-#endif
-    return value;
+    Data tmp;
+    if(node.od().isSubValid(0x1007, 0x00)) {
+        node.od().readData(tmp, 0x1007, 0x00);
+        value = tmp.u32;
+    };
+    return value * 1000;
 }
 
 void PDO::transmitTPDO(unsigned index) {
     if (!enabled || index >= OD_TPDO_COUNT) return;
     TPDO *tpdo = tpdos + index;
-    //    uint8_t transmission = tpdo->commObject->getTransmissionType();
-    //    if (transmission == X1800_ACYCLIC)
-    //    {
-    //        tpdo->syncFlag = true;
-    //    }
-    //    else if (transmission >= X1800_EVENT1)
-    //    {
-    //        uint32_t timestamp_us = node.getTime_us();
-    //        bool supported = tpdo->commObject->isInhibitSupported();
-    //        if (!supported || (supported &&
-    //        (tpdo->commObject->getInhibitTime_us() == 0 || timestamp_us -
-    //        tpdo->timestamp_us >= tpdo->commObject->getInhibitTime_us())))
-    //        {
-    //            sendTPDO(index, timestamp_us);
-    //        }
-    //    } //TODO: pdo
+       uint8_t transmission = tpdo->commParameter.getTransmissionType();
+       if (transmission == ACYCLIC)
+       {
+           tpdo->syncFlag = true;
+       }
+       else if (transmission >= EVENT1)
+       {
+           uint32_t timestamp_us = node.getTime_us();
+           bool supported = tpdo->commParameter.isInhibitSupported();
+           if (!supported || (supported &&
+           (tpdo->commParameter.getInhibitTime_us() == 0 || timestamp_us -
+           tpdo->timestamp_us >= tpdo->commParameter.getInhibitTime_us())))
+           {
+               sendTPDO(index, timestamp_us);
+           }
+       }
 }
 
 void PDO::reloadTPDO() {

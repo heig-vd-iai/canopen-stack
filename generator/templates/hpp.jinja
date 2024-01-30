@@ -34,62 +34,62 @@
 
 using namespace CANopen;
 
-int8_t getLocalData_bool(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_bool(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_int8_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_int8_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_int16_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_int16_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_int32_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_int32_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_int64_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_int64_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_uint8_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_uint8_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_uint16_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_uint16_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_uint32_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_uint32_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_uint64_t(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_uint64_t(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_float(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_float(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_double(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_double(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t getLocalData_char(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
-int8_t setLocalData_char(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
 
 {% for object in objects %}
 {% for subobject in object.entries %}
 {% if subobject.getter != "getLocalData" %}
-int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {% if subobject.setter != "setLocalData" %}
-int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
 {%endfor%}
@@ -129,7 +129,7 @@ public:
 
     // GETTER/SETTER
     // This table contain all the objects getter
-    int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, uint32_t id, SDOAbortCodes &abortCode) = {
+    int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.entries %}
         {% if subobject.getter != "getLocalData" %}
@@ -142,7 +142,7 @@ public:
     };
 
     // This table contain all the objects setter
-    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, uint32_t id, SDOAbortCodes &abortCode) = { 
+    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.entries %}
         {% if subobject.setter != "setLocalData" %}
@@ -361,8 +361,8 @@ public:
      * @param index The hex index of the object to find.
      * @return index in objectDataTable if found, -1 otherwise.
      */
-    int64_t findObject(uint16_t index);
-    int64_t findObject(uint16_t index, uint8_t subIndex);
+    int32_t findObject(uint16_t index);
+    int32_t findObject(uint16_t index, uint8_t subIndex);
 
     /**
      * Access an object in the dictionary by array index using the subscript operator.
@@ -370,7 +370,7 @@ public:
      * @param index The array index of the object to access.
      * @return index in objectDataTable if found, -1 otherwise.
      */
-    int64_t operator[](uint16_t index);
+    int32_t operator[](uint16_t index);
 
     /**
      * Save data to non-volatile storage for a specified parameter group.
@@ -415,7 +415,11 @@ public:
     int8_t readData(Data &data, uint16_t index, uint8_t subIndex,
                     SDOAbortCodes &abortCode);
 
-    int8_t readData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t readData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    int8_t readData(Data &data, uint16_t index, uint8_t subIndex);
+
+    int8_t readData(Data &data, int32_t id);
 
     /**
      * Set the value of an object in the dictionary.
@@ -429,7 +433,11 @@ public:
     int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex,
                      SDOAbortCodes &abortCode);
 
-    int8_t writeData(const Data &data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t writeData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex);
+
+    int8_t writeData(const Data &data, int32_t id);
 
     /**
      * Get the metadata of an object in the dictionary.
@@ -441,14 +449,14 @@ public:
 
     Data* getData(uint16_t index, uint8_t subindex);
 
-    Data* getData(uint32_t id);
+    Data* getData(int32_t id);
 
     void setData(const Data &data, uint16_t index, uint8_t subindex);
 
-    void setData(const Data &data, uint32_t id);
+    void setData(const Data &data, int32_t id);
 
     uint16_t getSize(uint16_t index, uint8_t subindex);
 
-    uint16_t getSize(uint32_t id);
+    uint16_t getSize(int32_t id);
 };
 #endif // _OD_DEFINES_ONLY

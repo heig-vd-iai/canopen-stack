@@ -37,8 +37,8 @@ struct Metadata_uint8_t : public Metadata {
 struct Metadata_uint8_t_limited : public Metadata_uint8_t {
     uint8_t min;
     uint8_t max;
-    Metadata_uint8_t_limited(AccessType access, uint8_t defaultValue, uint8_t min,
-                    uint8_t max) {
+    Metadata_uint8_t_limited(AccessType access, uint8_t defaultValue,
+                             uint8_t min, uint8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -60,8 +60,8 @@ struct Metadata_uint16_t : public Metadata {
 struct Metadata_uint16_t_limited : public Metadata_uint16_t {
     uint16_t min;
     uint16_t max;
-    Metadata_uint16_t_limited(AccessType access, uint16_t defaultValue, uint16_t min,
-                     uint16_t max) {
+    Metadata_uint16_t_limited(AccessType access, uint16_t defaultValue,
+                              uint16_t min, uint16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -83,8 +83,8 @@ struct Metadata_uint32_t : public Metadata {
 struct Metadata_uint32_t_limited : public Metadata_uint32_t {
     uint32_t min;
     uint32_t max;
-    Metadata_uint32_t_limited(AccessType access, uint32_t defaultValue, uint32_t min,
-                     uint32_t max) {
+    Metadata_uint32_t_limited(AccessType access, uint32_t defaultValue,
+                              uint32_t min, uint32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -106,8 +106,8 @@ struct Metadata_uint64_t : public Metadata {
 struct Metadata_uint64_t_limited : public Metadata_uint64_t {
     uint64_t min;
     uint64_t max;
-    Metadata_uint64_t_limited(AccessType access, uint64_t defaultValue, uint64_t min,
-                     uint64_t max) {
+    Metadata_uint64_t_limited(AccessType access, uint64_t defaultValue,
+                              uint64_t min, uint64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -130,7 +130,7 @@ struct Metadata_int8_t_limited : public Metadata_int8_t {
     int8_t min;
     int8_t max;
     Metadata_int8_t_limited(AccessType access, int8_t defaultValue, int8_t min,
-                   int8_t max) {
+                            int8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -152,8 +152,8 @@ struct Metadata_int16_t : public Metadata {
 struct Metadata_int16_t_limited : public Metadata_int16_t {
     int16_t min;
     int16_t max;
-    Metadata_int16_t_limited(AccessType access, int16_t defaultValue, int16_t min,
-                    int16_t max) {
+    Metadata_int16_t_limited(AccessType access, int16_t defaultValue,
+                             int16_t min, int16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -175,8 +175,8 @@ struct Metadata_int32_t : public Metadata {
 struct Metadata_int32_t_limited : public Metadata_int32_t {
     int32_t min;
     int32_t max;
-    Metadata_int32_t_limited(AccessType access, int32_t defaultValue, int32_t min,
-                    int32_t max) {
+    Metadata_int32_t_limited(AccessType access, int32_t defaultValue,
+                             int32_t min, int32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -198,8 +198,8 @@ struct Metadata_int64_t : public Metadata {
 struct Metadata_int64_t_limited : public Metadata_int64_t {
     int64_t min;
     int64_t max;
-    Metadata_int64_t_limited(AccessType access, int64_t defaultValue, int64_t min,
-                    int64_t max) {
+    Metadata_int64_t_limited(AccessType access, int64_t defaultValue,
+                             int64_t min, int64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -221,7 +221,8 @@ struct Metadata_float : public Metadata {
 struct Metadata_float_limited : public Metadata_float {
     float min;
     float max;
-    Metadata_float_limited(AccessType access, float defaultValue, float min, float max) {
+    Metadata_float_limited(AccessType access, float defaultValue, float min,
+                           float max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -244,7 +245,7 @@ struct Metadata_double_limited : public Metadata_double {
     double min;
     double max;
     Metadata_double_limited(AccessType access, double defaultValue, double min,
-                   double max) {
+                            double max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -269,19 +270,28 @@ class IObjectDictionnary {
                             SDOAbortCodes &abortCode) = 0;
     virtual int8_t writeData(const Data &data, uint16_t index, uint8_t subindex,
                              SDOAbortCodes &abortCode) = 0;
+    virtual int8_t readData(Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) = 0;
+    virtual int8_t writeData(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode) = 0;
+    virtual int8_t readData(Data &data, uint16_t index, uint8_t subindex) = 0;
+    virtual int8_t writeData(const Data &data, uint16_t index,
+                             uint8_t subindex) = 0;
+    virtual int8_t readData(Data &data, int32_t id) = 0;
+    virtual int8_t writeData(const Data &data, int32_t id) = 0;
     virtual bool saveData(uint8_t parameterGroup) = 0;
     virtual bool loadData(uint8_t parameterGroup) = 0;
     virtual bool restoreData(uint8_t parameterGroup) = 0;
     virtual bool isSubValid(uint16_t index, uint8_t subindex) = 0;
-    virtual int64_t findObject(uint16_t index) = 0;
-    virtual int64_t findObject(uint16_t index, uint8_t subindex) = 0;
+    virtual int32_t findObject(uint16_t index) = 0;
+    virtual int32_t findObject(uint16_t index, uint8_t subindex) = 0;
     virtual Metadata getMetadata(uint16_t index, uint8_t subindex) = 0;
     virtual Data *getData(uint16_t index, uint8_t subindex) = 0;
-    virtual Data *getData(uint32_t id) = 0;
+    virtual Data *getData(int32_t id) = 0;
     virtual void setData(const Data &data, uint16_t index,
                          uint8_t subindex) = 0;
-    virtual void setData(const Data &data, uint32_t id) = 0;
+    virtual void setData(const Data &data, int32_t id) = 0;
     virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
-    virtual uint16_t getSize(uint32_t id) = 0;
+    virtual uint16_t getSize(int32_t id) = 0;
 };
 }  // namespace CANopen

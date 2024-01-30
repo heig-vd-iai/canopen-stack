@@ -36,9 +36,9 @@ namespace CANopen {
 
 class MapParameter {
    private:
-    int64_t odID;
+    int32_t odID;
     uint8_t entriesNumber;
-    uint32_t mappedObjects[OD_PDO_MAPPING_MAX];
+    int32_t mappedObjects[OD_PDO_MAPPING_MAX];
 
    public:
     int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
@@ -52,7 +52,7 @@ class MapParameter {
 
 class CommParameter {
    private:
-    int64_t odID;
+    int32_t odID;
     uint32_t cobId;
     uint8_t transmissionType;
     uint16_t inhibitTime;
@@ -87,20 +87,12 @@ class CommParameter {
  */
 class PDO {
     /**
-     * Structure to hold a pair of an object and subindex for PDO mapping.
-     */
-    struct PDOPair {
-        class Object *object;
-        uint8_t subindex;
-    };
-
-    /**
      * Structure to represent a Transmit PDO.
      */
     struct TPDO {
         CommParameter commParameter;
         MapParameter mapParameter;
-        PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
+        uint32_t mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t count = 0;
         uint8_t size = 0;
         uint32_t timestamp_us = 0;
@@ -113,7 +105,7 @@ class PDO {
     struct RPDO {
         CommParameter commParameter;
         MapParameter mapParameter;
-        PDOPair mappedEntries[OD_PDO_MAPPING_MAX];
+        uint32_t mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t buffer[PDO_DLC] = {0};
         uint8_t count = 0;
         uint8_t size = 0;
