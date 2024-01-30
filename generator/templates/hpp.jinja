@@ -94,11 +94,13 @@ int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Da
 {%endfor%}
 {%endfor%}
 
+//METADATA
 {% for object in objects %}
 {% for subobject in object.entries %}
-const Metadata_{{subobject.ctype_name}} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata({{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if subobject.type_value != 0x09 and subobject.type_value != 0x11 %}, {{subobject.value_min}}, {{subobject.value_max}}{% endif %});
+const Metadata_{{subobject.ctype_name}}{% if (subobject.min_value is not none) and (subobject.max_value is not none) %}_limited{% endif %} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata({{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if (subobject.min_value is not none) and (subobject.max_value is not none) %}, {{subobject.min_value}}, {{subobject.min_value}}{% endif %});
 {% endfor %}
 {% endfor %}
+//END METADATA
 
 class ObjectDictionnary : IObjectDictionnary{
 

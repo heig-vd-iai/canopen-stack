@@ -26,9 +26,18 @@ struct Metadatabool : public Metadata {
 
 struct Metadata_uint8_t : public Metadata {
     uint8_t defaultValue;
+    Metadata_uint8_t() {}
+    Metadata_uint8_t(AccessType access, uint8_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED8;
+    }
+};
+
+struct Metadata_uint8_t_limited : public Metadata_uint8_t {
     uint8_t min;
     uint8_t max;
-    Metadata_uint8_t(AccessType access, uint8_t defaultValue, uint8_t min,
+    Metadata_uint8_t_limited(AccessType access, uint8_t defaultValue, uint8_t min,
                     uint8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -40,9 +49,18 @@ struct Metadata_uint8_t : public Metadata {
 
 struct Metadata_uint16_t : public Metadata {
     uint16_t defaultValue;
+    Metadata_uint16_t() {}
+    Metadata_uint16_t(AccessType access, uint16_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED16;
+    }
+};
+
+struct Metadata_uint16_t_limited : public Metadata_uint16_t {
     uint16_t min;
     uint16_t max;
-    Metadata_uint16_t(AccessType access, uint16_t defaultValue, uint16_t min,
+    Metadata_uint16_t_limited(AccessType access, uint16_t defaultValue, uint16_t min,
                      uint16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -54,9 +72,18 @@ struct Metadata_uint16_t : public Metadata {
 
 struct Metadata_uint32_t : public Metadata {
     uint32_t defaultValue;
+    Metadata_uint32_t() {}
+    Metadata_uint32_t(AccessType access, uint32_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED32;
+    }
+};
+
+struct Metadata_uint32_t_limited : public Metadata_uint32_t {
     uint32_t min;
     uint32_t max;
-    Metadata_uint32_t(AccessType access, uint32_t defaultValue, uint32_t min,
+    Metadata_uint32_t_limited(AccessType access, uint32_t defaultValue, uint32_t min,
                      uint32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -68,9 +95,18 @@ struct Metadata_uint32_t : public Metadata {
 
 struct Metadata_uint64_t : public Metadata {
     uint64_t defaultValue;
+    Metadata_uint64_t() {}
+    Metadata_uint64_t(AccessType access, uint64_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED64;
+    }
+};
+
+struct Metadata_uint64_t_limited : public Metadata_uint64_t {
     uint64_t min;
     uint64_t max;
-    Metadata_uint64_t(AccessType access, uint64_t defaultValue, uint64_t min,
+    Metadata_uint64_t_limited(AccessType access, uint64_t defaultValue, uint64_t min,
                      uint64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -82,9 +118,18 @@ struct Metadata_uint64_t : public Metadata {
 
 struct Metadata_int8_t : public Metadata {
     int8_t defaultValue;
+    Metadata_int8_t() {}
+    Metadata_int8_t(AccessType access, int8_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER8;
+    }
+};
+
+struct Metadata_int8_t_limited : public Metadata_int8_t {
     int8_t min;
     int8_t max;
-    Metadata_int8_t(AccessType access, int8_t defaultValue, int8_t min,
+    Metadata_int8_t_limited(AccessType access, int8_t defaultValue, int8_t min,
                    int8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -96,9 +141,18 @@ struct Metadata_int8_t : public Metadata {
 
 struct Metadata_int16_t : public Metadata {
     int16_t defaultValue;
+    Metadata_int16_t() {}
+    Metadata_int16_t(AccessType access, int16_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER16;
+    }
+};
+
+struct Metadata_int16_t_limited : public Metadata_int16_t {
     int16_t min;
     int16_t max;
-    Metadata_int16_t(AccessType access, int16_t defaultValue, int16_t min,
+    Metadata_int16_t_limited(AccessType access, int16_t defaultValue, int16_t min,
                     int16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -110,9 +164,18 @@ struct Metadata_int16_t : public Metadata {
 
 struct Metadata_int32_t : public Metadata {
     int32_t defaultValue;
+    Metadata_int32_t() {}
+    Metadata_int32_t(AccessType access, int32_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER32;
+    }
+};
+
+struct Metadata_int32_t_limited : public Metadata_int32_t {
     int32_t min;
     int32_t max;
-    Metadata_int32_t(AccessType access, int32_t defaultValue, int32_t min,
+    Metadata_int32_t_limited(AccessType access, int32_t defaultValue, int32_t min,
                     int32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -124,9 +187,18 @@ struct Metadata_int32_t : public Metadata {
 
 struct Metadata_int64_t : public Metadata {
     int64_t defaultValue;
+    Metadata_int64_t() {}
+    Metadata_int64_t(AccessType access, int64_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER64;
+    }
+};
+
+struct Metadata_int64_t_limited : public Metadata_int64_t {
     int64_t min;
     int64_t max;
-    Metadata_int64_t(AccessType access, int64_t defaultValue, int64_t min,
+    Metadata_int64_t_limited(AccessType access, int64_t defaultValue, int64_t min,
                     int64_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
@@ -138,9 +210,18 @@ struct Metadata_int64_t : public Metadata {
 
 struct Metadata_float : public Metadata {
     float defaultValue;
+    Metadata_float() {}
+    Metadata_float(AccessType access, float defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::REAL32;
+    }
+};
+
+struct Metadata_float_limited : public Metadata_float {
     float min;
     float max;
-    Metadata_float(AccessType access, float defaultValue, float min, float max) {
+    Metadata_float_limited(AccessType access, float defaultValue, float min, float max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -151,9 +232,18 @@ struct Metadata_float : public Metadata {
 
 struct Metadata_double : public Metadata {
     double defaultValue;
+    Metadata_double() {}
+    Metadata_double(AccessType access, double defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::REAL64;
+    }
+};
+
+struct Metadata_double_limited : public Metadata_double {
     double min;
     double max;
-    Metadata_double(AccessType access, double defaultValue, double min,
+    Metadata_double_limited(AccessType access, double defaultValue, double min,
                    double max) {
         this->defaultValue = defaultValue;
         this->min = min;

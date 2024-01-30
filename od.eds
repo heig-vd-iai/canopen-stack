@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=15:59
-CreationDate=2024-01-29
+CreationTime=10:16
+CreationDate=2024-01-30
 CreatedBy=Adrien Cardinale
-ModificationTime=15:59
-ModificationDate=2024-01-29
+ModificationTime=10:16
+ModificationDate=2024-01-30
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]

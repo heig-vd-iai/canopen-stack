@@ -23,6 +23,8 @@ MandatoryObjects:
     DefaultValue: 0x00020192
     PDOMapping: 0
     isRemote: 0
+    MinValue: 0x00000000
+    MaxValue: 0xFFFFFFFF
   - Index: "1001"
     ParameterName: Error Register
     ObjectType: VAR
