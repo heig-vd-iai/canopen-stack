@@ -62,7 +62,8 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     //    } else
     //        uploadInitiateSend(timestamp_us);
 
-    // TODO: iniate send
+    // TODO: remote object
+    uploadInitiateSend(timestamp_us);
 }
 
 void SDO::uploadInitiateSend(uint32_t timestamp_us) {

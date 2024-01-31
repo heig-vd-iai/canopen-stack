@@ -2,7 +2,7 @@
  * Contains all of the shared unions used in this project.
  */
 #pragma once
-#include <cstdint>
+#include <stdint.h>
 
 namespace CANopen {
 /**

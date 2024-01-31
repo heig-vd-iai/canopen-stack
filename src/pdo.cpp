@@ -262,7 +262,7 @@ void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index) {
     tpdos[index].commParameter =
-        CommParameter(TPDO_COMMUNICATION_INDEX + index);
+        CommParameter(TPDO_COMMUNICATION_INDEX + index); //TODO: test if exist
     tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
