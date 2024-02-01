@@ -400,7 +400,8 @@ OptionalObjects:
   - Index: "6071"
     ParameterName: Target torque
     ObjectType: VAR
-    DataType: INTEGER32
+    # DataType: INTEGER32
+    DataType: INTEGER64
     AccessType: rw
     DefaultValue: 0
     PDOMapping: 1

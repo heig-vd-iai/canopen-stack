@@ -4,10 +4,10 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=10:19
+CreationTime=13:06
 CreationDate=2024-02-01
 CreatedBy=Adrien Cardinale
-ModificationTime=10:19
+ModificationTime=13:06
 ModificationDate=2024-02-01
 ModifiedBy=Adrien Cardinale
 
@@ -558,7 +558,7 @@ PDOMapping=1
 [6071]
 ParameterName=Target torque
 ObjectType=0x07
-DataType=0x0004
+DataType=0x0015
 AccessType=rw
 DefaultValue=0
 PDOMapping=1

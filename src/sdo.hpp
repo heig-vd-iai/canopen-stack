@@ -65,7 +65,11 @@ class SDO {
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
     } transferData;
-    Data buffer;
+    struct
+    {
+        uint8_t data[SDO_BUFFSIZE] = {0};
+        uint32_t offset = 0;
+    } buffer;
 
     /**
      * Enable SDO functionality, should only be called internally by NMT class.
