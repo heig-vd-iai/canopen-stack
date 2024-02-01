@@ -44,7 +44,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (node.od().getMetadata(id).access.bits.writeable) {
+    if (!node.od().getMetadata(id).access.bits.readable) {
         sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
         return;
     }
@@ -69,32 +69,26 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
 void SDO::uploadInitiateSend(uint32_t timestamp_us) {
     SDOFrame response(node.nodeId);
     SDOCommandByte sendCommand = {0};
-       int16_t size = transferData.size;
-       if (size > SDO_INITIATE_DATA_LENGTH) {  // Segment transfer
-           sendCommand.bits_initiate.e = false;
-           sendCommand.bits_initiate.s = true;
-           sendCommand.bits_initiate.n = false;
-           response.setInitiateData(size);
-       } else {  // Expedited transfer
-           sendCommand.bits_initiate.e = true;
-           sendCommand.bits_initiate.s = true;
-           sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
-           SDOAbortCodes abortCode;
-        //    if ((abortCode = transferData.object->readBytes(
-        //             transferData.subindex,
-        //             response.data + SDO_INITIATE_DATA_OFFSET, size, 0)) !=
-        //        SDOAbortCode_OK) {
-        //        sendAbort(transferData.index, transferData.subindex,
-        //        abortCode); return;
-        //    }
-            Data tmp;
-            node.od().readData(tmp, transferData.odID, abortCode);
-            memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &tmp.u8, size); //TODO: check if this is correct
-            if(abortCode != SDOAbortCode_OK) {
-                sendAbort(transferData.index, transferData.subindex, abortCode);
-                return;
-            }
-       }
+    int16_t size = transferData.size;
+    if (size > SDO_INITIATE_DATA_LENGTH) {  // Segment transfer
+        sendCommand.bits_initiate.e = false;
+        sendCommand.bits_initiate.s = true;
+        sendCommand.bits_initiate.n = false;
+        response.setInitiateData(size);
+    } else {  // Expedited transfer
+        sendCommand.bits_initiate.e = true;
+        sendCommand.bits_initiate.s = true;
+        sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
+        SDOAbortCodes abortCode;
+        Data tmp;
+        node.od().readData(tmp, transferData.odID, abortCode);
+        memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &tmp.u8,
+               size);  // TODO: check if this is correct
+        if (abortCode != SDOAbortCode_OK) {
+            sendAbort(transferData.index, transferData.subindex, abortCode);
+            return;
+        }
+    }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
     response.setCommandByte(sendCommand.value);
     response.setIndex(transferData.index);
@@ -106,14 +100,16 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
 }
 
 void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
-    // SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
-    // if (transferData.toggle != recvCommand.bits_segment.t) {
+    // SDOCommandByte sendCommand = {0}, recvCommand =
+    // {request.getCommandByte()}; if (transferData.toggle !=
+    // recvCommand.bits_segment.t) {
     //     sendAbort(transferData.index, transferData.subindex,
     //               SDOAbortCode_ToggleBitNotAlternated);
     //     return;
     // }
     // transferData.toggle = !recvCommand.bits_segment.t;
-    // uint32_t payloadSize = transferData.remainingBytes > SDO_SEGMENT_DATA_LENGTH
+    // uint32_t payloadSize = transferData.remainingBytes >
+    // SDO_SEGMENT_DATA_LENGTH
     //                            ? SDO_SEGMENT_DATA_LENGTH
     //                            : transferData.remainingBytes;
     // //    uint32_t bytesSent =
@@ -129,7 +125,8 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     // //             transferData.subindex, response.data +
     // //             SDO_SEGMENT_DATA_OFFSET, payloadSize, bytesSent)) !=
     // //             SDOAbortCode_OK) {
-    // //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    // //        sendAbort(transferData.index, transferData.subindex,
+    // abortCode);
     // //        return;
     // //    }
     // transferData.remainingBytes -= payloadSize;
@@ -139,73 +136,86 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
 }
 
 void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
-//     SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
-//     uint16_t index = request.getIndex();
-//     uint8_t subindex = request.getSubindex();
-//     //    Object *object = node._od.findObject(index);
-// //    Object *object = nullptr;  // TODO change
-// //    if (!object) {
-// //        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-// //        return;
-// //    }
-//     //    if (!object->isSubValid(subindex)) {
-//     //        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
-//     //        return;
-//     //    }
-//     //    if (!object->getMetadata(subindex).bits.writeable) {
-//     //        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-//     //        return;
-//     //    }
-//     transferData.index = index;
-//     transferData.subindex = subindex;
-//     // transferData.object = object;
-//     //    uint32_t size = object->getSize(subindex);
-//     transferData.toggle = false;
-//     if (recvCommand.bits_initiate.e) {  // Expedited transfer
-//                                         //        transferData.remainingBytes =
-//         //            recvCommand.bits_initiate.s
-//         //                ? SDO_INITIATE_DATA_LENGTH -
-//         //                recvCommand.bits_initiate.n : size;
-//         if (transferData.remainingBytes > SDO_INITIATE_DATA_LENGTH) {
-//             sendAbort(index, subindex,
-//                       SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
-//             return;
-//         }
-//         uint32_t abortCode;
-//         //        if ((abortCode = object->writeBytes(
-//         //                 subindex, request.data + SDO_INITIATE_DATA_OFFSET,
-//         //                 transferData.remainingBytes, node)) !=
-//         //                 SDOAbortCode_OK) {
-//         //            sendAbort(index, subindex, abortCode);
-//         //            return;
-//         //        }
-//     } else {  // Segment transfer
-//         if (!recvCommand.bits_initiate.s) {
-//             sendAbort(index, subindex,
-//                       SDOAbortCode_GeneralParameterIncompatibility);
-//             return;
-//         }
-//         transferData.remainingBytes = request.getInitiateData();
-//         //        if (transferData.remainingBytes != size) {
-//         //            sendAbort(index, subindex,
-//         //                      SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
-//         //            return;
-//         //        }
-//         bufferReset();
-//     }
-//     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerDownloadInitiate;
-//     SDOFrame response(node.nodeId, sendCommand.value);
-//     response.setIndex(index);
-//     response.setSubindex(subindex);
-//     node.sendFrame(response);
-//     if (!recvCommand.bits_initiate.e) serverState = SDOServerState_Downloading;
-//     transferData.timestamp_us = timestamp_us;
+    SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
+    uint16_t index = request.getIndex();
+    uint8_t subindex = request.getSubindex();
+    int32_t id = node.od().findObject(index, subindex);
+    if (id == -1) {
+        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
+        return;
+    }
+    if (id == -2) {
+        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+        return;
+    }
+    if (!node.od().getMetadata(id).access.bits.writeable) {
+        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
+        return;
+    }
+    transferData.index = index;
+    transferData.subindex = subindex;
+    transferData.odID = id;
+    uint16_t size = node.od().getSize(id);  // TODO: need ?
+    transferData.toggle = false;
+    if (recvCommand.bits_initiate.e) {  // Expedited transfer
+        transferData.remainingBytes =
+            recvCommand.bits_initiate.s
+                ? SDO_INITIATE_DATA_LENGTH - recvCommand.bits_initiate.n
+                : size;
+        if (transferData.remainingBytes > SDO_INITIATE_DATA_LENGTH) {
+            sendAbort(index, subindex,
+                      SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
+            return;
+        }
+        SDOAbortCodes abortCode;
+        Data tmp; //TODO: simplify
+        switch(size){
+            case 1:
+                tmp.u8 = request.data[SDO_INITIATE_DATA_OFFSET];
+                break;
+            case 2:
+                tmp.u16 = request.data[SDO_INITIATE_DATA_OFFSET] | (request.data[SDO_INITIATE_DATA_OFFSET+1] << 8);
+                break;
+            case 4:
+                tmp.u32 = request.data[SDO_INITIATE_DATA_OFFSET] | (request.data[SDO_INITIATE_DATA_OFFSET+1] << 8) | (request.data[SDO_INITIATE_DATA_OFFSET+2] << 16) | (request.data[SDO_INITIATE_DATA_OFFSET+3] << 24);
+                break;
+            default:
+                break;
+        }
+        node.od().writeData(tmp, index, subindex, abortCode);
+        if (abortCode != SDOAbortCode_OK) {
+        sendAbort(index, subindex, abortCode);
+        return;
+        }
+    } else {  // Segment transfer
+        if (!recvCommand.bits_initiate.s) {
+            sendAbort(index, subindex,
+                      SDOAbortCode_GeneralParameterIncompatibility);
+            return;
+        }
+        transferData.remainingBytes = request.getInitiateData();
+               if (transferData.remainingBytes != size) {
+                   sendAbort(index, subindex,
+        SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
+                   return;
+               }
+        bufferReset();
+    }
+    sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerDownloadInitiate;
+    SDOFrame response(node.nodeId, sendCommand.value);
+    response.setIndex(index);
+    response.setSubindex(subindex);
+    node.sendFrame(response);
+    if (!recvCommand.bits_initiate.e) serverState = SDOServerState_Downloading;
+    transferData.timestamp_us = timestamp_us;
 }
 
 void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
-    // SDOCommandByte sendCommand = {0}, recvCommand = {request.getCommandByte()};
-    // //    uint32_t size = transferData.object->getSize(transferData.subindex);
-    // uint32_t payloadSize = SDO_SEGMENT_DATA_LENGTH - recvCommand.bits_segment.n;
+    // SDOCommandByte sendCommand = {0}, recvCommand =
+    // {request.getCommandByte()};
+    // //    uint32_t size =
+    // transferData.object->getSize(transferData.subindex); uint32_t
+    // payloadSize = SDO_SEGMENT_DATA_LENGTH - recvCommand.bits_segment.n;
     // //    uint32_t bytesReceived = size - transferData.remainingBytes;
     // if (transferData.toggle != recvCommand.bits_segment.t) {
     //     sendAbort(transferData.index, transferData.subindex,
@@ -215,7 +225,7 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
     // transferData.toggle = !recvCommand.bits_segment.t;
     // //    if (bytesReceived + payloadSize > size) {
     // //        sendAbort(transferData.index, transferData.subindex,
-    // //                  SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
+    // // SDOAbortCode_DataTypeMismatch_LengthParameterTooHigh);
     // //        return;
     // //    }
     // bufferAppend(request.data + SDO_SEGMENT_DATA_OFFSET, payloadSize);
@@ -224,63 +234,70 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
     // //        (abortCode = transferData.object->writeBytes(
     // //             transferData.subindex, buffer.data, size, node)) !=
     // //            SDOAbortCode_OK) {
-    // //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    // //        sendAbort(transferData.index, transferData.subindex,
+    // abortCode);
     // //        return;
     // //    }
     // transferData.remainingBytes -= payloadSize;
-    // sendCommand.bits_segment.ccs = SDOCommandSpecifier_ServerDownloadSegment;
-    // sendCommand.bits_segment.t = recvCommand.bits_segment.t;
-    // SDOFrame response(node.nodeId, sendCommand.value);
-    // node.sendFrame(response);
-    // if (recvCommand.bits_segment.c) serverState = SDOServerState_Ready;
+    // sendCommand.bits_segment.ccs =
+    // SDOCommandSpecifier_ServerDownloadSegment; sendCommand.bits_segment.t
+    // = recvCommand.bits_segment.t; SDOFrame response(node.nodeId,
+    // sendCommand.value); node.sendFrame(response); if
+    // (recvCommand.bits_segment.c) serverState = SDOServerState_Ready;
     // transferData.timestamp_us = timestamp_us;
 }
 
 void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
-//     SDOBlockCommandByte recvCommand = {request.getCommandByte()};
-//     switch ((SDOSubCommands)recvCommand.bits_upClient.cs) {
-//         case SDOSubCommand_ClientUploadInitiate: {
-//             uint16_t index = request.getIndex();
-//             uint8_t subindex = request.getSubindex();
-//             //        Object *object = node._od.findObject(index);
-//             // Object *object = nullptr;  // TODO change
-// //            if (!object) {
-// //                sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-// //                return;
-// //            }
-//             //            if (!object->isSubValid(subindex)) {
-//             //                sendAbort(index, subindex,
-//             //                SDOAbortCode_SubindexNonExistent); return;
-//             //            }
-//             //            if (!object->getMetadata(subindex).bits.readable) {
-//             //                sendAbort(index, subindex,
-//             //                SDOAbortCode_AttemptReadOnWriteOnly); return;
-//             //            }
-//             transferData.index = index;
-//             transferData.subindex = subindex;
-//             // transferData.object = object;
-//             //            transferData.remainingBytes =
-//             //            transferData.lastBlockRemainingBytes =
-//             //                object->getSize(subindex);
-//             transferData.blksize = request.getInitiateBlockSize();
-//             transferData.seqno = SDO_BLOCK_SEQNO_MIN;
-//             //            if (object->isRemote()) {
-//             //                object->requestUpdate(subindex);
-//             //                transferData.timestamp_us = timestamp_us;
-//             //                serverState = SDOServerState_BlockPending;
-//             //            } else
-//             //                blockUploadInitiateSend(timestamp_us);
-//             //            break;
-//         }
-//         case SDOSubCommand_ClientUploadStart: {
-//             serverState = SDOServerState_BlockUploading;
-//             transferData.timestamp_us = timestamp_us;
-//             break;
-//         }
-//         default:
-//             sendAbort(SDOAbortCode_CommandSpecifierInvalid);
-//             break;
-//     }
+    //     SDOBlockCommandByte recvCommand = {request.getCommandByte()};
+    //     switch ((SDOSubCommands)recvCommand.bits_upClient.cs) {
+    //         case SDOSubCommand_ClientUploadInitiate: {
+    //             uint16_t index = request.getIndex();
+    //             uint8_t subindex = request.getSubindex();
+    //             //        Object *object = node._od.findObject(index);
+    //             // Object *object = nullptr;  // TODO change
+    // //            if (!object) {
+    // //                sendAbort(index, subindex,
+    // SDOAbortCode_ObjectNonExistent);
+    // //                return;
+    // //            }
+    //             //            if (!object->isSubValid(subindex)) {
+    //             //                sendAbort(index, subindex,
+    //             //                SDOAbortCode_SubindexNonExistent);
+    //             return;
+    //             //            }
+    //             //            if
+    //             (!object->getMetadata(subindex).bits.readable) {
+    //             //                sendAbort(index, subindex,
+    //             //                SDOAbortCode_AttemptReadOnWriteOnly);
+    //             return;
+    //             //            }
+    //             transferData.index = index;
+    //             transferData.subindex = subindex;
+    //             // transferData.object = object;
+    //             //            transferData.remainingBytes =
+    //             //            transferData.lastBlockRemainingBytes =
+    //             //                object->getSize(subindex);
+    //             transferData.blksize = request.getInitiateBlockSize();
+    //             transferData.seqno = SDO_BLOCK_SEQNO_MIN;
+    //             //            if (object->isRemote()) {
+    //             //                object->requestUpdate(subindex);
+    //             //                transferData.timestamp_us =
+    //             timestamp_us;
+    //             //                serverState =
+    //             SDOServerState_BlockPending;
+    //             //            } else
+    //             //                blockUploadInitiateSend(timestamp_us);
+    //             //            break;
+    //         }
+    //         case SDOSubCommand_ClientUploadStart: {
+    //             serverState = SDOServerState_BlockUploading;
+    //             transferData.timestamp_us = timestamp_us;
+    //             break;
+    //         }
+    //         default:
+    //             sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+    //             break;
+    //     }
 }
 
 void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {
@@ -289,11 +306,13 @@ void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {
     //     SDOCommandSpecifier_ServerBlockUpload;
     // sendCommand.bits_upServerInitiate.sc = false;
     // sendCommand.bits_upServerInitiate.s = true;
-    // sendCommand.bits_upServerInitiate.ss = SDOSubCommand_ServerUploadInitiate;
-    // SDOBlockFrame response(node.nodeId, sendCommand.value);
+    // sendCommand.bits_upServerInitiate.ss =
+    // SDOSubCommand_ServerUploadInitiate; SDOBlockFrame
+    // response(node.nodeId, sendCommand.value);
     // response.setIndex(transferData.index);
     // response.setSubindex(transferData.subindex);
-    // //    response.setSize(transferData.object->getSize(transferData.subindex));
+    // //
+    // response.setSize(transferData.object->getSize(transferData.subindex));
     // node.sendFrame(response);
     // serverState = SDOServerState_Ready;
     // transferData.timestamp_us = timestamp_us;
@@ -307,7 +326,8 @@ void SDO::blockUploadReceive(class SDOBlockFrame &request,
     //         uint32_t ackseq = request.getAckseq();
     //         if (ackseq <
     //             transferData.seqno -
-    //                 1U) {  // Lost data, begin next sub-block at failed offset
+    //                 1U) {  // Lost data, begin next sub-block at failed
+    //                 offset
     //             transferData.seqno = SDO_BLOCK_SEQNO_MIN;
     //             transferData.remainingBytes =
     //                 transferData.lastBlockRemainingBytes -
@@ -329,8 +349,8 @@ void SDO::blockUploadReceive(class SDOBlockFrame &request,
     //                         SDO_BLOCK_DATA_LENGTH;
     //                 sendCommand.bits_upServerEnd.ss =
     //                     SDOSubCommand_ServerUploadEnd;
-    //                 SDOBlockFrame response(node.nodeId, sendCommand.value);
-    //                 response.setCRC(0);
+    //                 SDOBlockFrame response(node.nodeId,
+    //                 sendCommand.value); response.setCRC(0);
     //                 node.sendFrame(response);
     //             }
     //         }
@@ -367,9 +387,11 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
     // SDOBlockFrame frame(node.nodeId, cmd.value);
     // uint32_t abortCode;
     // //    if ((abortCode = transferData.object->readBytes(
-    // //             transferData.subindex, frame.data + SDO_BLOCK_DATA_OFFSET,
+    // //             transferData.subindex, frame.data +
+    // SDO_BLOCK_DATA_OFFSET,
     // //             payloadSize, bytesSent)) != SDOAbortCode_OK) {
-    // //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    // //        sendAbort(transferData.index, transferData.subindex,
+    // abortCode);
     // //        return;
     // //    }
     // transferData.remainingBytes -= payloadSize;
@@ -378,55 +400,59 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
 }
 
 void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
-//     SDOBlockCommandByte sendCommand = {0},
-//                         recvCommand = {request.getCommandByte()};
-//     if (recvCommand.bits_downClientInitiate.cs !=
-//         SDOSubCommand_ClientDownloadInitiate) {
-//         sendAbort(SDOAbortCode_CommandSpecifierInvalid);
-//         return;
-//     }
-//     uint16_t index = request.getIndex();
-//     uint8_t subindex = request.getSubindex();
-//     //    Object *object = node._od.findObject(index);
-//     // Object *object = nullptr;  // TODO change
-// //    if (!object) {
-// //        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
-// //        return;
-// //    }
-//     //    if (!object->isSubValid(subindex)) {
-//     //        sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
-//     //        return;
-//     //    }
-//     //    if (!object->getMetadata(subindex).bits.writeable) {
-//     //        sendAbort(index, subindex, SDOAbortCode_AttemptWriteOnReadOnly);
-//     //        return;
-//     //    }
-//     //    uint32_t size = object->getSize(subindex);
-//     //    if (recvCommand.bits_downClientInitiate.s && size !=
-//     //    request.getSize()) {
-//     //        sendAbort(index, subindex,
-//     //                  SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
-//     //        return;
-//     //    }
-//     transferData.index = index;
-//     transferData.subindex = subindex;
-//     // transferData.object = object;
-//     //    transferData.remainingBytes = transferData.lastBlockRemainingBytes =
-//     //    size;
-//     transferData.blksize = SDO_BLOCK_SEQNO_MAX;
-//     transferData.seqno = transferData.ackseq = 0;
-//     transferData.retries = 0;
-//     sendCommand.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
-//     sendCommand.bits_downServer.sc = false;
-//     sendCommand.bits_downServer.ss = SDOSubCommand_ServerDownloadInitiate;
-//     SDOBlockFrame response(node.nodeId, sendCommand.value);
-//     response.setIndex(index);
-//     response.setSubindex(subindex);
-//     response.setInitiateBlockSize(transferData.blksize);
-//     node.sendFrame(response);
-//     bufferReset();
-//     serverState = SDOServerState_BlockDownloading;
-//     transferData.timestamp_us = timestamp_us;
+    //     SDOBlockCommandByte sendCommand = {0},
+    //                         recvCommand = {request.getCommandByte()};
+    //     if (recvCommand.bits_downClientInitiate.cs !=
+    //         SDOSubCommand_ClientDownloadInitiate) {
+    //         sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+    //         return;
+    //     }
+    //     uint16_t index = request.getIndex();
+    //     uint8_t subindex = request.getSubindex();
+    //     //    Object *object = node._od.findObject(index);
+    //     // Object *object = nullptr;  // TODO change
+    // //    if (!object) {
+    // //        sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
+    // //        return;
+    // //    }
+    //     //    if (!object->isSubValid(subindex)) {
+    //     //        sendAbort(index, subindex,
+    //     SDOAbortCode_SubindexNonExistent);
+    //     //        return;
+    //     //    }
+    //     //    if (!object->getMetadata(subindex).bits.writeable) {
+    //     //        sendAbort(index, subindex,
+    //     SDOAbortCode_AttemptWriteOnReadOnly);
+    //     //        return;
+    //     //    }
+    //     //    uint32_t size = object->getSize(subindex);
+    //     //    if (recvCommand.bits_downClientInitiate.s && size !=
+    //     //    request.getSize()) {
+    //     //        sendAbort(index, subindex,
+    //     // SDOAbortCode_DataTypeMismatch_LengthParameterMismatch);
+    //     //        return;
+    //     //    }
+    //     transferData.index = index;
+    //     transferData.subindex = subindex;
+    //     // transferData.object = object;
+    //     //    transferData.remainingBytes =
+    //     transferData.lastBlockRemainingBytes =
+    //     //    size;
+    //     transferData.blksize = SDO_BLOCK_SEQNO_MAX;
+    //     transferData.seqno = transferData.ackseq = 0;
+    //     transferData.retries = 0;
+    //     sendCommand.bits_downServer.scs =
+    //     SDOCommandSpecifier_ServerBlockDownload;
+    //     sendCommand.bits_downServer.sc = false;
+    //     sendCommand.bits_downServer.ss =
+    //     SDOSubCommand_ServerDownloadInitiate; SDOBlockFrame
+    //     response(node.nodeId, sendCommand.value);
+    //     response.setIndex(index); response.setSubindex(subindex);
+    //     response.setInitiateBlockSize(transferData.blksize);
+    //     node.sendFrame(response);
+    //     bufferReset();
+    //     serverState = SDOServerState_BlockDownloading;
+    //     transferData.timestamp_us = timestamp_us;
 }
 
 void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us) {
@@ -455,24 +481,28 @@ void SDO::blockDownloadEnd(class SDOBlockFrame &request,
                            uint32_t timestamp_us) {
     // SDOBlockCommandByte sendCommand = {0},
     //                     recvCommand = {request.getCommandByte()};
-    // if (recvCommand.bits_downClientEnd.cs != SDOSubCommand_ClientDownloadEnd) {
+    // if (recvCommand.bits_downClientEnd.cs !=
+    // SDOSubCommand_ClientDownloadEnd)
+    // {
     //     sendAbort(SDOAbortCode_CommandSpecifierInvalid);
     //     return;
     // }
     // uint32_t abortCode;
     // //    if ((abortCode = transferData.object->writeBytes(
     // //             transferData.subindex, buffer.data,
-    // //             transferData.object->getSize(transferData.subindex), node))
+    // //             transferData.object->getSize(transferData.subindex),
+    // node))
     // //             !=
     // //        SDOAbortCode_OK) {
-    // //        sendAbort(transferData.index, transferData.subindex, abortCode);
+    // //        sendAbort(transferData.index, transferData.subindex,
+    // abortCode);
     // //        return;
     // //    }
-    // sendCommand.bits_downServer.scs = SDOCommandSpecifier_ServerBlockDownload;
+    // sendCommand.bits_downServer.scs =
+    // SDOCommandSpecifier_ServerBlockDownload;
     // sendCommand.bits_downServer.ss = SDOSubCommand_ServerDownloadEnd;
     // SDOBlockFrame frame(node.nodeId, sendCommand.value);
-    // node.sendFrame(frame);
-    // serverState = SDOServerState_Ready;
+    // node.sendFrame(frame); serverState = SDOServerState_Ready;
     // transferData.timestamp_us = timestamp_us;
 }
 
@@ -560,14 +590,14 @@ void SDO::update(uint32_t timestamp_us) {
         case SDOServerState_Pending:
             //        if
             //        (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
-            //            uploadInitiateSend(timestamp_us); //TODO : check with
-            //            getter/setter return
+            //            uploadInitiateSend(timestamp_us); //TODO : check
+            //            with getter/setter return
             break;
         case SDOServerState_BlockPending:
             //        if
             //        (!transferData.object->getMetadata(transferData.subindex).bits.updateFlag)
-            //            blockUploadInitiateSend(timestamp_us); //TODO : check
-            //            with getter/setter return
+            //            blockUploadInitiateSend(timestamp_us); //TODO :
+            //            check with getter/setter return
             break;
         default:
             break;

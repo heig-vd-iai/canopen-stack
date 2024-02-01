@@ -12,11 +12,11 @@ namespace CANopen {
  */
 union Access {
     uint8_t value;
-    struct {
-        uint8_t dummy : 5;  
+    struct {  
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
+        //TODO : add if object has limit
     } bits;
 };
 
