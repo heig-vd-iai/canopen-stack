@@ -29,7 +29,7 @@
 #define INDEX_SYNC 6
 
 #define OD_PDO_MAPPING_MAX 8
-#define OD_TPDO_COUNT 4
+#define OD_TPDO_COUNT 4 
 #define OD_RPDO_COUNT 4
 
 namespace CANopen {
@@ -44,7 +44,7 @@ class MapParameter {
     int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
     int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
     MapParameter();
-    MapParameter(uint32_t id);
+    MapParameter(int32_t id);
     MapParameter &operator=(const MapParameter &other);
     uint8_t getCount();
     uint32_t getMappedValue(uint8_t entry);
@@ -66,7 +66,7 @@ class CommParameter {
     int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
     int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
     CommParameter();
-    CommParameter(uint32_t id);
+    CommParameter(int32_t id);
     CommParameter &operator=(const CommParameter &other);
     uint32_t getCobId();
     uint16_t getActualCobId();

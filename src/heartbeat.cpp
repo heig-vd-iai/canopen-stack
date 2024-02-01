@@ -4,13 +4,13 @@
 #include "heartbeat.hpp"
 
 #include "frame.hpp"
-// #include "node.hpp" //TODO: find why this include make the cm boot without program loaded (try reinstalling ccs)
+#include "node.hpp"
 using namespace CANopen;
 
 void HB::publishState(NMTStates state, uint8_t toggleBit) {
-    // HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
-    // node.sendFrame(frame);
-    // lastPublish = node.getTime_us();
+    HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
+    node.sendFrame(frame);
+    lastPublish = node.getTime_us();
 }
 
 void HB::update(uint32_t timestamp_us) {
@@ -24,8 +24,8 @@ void HB::update(uint32_t timestamp_us) {
 }
 
 void HB::receiveFrame(Frame &frame) {
-    // if (frame.nodeId != node.nodeId || !frame.rtr) return;
-    // publishState(node._nmt.getState(), toggleBit);
+    if (frame.nodeId != node.nodeId || !frame.rtr) return;
+    publishState(node._nmt.getState(), toggleBit);
     toggleBit = !toggleBit;
 }
 

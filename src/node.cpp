@@ -31,12 +31,12 @@ void Node::init() { _nmt.initSM(); }
 
 void Node::receiveFrame(Frame frame) {
     uint32_t timestamp = getTime_us();
-    switch ((FunctionCodes)frame.functionCode) {
+     switch ((FunctionCodes)frame.functionCode) {
         case FunctionCode_NMT:
-            _nmt.receiveFrame((NMTFrame &)frame);
+           _nmt.receiveFrame((NMTFrame &)frame);
             break;
         case FunctionCode_HEARTBEAT:
-            _hb.receiveFrame(frame);
+           _hb.receiveFrame(frame);
             break;
         case FunctionCode_SYNC:
             _sync.receiveFrame((SYNCFrame &)frame, timestamp);
@@ -54,7 +54,7 @@ void Node::receiveFrame(Frame frame) {
             _pdo.receiveRPDO(frame, timestamp);
             break;
         case FunctionCode_RSDO:
-            _sdo.receiveFrame((SDOFrame &)frame, timestamp);
+           _sdo.receiveFrame((SDOFrame &)frame, timestamp);
             break;
         default:
             break;
@@ -63,7 +63,7 @@ void Node::receiveFrame(Frame frame) {
 
 void Node::update() {
     uint32_t timestamp = getTime_us();
-    _hb.update(timestamp);
-    _sdo.update(timestamp);
+   _hb.update(timestamp);
+   _sdo.update(timestamp);
     _pdo.update(timestamp);
 }

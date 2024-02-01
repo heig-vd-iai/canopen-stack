@@ -10,7 +10,7 @@
 #include "node.hpp"
 using namespace CANopen;
 
-MapParameter::MapParameter(uint32_t id) : odID(id) {
+MapParameter::MapParameter(int32_t id) : odID(id) {
     if (odID < 0) {
         entriesNumber = 0;
     } else {
@@ -98,7 +98,7 @@ CANopen::MapParameter &CANopen::MapParameter::operator=(
     return *this;
 }
 
-CommParameter::CommParameter(uint32_t id) : odID(id) {
+CommParameter::CommParameter(int32_t id) : odID(id) {
     if (odID < 0) {
         entriesNumber = 6;
         cobId = 0;
@@ -262,15 +262,15 @@ void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index) {
     tpdos[index].commParameter =
-        CommParameter(TPDO_COMMUNICATION_INDEX + index); //TODO: test if exist
-    tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
+        CommParameter(OD_OBJECT_1800_SUB0 + index);  // TODO: test if exist
+    tpdos[index].mapParameter = MapParameter(OD_OBJECT_1A00_SUB0 + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
     rpdos[index].commParameter =
-        CommParameter(RPDO_COMMUNICATION_INDEX + index);
-    rpdos[index].mapParameter = MapParameter(RPDO_MAPPING_INDEX + index);
+        CommParameter(OD_OBJECT_1400_SUB0 + index);
+    rpdos[index].mapParameter = MapParameter(OD_OBJECT_1600_SUB0 + index);
     remapRPDO(index);
 }
 
@@ -454,8 +454,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
     }
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) {
         RPDO *rpdo = rpdos + i;
-               if (!rpdo->commParameter.isSynchronous() || !rpdo->syncFlag)
-                   continue;
+        if (!rpdo->commParameter.isSynchronous() || !rpdo->syncFlag) continue;
         unpackRPDO(i, rpdo->buffer, timestamp_us);
         rpdo->syncFlag = false;
     }
@@ -464,7 +463,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
 uint32_t PDO::getSyncWindow_us() {
     uint32_t value = 0;
     Data tmp;
-    if(node.od().isSubValid(0x1007, 0x00)) {
+    if (node.od().isSubValid(0x1007, 0x00)) {
         node.od().readData(tmp, 0x1007, 0x00);
         value = tmp.u32;
     };
@@ -474,22 +473,19 @@ uint32_t PDO::getSyncWindow_us() {
 void PDO::transmitTPDO(unsigned index) {
     if (!enabled || index >= OD_TPDO_COUNT) return;
     TPDO *tpdo = tpdos + index;
-       uint8_t transmission = tpdo->commParameter.getTransmissionType();
-       if (transmission == ACYCLIC)
-       {
-           tpdo->syncFlag = true;
-       }
-       else if (transmission >= EVENT1)
-       {
-           uint32_t timestamp_us = node.getTime_us();
-           bool supported = tpdo->commParameter.isInhibitSupported();
-           if (!supported || (supported &&
-           (tpdo->commParameter.getInhibitTime_us() == 0 || timestamp_us -
-           tpdo->timestamp_us >= tpdo->commParameter.getInhibitTime_us())))
-           {
-               sendTPDO(index, timestamp_us);
-           }
-       }
+    uint8_t transmission = tpdo->commParameter.getTransmissionType();
+    if (transmission == ACYCLIC) {
+        tpdo->syncFlag = true;
+    } else if (transmission >= EVENT1) {
+        uint32_t timestamp_us = node.getTime_us();
+        bool supported = tpdo->commParameter.isInhibitSupported();
+        if (!supported ||
+            (supported && (tpdo->commParameter.getInhibitTime_us() == 0 ||
+                           timestamp_us - tpdo->timestamp_us >=
+                               tpdo->commParameter.getInhibitTime_us()))) {
+            sendTPDO(index, timestamp_us);
+        }
+    }
 }
 
 void PDO::reloadTPDO() {

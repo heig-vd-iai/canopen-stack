@@ -19,9 +19,9 @@ void EMCY::enable() { enabled = true; }
 void EMCY::disable() { enabled = false; }
 
 void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
-//    EmergencyFrame frame(node.nodeId, errorCode,
-//                         errorRegisterObject->getValue(), manufacturerCode);
-//    node.sendFrame(frame);
+//   EmergencyFrame frame(node.nodeId, errorCode,
+//                        // errorRegisterObject->getValue(), manufacturerCode);
+//   node.sendFrame(frame);
 }
 
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
@@ -112,7 +112,7 @@ void EMCY::clearErrorBit(unsigned bit) {
 //        sendError(EMCYErrorCode_Reset, 0);
 }
 
-//uint8_t EMCY::getErrorRegister() { return errorRegisterObject->getValue(); }
+// uint8_t EMCY::getErrorRegister() { return errorRegisterObject->getValue(); }
 
 void EMCY::clearHistory() {
 #ifdef OD_OBJECT_1003
@@ -120,4 +120,4 @@ void EMCY::clearHistory() {
 #endif
 }
 
-//void EMCY::reset() { errorRegisterObject->reset(); }
+// void EMCY::reset() { errorRegisterObject->reset(); }
