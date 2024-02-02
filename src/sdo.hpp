@@ -64,6 +64,7 @@ class SDO {
         uint16_t ackseq;
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
+        Data data;
     } transferData;
     struct
     {
@@ -132,6 +133,8 @@ class SDO {
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
     void downloadInitiate(class SDOFrame &request, uint32_t timestamp_us);
+
+    void downloadInitiateSend(uint32_t timestamp_us);
 
     /**
      * This method handles download segment frames.

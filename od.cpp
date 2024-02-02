@@ -3,9 +3,20 @@
  */
 #include "od.hpp"
 #include "node.hpp"
+#include "ipcCommunication.hpp"
 
+extern IPC localIPC;
+extern IPC *remoteIPC;
 
 using namespace CANopen;
+
+int8_t getobject6040sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return getRemoteData(data, id, abortCode);
+}
+
+int8_t setobject6040sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return setRemoteData(data, id, abortCode);
+}
 
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
@@ -148,6 +159,13 @@ int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode)
     return -1; //TODO: implement
 }
 
+int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+
+}
+
+int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+}
+
 int32_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t lower = 0;
     int32_t upper = length - 1;
@@ -232,7 +250,6 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
     SDOAbortCodes abortCode;
     return objectSetterTable[id](data, id, abortCode);
 }
-
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
     return true;  // TODO: implement

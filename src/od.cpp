@@ -4,8 +4,15 @@
 #include "od.hpp"
 #include "node.hpp"
 
-
 using namespace CANopen;
+
+int8_t getobject6040sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return getRemoteData(data, id, abortCode);
+}
+
+int8_t setobject6040sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return setRemoteData(data, id, abortCode);
+}
 
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
@@ -232,7 +239,6 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
     SDOAbortCodes abortCode;
     return objectSetterTable[id](data, id, abortCode);
 }
-
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
     return true;  // TODO: implement
