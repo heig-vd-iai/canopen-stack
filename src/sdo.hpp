@@ -38,7 +38,8 @@ namespace CANopen {
 class SDO {
     enum SDOServerStates {
         SDOServerState_Ready,
-        SDOServerState_Pending,
+        SDOServerState_UploadPending,
+        SDOServerState_DownloadPending,
         SDOServerState_Uploading,
         SDOServerState_Downloading,
         SDOServerState_BlockPending,
@@ -65,6 +66,7 @@ class SDO {
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
         Data data;
+        SDOCommandByte sendCommand, recvCommand;
     } transferData;
     struct
     {
