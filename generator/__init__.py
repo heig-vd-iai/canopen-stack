@@ -29,6 +29,7 @@ TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
 EDS_TEMPLATE = "eds.jinja"
 HEADER_TEMPLATE = "hpp.jinja"
 CPP_TEMPLATE = "cpp.jinja"
+REMOTE_TEMPLATE = "remote.jinja"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 
 
@@ -180,6 +181,28 @@ class ObjectDictionary:
     def to_cpp(self) -> str:
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
         return env.get_template(CPP_TEMPLATE).render(
+            objects=self.all_objects,
+            node_id=self.node_id,
+            date=datetime.now(),
+            rpdo_count=self.rpdo_count,
+            tpdo_count=self.tpdo_count,
+            subindex_count=self.subindex_count,
+            existing_classes=[
+                "Object1A00",
+                "Object1001",
+                "Object1003",
+                "Object1010",
+                "Object1011",
+                "Object1019",
+                "Object1400",
+                "Object1600",
+                "Object1800"
+            ]
+        )
+
+    def to_remote(self) -> str:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATES_DIR), trim_blocks=True, lstrip_blocks=True)
+        return env.get_template(REMOTE_TEMPLATE).render(
             objects=self.all_objects,
             node_id=self.node_id,
             date=datetime.now(),

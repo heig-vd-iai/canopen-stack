@@ -44,8 +44,6 @@ MandatoryObjects:
         DefaultValue: 0x04
         PDOMapping: 0
         isRemote: 1
-        RemoteGetter: onSdoRequestUpdate
-        RemoteSetter: onSdoWrite
       - ParameterName: Vendor-ID
         ObjectType: VAR
         DataType: UNSIGNED32
@@ -357,6 +355,8 @@ OptionalObjects:
     PDOMapping: 1
     Getter: getRemoteData
     Setter: setRemoteData
+    RemoteGetter: sys.axis->getControlword
+    RemoteSetter: sys.axis->setControlword
   - Index: "6041"
     ParameterName: Statusword
     ObjectType: VAR

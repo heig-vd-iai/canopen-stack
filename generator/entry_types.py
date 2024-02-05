@@ -6,6 +6,7 @@ class Entry:
     default_value: str
     pdo_mapping: bool
     access_type: str
+    type_code: str
     type_value: int
     type_name: str
     ctype_name: str
@@ -16,6 +17,8 @@ class Entry:
     meta_data: int
     _min_value: int
     _max_value: int
+    remote_getter: str
+    remote_setter: str
 
     @classmethod
     def _get_subclasses(cls) -> "list[type]":
@@ -41,6 +44,8 @@ class Entry:
         self.setter: str = str(data.get("Setter", "setLocalData"))
         self._min_value: str = str(data.get("MinValue", None))
         self._max_value: str = str(data.get("MaxValue", None))
+        self.remote_getter: str = str(data.get("RemoteGetter", "none"))
+        self.remote_setter: str = str(data.get("RemoteSetter", "none"))
 
     def __str__(self) -> str:
         return '\n'.join([f"{k}={v}" for k, v in {
@@ -126,6 +131,7 @@ class IntegerEntry(Entry):
 
 class BooleanEntry(Entry):
     type_value: int = 0x01
+    type_code: str = "b"
     type_name: str = "BOOLEAN"
     ctype_name: str = "bool"
     size: int = 8
@@ -140,6 +146,7 @@ class BooleanEntry(Entry):
 
 class Integer8Entry(IntegerEntry):
     type_value: int = 0x02
+    type_code: str = "i8"
     type_name: str = "INTEGER8"
     ctype_name: str = "int8_t"
     size: int = 8
@@ -151,6 +158,7 @@ class Integer8Entry(IntegerEntry):
 
 class Integer16Entry(IntegerEntry):
     type_value: int = 0x03
+    type_code: str = "i16"
     type_name: str = "INTEGER16"
     ctype_name: str = "int16_t"
     size: int = 16
@@ -161,6 +169,7 @@ class Integer16Entry(IntegerEntry):
 
 class Integer32Entry(IntegerEntry):
     type_value: int = 0x04
+    type_code: str = "i32"
     type_name: str = "INTEGER32"
     ctype_name: str = "int32_t"
     size: int = 32
@@ -171,6 +180,7 @@ class Integer32Entry(IntegerEntry):
 
 class Integer64Entry(IntegerEntry):
     type_value: int = 0x15
+    type_code: str = "i64"
     type_name: str = "INTEGER64"
     ctype_name: str = "int64_t"
     size: int = 64
@@ -182,6 +192,7 @@ class Integer64Entry(IntegerEntry):
 
 class Unsigned8Entry(IntegerEntry):
     type_value: int = 0x05
+    type_code: str = "u8"
     type_name: str = "UNSIGNED8"
     ctype_name: str = "uint8_t"
     size: int = 8
@@ -192,6 +203,7 @@ class Unsigned8Entry(IntegerEntry):
 
 class Unsigned16Entry(IntegerEntry):
     type_value: int = 0x06
+    type_code: str = "u16"
     type_name: str = "UNSIGNED16"
     ctype_name: str = "uint16_t"
     size: int = 16
@@ -202,6 +214,7 @@ class Unsigned16Entry(IntegerEntry):
 
 class Unsigned32Entry(IntegerEntry):
     type_value: int = 0x07
+    type_code: str = "u32"
     type_name: str = "UNSIGNED32"
     ctype_name: str = "uint32_t"
     size: int = 32
@@ -212,6 +225,7 @@ class Unsigned32Entry(IntegerEntry):
 
 class Unsigned64Entry(IntegerEntry):
     type_value: int = 0x1B
+    type_code: str = "u64"
     type_name: str = "UNSIGNED64"
     ctype_name: str = "uint64_t"
     size: int = 64
@@ -222,6 +236,7 @@ class Unsigned64Entry(IntegerEntry):
 
 class Float32Entry(Entry):
     type_value: int = 0x08
+    type_code: str = "f32"
     type_name: str = "REAL32"
     ctype_name: str = "float"
     size: int = 32
@@ -246,6 +261,7 @@ class Float32Entry(Entry):
 
 class Float64Entry(Entry):
     type_value: int = 0x11
+    type_code: str = "f64"
     type_name: str = "REAL64"
     ctype_name: str = "double"
     size: int = 64
@@ -270,6 +286,7 @@ class Float64Entry(Entry):
 
 class StringEntry(Entry):
     type_value: int = 0x09
+    type_code: str = "s"
     type_name: str = "VISIBLE_STRING"
     ctype_name: str = "char"
     min_value = None
