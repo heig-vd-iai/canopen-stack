@@ -138,6 +138,8 @@ public:
         {% for subobject in object.entries %}
         {% if subobject.getter != "getLocalData" %}
         &get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        {% elif subobject.remote_getter != "none" %}
+        &getRemoteData,
         {% else %}
         &getLocalData_{{subobject.ctype_name}},
         {% endif %}
@@ -151,6 +153,8 @@ public:
         {% for subobject in object.entries %}
         {% if subobject.setter != "setLocalData" %}
         &set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+        {% elif subobject.remote_setter != "none" %}
+        &setRemoteData,
         {% else %}
         &setLocalData_{{subobject.ctype_name}},
         {% endif %}

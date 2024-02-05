@@ -129,6 +129,8 @@ class SDO {
      */
     void uploadSegment(class SDOFrame &request, uint32_t timestamp_us);
 
+    void uploadSegmentSend(uint32_t timestamp_us);
+
     /**
      * This method handles download initiate frames.
      * @param request SDOFrame to be processed.

@@ -10,14 +10,6 @@ extern IPC *remoteIPC;
 
 using namespace CANopen;
 
-int8_t getobject6040sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return getRemoteData(data, id, abortCode);
-}
-
-int8_t setobject6040sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return setRemoteData(data, id, abortCode);
-}
-
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
