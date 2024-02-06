@@ -324,7 +324,7 @@ void PDO::remapRPDO(unsigned index) {
         rpdo->size = sizeSum;
         rpdo->count++;
     }
-    // configRemoteRPDO(index, rpdo->mappedEntries);
+    configRemoteRPDO(index, rpdo->mappedEntries);
 }
 
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
@@ -347,15 +347,18 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
     if (!enabled || !rpdo->commParameter.isEnabled() || rpdo->count == 0)
         return;
     uint32_t bytesTransferred = 0;
+    Data tmp[OD_PDO_MAPPING_MAX];
     for (unsigned i = 0; i < rpdo->count; i++) {
         int32_t id = rpdo->mappedEntries[i];
         uint32_t size = node.od().getSize(id);
-        Data tmp;
-        tmp.u64 =
-            *(buffer + bytesTransferred + size);  // TODO: check if it is right
-        int8_t result = node.od().writeData(tmp, id);  // TODO: wait remote data
+        // Data tmp;
+        // tmp.u64 =
+        //     *(buffer + bytesTransferred + size);  // TODO: check if it is right
+        // int8_t result = node.od().writeData(tmp, id);  // TODO: wait remote data
+        memcpy(&tmp[i], buffer + bytesTransferred, size);
         bytesTransferred += size;
     }
+    setRemoteRPDO(index, tmp);
     rpdo->timestamp_us = timestamp_us;
     rpdo->watchTimeoutFlag = true;
 }

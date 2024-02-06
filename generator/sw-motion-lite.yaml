@@ -165,6 +165,8 @@ OptionalObjects:
   - Index: "1400"
     ParameterName: Receive PDO 1 Communication Parameter
     ObjectType: RECORD
+    Getter: node.pdo().rpdos[0].commParameter.getData
+    Setter: node.pdo().rpdos[0].commParameter.setData
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR
@@ -187,6 +189,8 @@ OptionalObjects:
   - Index: "1600"
     ParameterName: Receive PDO 1 Mapping Parameter
     ObjectType: RECORD
+    Getter: node.pdo().rpdos[0].mapParameter.getData
+    Setter: node.pdo().rpdos[0].mapParameter.setData
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR
