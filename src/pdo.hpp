@@ -49,8 +49,8 @@ class MapParameter {
     int32_t mappedObjects[OD_PDO_MAPPING_MAX];
 
    public:
-    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
-    int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(Data data, int32_t id, SDOAbortCodes &abortCode);
     MapParameter();
     MapParameter(int32_t id);
     MapParameter &operator=(const MapParameter &other);
@@ -71,8 +71,8 @@ class CommParameter {
     uint8_t entriesNumber;
 
    public:
-    int8_t getData(Data &data, uint32_t id, SDOAbortCodes &abortCode);
-    int8_t setData(Data data, uint32_t id, SDOAbortCodes &abortCode);
+    int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(Data data, int32_t id, SDOAbortCodes &abortCode);
     CommParameter();
     CommParameter(int32_t id);
     CommParameter &operator=(const CommParameter &other);

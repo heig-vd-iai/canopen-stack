@@ -50,7 +50,7 @@ union PDOMapEntry {
 /**
  * Union representing the error register value in error register (0x1001).
  */
-union ErrorRegister {
+union ErrorRegisterValue {
     uint8_t value;
     struct {
         bool genericError : 1;

@@ -195,6 +195,12 @@ enum ErrorRegisterBits {
     ErrorRegisterBit_Manufacturer = 7
 };
 
+enum ErrorBehaviorValue {
+    ErrorBehaviorValue_PreOperational = 0x00,
+    ErrorBehaviorValue_None = 0x01,
+    ErrorBehaviorValue_Stop = 0x02,
+};
+
 /**
  * Enumeration representing the parameter groups for saving and restoring the
  * object dictionnary. This enum only accounts for 3 first default groups. Up to

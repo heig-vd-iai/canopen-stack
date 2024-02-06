@@ -3,14 +3,17 @@
  */
 #pragma once
 #include <cstdint>
-#define X1029_SUB_COMMUNICATION 1
-#define X1029_BEHAVIOUR_PREOP 0x00
-#define X1029_BEHAVIOUR_NONE 0x01
-#define X1029_BEHAVIOUR_STOPPED 0x02
+
+#include "enums.hpp"
+#include "unions.hpp"
 #define EMCY_DLC 8
 #define EMCY_ERRCODE_OFFSET 0
 #define EMCY_ERRREG_OFFSET 2
 #define EMCY_MANUFACTURER_OFFSET 3
+#define PREDEFINED_ERROR_FIELD_SIZE 8
+#define PREDEFINED_ERROR_FIELD_INDEX 0x1003
+#define ERROR_BEHAVIOR_SIZE 2
+#define ERROR_BEHAVIOR_INDEX 0x1029
 
 namespace CANopen {
 /**
@@ -18,7 +21,55 @@ namespace CANopen {
  * It handles the emission of emergency messages, as well as the pre-defined
  * error field and error register. See CiA301:2011§7.2.7 (p. 64)
  */
+
+class ErrorRegister {
+    int32_t odID;
+    uint8_t value;
+
+   public:
+    ErrorRegister(int32_t id);
+    uint8_t getValue();
+    void setErrorBit(unsigned bit);
+    void clearErrorBit(unsigned bit);
+    bool isErrorfree();
+    void reset();
+    int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+};
+
+class PreDefinesErrorField {
+    int32_t odID;
+    uint8_t errorsNumber;
+    uint32_t errorsField[PREDEFINED_ERROR_FIELD_SIZE];
+
+   public:
+    PreDefinesErrorField();
+    void shiftErrors();
+    void pushError(uint16_t errorCode, uint32_t manufacturerCode);
+    void clearErrors();
+    int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+};
+
+class ErrorBehavior {
+    int32_t odID;
+    uint8_t numberOfEntries;
+    ErrorBehaviorValue communicationError;
+    ErrorBehaviorValue internalDeviceError;
+
+   public:
+    ErrorBehavior();
+    ErrorBehaviorValue getCommunicationError();
+    ErrorBehaviorValue getInternalDeviceError();
+    int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t setData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+};
+
 class EMCY {
+   public:
+    ErrorRegister errorRegister;
+    PreDefinesErrorField preDefinedErrorField;
+    ErrorBehavior errorBehavior;
    private:
     bool enabled = false;
     bool errorFree = true;

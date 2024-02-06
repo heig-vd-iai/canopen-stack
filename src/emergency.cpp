@@ -5,28 +5,188 @@
 
 #include "frame.hpp"
 #include "node.hpp"
-//#include "objects/object_1001.hpp"
-//#include "objects/object_1003.hpp"
+
 using namespace CANopen;
 
-EMCY::EMCY() {
-    //    errorRegisterObject = (Object1001 *)node._od.at(OD_OBJECT_1001);
-    //    //TODO add error register local
+ErrorRegister::ErrorRegister(int32_t id) : odID(id), value(0) {}
+
+uint8_t ErrorRegister::getValue() { return value; }
+
+void ErrorRegister::setErrorBit(unsigned bit) {
+    ErrorRegisterValue reg = {value};
+    reg.bits.genericError = 1;
+    switch ((ErrorRegisterBits)bit) {
+        case ErrorRegisterBit_Current:
+            reg.bits.current = 1;
+            break;
+        case ErrorRegisterBit_Voltage:
+            reg.bits.voltage = 1;
+            break;
+        case ErrorRegisterBit_Temperature:
+            reg.bits.temperature = 1;
+            break;
+        case ErrorRegisterBit_Communication:
+            reg.bits.communicationError = 1;
+            break;
+        case ErrorRegisterBit_DeviceProfile:
+            reg.bits.deviceProfileSpecific = 1;
+            break;
+        case ErrorRegisterBit_Manufacturer:
+            reg.bits.manufacturerSpecific = 1;
+            break;
+        default:
+            break;
+    }
+    value = reg.value;
 }
+
+void ErrorRegister::clearErrorBit(unsigned bit) {
+    ErrorRegisterValue reg = {value};
+    switch ((ErrorRegisterBits)bit) {
+        case ErrorRegisterBit_Generic:
+            // Only clear generic error bit is all other bits are clear
+            if (reg.value == 0b00000001) reg.bits.genericError = 0;
+            break;
+        case ErrorRegisterBit_Current:
+            reg.bits.current = 0;
+            break;
+        case ErrorRegisterBit_Voltage:
+            reg.bits.voltage = 0;
+            break;
+        case ErrorRegisterBit_Temperature:
+            reg.bits.temperature = 0;
+            break;
+        case ErrorRegisterBit_Communication:
+            reg.bits.communicationError = 0;
+            break;
+        case ErrorRegisterBit_DeviceProfile:
+            reg.bits.deviceProfileSpecific = 0;
+            break;
+        case ErrorRegisterBit_Manufacturer:
+            reg.bits.manufacturerSpecific = 0;
+            break;
+        default:
+            break;
+    }
+    value = reg.value;
+}
+
+bool ErrorRegister::isErrorfree() { return value == 0; }
+
+void ErrorRegister::reset() { value = 0; }
+
+int8_t ErrorRegister::getData(Data &data, int32_t odID,
+                              SDOAbortCodes &abortCode) {
+    if (odID != this->odID) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    data.u8 = value;
+    return 0;
+}
+
+int8_t ErrorRegister::setData(const Data &data, int32_t odID,
+                              SDOAbortCodes &abortCode) {
+    if (odID != this->odID) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    value = data.u8;
+    return 0;
+}
+
+PreDefinesErrorField::PreDefinesErrorField() : errorsNumber(0) {
+    odID = node.od().findObject(PREDEFINED_ERROR_FIELD_INDEX);
+    for (int i = 0; i < PREDEFINED_ERROR_FIELD_SIZE; i++) errorsField[i] = 0;
+}
+
+void PreDefinesErrorField::shiftErrors() {
+    uint32_t val = 0;
+    for (unsigned i = errorsNumber; i > 0; i--) {
+        val = errorsField[i - 1];
+        errorsField[i] = val;
+    }
+}
+
+void PreDefinesErrorField::pushError(uint16_t errorCode,
+                                     uint32_t manufacturerCode) {
+    uint32_t newError = manufacturerCode << 16 | errorCode;
+    uint32_t firstError = newError;
+    firstError = errorsField[0];
+    if (firstError != newError) {
+        shiftErrors();
+        uint8_t count = errorsNumber;
+        if (count < PREDEFINED_ERROR_FIELD_SIZE) errorsNumber = ++count;
+        errorsField[0] = newError;
+    }
+}
+
+void PreDefinesErrorField::clearErrors() {
+    errorsNumber = 0;
+    for (unsigned i = 0; i < errorsNumber; i++) errorsField[i] = 0;
+}
+
+ErrorBehavior::ErrorBehavior() : numberOfEntries(ERROR_BEHAVIOR_SIZE) {
+    odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
+    communicationError = {ErrorBehaviorValue_PreOperational};
+    internalDeviceError = {ErrorBehaviorValue_PreOperational};
+}
+
+ErrorBehaviorValue ErrorBehavior::getCommunicationError() {
+    return communicationError;
+}
+
+ErrorBehaviorValue ErrorBehavior::getInternalDeviceError() {
+    return internalDeviceError;
+}
+
+int8_t ErrorBehavior::getData(Data &data, int32_t odID,
+                              SDOAbortCodes &abortCode) {
+    if (odID == this->odID) {
+        data.u8 = numberOfEntries;
+    }
+    if (odID == this->odID + 1) {
+        data.u8 = (uint8_t)communicationError;
+    } else if (odID == this->odID + 2) {
+        data.u8 = (uint8_t)internalDeviceError;
+    } else {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return 0;
+}
+
+int8_t ErrorBehavior::setData(const Data &data, int32_t odID,
+                              SDOAbortCodes &abortCode) {
+    if (odID == this->odID + 1) {
+        communicationError = (ErrorBehaviorValue)data.u8;
+    } else if (odID == this->odID + 2) {
+        internalDeviceError = (ErrorBehaviorValue)data.u8;
+    } else {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return 0;
+}
+
+EMCY::EMCY()
+    : errorRegister(OD_OBJECT_1001_SUB0),
+      preDefinedErrorField(),
+      errorBehavior() {}
 
 void EMCY::enable() { enabled = true; }
 
 void EMCY::disable() { enabled = false; }
 
 void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
-//   EmergencyFrame frame(node.nodeId, errorCode,
-//                        // errorRegisterObject->getValue(), manufacturerCode);
-//   node.sendFrame(frame);
+    EmergencyFrame frame(node.nodeId, errorCode, errorRegister.getValue(),
+                         manufacturerCode);
+    node.sendFrame(frame);
 }
 
-void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
+void EMCY::raiseError(uint16_t errorCode,
+                      uint16_t manufacturerCode) {  // TODO: add ipc interface
     if (!enabled) return;
-    uint8_t behaviour = X1029_BEHAVIOUR_PREOP;
     switch ((EMCYErrorCodes)errorCode) {
         case EMCYErrorCode_Generic:
         case EMCYErrorCode_DeviceHardware:
@@ -43,24 +203,24 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
         case EMCYErrorCode_Protocol_SyncDataLength:
         case EMCYErrorCode_Protocol_RPDOTimeout:
         case EMCYErrorCode_ExternalError:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Generic);
+            errorRegister.setErrorBit(ErrorRegisterBit_Generic);
             break;
         case EMCYErrorCode_Current:
         case EMCYErrorCode_Current_InputSide:
         case EMCYErrorCode_Current_InsideDevice:
         case EMCYErrorCode_Current_OutputSide:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Current);
+            errorRegister.setErrorBit(ErrorRegisterBit_Current);
             break;
         case EMCYErrorCode_Voltage:
         case EMCYErrorCode_Voltage_Main:
         case EMCYErrorCode_Voltage_InsideDevice:
         case EMCYErrorCode_Voltage_Output:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Voltage);
+            errorRegister.setErrorBit(ErrorRegisterBit_Voltage);
             break;
         case EMCYErrorCode_Temperature:
         case EMCYErrorCode_Temperature_Ambient:
         case EMCYErrorCode_Temperature_Device:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Temperature);
+            errorRegister.setErrorBit(ErrorRegisterBit_Temperature);
             break;
         case EMCYErrorCode_Communication:
         case EMCYErrorCode_Communication_CANOverrun:
@@ -68,37 +228,30 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
         case EMCYErrorCode_Communication_HeartbeatError:
         case EMCYErrorCode_Communication_RecoveredBusOFF:
         case EMCYErrorCode_Communication_CANIDCollision:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Communication);
-#ifdef OD_OBJECT_1029
-            node._od.at(OD_OBJECT_1029)
-                ->getValue(X1029_SUB_COMMUNICATION, &behaviour);
-#endif
+            errorRegister.setErrorBit(ErrorRegisterBit_Communication);
             break;
         case EMCYErrorCode_DeviceSpecific:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_DeviceProfile);
+            errorRegister.setErrorBit(ErrorRegisterBit_DeviceProfile);
             break;
         case EMCYErrorCode_AdditionalFunctions:
-//            errorRegisterObject->setErrorBit(ErrorRegisterBit_Manufacturer);
+            errorRegister.setErrorBit(ErrorRegisterBit_Manufacturer);
             break;
         default:
             break;
     }
-#ifdef OD_OBJECT_1003
-    ((Object1003 *)node._od.at(OD_OBJECT_1003))
-        ->pushError(errorCode, manufacturerCode);
-#endif
+    preDefinedErrorField.pushError(errorCode, manufacturerCode);
     sendError(errorCode, manufacturerCode);
     NMTServiceCommands command = NMTServiceCommand_None;
-    switch (behaviour) {
+    switch (errorBehavior.getCommunicationError()) {
         default:
-        case X1029_BEHAVIOUR_PREOP:
+        case ErrorBehaviorValue_PreOperational:
             if (node._nmt.getState() == NMTState_Operational)
                 command = NMTServiceCommand_EnterPreOperational;
             break;
-        case X1029_BEHAVIOUR_NONE:
+        case ErrorBehaviorValue_None:
             command = NMTServiceCommand_None;
             break;
-        case X1029_BEHAVIOUR_STOPPED:
+        case ErrorBehaviorValue_Stop:
             command = NMTServiceCommand_Stop;
             break;
     }
@@ -106,18 +259,13 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
 }
 
 void EMCY::clearErrorBit(unsigned bit) {
-//    bool tmp = errorRegisterObject->isErrorfree();
-//    errorRegisterObject->clearErrorBit(bit);
-//    if (errorRegisterObject->isErrorfree() && !tmp)
-//        sendError(EMCYErrorCode_Reset, 0);
+    bool tmp = errorRegister.isErrorfree();
+    errorRegister.clearErrorBit(bit);
+    if (errorRegister.isErrorfree() && !tmp) sendError(EMCYErrorCode_Reset, 0);
 }
 
-// uint8_t EMCY::getErrorRegister() { return errorRegisterObject->getValue(); }
+uint8_t EMCY::getErrorRegister() { return errorRegister.getValue(); }
 
-void EMCY::clearHistory() {
-#ifdef OD_OBJECT_1003
-    ((Object1003 *)node._od.at(OD_OBJECT_1003))->clearErrors();
-#endif
-}
+void EMCY::clearHistory() { preDefinedErrorField.clearErrors(); }
 
-// void EMCY::reset() { errorRegisterObject->reset(); }
+void EMCY::reset() { errorRegister.reset(); }

@@ -39,7 +39,7 @@ uint32_t MapParameter::getMappedValue(uint8_t entry) {
     return mappedObjects[entry];
 }
 
-int8_t MapParameter::getData(Data &data, uint32_t id,
+int8_t MapParameter::getData(Data &data, int32_t id,
                              SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCodes::SDOAbortCode_OK;
     if (id == odID) {
@@ -54,7 +54,7 @@ int8_t MapParameter::getData(Data &data, uint32_t id,
     }
 }
 
-int8_t MapParameter::setData(Data data, uint32_t id, SDOAbortCodes &abortCode) {
+int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCodes::SDOAbortCode_OK;
     if (id == odID) {
         uint8_t value = data.u8;
@@ -166,7 +166,7 @@ bool CommParameter::isInhibitSupported() {
 
 bool CommParameter::isEnabled() { return ~cobId & COBID_VALID_MASK; }
 
-int8_t CommParameter::getData(Data &data, uint32_t id,
+int8_t CommParameter::getData(Data &data, int32_t id,
                               SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCodes::SDOAbortCode_OK;
     if (id - odID > entriesNumber) {
@@ -197,7 +197,7 @@ int8_t CommParameter::getData(Data &data, uint32_t id,
     }
 }
 
-int8_t CommParameter::setData(Data data, uint32_t id,
+int8_t CommParameter::setData(Data data, int32_t id,
                               SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCodes::SDOAbortCode_OK;
     bool enabled = isEnabled();
