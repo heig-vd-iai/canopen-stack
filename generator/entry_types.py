@@ -30,18 +30,22 @@ class Entry:
 
     
     @classmethod
-    def get_instance(cls, type_name: str, data: dict, subindex: int = 0):
-        return next(c(data, subindex) for c in cls._get_subclasses() if c.type_name in type_name)
+    def get_instance(cls, type_name: str, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none"):
+        return next(c(data, subindex, getter, setter) for c in cls._get_subclasses() if c.type_name in type_name)
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
         self.parameter_name: str = str(data.get("ParameterName", ""))
         self.object_type = str(data.get("ObjectType", ""))
         self.default_value: str = str(data.get("DefaultValue", 0x00))
         self.pdo_mapping: bool = data.get("PDOMapping", False)
         self.access_type: str = str(data.get("AccessType", ""))
         self.subindex: int = subindex
-        self.getter: str = str(data.get("Getter", "getLocalData"))
-        self.setter: str = str(data.get("Setter", "setLocalData"))
+        if setter == "none" and getter == "none":
+            self.getter: str = str(data.get("Getter", "getLocalData"))
+            self.setter: str = str(data.get("Setter", "setLocalData"))
+        else:
+            self.getter: str = getter
+            self.setter: str = setter
         self._min_value: str = str(data.get("MinValue", None))
         self._max_value: str = str(data.get("MaxValue", None))
         self.remote_getter: str = str(data.get("RemoteGetter", "none"))
@@ -58,21 +62,28 @@ class Entry:
         }.items() if v is not None])
 
     @property
-    def meta_data(self) -> int:
-        if not self.pdo_mapping:
-            if self.access_type == "ro" or self.access_type == "const":
-                return "Metadata_ReadOnlyNotMappable"
-            if self.access_type == "wo":
-                return "Metadata_WriteOnlyNotMappable"
-            if self.access_type == "rw":
-                return "Metadata_ReadWriteNotMappable"
+    def meta_data(self) -> str:
+        meta : str = "{.bits = {"
+        if self.access_type == "ro" or self.access_type == "const":
+            meta += ".readable = true, .writeable = false, "
+        if self.access_type == "wo":
+            meta += ".readable = false, .writeable = true, "
+        if self.access_type == "rw":
+            meta += ".readable = true, .writeable = true, "
+        if self.pdo_mapping:
+            meta += ".mappable = true, "
         else:
-            if self.access_type == "ro":
-                return "Metadata_ReadOnlyMappable"
-            if self.access_type == "wo":
-                return "Metadata_WriteOnlyMappable"
-            if self.access_type == "rw":
-                return "Metadata_ReadWriteMappable"
+            meta += ".mappable = false, "
+        if self._min_value is None or self._max_value is None:
+            meta += ".limited = false, "
+        else:
+            meta += ".limited = true, "
+        if self.remote_getter == "none" or self.remote_setter == "none":
+            meta += ".remote = false"
+        else:
+            meta += ".remote = true"
+        meta += "}}"
+        return meta
 
     @property
     def value(self) -> str:
@@ -98,8 +109,8 @@ class Entry:
 class IntegerEntry(Entry):
     type_name: str = "INTEGERENTRYBASE"
     
-    def __init__(self, data: dict, subindex: int = 0, precision: int = 0) -> None:
-        super().__init__(data, subindex)
+    def __init__(self, data: dict, subindex: int = 0, precision: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, getter, setter)
         self._isexpr: bool = False
         self._precision: int = precision
         # if len(self.default_value):
@@ -138,8 +149,8 @@ class BooleanEntry(Entry):
     min_value = None
     max_value = None
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, getter, setter)
         if len(self.default_value):
             self.default_value = str(int(self.default_value) > 0).lower()
 
@@ -151,8 +162,8 @@ class Integer8Entry(IntegerEntry):
     ctype_name: str = "int8_t"
     size: int = 8
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, precision=2)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 2, getter, setter)
 
     
 
@@ -163,8 +174,8 @@ class Integer16Entry(IntegerEntry):
     ctype_name: str = "int16_t"
     size: int = 16
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 4)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 4, getter, setter)
 
 
 class Integer32Entry(IntegerEntry):
@@ -174,8 +185,8 @@ class Integer32Entry(IntegerEntry):
     ctype_name: str = "int32_t"
     size: int = 32
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 8)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 8, getter, setter)
 
 
 class Integer64Entry(IntegerEntry):
@@ -185,8 +196,8 @@ class Integer64Entry(IntegerEntry):
     ctype_name: str = "int64_t"
     size: int = 64
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 16)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 16, getter, setter)
 
 
 
@@ -197,8 +208,8 @@ class Unsigned8Entry(IntegerEntry):
     ctype_name: str = "uint8_t"
     size: int = 8
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 2)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 2, getter, setter)
 
 
 class Unsigned16Entry(IntegerEntry):
@@ -208,8 +219,8 @@ class Unsigned16Entry(IntegerEntry):
     ctype_name: str = "uint16_t"
     size: int = 16
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 4)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 4, getter, setter)
 
 
 class Unsigned32Entry(IntegerEntry):
@@ -219,8 +230,8 @@ class Unsigned32Entry(IntegerEntry):
     ctype_name: str = "uint32_t"
     size: int = 32
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 8)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 8, getter, setter)
 
 
 class Unsigned64Entry(IntegerEntry):
@@ -230,8 +241,8 @@ class Unsigned64Entry(IntegerEntry):
     ctype_name: str = "uint64_t"
     size: int = 64
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex, 16)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, 16, getter, setter)
 
 
 class Float32Entry(Entry):
@@ -241,8 +252,8 @@ class Float32Entry(Entry):
     ctype_name: str = "float"
     size: int = 32
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, getter, setter)
         if len(self.default_value):
             self.default_value = f"{float(self.default_value)}f"
     
@@ -266,8 +277,8 @@ class Float64Entry(Entry):
     ctype_name: str = "double"
     size: int = 64
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, getter, setter)
         if len(self.default_value):
             self.default_value = str(float(self.default_value))
 
@@ -300,8 +311,8 @@ class StringEntry(Entry):
     def size(self) -> int:
         return (len(self.default_value.encode()) + 1) * 8
 
-    def __init__(self, data: dict, subindex: int = 0) -> None:
-        super().__init__(data, subindex)
+    def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
+        super().__init__(data, subindex, getter, setter)
 
     def eval_value(self, node_id: int) -> str:
         return f"\"{self.default_value}\""

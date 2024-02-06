@@ -7,6 +7,8 @@ class Object(ABC):
     parameter_name: str
     type_value: int
     type_name: str
+    getter: str
+    setter: str
     entries: "list[Entry]"
 
     @classmethod
@@ -16,7 +18,9 @@ class Object(ABC):
     def __init__(self, data: dict) -> None:
         self.index = int(data.get("Index"), 16)
         self.parameter_name: str = data.get("ParameterName", "")
-        self.entries: list[Entry] = [Entry.get_instance(subdata.get("DataType"), subdata, i) for i, subdata in enumerate(data.get("SubEntries", [data]))]
+        self.getter: str = data.get("Getter", "none")
+        self.setter: str = data.get("Setter", "none")
+        self.entries: list[Entry] = [Entry.get_instance(subdata.get("DataType"), subdata, i, self.getter, self.setter) for i, subdata in enumerate(data.get("SubEntries", [data]))]
 
     @abstractmethod
     def __str__(self) -> str:

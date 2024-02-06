@@ -13,10 +13,12 @@ inline void emptySetter(const Data &data) {}
 
 {% for object in objects %}
 {% for subobject in object.entries %}
-{% if subobject.remote_setter != "none" %}
+{% if subobject.remote_getter != "none" %}
 inline void get{{object.cpp_instance_name}}{{subobject.cpp_instance_name}}(Data &data) {
     data.{{subobject.type_code}} = {{subobject.remote_getter}}();
 }
+{% endif %}
+{% if subobject.remote_setter != "none" %}
 inline void set{{object.cpp_instance_name}}{{subobject.cpp_instance_name}}(const Data &data) {
     {{subobject.remote_setter}}(data.{{subobject.type_code}});
 }

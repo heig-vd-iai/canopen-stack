@@ -29,8 +29,16 @@
 #define INDEX_SYNC 6
 
 #define OD_PDO_MAPPING_MAX 8
-#define OD_TPDO_COUNT 4 
-#define OD_RPDO_COUNT 4
+#define OD_TPDO_COUNT 1 //TODO: define with OD
+#define OD_RPDO_COUNT 1
+
+void configRemoteRPDO(int16_t pdoIndex, int32_t odIDs[]);
+
+void configRemoteTPDO(int16_t pdoIndex, int32_t odIDs[]);
+
+void getRemoteTPDO(int16_t pdoIndex, Data data[]);
+
+void setRemoteRPDO(int16_t pdoIndex, const Data data[]);
 
 namespace CANopen {
 
@@ -86,13 +94,14 @@ class CommParameter {
  * mapping and communication parameters. See CiA301:2011§7.2.2 (p. 31)
  */
 class PDO {
+   public:
     /**
      * Structure to represent a Transmit PDO.
      */
-    struct TPDO {
+    struct TPDO {  // TODO: change to private class
         CommParameter commParameter;
         MapParameter mapParameter;
-        uint32_t mappedEntries[OD_PDO_MAPPING_MAX];
+        int32_t mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t count = 0;
         uint8_t size = 0;
         uint32_t timestamp_us = 0;
@@ -105,7 +114,7 @@ class PDO {
     struct RPDO {
         CommParameter commParameter;
         MapParameter mapParameter;
-        uint32_t mappedEntries[OD_PDO_MAPPING_MAX];
+        int32_t mappedEntries[OD_PDO_MAPPING_MAX];
         uint8_t buffer[PDO_DLC] = {0};
         uint8_t count = 0;
         uint8_t size = 0;
@@ -114,10 +123,11 @@ class PDO {
         bool watchTimeoutFlag = false;
     };
 
-   private:
-    bool enabled = false;
     TPDO tpdos[OD_TPDO_COUNT];
     RPDO rpdos[OD_RPDO_COUNT];
+
+   private:
+    bool enabled = false;
     std::function<void(unsigned)> onReceiveFunc;
     std::function<void(unsigned)> onTimeoutFunc;
 

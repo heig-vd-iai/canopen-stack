@@ -14,9 +14,13 @@ MapParameter::MapParameter(int32_t id) : odID(id) {
     if (odID < 0) {
         entriesNumber = 0;
     } else {
-        entriesNumber = node.od().getData((uint32_t)odID)->u8;
+        Data tmp;
+        SDOAbortCodes abortCode;
+        getLocalData_uint8_t(tmp, id, abortCode);
+        entriesNumber = tmp.u8;
         for (uint8_t i = 0; i < entriesNumber; i++) {
-            mappedObjects[i] = node.od().getData(id + i + 1)->u32;
+            getLocalData_uint32_t(tmp, id + i + 1, abortCode);
+            mappedObjects[i] = tmp.u32;
         }
     }
 }
@@ -37,7 +41,8 @@ uint32_t MapParameter::getMappedValue(uint8_t entry) {
 
 int8_t MapParameter::getData(Data &data, uint32_t id,
                              SDOAbortCodes &abortCode) {
-    if (odID == 0) {
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
+    if (id == odID) {
         data.u8 = entriesNumber;
         return 0;
     } else if (id > odID && id < odID + entriesNumber + 1) {
@@ -50,6 +55,7 @@ int8_t MapParameter::getData(Data &data, uint32_t id,
 }
 
 int8_t MapParameter::setData(Data data, uint32_t id, SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
     if (id == odID) {
         uint8_t value = data.u8;
         if (value > OD_PDO_MAPPING_MAX) {
@@ -108,13 +114,23 @@ CommParameter::CommParameter(int32_t id) : odID(id) {
         syncStartValue = 0;  // TODO: add default value by define
 
     } else {
-        entriesNumber = node.od().getData(id)->u8;
-        cobId = node.od().getData(id + 1)->u32;
-        transmissionType = node.od().getData(id + 2)->u8;
-        inhibitTime = node.od().getData(id + 3)->u32;
-        compatibilityEntry = node.od().getData(id + 4)->u32;
-        eventTimer = node.od().getData(id + 5)->u32;
-        syncStartValue = node.od().getData(id + 6)->u8;
+        SDOAbortCodes abortCode;
+        Data tmp;
+        getLocalData_uint8_t(tmp, id, abortCode);
+        entriesNumber = tmp.u8;
+        getLocalData_uint32_t(tmp, id + 1, abortCode);
+        cobId = tmp.u32;
+        getLocalData_uint8_t(tmp, id + 2, abortCode);
+        transmissionType = tmp.u8;
+        // getLocalData_uint32_t(tmp, id + 3, abortCode); //not supported
+        // inhibitTime = tmp.u32;
+        inhibitTime = 0;
+        getLocalData_uint32_t(tmp, id + 4, abortCode);
+        compatibilityEntry = tmp.u32;
+        getLocalData_uint32_t(tmp, id + 5, abortCode);
+        eventTimer = tmp.u32;
+        getLocalData_uint8_t(tmp, id + 6, abortCode);
+        syncStartValue = tmp.u8;
     }
 }
 
@@ -148,10 +164,11 @@ bool CommParameter::isInhibitSupported() {
     return entriesNumber >= INDEX_INHIBIT;
 }
 
-bool CommParameter::isEnabled() { return cobId & COBID_VALID_MASK; }
+bool CommParameter::isEnabled() { return ~cobId & COBID_VALID_MASK; }
 
 int8_t CommParameter::getData(Data &data, uint32_t id,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
     if (id - odID > entriesNumber) {
         abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
         return -1;
@@ -182,6 +199,7 @@ int8_t CommParameter::getData(Data &data, uint32_t id,
 
 int8_t CommParameter::setData(Data data, uint32_t id,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCodes::SDOAbortCode_OK;
     bool enabled = isEnabled();
     if (id - odID > entriesNumber) {
         abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
@@ -209,7 +227,7 @@ int8_t CommParameter::setData(Data data, uint32_t id,
         }
         cobId = data.u32;
     } else if (id == odID + INDEX_TRANSMISSION) {
-        if (SYNC_MAX < data.u8 && data.u8 < EVENT1) {
+        if (SYNC_MAX < data.u8 && data.u8 < RTR_SYNC) {
             abortCode =
                 SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
             return -1;
@@ -224,8 +242,10 @@ int8_t CommParameter::setData(Data data, uint32_t id,
     } else if (id == odID + INDEX_EVENT) {
         eventTimer = data.u16;
     } else if (id == odID + INDEX_SYNC) {
-        abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
-        return -1;
+        if(enabled){
+            abortCode = SDOAbortCodes::SDOAbortCode_UnsupportedObjectAccess;
+            return -1;
+        }
     } else {
         abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
         return -1;
@@ -268,8 +288,7 @@ void PDO::initTPDO(unsigned index) {
 }
 
 void PDO::initRPDO(unsigned index) {
-    rpdos[index].commParameter =
-        CommParameter(OD_OBJECT_1400_SUB0 + index);
+    rpdos[index].commParameter = CommParameter(OD_OBJECT_1400_SUB0 + index);
     rpdos[index].mapParameter = MapParameter(OD_OBJECT_1600_SUB0 + index);
     remapRPDO(index);
 }
@@ -288,6 +307,7 @@ void PDO::remapTPDO(unsigned index) {
         tpdo->size = sizeSum;
         tpdo->count++;
     }
+    configRemoteTPDO(index, tpdo->mappedEntries); //assuming all TPDOs are remote TODO: add check if remote
 }
 
 void PDO::remapRPDO(unsigned index) {
@@ -304,18 +324,20 @@ void PDO::remapRPDO(unsigned index) {
         rpdo->size = sizeSum;
         rpdo->count++;
     }
+    // configRemoteRPDO(index, rpdo->mappedEntries);
 }
 
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
     TPDO *tpdo = tpdos + index;
     uint32_t bytesTransferred = 0;
+    Data tmp[OD_PDO_MAPPING_MAX];
+    getRemoteTPDO(index, tmp); //assuming all TPDOs are remote TODO: add check if remote
     for (unsigned i = 0; i < tpdo->count; i++) {
         int32_t id = tpdo->mappedEntries[i];
         uint32_t size = node.od().getSize(id);
         if (bytesTransferred + size > PDO_DLC) break;
-        Data tmp;
-        int8_t result = node.od().readData(tmp, id);  // TODO: wait remote data
-        // TODO: add data to buffer
+        // int8_t result = node.od().readData(tmp, id);  // TODO: wait remote data
+        memcpy(buffer + bytesTransferred, &tmp[i], size);
         bytesTransferred += size;
     }
 }

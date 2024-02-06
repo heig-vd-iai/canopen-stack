@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=10:18
-CreationDate=2024-02-05
+CreationTime=12:42
+CreationDate=2024-02-06
 CreatedBy=Adrien Cardinale
-ModificationTime=10:18
-ModificationDate=2024-02-05
+ModificationTime=12:42
+ModificationDate=2024-02-06
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -542,9 +542,9 @@ PDOMapping=1
 [6064]
 ParameterName=Position actual value
 ObjectType=0x07
-DataType=0x0004
+DataType=0x0008
 AccessType=ro
-DefaultValue=0
+DefaultValue=0.0f
 PDOMapping=1
 
 [606C]
@@ -584,7 +584,7 @@ ParameterName=Target position
 ObjectType=0x07
 DataType=0x0004
 AccessType=rw
-DefaultValue=0
+DefaultValue=42
 PDOMapping=1
 
 [6081]

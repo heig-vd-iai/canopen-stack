@@ -16,7 +16,8 @@ union Access {
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
-        //TODO : add if object has limit
+        bool limited : 1;
+        bool remote : 1;
     } bits;
 };
 
