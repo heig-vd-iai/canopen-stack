@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=14:40
-CreationDate=2024-02-06
+CreationTime=14:06
+CreationDate=2024-02-08
 CreatedBy=Adrien Cardinale
-ModificationTime=14:40
-ModificationDate=2024-02-06
+ModificationTime=14:06
+ModificationDate=2024-02-08
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -104,7 +104,7 @@ DefaultValue=0
 PDOMapping=0
 
 [OptionalObjects]
-SupportedObjects=22
+SupportedObjects=23
 1=0x1003
 2=0x1010
 3=0x1011
@@ -119,14 +119,15 @@ SupportedObjects=22
 12=0x6061
 13=0x6062
 14=0x6064
-15=0x606C
-16=0x6071
-17=0x6077
-18=0x6078
-19=0x607A
-20=0x6081
-21=0x6083
-22=0x6084
+15=0x606B
+16=0x606C
+17=0x6071
+18=0x6077
+19=0x6078
+20=0x607A
+21=0x6081
+22=0x6083
+23=0x6084
 
 [1003]
 ParameterName=Pre-defined error field
@@ -542,9 +543,17 @@ PDOMapping=1
 [6064]
 ParameterName=Position actual value
 ObjectType=0x07
-DataType=0x0008
+DataType=0x0004
 AccessType=ro
-DefaultValue=0.0f
+DefaultValue=0
+PDOMapping=1
+
+[606B]
+ParameterName=Velocity demand value
+ObjectType=0x07
+DataType=0x0004
+AccessType=ro
+DefaultValue=0
 PDOMapping=1
 
 [606C]
@@ -558,7 +567,7 @@ PDOMapping=1
 [6071]
 ParameterName=Target torque
 ObjectType=0x07
-DataType=0x0015
+DataType=0x0004
 AccessType=rw
 DefaultValue=0
 PDOMapping=1

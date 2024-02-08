@@ -155,6 +155,8 @@ OptionalObjects:
     AccessType: rw
     DefaultValue: 0x00
     PDOMapping: 0
+    Getter: node.sync().getData
+    Setter: node.sync().setData
   - Index: "1400"
     ParameterName: Receive PDO 1 Communication Parameter
     ObjectType: RECORD
@@ -363,6 +365,7 @@ OptionalObjects:
     AccessType: ro
     DefaultValue: 42
     PDOMapping: 1
+    RemoteGetter: sys.axis->getStatusword
   - Index: "6060"
     ParameterName: Modes of operation
     ObjectType: VAR
@@ -377,8 +380,8 @@ OptionalObjects:
     ObjectType: VAR
     DataType: INTEGER8
     AccessType: ro
-    # DefaultValue: 
     PDOMapping: 1
+    RemoteGetter: sys.axis->getOperationModeDisplay
   - Index: "6062"
     ParameterName: Position demand value
     ObjectType: VAR
@@ -386,31 +389,39 @@ OptionalObjects:
     AccessType: ro
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getDemandPosition
   - Index: "6064"
     ParameterName: Position actual value
     ObjectType: VAR
-    DataType: REAL32
+    DataType: INTEGER32
     AccessType: ro
     DefaultValue: 0
     PDOMapping: 1
     RemoteGetter: sys.axis->getActualPosition
+  - Index: "606B"
+    ParameterName: Velocity demand value
+    ObjectType: VAR
+    DataType: INTEGER32
+    AccessType: ro
+    DefaultValue: 0
+    PDOMapping: 1
+    RemoteGetter: sys.axis->getDemandVelocity
   - Index: "606C"
     ParameterName: Velocity actual value
     ObjectType: VAR
     DataType: INTEGER32
     AccessType: ro
-    # DefaultValue: 
     PDOMapping: 1
+    RemoteGetter: sys.axis->getActualVelocity
   - Index: "6071"
     ParameterName: Target torque
     ObjectType: VAR
-    # DataType: INTEGER32
-    DataType: INTEGER64
+    DataType: INTEGER32
     AccessType: rw
     DefaultValue: 0
     PDOMapping: 1
-    RemoteGetter: sys.getTest
-    RemoteSetter: sys.setTest
+    RemoteGetter: sys.axis->getTargetTorque
+    RemoteSetter: sys.axis->setTargetTorque
   - Index: "6077"
     ParameterName: Torque actual value
     ObjectType: VAR
@@ -418,6 +429,7 @@ OptionalObjects:
     AccessType: ro
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getActualTorque
   - Index: "6078"
     ParameterName: Current actual value
     ObjectType: VAR
@@ -425,6 +437,7 @@ OptionalObjects:
     AccessType: ro
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getActualCurrent
   - Index: "607A"
     ParameterName: Target position
     ObjectType: VAR
@@ -432,6 +445,8 @@ OptionalObjects:
     AccessType: rw
     DefaultValue: 42
     PDOMapping: 1
+    RemoteGetter: sys.axis->getTargetPosition
+    RemoteSetter: sys.axis->setTargetPosition
   - Index: "6081"
     ParameterName: Profile velocity
     ObjectType: VAR
@@ -439,6 +454,8 @@ OptionalObjects:
     AccessType: rw
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getProfileVelocity
+    RemoteSetter: sys.axis->setProfileVelocity
   - Index: "6083"
     ParameterName: Profile acceleration
     ObjectType: VAR
@@ -446,6 +463,8 @@ OptionalObjects:
     AccessType: rw
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getProfileAcceleration
+    RemoteSetter: sys.axis->setProfileAcceleration
   - Index: "6084"
     ParameterName: Profile deceleration
     ObjectType: VAR
@@ -453,3 +472,5 @@ OptionalObjects:
     AccessType: rw
     DefaultValue: 0
     PDOMapping: 1
+    RemoteGetter: sys.axis->getProfileDeceleration
+    RemoteSetter: sys.axis->setProfileDeceleration

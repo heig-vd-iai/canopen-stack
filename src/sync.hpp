@@ -10,8 +10,14 @@
 
 #include <cstdint>
 #include <functional>
+#include "unions.hpp"
+#include "enums.hpp"f
 
 #define SYNC_COUNTER_OFFSET 0
+#define SYNC_INDEX 0x1019
+#define NO_COUNTER 0
+#define MIN_COUNTER 2
+#define MAX_COUNTER 240
 
 namespace CANopen {
 /**
@@ -21,6 +27,7 @@ namespace CANopen {
  */
 class SYNC {
    private:
+    int32_t odID;
     bool enabled = false;
     uint8_t internalCounter = 1;
     uint8_t maxCounter;
@@ -64,5 +71,9 @@ class SYNC {
      * @param callback Callback function to be called on SYNC event.
      */
     void onSync(std::function<void(unsigned)> callback);
+
+    int8_t getData(Data &data, int32_t odID, SDOAbortCodes &abortCode);
+
+    int8_t setData(const Data &data, int32_t odID, SDOAbortCodes &abortCode);
 };
 }  // namespace CANopen

@@ -13,7 +13,7 @@ void HB::publishState(NMTStates state, uint8_t toggleBit) {
     lastPublish = node.getTime_us();
 }
 
-void HB::update(uint32_t timestamp_us) {
+void HB::update(uint32_t timestamp_us) { //TODO: add local data
 #ifdef OD_OBJECT_1017
     uint16_t heartbeatTime_ms = 0;
     node._od.at(OD_OBJECT_1017)->getValue(0, &heartbeatTime_ms);
