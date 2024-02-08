@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #include "emergency.hpp"
+#include "hardwareInterface.hpp"
 #include "heartbeat.hpp"
 #include "nmt.hpp"
 #include "od.hpp"
@@ -26,6 +27,7 @@ class Node {
     PDO _pdo;
     SYNC _sync;
     EMCY _emcy;
+    HardwareInterface *_hardware;
 
     /**
      * Send a CANopen frame to the CAN network.
@@ -99,11 +101,17 @@ class Node {
     EMCY &emcy();
 
     /**
+     * Get the HardwareInterface object.
+     * @return Reference to the HardwareInterface instance.
+     */
+    HardwareInterface &hardware();
+
+    /**
      * Initialize the CANopen node.
      * This method will initialize the NMT state machine, so it should be called
      * when the node is ready to accept incoming frames.
      */
-    void init();
+    void init(HardwareInterface *hardware);
 
     /**
      * Receive and process a CANopen frame.

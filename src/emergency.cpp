@@ -200,7 +200,7 @@ void EMCY::disable() { enabled = false; }
 void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
     EmergencyFrame frame(node.nodeId, errorCode, errorRegister.getValue(),
                          manufacturerCode);
-    node.sendFrame(frame);
+    node.hardware().sendFrame(frame);
 }
 
 void EMCY::raiseError(uint16_t errorCode,

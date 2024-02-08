@@ -2,7 +2,6 @@
  * Contains the definitions of the Node class.
  */
 #include "node.hpp"
-
 #include "frame.hpp"
 
 namespace CANopen {
@@ -27,7 +26,13 @@ SYNC &Node::sync() { return _sync; }
 
 EMCY &Node::emcy() { return _emcy; }
 
-void Node::init() { _nmt.initSM(); }
+HardwareInterface &Node::hardware() { return *_hardware; }
+
+void Node::init(HardwareInterface *hardware) { 
+    _hardware = hardware;
+    _hardware->configCan();
+    _nmt.initSM(); 
+}
 
 void Node::receiveFrame(Frame frame) {
     uint32_t timestamp = getTime_us();
@@ -62,6 +67,7 @@ void Node::receiveFrame(Frame frame) {
 }
 
 void Node::update() {
+    hardware().update();
     uint32_t timestamp = getTime_us();
    _hb.update(timestamp);
    _sdo.update(timestamp);
