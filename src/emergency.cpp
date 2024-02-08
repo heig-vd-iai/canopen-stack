@@ -126,6 +126,25 @@ void PreDefinesErrorField::clearErrors() {
     for (unsigned i = 0; i < errorsNumber; i++) errorsField[i] = 0;
 }
 
+int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
+                                     SDOAbortCodes &abortCode) {
+    data.u8 = errorsNumber;
+}
+
+int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
+                                     SDOAbortCodes &abortCode) {
+    if(odID == this->odID) {
+        if(data.u8 == 0){
+            clearErrors();
+        }else{
+            abortCode = SDOAbortCode_InvalidDownloadParameterValue;
+            return -1;
+        }
+        abortCode = SDOAbortCode_OK;
+        return 0;
+    }
+}
+
 ErrorBehavior::ErrorBehavior() : numberOfEntries(ERROR_BEHAVIOR_SIZE) {
     odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
     communicationError = {ErrorBehaviorValue_PreOperational};
@@ -262,6 +281,63 @@ void EMCY::clearErrorBit(unsigned bit) {
     bool tmp = errorRegister.isErrorfree();
     errorRegister.clearErrorBit(bit);
     if (errorRegister.isErrorfree() && !tmp) sendError(EMCYErrorCode_Reset, 0);
+}
+
+void EMCY::clearErrorBit(EMCYErrorCodes code){
+    ErrorRegisterBits bit;
+    switch (code) {
+        case EMCYErrorCode_Generic:
+        case EMCYErrorCode_DeviceHardware:
+        case EMCYErrorCode_Software:
+        case EMCYErrorCode_Software_Internal:
+        case EMCYErrorCode_Software_User:
+        case EMCYErrorCode_Software_Dataset:
+        case EMCYErrorCode_Modules:
+        case EMCYErrorCode_Monitoring:
+        case EMCYErrorCode_Protocol:
+        case EMCYErrorCode_Protocol_PDOLengthError:
+        case EMCYErrorCode_Protocol_PDOLengthExceeded:
+        case EMCYErrorCode_Protocol_DAMMPDODestinationNotAvailable:
+        case EMCYErrorCode_Protocol_SyncDataLength:
+        case EMCYErrorCode_Protocol_RPDOTimeout:
+        case EMCYErrorCode_ExternalError:
+            bit = ErrorRegisterBit_Generic;
+            break;
+        case EMCYErrorCode_Current:
+        case EMCYErrorCode_Current_InputSide:
+        case EMCYErrorCode_Current_InsideDevice:
+        case EMCYErrorCode_Current_OutputSide:
+            bit = ErrorRegisterBit_Current;
+            break;
+        case EMCYErrorCode_Voltage:
+        case EMCYErrorCode_Voltage_Main:
+        case EMCYErrorCode_Voltage_InsideDevice:
+        case EMCYErrorCode_Voltage_Output:
+            bit = ErrorRegisterBit_Voltage;
+            break;
+        case EMCYErrorCode_Temperature:
+        case EMCYErrorCode_Temperature_Ambient:
+        case EMCYErrorCode_Temperature_Device:
+            bit = ErrorRegisterBit_Temperature;
+            break;
+        case EMCYErrorCode_Communication:
+        case EMCYErrorCode_Communication_CANOverrun:
+        case EMCYErrorCode_Communication_CANErrorPassive:
+        case EMCYErrorCode_Communication_HeartbeatError:
+        case EMCYErrorCode_Communication_RecoveredBusOFF:
+        case EMCYErrorCode_Communication_CANIDCollision:
+            bit = ErrorRegisterBit_Communication;
+            break;
+        case EMCYErrorCode_DeviceSpecific:
+            bit = ErrorRegisterBit_DeviceProfile;
+            break;
+        case EMCYErrorCode_AdditionalFunctions:
+            bit = ErrorRegisterBit_Manufacturer;
+            break;
+        default:
+            break;
+    }
+    clearErrorBit((unsigned)bit);
 }
 
 uint8_t EMCY::getErrorRegister() { return errorRegister.getValue(); }

@@ -117,6 +117,7 @@ class EMCY {
      * @param bit The index of the error bit to clear.
      */
     void clearErrorBit(unsigned bit);
+    void clearErrorBit(EMCYErrorCodes code);
 
     /**
      * Get the current error register value.
