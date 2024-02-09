@@ -9,8 +9,8 @@ using namespace CANopen;
 
 void HB::publishState(NMTStates state, uint8_t toggleBit) {
     HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
-    node.sendFrame(frame);
-    lastPublish = node.getTime_us();
+    node.hardware().sendFrame(frame);
+    lastPublish = node.hardware().getTime_us();
 }
 
 void HB::update(uint32_t timestamp_us) { //TODO: add local data

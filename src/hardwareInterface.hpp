@@ -9,9 +9,20 @@ class Frame;
 
 class HardwareInterface {
    public:
-    virtual void configCan() = 0;
+    virtual void init() = 0;
     virtual void update() = 0;
+     /**
+     * Send a CANopen frame to the CAN network.
+     * @param frame The CANopen frame to send.
+     */
     virtual void sendFrame(const Frame &frame) = 0;
+    /**
+     * Get the relative clock time.
+     * This value is used internally and doesn't have to be absolute.
+     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking
+     * issues.
+     * @return Current clock time in microseconds.
+     */
     virtual uint32_t getTime_us() = 0;
     virtual void updateError() = 0;
     virtual int8_t getRemoteData(Data &data, int32_t id,

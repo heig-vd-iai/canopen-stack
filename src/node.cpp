@@ -5,12 +5,12 @@
 #include "frame.hpp"
 
 namespace CANopen {
-Node node;
+    Node node;
 }  // namespace CANopen
 
 using namespace CANopen;
 
-Node::Node() : _od(), _nmt(), _hb(), _sdo(), _pdo(), _sync(), _emcy() {}
+Node::Node(){}
 
 ObjectDictionnary &Node::od() { return _od; }
 
@@ -28,14 +28,17 @@ EMCY &Node::emcy() { return _emcy; }
 
 HardwareInterface &Node::hardware() { return *_hardware; }
 
-void Node::init(HardwareInterface *hardware) { 
-    _hardware = hardware;
-    _hardware->configCan();
+void Node::init(HardwareInterface *hardware) {
+    _hardware = hardware; 
+    _hardware->init();
+    _pdo.init();
+    _sync.init();
+    _emcy.init();
     _nmt.initSM(); 
 }
 
 void Node::receiveFrame(Frame frame) {
-    uint32_t timestamp = getTime_us();
+    uint32_t timestamp = node.hardware().getTime_us();
      switch ((FunctionCodes)frame.functionCode) {
         case FunctionCode_NMT:
            _nmt.receiveFrame((NMTFrame &)frame);
@@ -68,7 +71,7 @@ void Node::receiveFrame(Frame frame) {
 
 void Node::update() {
     hardware().update();
-    uint32_t timestamp = getTime_us();
+    uint32_t timestamp = node.hardware().getTime_us();
    _hb.update(timestamp);
    _sdo.update(timestamp);
     _pdo.update(timestamp);

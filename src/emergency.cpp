@@ -8,7 +8,9 @@
 
 using namespace CANopen;
 
-ErrorRegister::ErrorRegister(int32_t id) : odID(id), value(0) {}
+ErrorRegister::ErrorRegister() : value(0) {}
+
+void ErrorRegister::init() { odID = node.od().findObject(ERROR_REGISTER_INDEX); }
 
 uint8_t ErrorRegister::getValue() { return value; }
 
@@ -95,7 +97,9 @@ int8_t ErrorRegister::setData(const Data &data, int32_t odID,
     return 0;
 }
 
-PreDefinesErrorField::PreDefinesErrorField() : errorsNumber(0) {
+PreDefinesErrorField::PreDefinesErrorField() : errorsNumber(0) {}
+
+void PreDefinesErrorField::init() {
     odID = node.od().findObject(PREDEFINED_ERROR_FIELD_INDEX);
     for (int i = 0; i < PREDEFINED_ERROR_FIELD_SIZE; i++) errorsField[i] = 0;
 }
@@ -133,10 +137,10 @@ int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
 
 int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
                                      SDOAbortCodes &abortCode) {
-    if(odID == this->odID) {
-        if(data.u8 == 0){
+    if (odID == this->odID) {
+        if (data.u8 == 0) {
             clearErrors();
-        }else{
+        } else {
             abortCode = SDOAbortCode_InvalidDownloadParameterValue;
             return -1;
         }
@@ -145,7 +149,9 @@ int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
     }
 }
 
-ErrorBehavior::ErrorBehavior() : numberOfEntries(ERROR_BEHAVIOR_SIZE) {
+ErrorBehavior::ErrorBehavior() {}
+
+void ErrorBehavior::init() {
     odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
     communicationError = {ErrorBehaviorValue_PreOperational};
     internalDeviceError = {ErrorBehaviorValue_PreOperational};
@@ -189,9 +195,15 @@ int8_t ErrorBehavior::setData(const Data &data, int32_t odID,
 }
 
 EMCY::EMCY()
-    : errorRegister(OD_OBJECT_1001_SUB0),
+    : errorRegister(),
       preDefinedErrorField(),
       errorBehavior() {}
+
+void EMCY::init() {
+    errorRegister.init();
+    preDefinedErrorField.init();
+    errorBehavior.init();
+}
 
 void EMCY::enable() { enabled = true; }
 
@@ -283,7 +295,7 @@ void EMCY::clearErrorBit(unsigned bit) {
     if (errorRegister.isErrorfree() && !tmp) sendError(EMCYErrorCode_Reset, 0);
 }
 
-void EMCY::clearErrorBit(EMCYErrorCodes code){
+void EMCY::clearErrorBit(EMCYErrorCodes code) {
     ErrorRegisterBits bit;
     switch (code) {
         case EMCYErrorCode_Generic:

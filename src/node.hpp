@@ -29,21 +29,6 @@ class Node {
     EMCY _emcy;
     HardwareInterface *_hardware;
 
-    /**
-     * Send a CANopen frame to the CAN network.
-     * @param frame The CANopen frame to send.
-     */
-    void sendFrame(class Frame &frame);
-
-    /**
-     * Get the relative clock time.
-     * This value is used internally and doesn't have to be absolute.
-     * The counter MUST count up to 0xFFFFFFFF in order to avoid clocking
-     * issues.
-     * @return Current clock time in microseconds.
-     */
-    uint32_t getTime_us();
-
    public:
     friend NMT;
     friend HB;

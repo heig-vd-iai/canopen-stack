@@ -32,14 +32,6 @@
 #define OD_TPDO_COUNT 1 //TODO: define with OD
 #define OD_RPDO_COUNT 1
 
-void configRemoteRPDO(int16_t pdoIndex, int32_t odIDs[]);
-
-void configRemoteTPDO(int16_t pdoIndex, int32_t odIDs[]);
-
-void getRemoteTPDO(int16_t pdoIndex, Data data[]);
-
-void setRemoteRPDO(int16_t pdoIndex, const Data data[]);
-
 namespace CANopen {
 
 class MapParameter {
@@ -130,6 +122,8 @@ class PDO {
     bool enabled = false;
     std::function<void(unsigned)> onReceiveFunc;
     std::function<void(unsigned)> onTimeoutFunc;
+
+    void init();
 
     /**
      * Enable PDO functionality, should only be called internally by NMT class.

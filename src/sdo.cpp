@@ -26,7 +26,7 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode) {
     response.setIndex(index);
     response.setSubindex(subindex);
     response.setAbortCode(abortCode);
-    node.sendFrame(response);
+    node.hardware().sendFrame(response);
     serverState = SDOServerState_Ready;
 }
 
@@ -91,7 +91,7 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
     response.setCommandByte(sendCommand.value);
     response.setIndex(transferData.index);
     response.setSubindex(transferData.subindex);
-    node.sendFrame(response);
+    node.hardware().sendFrame(response);
     serverState = sendCommand.bits_initiate.e ? SDOServerState_Ready
                                               : SDOServerState_Uploading;
     transferData.timestamp_us = timestamp_us;
@@ -122,7 +122,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     memcpy(response.data + SDO_SEGMENT_DATA_OFFSET,
            &transferData.data.u8 + bytesSent, payloadSize);
     transferData.remainingBytes -= payloadSize;
-    node.sendFrame(response);
+    node.hardware().sendFrame(response);
     if (transferData.sendCommand.bits_segment.c)
         serverState = SDOServerState_Ready;
     transferData.timestamp_us = timestamp_us;
@@ -200,7 +200,7 @@ void SDO::downloadInitiateSend(uint32_t timestamp_us) {
     SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
-    node.sendFrame(response);
+    node.hardware().sendFrame(response);
     if (!recvCommand.bits_initiate.e)
         serverState = SDOServerState_Downloading;
     else
@@ -246,7 +246,7 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
     transferData.sendCommand.bits_segment.t =
         transferData.recvCommand.bits_segment.t;
     SDOFrame response(node.nodeId, transferData.sendCommand.value);
-    node.sendFrame(response);
+    node.hardware().sendFrame(response);
     transferData.timestamp_us = timestamp_us;
 }
 

@@ -33,6 +33,8 @@ class SYNC {
     uint8_t maxCounter;
     std::function<void(unsigned)> onSyncFunc;
 
+    void init();
+
     /**
      * Enable EMCY functionality, should only be called internally by NMT class.
      */

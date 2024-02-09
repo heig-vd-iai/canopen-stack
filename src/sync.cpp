@@ -6,7 +6,9 @@
 //#include "objects/object_1019.hpp"
 using namespace CANopen;
 
-SYNC::SYNC() {
+SYNC::SYNC() {}
+
+void SYNC::init() {
     odID = node.od().findObject(SYNC_INDEX);
     if (odID < 0) {
         maxCounter = MAX_COUNTER;

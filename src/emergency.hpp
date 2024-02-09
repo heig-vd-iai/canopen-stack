@@ -10,6 +10,7 @@
 #define EMCY_ERRCODE_OFFSET 0
 #define EMCY_ERRREG_OFFSET 2
 #define EMCY_MANUFACTURER_OFFSET 3
+#define ERROR_REGISTER_INDEX 0x1001
 #define PREDEFINED_ERROR_FIELD_SIZE 8
 #define PREDEFINED_ERROR_FIELD_INDEX 0x1003
 #define ERROR_BEHAVIOR_SIZE 2
@@ -27,7 +28,8 @@ class ErrorRegister {
     uint8_t value;
 
    public:
-    ErrorRegister(int32_t id);
+    ErrorRegister();
+    void init();
     uint8_t getValue();
     void setErrorBit(unsigned bit);
     void clearErrorBit(unsigned bit);
@@ -43,6 +45,7 @@ class PreDefinesErrorField {
     uint32_t errorsField[PREDEFINED_ERROR_FIELD_SIZE];
 
    public:
+    void init();
     PreDefinesErrorField();
     void shiftErrors();
     void pushError(uint16_t errorCode, uint32_t manufacturerCode);
@@ -58,6 +61,7 @@ class ErrorBehavior {
     ErrorBehaviorValue internalDeviceError;
 
    public:
+    void init();
     ErrorBehavior();
     ErrorBehaviorValue getCommunicationError();
     ErrorBehaviorValue getInternalDeviceError();
@@ -70,6 +74,7 @@ class EMCY {
     ErrorRegister errorRegister;
     PreDefinesErrorField preDefinedErrorField;
     ErrorBehavior errorBehavior;
+
    private:
     bool enabled = false;
     bool errorFree = true;
@@ -95,6 +100,9 @@ class EMCY {
 
    public:
     friend class NMT;
+
+    void init();
+
     /**
      * Constructor for EMCY class.
      * @param node The parent Node reference.
