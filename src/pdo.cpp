@@ -10,16 +10,17 @@
 #include "node.hpp"
 using namespace CANopen;
 
-MapParameter::MapParameter(int32_t id) : odID(id) {
+MapParameter::MapParameter(int16_t index) {
+    odID = node.od().findObject(index);
     if (odID < 0) {
         entriesNumber = 0;
     } else {
         Data tmp;
         SDOAbortCodes abortCode;
-        getLocalData_uint8_t(tmp, id, abortCode);
+        getLocalData_uint8_t(tmp, odID, abortCode);
         entriesNumber = tmp.u8;
         for (uint8_t i = 0; i < entriesNumber; i++) {
-            getLocalData_uint32_t(tmp, id + i + 1, abortCode);
+            getLocalData_uint32_t(tmp, odID + i + 1, abortCode);
             mappedObjects[i] = tmp.u32;
         }
     }
@@ -103,7 +104,8 @@ CANopen::MapParameter &CANopen::MapParameter::operator=(
     return *this;
 }
 
-CommParameter::CommParameter(int32_t id) : odID(id) {
+CommParameter::CommParameter(int16_t index) {
+    odID = node.od().findObject(index);
     if (odID < 0) {
         entriesNumber = 6;
         cobId = 0;
@@ -115,20 +117,20 @@ CommParameter::CommParameter(int32_t id) : odID(id) {
     } else {
         SDOAbortCodes abortCode;
         Data tmp;
-        getLocalData_uint8_t(tmp, id, abortCode);
+        getLocalData_uint8_t(tmp, odID, abortCode);
         entriesNumber = tmp.u8;
-        getLocalData_uint32_t(tmp, id + 1, abortCode);
+        getLocalData_uint32_t(tmp, odID + 1, abortCode);
         cobId = tmp.u32;
-        getLocalData_uint8_t(tmp, id + 2, abortCode);
+        getLocalData_uint8_t(tmp, odID + 2, abortCode);
         transmissionType = tmp.u8;
-        // getLocalData_uint32_t(tmp, id + 3, abortCode); //not supported
+        // getLocalData_uint32_t(tmp, odID + 3, abortCode); //not supported
         // inhibitTime = tmp.u32;
         inhibitTime = 0;
-        getLocalData_uint32_t(tmp, id + 4, abortCode);
+        getLocalData_uint32_t(tmp, odID + 4, abortCode);
         compatibilityEntry = tmp.u32;
-        getLocalData_uint32_t(tmp, id + 5, abortCode);
+        getLocalData_uint32_t(tmp, odID + 5, abortCode);
         eventTimer = tmp.u32;
-        getLocalData_uint8_t(tmp, id + 6, abortCode);
+        getLocalData_uint8_t(tmp, odID + 6, abortCode);
         syncStartValue = tmp.u8;
     }
 }
@@ -269,9 +271,9 @@ CommParameter &CommParameter::operator=(const CommParameter &other) {
     return *this;
 }
 
-PDO::PDO(){}
+PDO::PDO() {}
 
-void  PDO::init(){
+void PDO::init() {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) initTPDO(i);
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) initRPDO(i);
 }
@@ -281,15 +283,14 @@ void PDO::enable() { enabled = true; }
 void PDO::disable() { enabled = false; }
 
 void PDO::initTPDO(unsigned index) {
-    tpdos[index].commParameter =
-        CommParameter(OD_OBJECT_1800_SUB0 + index);  // TODO: test if exist
-    tpdos[index].mapParameter = MapParameter(OD_OBJECT_1A00_SUB0 + index);
+    tpdos[index].commParameter = CommParameter(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
-    rpdos[index].commParameter = CommParameter(OD_OBJECT_1400_SUB0 + index);
-    rpdos[index].mapParameter = MapParameter(OD_OBJECT_1600_SUB0 + index);
+    rpdos[index].commParameter = CommParameter(RPDO_COMMUNICATION_INDEX + index);
+    rpdos[index].mapParameter = MapParameter(RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
 
@@ -339,8 +340,6 @@ void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
         int32_t id = tpdo->mappedEntries[i];
         uint32_t size = node.od().getSize(id);
         if (bytesTransferred + size > PDO_DLC) break;
-        // int8_t result = node.od().readData(tmp, id);  // TODO: wait remote
-        // data
         memcpy(buffer + bytesTransferred, &tmp[i], size);
         bytesTransferred += size;
     }
@@ -355,12 +354,6 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
     for (unsigned i = 0; i < rpdo->count; i++) {
         int32_t id = rpdo->mappedEntries[i];
         uint32_t size = node.od().getSize(id);
-        // Data tmp;
-        // tmp.u64 =
-        //     *(buffer + bytesTransferred + size);  // TODO: check if it is
-        //     right
-        // int8_t result = node.od().writeData(tmp, id);  // TODO: wait remote
-        // data
         memcpy(&tmp[i], buffer + bytesTransferred, size);
         bytesTransferred += size;
     }

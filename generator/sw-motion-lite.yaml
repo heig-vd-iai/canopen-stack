@@ -181,11 +181,179 @@ OptionalObjects:
         AccessType: rw
         DefaultValue: 0xFF
         PDOMapping: 0
+  - Index: "1401"
+    ParameterName: Receive PDO 2 Communication Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().rpdos[1].commParameter.getData
+    Setter: node.pdo().rpdos[1].commParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000300
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+  - Index: "1402"
+    ParameterName: Receive PDO 3 Communication Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().rpdos[2].commParameter.getData
+    Setter: node.pdo().rpdos[2].commParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000400
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
   - Index: "1600"
     ParameterName: Receive PDO 1 Mapping Parameter
     ObjectType: RECORD
     Getter: node.pdo().rpdos[0].mapParameter.getData
     Setter: node.pdo().rpdos[0].mapParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1601"
+    ParameterName: Receive PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().rpdos[1].mapParameter.getData
+    Setter: node.pdo().rpdos[1].mapParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1602"
+    ParameterName: Receive PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().rpdos[2].mapParameter.getData
+    Setter: node.pdo().rpdos[2].mapParameter.setData
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR
@@ -289,11 +457,227 @@ OptionalObjects:
         AccessType: rw
         DefaultValue: 0x00
         PDOMapping: 0
+  - Index: "1801"
+    ParameterName: Transmit PDO 2 Communication Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().tpdos[1].commParameter.getData
+    Setter: node.pdo().tpdos[1].commParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000280
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+  - Index: "1802"
+    ParameterName: Transmit PDO 3 Communication Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().tpdos[2].commParameter.getData
+    Setter: node.pdo().tpdos[2].commParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: ro
+        DefaultValue: 0x06
+        PDOMapping: 0
+      - ParameterName: COB-ID
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: $NODEID+0x80000380
+        PDOMapping: 0
+      - ParameterName: Transmission Type
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0xFF
+        PDOMapping: 0
+      - ParameterName: Inhibit Time
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x0000
+        PDOMapping: 0
+      - ParameterName: Compatibility Entry
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: Event Timer
+        ObjectType: VAR
+        DataType: UNSIGNED16
+        AccessType: rw
+        DefaultValue: 0x02
+        PDOMapping: 0
+      - ParameterName: SYNC start value
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
   - Index: "1A00"
     ParameterName: Transmit PDO 1 Mapping Parameter
     ObjectType: RECORD
     Getter: node.pdo().tpdos[0].mapParameter.getData
     Setter: node.pdo().tpdos[0].mapParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1A01"
+    ParameterName: Transmit PDO 2 Mapping Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().tpdos[1].mapParameter.getData
+    Setter: node.pdo().tpdos[1].mapParameter.setData
+    SubEntries:
+      - ParameterName: Number of entries
+        ObjectType: VAR
+        DataType: UNSIGNED8
+        AccessType: rw
+        DefaultValue: 0x00
+        PDOMapping: 0
+      - ParameterName: 1st object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 2nd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 3rd object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 4th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 5th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 6th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 7th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+      - ParameterName: 8th object to be mapped
+        ObjectType: VAR
+        DataType: UNSIGNED32
+        AccessType: rw
+        DefaultValue: 0x00000000
+        PDOMapping: 0
+  - Index: "1A02"
+    ParameterName: Transmit PDO 3 Mapping Parameter
+    ObjectType: RECORD
+    Getter: node.pdo().tpdos[2].mapParameter.getData
+    Setter: node.pdo().tpdos[2].mapParameter.setData
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR

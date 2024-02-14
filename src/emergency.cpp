@@ -216,7 +216,7 @@ void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
 }
 
 void EMCY::raiseError(uint16_t errorCode,
-                      uint16_t manufacturerCode) {  // TODO: add ipc interface
+                      uint16_t manufacturerCode) {
     if (!enabled) return;
     switch ((EMCYErrorCodes)errorCode) {
         case EMCYErrorCode_Generic:

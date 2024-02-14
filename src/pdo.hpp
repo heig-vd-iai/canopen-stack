@@ -28,9 +28,12 @@
 #define INDEX_EVENT 5
 #define INDEX_SYNC 6
 
+#define RPDO_COMMUNICATION_INDEX 0x1400
+#define RPDO_MAPPING_INDEX 0x1600
+#define TPDO_COMMUNICATION_INDEX 0x1800
+#define TPDO_MAPPING_INDEX 0x1A00
+
 #define OD_PDO_MAPPING_MAX 8
-#define OD_TPDO_COUNT 1 //TODO: define with OD
-#define OD_RPDO_COUNT 1
 
 namespace CANopen {
 
@@ -44,7 +47,7 @@ class MapParameter {
     int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
     int8_t setData(Data data, int32_t id, SDOAbortCodes &abortCode);
     MapParameter();
-    MapParameter(int32_t id);
+    MapParameter(int16_t index);
     MapParameter &operator=(const MapParameter &other);
     uint8_t getCount();
     uint32_t getMappedValue(uint8_t entry);
@@ -66,7 +69,7 @@ class CommParameter {
     int8_t getData(Data &data, int32_t id, SDOAbortCodes &abortCode);
     int8_t setData(Data data, int32_t id, SDOAbortCodes &abortCode);
     CommParameter();
-    CommParameter(int32_t id);
+    CommParameter(int16_t index);
     CommParameter &operator=(const CommParameter &other);
     uint32_t getCobId();
     uint16_t getActualCobId();
