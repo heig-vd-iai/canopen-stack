@@ -16,13 +16,37 @@ using namespace CANopen;
 int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode){
     return {{ subobject.getter }}(data, id, abortCode);
 }
-
+{% endif %}
+{% if object.index in user_defined_unit_object %}
+int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode){
+    int8_t ret;
+    {% if subobject.getter != "getLocalData" %}
+    ret = {{ subobject.getter }}(data, id, abortCode);
+    {% elif subobject.remote_getter !=  none %}
+    ret = getRemoteData(data, id, abortCode);
+    {% else %}
+    ret = getLocalData_{{ subobject.ctype_name }}(data, id, abortCode);
+    {% endif %}
+    Data tmp = data; //TODO: convert data to user defined unit
+    return ret;
+}
 {% endif %}
 {% if subobject.setter != "setLocalData" %}
 int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode){
     return {{ subobject.setter }}(data, id, abortCode);
 }
-
+{% endif %}
+{% if object.index in user_defined_unit_object %}
+int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    Data tmp = data; //TODO: convert data to SI unit
+    {% if subobject.setter != "setLocalData" %}
+    return {{ subobject.setter }}(tmp, id, abortCode);
+    {% elif subobject.remote_setter !=  none %}
+    return setRemoteData(tmp, id, abortCode);
+    {% else %}
+    return setLocalData_{{ subobject.ctype_name }}(tmp, id, abortCode);
+    {% endif %}
+}
 {% endif %}
 {%endfor%}
 {%endfor%}

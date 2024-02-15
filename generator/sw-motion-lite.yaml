@@ -858,3 +858,31 @@ OptionalObjects:
     PDOMapping: 1
     RemoteGetter: sys.axis->getProfileDeceleration
     RemoteSetter: sys.axis->setProfileDeceleration
+  - Index: "60A8"
+    ParameterName: SI unit Position
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    PDOMapping: 0
+    DefaultValue: 0xFD010000
+  - Index: "60A9"
+    ParameterName: SI unit Velocity
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    PDOMapping: 0
+    DefaultValue: 0xFD010300
+  - Index: "60AA"
+    ParameterName: SI unit Acceleration
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    PDOMapping: 0
+    DefaultValue: 0xFD015700
+  - Index: "60AB"
+    ParameterName: SI unit Jerk
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    PDOMapping: 0
+    DefaultValue: 0xFD01A000

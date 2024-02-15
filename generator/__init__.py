@@ -31,6 +31,41 @@ HEADER_TEMPLATE = "hpp.jinja"
 CPP_TEMPLATE = "cpp.jinja"
 REMOTE_TEMPLATE = "remote.jinja"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
+# only for CIA 402
+USER_DEFINED_UNIT_OBJECT = [0x607A, # Target Position 
+                            0x607B, # Position range limit
+                            0x607D, # Software position limit
+                            0x6062, # Position demand value
+                            0x6064, # Position actual value
+                            0x6067, # Position window
+                            0x6068, # Position window time
+                            0x60B0, # Position offset
+                            0x60E4, # Additional position actual value
+                            0x607F, # Max profile velocity
+                            0x6081, # Profile velocity
+                            0x6082, # End velocity
+                            0x606B, # Velocity demand value
+                            0x606C, # Velocity actual value
+                            0x606D, # Velocity window
+                            0x606E, # Velocity window time
+                            0x60FF, # Target velocity
+                            0x6042, # vl target velocity
+                            0x6043, # vl velocity demand
+                            0x6044, # vl velocity actual value
+                            0x6046, # vl velocity min max amount
+                            0x6048, # vl velocity acceleration
+                            0x6049, # vl velocity deceleration
+                            0x604A, # vl velocity quick stop
+                            0x60B1, # Velocity offset
+                            0x60E5, # Additional velocity actual value
+                            0x6083, # Profile acceleration
+                            0x60C5, # Max acceleration
+                            0x609A, # Homing acceleration
+                            0x6084, # Profile deceleration
+                            0x6085, # Quick stop deceleration
+                            0x60C6, # Max deceleration
+                            0x60A4 # Profile jerk
+                            ]
 
 
 #TODO: test yaml
@@ -187,6 +222,7 @@ class ObjectDictionary:
             rpdo_count=self.rpdo_count,
             tpdo_count=self.tpdo_count,
             subindex_count=self.subindex_count,
+            user_defined_unit_object = USER_DEFINED_UNIT_OBJECT,
             existing_classes=[
                 "Object1A00",
                 "Object1001",

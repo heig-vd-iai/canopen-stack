@@ -137,6 +137,70 @@ enum SDOAbortCodes {
     SDOAbortCode_CannotStoreOrTransfer_DeviceState = 0x08000022,
     SDOAbortCode_NoDataAvailable = 0x08000024
 };
+
+/*
+* Enumeration representing the physical units of the data types.
+* See CiA890
+*/
+enum PhysUnit {
+    PhysUnit_NONE = 0x00,  // dimensionless
+    PhysUnit_METER = 0x01,
+    PhysUnit_KILOGRAM = 0x02,
+    PhysUnit_SECOND = 0x03,
+    PhysUnit_AMPERE = 0x04,
+    PhysUnit_KELVIN = 0x05,
+    PhysUnit_MOLE = 0x06,
+    PhysUnit_CANDELA = 0x07,
+    PhysUnit_RADIAN = 0x10,
+    PhysUnit_STERADIAN = 0x11,
+    PhysUnit_HERTZ = 0x20,
+    PhysUnit_NEWTON = 0x21,
+    PhysUnit_PASCAL = 0x22,
+    PhysUnit_JOULE = 0x23,
+    PhysUnit_WATT = 0x24,
+    PhysUnit_COULOMB = 0x25,
+    PhysUnit_VOLT = 0x26,
+    PhysUnit_FARAD = 0x27,
+    PhysUnit_OHM = 0x28,
+    PhysUnit_SIEMENS = 0x29,
+    PhysUnit_WEBER = 0x2A,
+    PhysUnit_TESLA = 0x2B,
+    PhysUnit_HENRY = 0x2C,
+    PhysUnit_DEGREE_CELSIUS = 0x2D,
+    PhysUnit_LUMEN = 0x2E,
+    PhysUnit_LUX = 0x2F,
+    PhysUnit_BECQUEREL = 0x30,
+    PhysUnit_GRAY = 0x31,
+    PhysUnit_SIEVERT = 0x32,
+    PhysUnit_KATAL = 0x33,
+    PhysUnit_GRADE = 0x40,  // angle
+    PhysUnit_DEGREE = 0x41,
+    PhysUnit_MINUTE_ANGLE = 0x42,
+    PhysUnit_SECOND_ANGLE = 0x43,
+    PhysUnit_LITRE = 0x44,
+    PhysUnit_ARE = 0x45,
+    PhysUnit_HECTARE = 0x46,
+    PhysUnit_MINUTE = 0x47,
+    PhysUnit_HOUR = 0x48,
+    PhysUnit_DAY = 0x49,
+    PhysUnit_YEAR = 0x4A,
+    PhysUnit_GRAM = 0x4B,
+    PhysUnit_TONNE = 0x4C,
+    PhysUnit_BAR = 0x4E,
+    PhysUnit_POISE = 0x4F,
+    PhysUnit_STOKES = 0x50,
+    PhsyUnit_ELECTRONVOLT = 0x51,
+    PhysUnit_ATOMIC_MASS_UNIT = 0x52,
+    PhysUnit_ASTRONOMICAL_UNIT = 0x53,
+    PhysUnit_PARSEC = 0x54,
+    PhysUnit_METER_SQUARE_SECOND = 0x55,
+    PhysUnit_NEWTON_METER = 0x56,
+    // Device profile specific units see CiA402 §9.2.9
+    PhysUnit_CUBIC_SECOND = 0xA0,
+    PhysUnit_REVOLUTION = 0xB4,
+    PhysUnit_INC = 0xB5,
+    PhysUnit_STEP = 0xB6
+};
 }  // namespace CANopen
 
 /**

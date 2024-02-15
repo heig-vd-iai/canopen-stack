@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=08:07
-CreationDate=2024-02-14
+CreationTime=07:56
+CreationDate=2024-02-15
 CreatedBy=Adrien Cardinale
-ModificationTime=08:07
-ModificationDate=2024-02-14
+ModificationTime=07:56
+ModificationDate=2024-02-15
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -104,7 +104,7 @@ DefaultValue=0
 PDOMapping=0
 
 [OptionalObjects]
-SupportedObjects=31
+SupportedObjects=35
 1=0x1003
 2=0x1010
 3=0x1011
@@ -136,6 +136,10 @@ SupportedObjects=31
 29=0x6081
 30=0x6083
 31=0x6084
+32=0x60A8
+33=0x60A9
+34=0x60AA
+35=0x60AB
 
 [1003]
 ParameterName=Pre-defined error field
@@ -1115,3 +1119,35 @@ DataType=0x0007
 AccessType=rw
 DefaultValue=0
 PDOMapping=1
+
+[60A8]
+ParameterName=SI unit Position
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=4244701184
+PDOMapping=0
+
+[60A9]
+ParameterName=SI unit Velocity
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=4244701952
+PDOMapping=0
+
+[60AA]
+ParameterName=SI unit Acceleration
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=4244723456
+PDOMapping=0
+
+[60AB]
+ParameterName=SI unit Jerk
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=4244742144
+PDOMapping=0
