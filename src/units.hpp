@@ -15,13 +15,13 @@ namespace CANopen {
 class Units {
    private:
     uint32_t positionUnit;
-    int32_t positionID;
+    int32_t positionUnitID;
     uint32_t velocityUnit;
-    int32_t velocityID;
+    int32_t velocityUnitID;
     uint32_t accelerationUnit;
-    int32_t accelerationID;
+    int32_t accelerationUnitID;
     uint32_t jerkUnit;
-    int32_t jerkID;
+    int32_t jerkUnitID;
 
    public:
     Units();

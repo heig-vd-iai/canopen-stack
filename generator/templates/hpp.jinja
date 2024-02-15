@@ -89,10 +89,10 @@ int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
 {% for object in objects %}
 {% for subobject in object.entries %}
-{% if subobject.getter != "getLocalData" %}
+{% if subobject.accessType != "wo" %}
 int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
-{% if subobject.setter != "setLocalData" %}
+{% if subobject.setter != "ro" %}
 int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
@@ -136,13 +136,7 @@ public:
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.entries %}
-        {% if subobject.getter != "getLocalData" %}
         &get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
-        {% elif subobject.remote_getter != "none" %}
-        &getRemoteData,
-        {% else %}
-        &getLocalData_{{subobject.ctype_name}},
-        {% endif %}
         {% endfor %}
         {% endfor %}
     };
@@ -151,13 +145,7 @@ public:
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.entries %}
-        {% if subobject.setter != "setLocalData" %}
         &set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
-        {% elif subobject.remote_setter != "none" %}
-        &setRemoteData,
-        {% else %}
-        &setLocalData_{{subobject.ctype_name}},
-        {% endif %}
         {% endfor %}
         {% endfor %}
     };
