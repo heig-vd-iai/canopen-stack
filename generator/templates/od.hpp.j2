@@ -1,0 +1,119 @@
+/**
+ * This file contains the declaration of the ObjectDictionnary class.
+ * Generated on {{date.strftime("%B %d, %Y")}}
+ *
+ * NOTICE: Auto-generated from the device's EDS file, do not edit manually!
+ */
+#pragma once
+#define OD_GRANULARITY 8
+#define OD_PDO_MAPPING_MAX 8
+{% for define in defines %}
+#define {{define}}
+{% endfor %}
+/* These defines map an object to its dictionnary array index */
+{% for define in defines_index %}
+#define {{define}}
+{% endfor %}
+/* These defines map an entry to its multiplexed address (parent object index and entry subindex) */
+{% for define in defines_mux %}
+#define {{define}}
+{% endfor %}
+
+/* Useful if only the defines from this file are needed */ 
+#ifndef _OD_DEFINES_ONLY
+#include "od_include.hpp"
+
+namespace {{namespace}}
+{
+/**
+ * This struct represents the object dictionary raw data.
+ * It is an auto-generated struct that should not be manually edited.
+ */
+struct ObjectDictionnaryData
+{
+    {% for object in objects %}
+    {% for data in object.renderData() %}
+    {{data}};
+    {% endfor %}
+    {% endfor %}
+};
+
+/**
+ * Object Dictionary.
+ * It is an auto-generated class that should not be manually edited.
+ */
+class ObjectDictionnary
+{
+// @cond
+private:
+    ObjectDictionnaryData data;
+    {% for object in objects %}
+    {% for entry in object.renderEntry() %}
+    {{entry}};
+    {% endfor %}
+    {{object.renderEntryList()}};
+    {% endfor %}
+    {% for object in objects %}
+    {{object.renderObject()}};
+    {% endfor %}
+    Object *objectsArray[OD_OBJECTS_COUNT] = {&object_{{objectNames|join(', &object_')}}};
+    class Node &node;
+    // @endcond
+public:
+    const uint16_t length = OD_OBJECTS_COUNT;
+
+    /**
+     * Constructor for the Object Dictionary.
+     * @param node The parent Node reference.
+     */
+    ObjectDictionnary(class Node &node);
+
+    /**
+     * Find an object in the dictionary.
+     * @param index The hex index of the object to find.
+     * @return Pointer to the found object, or nullptr if not found.
+     */
+    Object *findObject(uint16_t index);
+
+    /**
+     * Access an object in the dictionary by array index.
+     * @param index The array index of the object.
+     * This parameter should always use one of the generated defines.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *at(uint16_t index);
+
+    /**
+     * Access an object in the dictionary by array index using the subscript operator.
+     * Under the hood, this method uses the at() method.
+     * @param index The array index of the object to access.
+     * @return Pointer to the accessed object, or nullptr if not found.
+     */
+    Object *operator[](uint16_t index);
+
+    /**
+     * Save data to non-volatile storage for a specified parameter group.
+     * This method is called by object 0x1010.
+     * @param parameterGroup The parameter group number.
+     * @return True if saving was successful, false otherwise.
+     */
+    bool saveData(uint8_t parameterGroup);
+
+    /**
+     * Load data from non-volatile storage for a specified parameter group.
+     * This method should be called on application startup to load the object dictionnary.
+     * @param parameterGroup The parameter group number.
+     * @return True if loading was successful, false otherwise.
+     */
+    bool loadData(uint8_t parameterGroup);
+
+    /**
+     * Restore data to default for a specified parameter group.
+     * This method is called by object 0x1011.
+     * @param parameterGroup The parameter group number.
+     * @return True if restoring was successful, false otherwise.
+     */
+    bool restoreData(uint8_t parameterGroup);
+};
+}
+#endif // _OD_DEFINES_ONLY
