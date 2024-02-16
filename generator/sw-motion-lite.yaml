@@ -745,7 +745,6 @@ OptionalObjects:
     ObjectType: VAR
     DataType: UNSIGNED16
     AccessType: ro
-    DefaultValue: 42
     PDOMapping: 1
     RemoteGetter: sys.axis->getStatusword
   - Index: "6060"

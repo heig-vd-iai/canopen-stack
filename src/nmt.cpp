@@ -28,6 +28,7 @@ void NMT::updateSM(NMTServiceCommands command) {
                     node._hb.resetToggleBit();
                     break;
             }
+            node._od.restoreData(ParameterGroup_All);
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
             nextState = NMTState_PreOperational;

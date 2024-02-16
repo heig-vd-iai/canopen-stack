@@ -13,6 +13,10 @@ namespace CANopen {
 struct Metadata {
     Access access;
     DataType dataType;
+    virtual Data getDefaultValue(){
+        Data data;
+        return data;
+    }
 };
 
 struct Metadatabool : public Metadata {
@@ -21,6 +25,11 @@ struct Metadatabool : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::BOOL;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.b = defaultValue;
+        return data;
     }
 };
 
@@ -31,6 +40,11 @@ struct Metadata_uint8_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::UNSIGNED8;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.u8 = defaultValue;
+        return data;
     }
 };
 
@@ -45,6 +59,11 @@ struct Metadata_uint8_t_limited : public Metadata_uint8_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED8;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.u8 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_uint16_t : public Metadata {
@@ -54,6 +73,11 @@ struct Metadata_uint16_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::UNSIGNED16;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.u16 = defaultValue;
+        return data;
     }
 };
 
@@ -68,6 +92,11 @@ struct Metadata_uint16_t_limited : public Metadata_uint16_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED16;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.u16 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_uint32_t : public Metadata {
@@ -77,6 +106,11 @@ struct Metadata_uint32_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::UNSIGNED32;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.u32 = defaultValue;
+        return data;
     }
 };
 
@@ -91,6 +125,11 @@ struct Metadata_uint32_t_limited : public Metadata_uint32_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED32;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.u32 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_uint64_t : public Metadata {
@@ -100,6 +139,11 @@ struct Metadata_uint64_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::UNSIGNED64;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.u64 = defaultValue;
+        return data;
     }
 };
 
@@ -114,6 +158,11 @@ struct Metadata_uint64_t_limited : public Metadata_uint64_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED64;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.u64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int8_t : public Metadata {
@@ -123,6 +172,11 @@ struct Metadata_int8_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::INTEGER8;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.i8 = defaultValue;
+        return data;
     }
 };
 
@@ -137,6 +191,11 @@ struct Metadata_int8_t_limited : public Metadata_int8_t {
         this->access = access;
         this->dataType = DataType::INTEGER8;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.i8 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int16_t : public Metadata {
@@ -146,6 +205,11 @@ struct Metadata_int16_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::INTEGER16;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.i16 = defaultValue;
+        return data;
     }
 };
 
@@ -160,6 +224,11 @@ struct Metadata_int16_t_limited : public Metadata_int16_t {
         this->access = access;
         this->dataType = DataType::INTEGER16;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.i16 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int32_t : public Metadata {
@@ -169,6 +238,11 @@ struct Metadata_int32_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::INTEGER32;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.i32 = defaultValue;
+        return data;
     }
 };
 
@@ -183,6 +257,11 @@ struct Metadata_int32_t_limited : public Metadata_int32_t {
         this->access = access;
         this->dataType = DataType::INTEGER32;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.i32 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int64_t : public Metadata {
@@ -192,6 +271,11 @@ struct Metadata_int64_t : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::INTEGER64;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.i64 = defaultValue;
+        return data;
     }
 };
 
@@ -206,6 +290,11 @@ struct Metadata_int64_t_limited : public Metadata_int64_t {
         this->access = access;
         this->dataType = DataType::INTEGER64;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.i64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_float : public Metadata {
@@ -215,6 +304,11 @@ struct Metadata_float : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::REAL32;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.f32 = defaultValue;
+        return data;
     }
 };
 
@@ -229,6 +323,11 @@ struct Metadata_float_limited : public Metadata_float {
         this->access = access;
         this->dataType = DataType::REAL32;
     }
+    Data getDefaultValue(){
+        Data data;
+        data.f32 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_double : public Metadata {
@@ -238,6 +337,11 @@ struct Metadata_double : public Metadata {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::REAL64;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.f64 = defaultValue;
+        return data;
     }
 };
 
@@ -251,6 +355,11 @@ struct Metadata_double_limited : public Metadata_double {
         this->max = max;
         this->access = access;
         this->dataType = DataType::REAL64;
+    }
+    Data getDefaultValue(){
+        Data data;
+        data.f64 = defaultValue;
+        return data;
     }
 };
 

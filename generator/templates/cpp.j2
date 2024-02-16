@@ -5,6 +5,8 @@
 #include "node.hpp"
 #include "ipcCommunication.hpp"
 
+#include <cstring>
+
 extern IPC localIPC;
 extern IPC *remoteIPC;
 
@@ -279,7 +281,37 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
 }
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
-    return true;  // TODO: implement
+    Data tmp;
+    int16_t size;
+    int16_t minIndex, maxIndex;
+    SDOAbortCodes abortCode;
+
+    if (parameterGroup == ParameterGroup_Communication) {
+        minIndex = 0x1000;
+        maxIndex = 0x1FFF;
+    } else if (parameterGroup == ParameterGroup_Application) {
+        minIndex = 0x6000;
+        maxIndex = 0x9FFF;
+    } else {
+        for (int i = 0; i < length; i++) {
+            size = getSize(i);
+            tmp = getMetadata(i).getDefaultValue();
+            int8_t ret;
+            do{
+                ret = writeData(tmp, i, abortCode);
+            }while(ret == 1);
+        }
+        return true;
+    }
+    for (int i = 0; i < length; i++) {
+        if (objectIndexTable[i].first > minIndex &&
+            objectIndexTable[i].first < maxIndex) {
+            size = getSize(i);
+            tmp = getMetadata(i).getDefaultValue();
+            setData(tmp, i);
+        }
+    }
+    return true;
 }
 
 bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
