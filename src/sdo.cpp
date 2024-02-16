@@ -57,16 +57,18 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     transferData.toggle = false;
 
     SDOAbortCodes abortCode;
-    if (node.od().readData(transferData.data, transferData.odID, abortCode) ==
+    int8_t ret = node.od().readData(transferData.data, transferData.odID,
+                                    abortCode);
+    if (abortCode != SDOAbortCode_OK) {
+        sendAbort(transferData.index, transferData.subindex, abortCode);
+        return;
+    }
+    if (ret  ==
         1) {
         serverState = SDOServerState_UploadPending;
         transferData.timestamp_us = timestamp_us;
     } else {
         uploadInitiateSend(timestamp_us);
-    }
-    if (abortCode != SDOAbortCode_OK) {
-        sendAbort(transferData.index, transferData.subindex, abortCode);
-        return;
     }
 }
 
@@ -165,15 +167,16 @@ void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         SDOAbortCodes abortCode;
         Data tmp;
         memcpy(&tmp.u8, request.data + SDO_INITIATE_DATA_OFFSET, size);
-        if (node.od().writeData(tmp, index, subindex, abortCode) == 1) {
+        int8_t ret = node.od().writeData(tmp, index, subindex, abortCode);
+        if (abortCode != SDOAbortCode_OK) {
+            sendAbort(index, subindex, abortCode);
+            return;
+        }
+        if (ret == 1) {
             serverState = SDOServerState_DownloadPending;
             transferData.timestamp_us = timestamp_us;
         } else {
             downloadInitiateSend(timestamp_us);
-        }
-        if (abortCode != SDOAbortCode_OK) {
-            sendAbort(index, subindex, abortCode);
-            return;
         }
     } else {  // Segment transfer
         if (!transferData.recvCommand.bits_initiate.s) {
@@ -230,14 +233,15 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
     SDOAbortCodes abortCode;
     if (transferData.recvCommand.bits_segment.c) {
         memcpy(&transferData.data.u8, buffer.data, size);
-        if (node.od().writeData(transferData.data, transferData.index,
-                                transferData.subindex, abortCode) == 1) {
-            serverState = SDOServerState_DownloadPending;
-            transferData.timestamp_us = timestamp_us;
-        }
+        int8_t ret = node.od().writeData(transferData.data, transferData.index,
+                                         transferData.subindex, abortCode);
         if (abortCode != SDOAbortCode_OK) {
             sendAbort(transferData.index, transferData.subindex, abortCode);
             return;
+        }
+        if (ret == 1) {
+            serverState = SDOServerState_DownloadPending;
+            transferData.timestamp_us = timestamp_us;
         }
     }
     transferData.remainingBytes -= payloadSize;

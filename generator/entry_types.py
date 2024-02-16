@@ -15,8 +15,8 @@ class Entry:
     getter: str
     setter: str
     meta_data: int
-    _min_value: int
-    _max_value: int
+    low_limit: str
+    high_limit: str
     remote_getter: str
     remote_setter: str
 
@@ -46,8 +46,8 @@ class Entry:
         else:
             self.getter: str = getter
             self.setter: str = setter
-        self._min_value: str = str(data.get("MinValue", None))
-        self._max_value: str = str(data.get("MaxValue", None))
+        self.low_limit: str = str(data.get("LowLimit", "none"))
+        self.high_limit: str = str(data.get("HighLimit", "none"))
         self.remote_getter: str = str(data.get("RemoteGetter", "none"))
         self.remote_setter: str = str(data.get("RemoteSetter", "none"))
 
@@ -74,7 +74,7 @@ class Entry:
             meta += ".mappable = true, "
         else:
             meta += ".mappable = false, "
-        if self._min_value is None or self._max_value is None:
+        if self.low_limit == "none" or self.high_limit == "none":
             meta += ".limited = false, "
         else:
             meta += ".limited = true, "
@@ -116,7 +116,7 @@ class IntegerEntry(Entry):
         # if len(self.default_value):
         #     pattern = "\$NODEID\+(0x[0-9a-fA-F]+|\d+)"
         #     result = re.search(pattern, self.default_value)
-        #     if result == "None":
+        #     if result == "none":
         #         self.default_value = f"0x{int(self.default_value, 0):0{self._precision}X}"
         #     else:
         #         self.default_value = result.group()
@@ -127,18 +127,6 @@ class IntegerEntry(Entry):
             return f"0x{(int(self.default_value.split('+')[-1], 0) + node_id):0{self._precision}X}"
         return self.default_value
 
-    @property
-    def min_value(self) -> int:
-        if self._min_value == "None":
-            return None
-        return int(self._min_value)
-
-    @property
-    def max_value(self) -> int:
-        if self._max_value == "None":
-            return None
-        return int(self._max_value)
-
 
 class BooleanEntry(Entry):
     type_value: int = 0x01
@@ -146,8 +134,8 @@ class BooleanEntry(Entry):
     type_name: str = "BOOLEAN"
     ctype_name: str = "bool"
     size: int = 8
-    min_value = None
-    max_value = None
+    low_limit = "none"
+    high_limit = "none"
 
     def __init__(self, data: dict, subindex: int = 0, getter: str = "none", setter: str = "none") -> None:
         super().__init__(data, subindex, getter, setter)
@@ -257,17 +245,6 @@ class Float32Entry(Entry):
         if len(self.default_value):
             self.default_value = f"{float(self.default_value)}f"
     
-    @property
-    def min_value(self) -> int:
-        if self._min_value == "None":
-            return None
-        return float(self._min_value)
-
-    @property
-    def max_value(self) -> int:
-        if self._max_value == "None":
-            return None
-        return float(self._max_value)
 
 
 class Float64Entry(Entry):
@@ -282,26 +259,14 @@ class Float64Entry(Entry):
         if len(self.default_value):
             self.default_value = str(float(self.default_value))
 
-    @property
-    def min_value(self) -> int:
-        if self._min_value == "None":
-            return None
-        return float(self._min_value)
-
-    @property
-    def max_value(self) -> int:
-        if self._max_value == "None":
-            return None
-        return float(self._max_value)
-
 
 class StringEntry(Entry):
     type_value: int = 0x09
     type_code: str = "s"
     type_name: str = "VISIBLE_STRING"
     ctype_name: str = "char"
-    min_value = None
-    max_value = None
+    low_limit = "none"
+    high_limit = "none"
 
     @property
     def value(self) -> str:

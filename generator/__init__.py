@@ -25,11 +25,11 @@ TEMPLATES_DIR = script_dir + "/templates"
 
 HEADER_FILENAME = "od.hpp"
 CPP_FILENAME = "od.cpp"
-TEMPLATE_FILENAME = HEADER_FILENAME + ".jinja"
-EDS_TEMPLATE = "eds.jinja"
-HEADER_TEMPLATE = "hpp.jinja"
-CPP_TEMPLATE = "cpp.jinja"
-REMOTE_TEMPLATE = "remote.jinja"
+TEMPLATE_FILENAME = HEADER_FILENAME + ".j2"
+EDS_TEMPLATE = "eds.j2"
+HEADER_TEMPLATE = "hpp.j2"
+CPP_TEMPLATE = "cpp.j2"
+REMOTE_TEMPLATE = "remote.j2"
 MANDATORY_OBJECTS = [0x1000, 0x1001, 0x1018]
 # only for CIA 402
 USER_DEFINED_UNIT_OBJECT = [0x607A, # Target Position 

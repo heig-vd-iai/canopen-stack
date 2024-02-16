@@ -22,8 +22,6 @@ MandatoryObjects:
     AccessType: ro
     DefaultValue: 0x00020192
     PDOMapping: 0
-    MinValue: 0x00000000
-    MaxValue: 0xFFFFFFFF
   - Index: "1001"
     ParameterName: Error Register
     ObjectType: VAR
@@ -827,10 +825,12 @@ OptionalObjects:
     ObjectType: VAR
     DataType: INTEGER32
     AccessType: rw
-    DefaultValue: 42
+    DefaultValue: 0
     PDOMapping: 1
     RemoteGetter: sys.axis->getTargetPosition
     RemoteSetter: sys.axis->setTargetPosition
+    LowLimit: -2
+    HighLimit: 2
   - Index: "6081"
     ParameterName: Profile velocity
     ObjectType: VAR
