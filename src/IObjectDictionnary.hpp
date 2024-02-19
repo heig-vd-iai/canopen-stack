@@ -26,7 +26,7 @@ struct Metadatabool : public Metadata {
         this->access = access;
         this->dataType = DataType::BOOL;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.b = defaultValue;
         return data;
@@ -41,7 +41,7 @@ struct Metadata_uint8_t : public Metadata {
         this->access = access;
         this->dataType = DataType::UNSIGNED8;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u8 = defaultValue;
         return data;
@@ -59,7 +59,7 @@ struct Metadata_uint8_t_limited : public Metadata_uint8_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED8;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u8 = defaultValue;
         return data;
@@ -74,7 +74,7 @@ struct Metadata_uint16_t : public Metadata {
         this->access = access;
         this->dataType = DataType::UNSIGNED16;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u16 = defaultValue;
         return data;
@@ -92,7 +92,7 @@ struct Metadata_uint16_t_limited : public Metadata_uint16_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED16;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u16 = defaultValue;
         return data;
@@ -107,7 +107,7 @@ struct Metadata_uint32_t : public Metadata {
         this->access = access;
         this->dataType = DataType::UNSIGNED32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u32 = defaultValue;
         return data;
@@ -125,7 +125,7 @@ struct Metadata_uint32_t_limited : public Metadata_uint32_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u32 = defaultValue;
         return data;
@@ -140,7 +140,7 @@ struct Metadata_uint64_t : public Metadata {
         this->access = access;
         this->dataType = DataType::UNSIGNED64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u64 = defaultValue;
         return data;
@@ -158,7 +158,7 @@ struct Metadata_uint64_t_limited : public Metadata_uint64_t {
         this->access = access;
         this->dataType = DataType::UNSIGNED64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.u64 = defaultValue;
         return data;
@@ -173,7 +173,7 @@ struct Metadata_int8_t : public Metadata {
         this->access = access;
         this->dataType = DataType::INTEGER8;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i8 = defaultValue;
         return data;
@@ -191,7 +191,7 @@ struct Metadata_int8_t_limited : public Metadata_int8_t {
         this->access = access;
         this->dataType = DataType::INTEGER8;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i8 = defaultValue;
         return data;
@@ -206,7 +206,7 @@ struct Metadata_int16_t : public Metadata {
         this->access = access;
         this->dataType = DataType::INTEGER16;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i16 = defaultValue;
         return data;
@@ -224,7 +224,7 @@ struct Metadata_int16_t_limited : public Metadata_int16_t {
         this->access = access;
         this->dataType = DataType::INTEGER16;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i16 = defaultValue;
         return data;
@@ -239,7 +239,7 @@ struct Metadata_int32_t : public Metadata {
         this->access = access;
         this->dataType = DataType::INTEGER32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i32 = defaultValue;
         return data;
@@ -257,7 +257,7 @@ struct Metadata_int32_t_limited : public Metadata_int32_t {
         this->access = access;
         this->dataType = DataType::INTEGER32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i32 = defaultValue;
         return data;
@@ -272,7 +272,7 @@ struct Metadata_int64_t : public Metadata {
         this->access = access;
         this->dataType = DataType::INTEGER64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i64 = defaultValue;
         return data;
@@ -290,7 +290,7 @@ struct Metadata_int64_t_limited : public Metadata_int64_t {
         this->access = access;
         this->dataType = DataType::INTEGER64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.i64 = defaultValue;
         return data;
@@ -305,7 +305,7 @@ struct Metadata_float : public Metadata {
         this->access = access;
         this->dataType = DataType::REAL32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.f32 = defaultValue;
         return data;
@@ -323,7 +323,7 @@ struct Metadata_float_limited : public Metadata_float {
         this->access = access;
         this->dataType = DataType::REAL32;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.f32 = defaultValue;
         return data;
@@ -338,7 +338,7 @@ struct Metadata_double : public Metadata {
         this->access = access;
         this->dataType = DataType::REAL64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.f64 = defaultValue;
         return data;
@@ -356,7 +356,7 @@ struct Metadata_double_limited : public Metadata_double {
         this->access = access;
         this->dataType = DataType::REAL64;
     }
-    Data getDefaultValue(){
+    Data getDefaultValue() override {
         Data data;
         data.f64 = defaultValue;
         return data;
@@ -394,10 +394,10 @@ class IObjectDictionnary {
     virtual bool isSubValid(uint16_t index, uint8_t subindex) = 0;
     virtual int32_t findObject(uint16_t index) = 0;
     virtual int32_t findObject(uint16_t index, uint8_t subindex) = 0;
-    virtual Metadata getMetadata(uint16_t index, uint8_t subindex) = 0;
-    virtual Metadata getMetadata(int32_t id) = 0;
-    virtual Data *getData(uint16_t index, uint8_t subindex) = 0;
-    virtual Data *getData(int32_t id) = 0;
+    virtual Metadata* getMetadata(uint16_t index, uint8_t subindex) = 0;
+    virtual Metadata* getMetadata(int32_t id) = 0;
+    virtual Data* getData(uint16_t index, uint8_t subindex) = 0;
+    virtual Data* getData(int32_t id) = 0;
     virtual void setData(const Data &data, uint16_t index,
                          uint8_t subindex) = 0;
     virtual void setData(const Data &data, int32_t id) = 0;

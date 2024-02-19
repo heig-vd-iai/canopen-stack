@@ -285,6 +285,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     int16_t size;
     int16_t minIndex, maxIndex;
     SDOAbortCodes abortCode;
+    int count = 0;
 
     if (parameterGroup == ParameterGroup_Communication) {
         minIndex = 0x1000;
@@ -295,10 +296,17 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     } else {
         for (int i = 0; i < length; i++) {
             size = getSize(i);
-            tmp = getMetadata(i).getDefaultValue();
+            tmp = getMetadata(i)->getDefaultValue();
             int8_t ret;
+            count = 0;
             do{
+                if(i == 117)
+                    minIndex = 12;
                 ret = writeData(tmp, i, abortCode);
+                count++;
+                if(count > MAX_WRITE_TRY){
+                    break;
+                }
             }while(ret == 1);
         }
         return true;
@@ -307,8 +315,18 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
         if (objectIndexTable[i].first > minIndex &&
             objectIndexTable[i].first < maxIndex) {
             size = getSize(i);
-            tmp = getMetadata(i).getDefaultValue();
-            setData(tmp, i);
+            tmp = getMetadata(i)->getDefaultValue();
+            count = 0;
+            int8_t ret;
+            do{
+                if(i == 117)
+                    minIndex = 12;
+                ret = writeData(tmp, i, abortCode);
+                count++;
+                if(count > MAX_WRITE_TRY){
+                    break;
+                }
+            }while(ret == 1);
         }
     }
     return true;
@@ -318,18 +336,18 @@ bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
     return findObject(index, subindex) != -1;
 }
 
-struct Metadata ObjectDictionnary::getMetadata(uint16_t index,
+struct Metadata* ObjectDictionnary::getMetadata(uint16_t index,
                                                uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id < 0) {
         Metadata metadata;
-        return metadata;
+        return &metadata;
     }
-    return *objectMetadataTable[id];
+    return (Metadata*)objectMetadataTable[id];
 }
 
-struct Metadata ObjectDictionnary::getMetadata(int32_t id) {
-    return *objectMetadataTable[id];
+struct Metadata* ObjectDictionnary::getMetadata(int32_t id) {
+    return (Metadata*)objectMetadataTable[id];
 }
 
 Data *ObjectDictionnary::getData(uint16_t index, uint8_t subindex) {

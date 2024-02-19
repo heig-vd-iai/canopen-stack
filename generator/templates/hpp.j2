@@ -19,6 +19,8 @@
 #define X1A00_SAM_MPDO 0xFE
 #define X1A00_DAM_MPDO 0xFF
 
+#define MAX_WRITE_TRY 5
+
 
 /* These defines map an object to its dictionnary array index */
 {% set counter = namespace(value=0) %}
@@ -98,17 +100,17 @@ int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Da
 {%endfor%}
 {%endfor%}
 
-//METADATA
-{% for object in objects %}
-{% for subobject in object.entries %}
-Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata{(Access){{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
-{% endfor %}
-{% endfor %}
-//END METADATA
 
 class ObjectDictionnary : IObjectDictionnary{
 
 private:
+    //METADATA
+    {% for object in objects %}
+    {% for subobject in object.entries %}
+    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata{(Access){{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
+    {% endfor %}
+    {% endfor %}
+    //END METADATA
     const uint32_t length = {{ subindex_count }};
 
 public:
@@ -453,9 +455,9 @@ public:
      * @param subIndex The subindex to the object
      * @return The metadata of the object.
      */
-    Metadata getMetadata(uint16_t index, uint8_t subindex);
+    Metadata* getMetadata(uint16_t index, uint8_t subindex);
 
-    Metadata getMetadata(int32_t id);
+    Metadata* getMetadata(int32_t id);
 
     Data* getData(uint16_t index, uint8_t subindex);
 

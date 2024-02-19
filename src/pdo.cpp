@@ -83,7 +83,7 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
             return -1;
         }
         Metadata meta =
-            node.od().getMetadata(entry.bits.index, entry.bits.subindex);
+            *node.od().getMetadata(entry.bits.index, entry.bits.subindex);
         if (!meta.access.bits.mappable || !meta.access.bits.readable) {
             abortCode = SDOAbortCodes::SDOAbortCode_CannotMapToPDO;
             return -1;

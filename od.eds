@@ -4,10 +4,10 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=08:06
+CreationTime=15:49
 CreationDate=2024-02-16
 CreatedBy=Adrien Cardinale
-ModificationTime=08:06
+ModificationTime=15:49
 ModificationDate=2024-02-16
 ModifiedBy=Adrien Cardinale
 
@@ -1013,7 +1013,7 @@ ParameterName=Statusword
 ObjectType=0x07
 DataType=0x0006
 AccessType=ro
-DefaultValue=42
+DefaultValue=0
 PDOMapping=1
 
 [6060]
@@ -1101,7 +1101,7 @@ ParameterName=Profile velocity
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0
+DefaultValue=1
 PDOMapping=1
 
 [6083]
@@ -1109,7 +1109,7 @@ ParameterName=Profile acceleration
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0
+DefaultValue=1
 PDOMapping=1
 
 [6084]
@@ -1117,7 +1117,7 @@ ParameterName=Profile deceleration
 ObjectType=0x07
 DataType=0x0007
 AccessType=rw
-DefaultValue=0
+DefaultValue=1
 PDOMapping=1
 
 [60A8]

@@ -835,7 +835,7 @@ OptionalObjects:
     ObjectType: VAR
     DataType: UNSIGNED32
     AccessType: rw
-    DefaultValue: 0
+    DefaultValue: 1
     PDOMapping: 1
     RemoteGetter: sys.axis->getProfileVelocity
     RemoteSetter: sys.axis->setProfileVelocity
@@ -844,7 +844,7 @@ OptionalObjects:
     ObjectType: VAR
     DataType: UNSIGNED32
     AccessType: rw
-    DefaultValue: 0
+    DefaultValue: 1
     PDOMapping: 1
     RemoteGetter: sys.axis->getProfileAcceleration
     RemoteSetter: sys.axis->setProfileAcceleration
@@ -853,7 +853,7 @@ OptionalObjects:
     ObjectType: VAR
     DataType: UNSIGNED32
     AccessType: rw
-    DefaultValue: 0
+    DefaultValue: 1
     PDOMapping: 1
     RemoteGetter: sys.axis->getProfileDeceleration
     RemoteSetter: sys.axis->setProfileDeceleration
