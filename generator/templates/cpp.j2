@@ -4,6 +4,10 @@
 #include "od.hpp"
 #include "node.hpp"
 #include "ipcCommunication.hpp"
+#include "driverlib_cm.h"
+extern "C" {
+#include "cm.h"
+}
 
 #include <cstring>
 
@@ -273,12 +277,18 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 }
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
-    return true;  // TODO: implement
+    return node.hardware().saveDataToFlash(parameterGroup);  // TODO: implement
+}
+
+int8_t ObjectDictionnary::saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    saveData(1); //TODO: implement
+    return 0;
 }
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
-    return true;  // TODO: implement
+    return node.hardware().loadDataFromFlash(parameterGroup);  // TODO: implement
 }
+
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     Data tmp;
@@ -299,15 +309,13 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
             tmp = getMetadata(i)->getDefaultValue();
             int8_t ret;
             count = 0;
-            do{
-                if(i == 117)
-                    minIndex = 12;
-                ret = writeData(tmp, i, abortCode);
+            while(writeData(tmp, i, abortCode) != 0){
                 count++;
                 if(count > MAX_WRITE_TRY){
                     break;
                 }
-            }while(ret == 1);
+            }
+            DEVICE_DELAY_US(100); //FIXME: understand why this is needed
         }
         return true;
     }
@@ -318,15 +326,13 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
             tmp = getMetadata(i)->getDefaultValue();
             count = 0;
             int8_t ret;
-            do{
-                if(i == 117)
-                    minIndex = 12;
-                ret = writeData(tmp, i, abortCode);
+            while(writeData(tmp, i, abortCode) != 0){
                 count++;
                 if(count > MAX_WRITE_TRY){
                     break;
                 }
-            }while(ret == 1);
+            }
+            DEVICE_DELAY_US(100); //FIXME: understand why this is needed
         }
     }
     return true;

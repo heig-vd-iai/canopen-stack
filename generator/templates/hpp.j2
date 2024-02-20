@@ -19,7 +19,7 @@
 #define X1A00_SAM_MPDO 0xFE
 #define X1A00_DAM_MPDO 0xFF
 
-#define MAX_WRITE_TRY 5
+#define MAX_WRITE_TRY 100
 
 
 /* These defines map an object to its dictionnary array index */
@@ -389,6 +389,14 @@ public:
      * @return True if saving was successful, false otherwise.
      */
     bool saveData(uint8_t parameterGroup);
+
+    /**
+    * Setter called by the od to save data
+    * @param data must contain "save" 
+    * @param id object id for parameter group
+    * @param abortCode to set if the object is not found.
+    */
+    int8_t saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
     /**
      * Load data from non-volatile storage for a specified parameter group.

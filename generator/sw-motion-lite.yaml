@@ -130,6 +130,7 @@ OptionalObjects:
       AccessType: rw
       DefaultValue: 0x00000001
       PDOMapping: 0
+      Setter: node.od().saveData
   - Index: "1011"
     ParameterName: Restore default parameters
     ObjectType: ARRAY

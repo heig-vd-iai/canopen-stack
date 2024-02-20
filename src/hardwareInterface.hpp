@@ -33,5 +33,7 @@ class HardwareInterface {
     virtual void configRemoteTPDO(uint16_t pdoIndex, int32_t odIDS[]) = 0;
     virtual void getRemoteTPDO(uint16_t pdoIndex, Data data[]) = 0;
     virtual void setRemoteRPDO(uint16_t pdoIndex, Data data[]) = 0;
+    virtual bool saveDataToFlash(uint8_t parameterGroup) = 0;
+    virtual bool loadDataFromFlash(uint8_t parameterGroup) = 0;
 };
 }  // namespace CANopen
