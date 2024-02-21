@@ -40,11 +40,13 @@ class Entry:
         self.pdo_mapping: bool = data.get("PDOMapping", False)
         self.access_type: str = str(data.get("AccessType", ""))
         self.subindex: int = subindex
-        if setter == "none" and getter == "none":
+        if getter == "none":
             self.getter: str = str(data.get("Getter", "getLocalData"))
-            self.setter: str = str(data.get("Setter", "setLocalData"))
         else:
             self.getter: str = getter
+        if setter == "none":
+            self.setter: str = str(data.get("Setter", "setLocalData"))
+        else:
             self.setter: str = setter
         self.low_limit: str = str(data.get("LowLimit", "none"))
         self.high_limit: str = str(data.get("HighLimit", "none"))

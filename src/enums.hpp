@@ -271,7 +271,7 @@ enum ErrorBehaviorValue {
  * 255 groups can be implemented, depending on the device profile or
  * manufacturer. See CiA301:2011§7.5.2.13 (p. 101)
  */
-enum ParameterGroups {
+enum ParameterGroups { //TODO: move to od.hpp and metagenerate manufacturer specific groups
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3

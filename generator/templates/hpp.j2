@@ -19,6 +19,12 @@
 #define X1A00_SAM_MPDO 0xFE
 #define X1A00_DAM_MPDO 0xFF
 
+#define SAVE_INDEX 0x1010
+#define RESTORE_INDEX 0x1011
+#define RESTORE_SIGNATURE 0x64616F6C
+
+#define MAX_SUB_INDEX 255
+
 #define MAX_WRITE_TRY 100
 
 
@@ -413,6 +419,14 @@ public:
      * @return True if restoring was successful, false otherwise.
      */
     bool restoreData(uint8_t parameterGroup);
+
+    /**
+    * Setter called by the od to restore data
+    * @param data must contain "load"
+    * @param id object id for parameter group
+    * @param abortCode to set if the object is not found.
+    */
+    int8_t restoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
     /**
      * Test if an object exists in the dictionary.

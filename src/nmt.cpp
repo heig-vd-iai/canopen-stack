@@ -11,6 +11,7 @@ void NMT::initSM() { updateSM(); }
 
 void NMT::updateSM(NMTServiceCommands command) {
     NMTStates nextState = currentState;
+    ParameterGroups pg;
     switch (currentState) {
         case NMTState_Initialisation:
             node._pdo.disable();
@@ -19,17 +20,23 @@ void NMT::updateSM(NMTServiceCommands command) {
             node._emcy.disable();
             switch (resetState) {
                 case NMTResetState_Initialising:
+                    pg = ParameterGroup_All;
                     break;
                 case NMTResetState_ResetApplication:
-                    node._od.restoreData(ParameterGroup_All);
+                    pg = ParameterGroup_Application;
+                    // TODO: add manufacturer specific reset
                     break;
                 case NMTResetState_ResetCommunication:
-                    node._od.restoreData(ParameterGroup_Communication);
+                    pg = ParameterGroup_Communication;
                     node._hb.resetToggleBit();
                     break;
             }
-            // node._od.restoreData(ParameterGroup_All);
-            node._od.loadData(ParameterGroup_All);
+            if (restorePending) {
+                restorePending = false;
+                node._od.restoreData(pg);
+            } else {
+                node._od.loadData(pg);
+            }
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
             nextState = NMTState_PreOperational;

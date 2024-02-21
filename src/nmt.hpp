@@ -41,9 +41,12 @@ class NMT {
      */
     void receiveFrame(class NMTFrame &frame);
 
-   public:
-    friend class Node;
+   protected:
+    bool restorePending = false;
 
+   public:
+    friend class ObjectDictionnary;
+    friend class Node;
     /**
      * Issue a state machine transition based on the given command.
      * @param command NMT service command.

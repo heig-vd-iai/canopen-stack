@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "od.hpp"
-#define SDO_TIMEOUT_US 30000
+#define SDO_TIMEOUT_US 300000000
 #define SDO_BLOCK_DOWNLOAD_TIMEOUT_US 10000
 #define SDO_DLC 8
 #define SDO_BUFFSIZE OD_ENTRY_SIZE_MAX

@@ -293,49 +293,56 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     Data tmp;
     int16_t size;
-    int16_t minIndex, maxIndex;
+    uint16_t minIndex = 0x0000;
+    uint16_t maxIndex = 0xFFFF;
     SDOAbortCodes abortCode;
     int count = 0;
 
     if (parameterGroup == ParameterGroup_Communication) {
-        minIndex = 0x1000;
+        minIndex = 0x1000; //TODO: meta generate
         maxIndex = 0x1FFF;
     } else if (parameterGroup == ParameterGroup_Application) {
         minIndex = 0x6000;
         maxIndex = 0x9FFF;
-    } else {
-        for (int i = 0; i < length; i++) {
-            size = getSize(i);
-            tmp = getMetadata(i)->getDefaultValue();
-            int8_t ret;
-            count = 0;
-            while(writeData(tmp, i, abortCode) != 0){
-                count++;
-                if(count > MAX_WRITE_TRY){
-                    break;
-                }
-            }
-            DEVICE_DELAY_US(100); //FIXME: understand why this is needed
-        }
-        return true;
     }
     for (int i = 0; i < length; i++) {
-        if (objectIndexTable[i].first > minIndex &&
-            objectIndexTable[i].first < maxIndex) {
+        if (objectIndexTable[i].first >= minIndex &&
+            objectIndexTable[i].first <= maxIndex) {
             size = getSize(i);
             tmp = getMetadata(i)->getDefaultValue();
-            count = 0;
             int8_t ret;
-            while(writeData(tmp, i, abortCode) != 0){
+            count = 0;
+            while (writeData(tmp, i, abortCode) != 0) {
                 count++;
-                if(count > MAX_WRITE_TRY){
+                if (count > MAX_WRITE_TRY) {
                     break;
                 }
             }
-            DEVICE_DELAY_US(100); //FIXME: understand why this is needed
+            DEVICE_DELAY_US(100);  // FIXME: understand why this is needed
         }
     }
     return true;
+}
+
+int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
+                                      SDOAbortCodes &abortCode) {
+    if (data.u32 != RESTORE_SIGNATURE){
+        abortCode = SDOAbortCode_CannotStoreOrTransfer;
+        return -1;
+    }
+    int32_t odID = findObject(RESTORE_INDEX);
+    if (id == -1) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    if (id > odID + MAX_SUB_INDEX) {
+        abortCode = SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    if (restoreData(id - odID)) {
+        return 0;
+    }
+    return -1;
 }
 
 bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {

@@ -117,6 +117,7 @@ OptionalObjects:
   - Index: "1010"
     ParameterName: Store parameters
     ObjectType: ARRAY
+    Setter: node.od().saveData
     SubEntries:
     - ParameterName: Number of entries
       ObjectType: VAR
@@ -130,10 +131,10 @@ OptionalObjects:
       AccessType: rw
       DefaultValue: 0x00000001
       PDOMapping: 0
-      Setter: node.od().saveData
   - Index: "1011"
     ParameterName: Restore default parameters
     ObjectType: ARRAY
+    Setter: node.od().restoreData
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR
