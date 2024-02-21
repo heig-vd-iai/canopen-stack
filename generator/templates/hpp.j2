@@ -20,6 +20,7 @@
 #define X1A00_DAM_MPDO 0xFF
 
 #define SAVE_INDEX 0x1010
+#define SAVE_SIGNATURE 0x65766173
 #define RESTORE_INDEX 0x1011
 #define RESTORE_SIGNATURE 0x64616F6C
 
@@ -117,9 +118,9 @@ private:
     {% endfor %}
     {% endfor %}
     //END METADATA
-    const uint32_t length = {{ subindex_count }};
 
 public:
+    const uint32_t length = {{ subindex_count }};
     // INDEX
     // This table is used to find an object by its index.
     const std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {

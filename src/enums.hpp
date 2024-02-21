@@ -274,7 +274,8 @@ enum ErrorBehaviorValue {
 enum ParameterGroups { //TODO: move to od.hpp and metagenerate manufacturer specific groups
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
-    ParameterGroup_Application = 3
+    ParameterGroup_Application = 3,
+    ParameterGroup_ManufacturerA = 4
 };
 
 enum AccessType {

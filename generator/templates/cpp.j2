@@ -277,16 +277,47 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 }
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
-    return node.hardware().saveDataToFlash(parameterGroup);  // TODO: implement
+    if (parameterGroup == 1){
+        bool result = true;
+        result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
+        result &= node.hardware().saveDataToFlash(ParameterGroup_Application); //TODO: meta generate
+//        result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA); 
+        return result;
+    }
+    return node.hardware().saveDataToFlash(parameterGroup);
 }
 
 int8_t ObjectDictionnary::saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    saveData(1); //TODO: implement
-    return 0;
+    if (data.u32 != SAVE_SIGNATURE){
+        abortCode = SDOAbortCode_CannotStoreOrTransfer;
+        return 0;
+    }
+    int32_t odID = findObject(SAVE_INDEX);
+    if (id == -1) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    if ((id - odID) > MAX_SUB_INDEX) {
+        abortCode = SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    if (saveData(id - odID)) {
+        return 0;
+    }else{
+        abortCode = SDOAbortCode_AccessFailedHardwareError;
+        return -1;
+    }
 }
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
-    return node.hardware().loadDataFromFlash(parameterGroup);  // TODO: implement
+    if (parameterGroup == 1){
+        bool result = true;
+        result &= node.hardware().loadDataFromFlash(ParameterGroup_Communication);
+        result &= node.hardware().loadDataFromFlash(ParameterGroup_Application); //TODO: meta generate
+        // result &= node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA); 
+        return result;
+    }
+    return node.hardware().loadDataFromFlash(parameterGroup);
 }
 
 
@@ -298,12 +329,15 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     SDOAbortCodes abortCode;
     int count = 0;
 
-    if (parameterGroup == ParameterGroup_Communication) {
-        minIndex = 0x1000; //TODO: meta generate
+    if (parameterGroup == ParameterGroup_Communication) { //TODO: meta generate
+        minIndex = 0x1000; 
         maxIndex = 0x1FFF;
     } else if (parameterGroup == ParameterGroup_Application) {
         minIndex = 0x6000;
         maxIndex = 0x9FFF;
+    } else if (parameterGroup == ParameterGroup_ManufacturerA) {
+        minIndex = 0x2000;
+        maxIndex = 0x5FFF;
     }
     for (int i = 0; i < length; i++) {
         if (objectIndexTable[i].first >= minIndex &&
@@ -312,7 +346,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
             tmp = getMetadata(i)->getDefaultValue();
             int8_t ret;
             count = 0;
-            while (writeData(tmp, i, abortCode) != 0) {
+            while (writeData(tmp, i, abortCode) == 1) {
                 count++;
                 if (count > MAX_WRITE_TRY) {
                     break;
@@ -328,21 +362,23 @@ int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
                                       SDOAbortCodes &abortCode) {
     if (data.u32 != RESTORE_SIGNATURE){
         abortCode = SDOAbortCode_CannotStoreOrTransfer;
-        return -1;
+        return 0;
     }
     int32_t odID = findObject(RESTORE_INDEX);
     if (id == -1) {
         abortCode = SDOAbortCode_ObjectNonExistent;
         return -1;
     }
-    if (id > odID + MAX_SUB_INDEX) {
+    if ((id - odID) > MAX_SUB_INDEX) {
         abortCode = SDOAbortCode_SubindexNonExistent;
         return -1;
     }
     if (restoreData(id - odID)) {
         return 0;
+    }else{
+        abortCode = SDOAbortCode_AccessFailedHardwareError;
+        return -1;
     }
-    return -1;
 }
 
 bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {

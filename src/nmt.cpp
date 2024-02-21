@@ -20,22 +20,17 @@ void NMT::updateSM(NMTServiceCommands command) {
             node._emcy.disable();
             switch (resetState) {
                 case NMTResetState_Initialising:
-                    pg = ParameterGroup_All;
-                    break;
                 case NMTResetState_ResetApplication:
-                    pg = ParameterGroup_Application;
-                    // TODO: add manufacturer specific reset
+                    pg = ParameterGroup_All;
                     break;
                 case NMTResetState_ResetCommunication:
                     pg = ParameterGroup_Communication;
                     node._hb.resetToggleBit();
                     break;
             }
-            if (restorePending) {
+            if (restorePending || !node._od.loadData(pg)) {
                 restorePending = false;
                 node._od.restoreData(pg);
-            } else {
-                node._od.loadData(pg);
             }
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();

@@ -132,38 +132,38 @@ struct Metadata_uint32_t_limited : public Metadata_uint32_t {
     }
 };
 
-struct Metadata_uint64_t : public Metadata {
-    uint64_t defaultValue;
-    Metadata_uint64_t() {}
-    Metadata_uint64_t(Access access, uint64_t defaultValue) {
-        this->defaultValue = defaultValue;
-        this->access = access;
-        this->dataType = DataType::UNSIGNED64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.u64 = defaultValue;
-        return data;
-    }
-};
-
-struct Metadata_uint64_t_limited : public Metadata_uint64_t {
-    uint64_t min;
-    uint64_t max;
-    Metadata_uint64_t_limited(Access access, uint64_t defaultValue,
-                              uint64_t min, uint64_t max) {
-        this->defaultValue = defaultValue;
-        this->min = min;
-        this->max = max;
-        this->access = access;
-        this->dataType = DataType::UNSIGNED64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.u64 = defaultValue;
-        return data;
-    }
-};
+//struct Metadata_uint64_t : public Metadata {
+//    uint64_t defaultValue;
+//    Metadata_uint64_t() {}
+//    Metadata_uint64_t(Access access, uint64_t defaultValue) {
+//        this->defaultValue = defaultValue;
+//        this->access = access;
+//        this->dataType = DataType::UNSIGNED64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.u64 = defaultValue;
+//        return data;
+//    }
+//};
+//
+//struct Metadata_uint64_t_limited : public Metadata_uint64_t {
+//    uint64_t min;
+//    uint64_t max;
+//    Metadata_uint64_t_limited(Access access, uint64_t defaultValue,
+//                              uint64_t min, uint64_t max) {
+//        this->defaultValue = defaultValue;
+//        this->min = min;
+//        this->max = max;
+//        this->access = access;
+//        this->dataType = DataType::UNSIGNED64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.u64 = defaultValue;
+//        return data;
+//    }
+//};
 
 struct Metadata_int8_t : public Metadata {
     int8_t defaultValue;
@@ -264,38 +264,38 @@ struct Metadata_int32_t_limited : public Metadata_int32_t {
     }
 };
 
-struct Metadata_int64_t : public Metadata {
-    int64_t defaultValue;
-    Metadata_int64_t() {}
-    Metadata_int64_t(Access access, int64_t defaultValue) {
-        this->defaultValue = defaultValue;
-        this->access = access;
-        this->dataType = DataType::INTEGER64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.i64 = defaultValue;
-        return data;
-    }
-};
-
-struct Metadata_int64_t_limited : public Metadata_int64_t {
-    int64_t min;
-    int64_t max;
-    Metadata_int64_t_limited(Access access, int64_t defaultValue,
-                             int64_t min, int64_t max) {
-        this->defaultValue = defaultValue;
-        this->min = min;
-        this->max = max;
-        this->access = access;
-        this->dataType = DataType::INTEGER64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.i64 = defaultValue;
-        return data;
-    }
-};
+//struct Metadata_int64_t : public Metadata {
+//    int64_t defaultValue;
+//    Metadata_int64_t() {}
+//    Metadata_int64_t(Access access, int64_t defaultValue) {
+//        this->defaultValue = defaultValue;
+//        this->access = access;
+//        this->dataType = DataType::INTEGER64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.i64 = defaultValue;
+//        return data;
+//    }
+//};
+//
+//struct Metadata_int64_t_limited : public Metadata_int64_t {
+//    int64_t min;
+//    int64_t max;
+//    Metadata_int64_t_limited(Access access, int64_t defaultValue,
+//                             int64_t min, int64_t max) {
+//        this->defaultValue = defaultValue;
+//        this->min = min;
+//        this->max = max;
+//        this->access = access;
+//        this->dataType = DataType::INTEGER64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.i64 = defaultValue;
+//        return data;
+//    }
+//};
 
 struct Metadata_float : public Metadata {
     float defaultValue;
@@ -330,38 +330,38 @@ struct Metadata_float_limited : public Metadata_float {
     }
 };
 
-struct Metadata_double : public Metadata {
-    double defaultValue;
-    Metadata_double() {}
-    Metadata_double(Access access, double defaultValue) {
-        this->defaultValue = defaultValue;
-        this->access = access;
-        this->dataType = DataType::REAL64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.f64 = defaultValue;
-        return data;
-    }
-};
-
-struct Metadata_double_limited : public Metadata_double {
-    double min;
-    double max;
-    Metadata_double_limited(Access access, double defaultValue, double min,
-                            double max) {
-        this->defaultValue = defaultValue;
-        this->min = min;
-        this->max = max;
-        this->access = access;
-        this->dataType = DataType::REAL64;
-    }
-    Data getDefaultValue() override {
-        Data data;
-        data.f64 = defaultValue;
-        return data;
-    }
-};
+//struct Metadata_double : public Metadata {
+//    double defaultValue;
+//    Metadata_double() {}
+//    Metadata_double(Access access, double defaultValue) {
+//        this->defaultValue = defaultValue;
+//        this->access = access;
+//        this->dataType = DataType::REAL64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.f64 = defaultValue;
+//        return data;
+//    }
+//};
+//
+//struct Metadata_double_limited : public Metadata_double {
+//    double min;
+//    double max;
+//    Metadata_double_limited(Access access, double defaultValue, double min,
+//                            double max) {
+//        this->defaultValue = defaultValue;
+//        this->min = min;
+//        this->max = max;
+//        this->access = access;
+//        this->dataType = DataType::REAL64;
+//    }
+//    Data getDefaultValue() override {
+//        Data data;
+//        data.f64 = defaultValue;
+//        return data;
+//    }
+//};
 
 struct Metadata_char : public Metadata {
     char *defaultValue;
