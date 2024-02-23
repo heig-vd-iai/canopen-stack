@@ -309,6 +309,20 @@ int8_t ObjectDictionnary::saveData(const Data &data, int32_t id, SDOAbortCodes &
     }
 }
 
+int8_t ObjectDictionnary::getSave(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    data.u32 = 0x01; //bit 1: auto save, bit 0: save at command
+    int32_t odID = findObject(SAVE_INDEX);
+    if (id == -1) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    if ((id - odID) > MAX_SUB_INDEX) {
+        abortCode = SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    return 0;
+}
+
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
     if (parameterGroup == 1){
         bool result = true;
@@ -379,6 +393,20 @@ int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
         abortCode = SDOAbortCode_AccessFailedHardwareError;
         return -1;
     }
+}
+
+int8_t ObjectDictionnary::getRestore(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    data.u32 = 0x01; //bit 0: restore at command
+    int32_t odID = findObject(SAVE_INDEX);
+    if (id == -1) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    if ((id - odID) > MAX_SUB_INDEX) {
+        abortCode = SDOAbortCode_SubindexNonExistent;
+        return -1;
+    }
+    return 0;
 }
 
 bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {

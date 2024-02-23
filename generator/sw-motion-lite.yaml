@@ -118,6 +118,7 @@ OptionalObjects:
     ParameterName: Store parameters
     ObjectType: ARRAY
     Setter: node.od().saveData
+    Getter: node.od().getSave
     SubEntries:
     - ParameterName: Number of entries
       ObjectType: VAR
@@ -135,6 +136,7 @@ OptionalObjects:
     ParameterName: Restore default parameters
     ObjectType: ARRAY
     Setter: node.od().restoreData
+    Getter: node.od().getRestore
     SubEntries:
       - ParameterName: Number of entries
         ObjectType: VAR
@@ -179,7 +181,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
   - Index: "1401"
     ParameterName: Receive PDO 2 Communication Parameter
@@ -203,7 +205,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
   - Index: "1402"
     ParameterName: Receive PDO 3 Communication Parameter
@@ -227,7 +229,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
   - Index: "1600"
     ParameterName: Receive PDO 1 Mapping Parameter
@@ -431,7 +433,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
       - ParameterName: Inhibit Time
         ObjectType: VAR
@@ -479,7 +481,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
       - ParameterName: Inhibit Time
         ObjectType: VAR
@@ -527,7 +529,7 @@ OptionalObjects:
         ObjectType: VAR
         DataType: UNSIGNED8
         AccessType: rw
-        DefaultValue: 0xFF
+        DefaultValue: 0xFD
         PDOMapping: 0
       - ParameterName: Inhibit Time
         ObjectType: VAR
@@ -830,8 +832,6 @@ OptionalObjects:
     PDOMapping: 1
     RemoteGetter: sys.axis->getTargetPosition
     RemoteSetter: sys.axis->setTargetPosition
-    LowLimit: -2
-    HighLimit: 2
   - Index: "6081"
     ParameterName: Profile velocity
     ObjectType: VAR

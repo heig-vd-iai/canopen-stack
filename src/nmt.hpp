@@ -3,12 +3,16 @@
  */
 #pragma once
 #include <cstdint>
+#include <functional>
 
 #include "enums.hpp"
 #define NMT_COMMAND_OFFSET 0
 #define NMT_NODEID_OFFSET 1
 
 namespace CANopen {
+
+bool resetCallBack();
+
 /**
  * NMT object.
  * It handles the reception of NMT commands, as well as the management of the
@@ -47,6 +51,9 @@ class NMT {
    public:
     friend class ObjectDictionnary;
     friend class Node;
+   
+    bool (*onReset)() = &resetCallBack;
+
     /**
      * Issue a state machine transition based on the given command.
      * @param command NMT service command.

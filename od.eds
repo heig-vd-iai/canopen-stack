@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=12:46
-CreationDate=2024-02-21
+CreationTime=10:41
+CreationDate=2024-02-23
 CreatedBy=Adrien Cardinale
-ModificationTime=12:46
-ModificationDate=2024-02-21
+ModificationTime=10:41
+ModificationDate=2024-02-23
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -294,7 +294,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1401]
@@ -323,7 +323,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1402]
@@ -352,7 +352,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1600]
@@ -612,7 +612,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1800sub3]
@@ -673,7 +673,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1801sub3]
@@ -734,7 +734,7 @@ ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
 AccessType=rw
-DefaultValue=255
+DefaultValue=253
 PDOMapping=0
 
 [1802sub3]

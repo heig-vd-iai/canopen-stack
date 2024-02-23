@@ -22,6 +22,7 @@ void NMT::updateSM(NMTServiceCommands command) {
                 case NMTResetState_Initialising:
                 case NMTResetState_ResetApplication:
                     pg = ParameterGroup_All;
+                    onReset();
                     break;
                 case NMTResetState_ResetCommunication:
                     pg = ParameterGroup_Communication;
@@ -115,6 +116,8 @@ void NMT::updateSM(NMTServiceCommands command) {
     }
     currentState = nextState;
 }
+
+bool CANopen::resetCallBack() { return true; }
 
 void NMT::receiveFrame(NMTFrame &frame) {
     uint8_t targetId = frame.getTargetId();

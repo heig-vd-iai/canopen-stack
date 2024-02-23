@@ -406,6 +406,14 @@ public:
     int8_t saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
     /**
+     * Getter called by the od to send information about the save
+     * @param data to fill with the save status
+     * @param id object id for parameter group
+     * @param abortCode to set if the object is not found. 
+    */
+    int8_t getSave(Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
      * Load data from non-volatile storage for a specified parameter group.
      * This method should be called on application startup to load the object dictionnary.
      * @param parameterGroup The parameter group number.
@@ -428,6 +436,14 @@ public:
     * @param abortCode to set if the object is not found.
     */
     int8_t restoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
+     * Getter called by the od to send information about the restore
+     * @param data to fill with the save status
+     * @param id object id for parameter group
+     * @param abortCode to set if the object is not found.
+    */
+    int8_t getRestore(Data &data, int32_t id, SDOAbortCodes &abortCode);
 
     /**
      * Test if an object exists in the dictionary.
