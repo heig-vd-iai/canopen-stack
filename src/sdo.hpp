@@ -29,6 +29,8 @@
 #define SDO_BLOCK_SEQNO_MAX 127
 #define SDO_BLOCK_MAX_RETRIES 1
 
+#define SDO_REMOTE_ACCESS_MAX_ATTEMPTS 20
+
 namespace CANopen {
 /**
  * SDO object.
@@ -50,6 +52,7 @@ class SDO {
 
    private:
     bool enabled = false;
+    uint16_t remoteAccesAttempt = 0;
     SDOServerStates serverState = SDOServerState_Ready;
     struct {
         int32_t odID;
@@ -68,8 +71,7 @@ class SDO {
         Data data;
         SDOCommandByte sendCommand, recvCommand;
     } transferData;
-    struct
-    {
+    struct {
         uint8_t data[SDO_BUFFSIZE] = {0};
         uint32_t offset = 0;
     } buffer;

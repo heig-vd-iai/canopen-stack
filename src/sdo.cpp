@@ -57,14 +57,13 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     transferData.toggle = false;
 
     SDOAbortCodes abortCode;
-    int8_t ret = node.od().readData(transferData.data, transferData.odID,
-                                    abortCode);
+    int8_t ret =
+        node.od().readData(transferData.data, transferData.odID, abortCode);
     if (abortCode != SDOAbortCode_OK) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
         return;
     }
-    if (ret  ==
-        1) {
+    if (ret == 1) {
         serverState = SDOServerState_UploadPending;
         transferData.timestamp_us = timestamp_us;
     } else {
@@ -349,15 +348,30 @@ void SDO::update(uint32_t timestamp_us) {
 
             if (node.od().readData(transferData.data, transferData.odID,
                                    abortCode) == 0) {
+                remoteAccesAttempt = 0;
                 uploadInitiateSend(timestamp_us);
+            } else {
+                remoteAccesAttempt++;
+            }
+            if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
+                sendAbort(transferData.index, transferData.subindex,
+                          SDOAbortCode_AccessFailedHardwareError);
             }
             break;
         case SDOServerState_DownloadPending:
             if (node.od().writeData(transferData.data, transferData.index,
                                     transferData.subindex, abortCode) == 0) {
+                remoteAccesAttempt = 0;
                 downloadInitiateSend(timestamp_us);
                 if (transferData.recvCommand.bits_segment.c)
                     serverState = SDOServerState_Ready;
+            } else {
+                remoteAccesAttempt++;
+            }
+
+            if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
+                sendAbort(transferData.index, transferData.subindex,
+                          SDOAbortCode_AccessFailedHardwareError);
             }
             break;
         case SDOServerState_BlockPending:
