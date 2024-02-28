@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=0
 EDSVersion=4.0
 Description=This is an EDS file for the Servopresse
-CreationTime=13:34
-CreationDate=2024-02-23
+CreationTime=10:28
+CreationDate=2024-02-27
 CreatedBy=Adrien Cardinale
-ModificationTime=13:34
-ModificationDate=2024-02-23
+ModificationTime=10:28
+ModificationDate=2024-02-27
 ModifiedBy=Adrien Cardinale
 
 [DeviceInfo]
@@ -104,7 +104,7 @@ DefaultValue=0
 PDOMapping=0
 
 [OptionalObjects]
-SupportedObjects=35
+SupportedObjects=43
 1=0x1003
 2=0x1010
 3=0x1011
@@ -112,34 +112,42 @@ SupportedObjects=35
 5=0x1400
 6=0x1401
 7=0x1402
-8=0x1600
-9=0x1601
-10=0x1602
-11=0x1800
-12=0x1801
-13=0x1802
-14=0x1A00
-15=0x1A01
-16=0x1A02
-17=0x6040
-18=0x6041
-19=0x6060
-20=0x6061
-21=0x6062
-22=0x6064
-23=0x606B
-24=0x606C
-25=0x6071
-26=0x6077
-27=0x6078
-28=0x607A
-29=0x6081
-30=0x6083
-31=0x6084
-32=0x60A8
-33=0x60A9
-34=0x60AA
-35=0x60AB
+8=0x1403
+9=0x1600
+10=0x1601
+11=0x1602
+12=0x1603
+13=0x1800
+14=0x1801
+15=0x1802
+16=0x1803
+17=0x1A00
+18=0x1A01
+19=0x1A02
+20=0x1A03
+21=0x2001
+22=0x2002
+23=0x2003
+24=0x2004
+25=0x6040
+26=0x6041
+27=0x6060
+28=0x6061
+29=0x6062
+30=0x6064
+31=0x606B
+32=0x606C
+33=0x6071
+34=0x6077
+35=0x6078
+36=0x607A
+37=0x6081
+38=0x6083
+39=0x6084
+40=0x60A8
+41=0x60A9
+42=0x60AA
+43=0x60AB
 
 [1003]
 ParameterName=Pre-defined error field
@@ -348,6 +356,35 @@ DefaultValue=$NODEID+0x80000400
 PDOMapping=0
 
 [1402sub2]
+ParameterName=Transmission Type
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=253
+PDOMapping=0
+
+[1403]
+ParameterName=Receive PDO 4 Communication Parameter
+ObjectType=0x09
+SubNumber=3
+
+[1403sub0]
+ParameterName=Number of entries
+ObjectType=0x07
+DataType=0x0005
+AccessType=ro
+DefaultValue=2
+PDOMapping=0
+
+[1403sub1]
+ParameterName=COB-ID
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=$NODEID+0x80000500
+PDOMapping=0
+
+[1403sub2]
 ParameterName=Transmission Type
 ObjectType=0x07
 DataType=0x0005
@@ -586,6 +623,83 @@ AccessType=rw
 DefaultValue=0
 PDOMapping=0
 
+[1603]
+ParameterName=Receive PDO 4 Mapping Parameter
+ObjectType=0x09
+SubNumber=9
+
+[1603sub0]
+ParameterName=Number of entries
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub1]
+ParameterName=1st object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub2]
+ParameterName=2nd object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub3]
+ParameterName=3rd object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub4]
+ParameterName=4th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub5]
+ParameterName=5th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub6]
+ParameterName=6th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub7]
+ParameterName=7th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1603sub8]
+ParameterName=8th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
 [1800]
 ParameterName=Transmit PDO 1 Communication Parameter
 ObjectType=0x09
@@ -762,6 +876,67 @@ DefaultValue=2
 PDOMapping=0
 
 [1802sub6]
+ParameterName=SYNC start value
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1803]
+ParameterName=Transmit PDO 4 Communication Parameter
+ObjectType=0x09
+SubNumber=7
+
+[1803sub0]
+ParameterName=Number of entries
+ObjectType=0x07
+DataType=0x0005
+AccessType=ro
+DefaultValue=6
+PDOMapping=0
+
+[1803sub1]
+ParameterName=COB-ID
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=$NODEID+0x80000480
+PDOMapping=0
+
+[1803sub2]
+ParameterName=Transmission Type
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=253
+PDOMapping=0
+
+[1803sub3]
+ParameterName=Inhibit Time
+ObjectType=0x07
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1803sub4]
+ParameterName=Compatibility Entry
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1803sub5]
+ParameterName=Event Timer
+ObjectType=0x07
+DataType=0x0006
+AccessType=rw
+DefaultValue=2
+PDOMapping=0
+
+[1803sub6]
 ParameterName=SYNC start value
 ObjectType=0x07
 DataType=0x0005
@@ -999,6 +1174,115 @@ DataType=0x0007
 AccessType=rw
 DefaultValue=0
 PDOMapping=0
+
+[1A03]
+ParameterName=Transmit PDO 4 Mapping Parameter
+ObjectType=0x09
+SubNumber=9
+
+[1A03sub0]
+ParameterName=Number of entries
+ObjectType=0x07
+DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub1]
+ParameterName=1st object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub2]
+ParameterName=2nd object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub3]
+ParameterName=3rd object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub4]
+ParameterName=4th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub5]
+ParameterName=5th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub6]
+ParameterName=6th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub7]
+ParameterName=7th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[1A03sub8]
+ParameterName=8th object to be mapped
+ObjectType=0x07
+DataType=0x0007
+AccessType=rw
+DefaultValue=0
+PDOMapping=0
+
+[2001]
+ParameterName=Encoder Sin signal
+ObjectType=0x07
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[2002]
+ParameterName=Encoder Cos signal
+ObjectType=0x07
+DataType=0x0006
+AccessType=ro
+DefaultValue=0
+PDOMapping=1
+
+[2003]
+ParameterName=Encoder Sin signal corrected
+ObjectType=0x07
+DataType=0x0008
+AccessType=ro
+DefaultValue=0.0f
+PDOMapping=1
+
+[2004]
+ParameterName=Encoder Cos signal corrected
+ObjectType=0x07
+DataType=0x0008
+AccessType=ro
+DefaultValue=0.0f
+PDOMapping=1
 
 [6040]
 ParameterName=Controlword
