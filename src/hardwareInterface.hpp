@@ -31,6 +31,8 @@ class HardwareInterface {
                                  SDOAbortCodes &abortCode) = 0;
     virtual void configRemoteRPDO(uint16_t pdoIndex, int32_t odIDs[]) = 0;
     virtual void configRemoteTPDO(uint16_t pdoIndex, int32_t odIDS[]) = 0;
+    virtual void enablePDO() = 0;
+    virtual void disablePDO() = 0;
     virtual void getRemoteTPDO(uint16_t pdoIndex, Data data[]) = 0;
     virtual void setRemoteRPDO(uint16_t pdoIndex, Data data[]) = 0;
     virtual bool saveDataToFlash(uint8_t parameterGroup) = 0;

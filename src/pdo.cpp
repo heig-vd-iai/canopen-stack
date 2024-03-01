@@ -278,18 +278,26 @@ void PDO::init() {
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) initRPDO(i);
 }
 
-void PDO::enable() { enabled = true; }
+void PDO::enable() {
+    enabled = true;
+    node.hardware().enablePDO();
+}
 
-void PDO::disable() { enabled = false; }
+void PDO::disable() {
+    enabled = false;
+    node.hardware().disablePDO();
+}
 
 void PDO::initTPDO(unsigned index) {
-    tpdos[index].commParameter = CommParameter(TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].commParameter =
+        CommParameter(TPDO_COMMUNICATION_INDEX + index);
     tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
-    rpdos[index].commParameter = CommParameter(RPDO_COMMUNICATION_INDEX + index);
+    rpdos[index].commParameter =
+        CommParameter(RPDO_COMMUNICATION_INDEX + index);
     rpdos[index].mapParameter = MapParameter(RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
