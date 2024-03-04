@@ -22,7 +22,6 @@ void NMT::updateSM(NMTServiceCommands command) {
                 case NMTResetState_Initialising:
                 case NMTResetState_ResetApplication:
                     pg = ParameterGroup_All;
-                    onReset();
                     break;
                 case NMTResetState_ResetCommunication:
                     pg = ParameterGroup_Communication;
@@ -35,6 +34,9 @@ void NMT::updateSM(NMTServiceCommands command) {
             }
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
+            if(pg == ParameterGroup_All){
+                onReset();
+            }
             nextState = NMTState_PreOperational;
             [[fallthrough]];  // explicit fallthrough
         case NMTState_PreOperational:

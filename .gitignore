@@ -46,3 +46,7 @@ doc/latex
 # OD save file
 *.dat
 od.hpp
+od.eds
+
+sw-motion.yaml
+sw-motion-lite.yaml
