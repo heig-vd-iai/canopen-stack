@@ -1,6 +1,0 @@
-profiles:
-  - 301:
-    name: Application layer and communication profile
-    objects:
-      - 0x1000
-       type: 
