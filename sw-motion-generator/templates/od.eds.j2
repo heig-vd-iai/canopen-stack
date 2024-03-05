@@ -1,0 +1,49 @@
+{% for object in objects %}
+{% for subobject in object.get_subobjects %}
+{% if object.category == "mandatory" %}
+{% if object.object_type == "0x07" %}
+[{{subobject.index_hex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+DefaultValue={{subobject.default_value}}
+PDOMapping={{subobject.pdo_mapping}}
+{% else %}
+[{{subobject.index_hex}}sub{{subobject.subindex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+DefaultValue={{subobject.default_value}}
+PDOMapping={{subobject.pdo_mapping}}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+{% for object in objects %}
+{% for subobject in object.get_subobjects %}
+{% if object.category != "mandatory" %}
+{% if object.object_type == "0x07" %}
+[{{subobject.index_hex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+DefaultValue={{subobject.default_value}}
+PDOMapping={{subobject.pdo_mapping}}
+{% else %}
+[{{subobject.index_hex}}sub{{subobject.subindex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+DefaultValue={{subobject.default_value}}
+PDOMapping={{subobject.pdo_mapping}}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endfor %}

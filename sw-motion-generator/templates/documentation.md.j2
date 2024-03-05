@@ -1,0 +1,13 @@
+# Standard Profile Definitions
+
+{% for profile in profiles %}
+## Profile {{ profile.profile }} {{ profile.name}}
+| Index | Name |
+| --- | --- |
+{% for object in profile.objects %}
+| **{{ object.index }}**| {{ object.name }} |
+{% for data in object.data %}
+|  {{ data.name }} | {{ data.type }} |
+{% endfor %}
+{% endfor %}
+{% endfor %}
