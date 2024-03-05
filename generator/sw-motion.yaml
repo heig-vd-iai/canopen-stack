@@ -1443,6 +1443,13 @@ OptionalObjects:
     DefaultValue: 0
     PDOMapping: 1
     isRemote: 0
+  - Index: "6075"
+    ParameterName: motor rated current
+    ObjectType: VAR
+    DataType: UNSIGNED32
+    AccessType: rw
+    PDOMapping: 0
+    Remote
   - Index: "6071"
     ParameterName: Target torque
     ObjectType: VAR
