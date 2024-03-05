@@ -16,6 +16,9 @@ def cli(config_file=None):
     with open("doc.md", "w") as file:
         file.write(od.to_md())
 
+    with open("od.eds", "w") as file:
+        file.write(od.to_eds())
+
 
 if __name__ == "__main__":
     cli()
