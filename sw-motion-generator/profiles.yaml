@@ -1,3 +1,22 @@
+functionalities:
+  baudrate:
+    baudrate_10: true
+    baudrate_20: true
+    baudrate_50: true
+    baudrate_125: true
+    baudrate_250: true
+    baudrate_500: true
+    baudrate_800: true
+    baudrate_1000: true
+  simpleBootUpMaster: false
+  simpleBootUpSlave: true
+  granularity: 8
+  dynamicChannelsSupported: false
+  compactPDO: false
+  groupMessaging: false
+  LSS_Supported: false
+
+
 profiles:
 - profile: 301
   name: Application layer and communication profile
@@ -5,11 +24,10 @@ profiles:
   - index: 0x1000
     name: Device type
     category: mandatory
-    type : uint32
     data:
-    - access: ro
+    - type : uint32
+      access: ro
       pdo_mapping: False
-      default: true
   - index: 0x1001
     name: Error register
     category: mandatory
@@ -17,7 +35,6 @@ profiles:
     - type: uint8
       access: ro
       pdo_mapping: true
-      default: false
   - index: 0x1002
     name: Manufacturer status register
     category: optional
@@ -25,7 +42,6 @@ profiles:
     - type: uint32
       access: ro
       pdo_mapping: true
-      default: false
   - index: 0x1003
     name: Pre-defined error field
     category: optional
@@ -34,18 +50,24 @@ profiles:
       name: Number of errors
       access: rw
       pdo_mapping: False
-      default: true
-      default_value: 0
+      default: 0
     - type: uint32
       name: Standard error field
       access: ro
       pdo_mapping: False
-      default: false
     - type: uint32
       name: Standard error field
       access: ro
       pdo_mapping: False
-      default: false
+  - index: 0x1400
+    name: RPDO Communication parameter
+    category: mandatory
+    data:
+    - type: uint8
+      name: Number of RPDOs supported
+      access: ro
+      pdo_mapping: False
+      default: 0
 - profile: 402
   name: Profile for drives and motion control
   objects:
@@ -56,7 +78,7 @@ profiles:
     - type: uint16
       access: rw
       pdo_mapping: true
-      default: true
+      default: 0
   - index: 0x6041
     name: Statusword
     category: mandatory
@@ -64,7 +86,7 @@ profiles:
     - type: uint16
       access: ro
       pdo_mapping: true
-      default: false
+      default: 0
 
 
       

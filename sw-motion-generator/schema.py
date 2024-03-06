@@ -10,65 +10,90 @@ def validate_profile_object(objects):
     for object in objects:
         if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
             raise Invalid(f"If there are more than one data fields, they must have a name [{hex(object['index'])}]")
-
-        if object["type"] == "none" and all(data["type"] == "none" for data in object["data"]):
-            raise Invalid(f"Object or data need type [[{hex(object['index'])}]]")
+            
         if len(object["data"]) == 1:
             object["data"][0]["name"] = object["name"]
-            if object["type"] != "none":
-                object["data"][0]["type"] = object["type"]
-        for data in object["data"]:
-            if not data["default"] and data["default_value"] != "none":
-                raise Invalid(f"Cannot have a default value if default is false [[{hex(object['index'])}]]")
     return objects
 
 def validate_object(objects):
-    # return validate_profile_object(objects)
     for object in objects:
         if object["profile"] == 0:
             if not object["data"] or any("type" not in data or "name" not in data or "access" not in data for data in object["data"]):
-                raise Invalid(f"Standard object need data fields [[{hex(object['index'])}]]")
+                raise Invalid(f"Non Standard object need data fields [[{hex(object['index'])}]]")
     return objects
 
-profile_schema = Schema({
-    Required("profiles") : [{
-        Required("profile") : int,
-        Required("name") : str,
-        Required("objects") : All([{
-            Required("index") : int,
-            Required("name") : str,
-            Optional("category", default="optional") : str,
-            Optional("type", default="none") : str,
-            Required("data") : [{
-                Optional("type", default="none") : str,
-                Optional("name") : str,
+data_schema = [{
+                Required("type") : str,
+                Optional("name", default="none") : str,
                 Required("access") : All(str, validate_access),
                 Optional("pdo_mapping", default=False) : bool,
-                Optional("default", default=True ): bool,
-                Optional("default_value", default="none") : Any(str, int, float, bool)
+                Optional("default", default="none") : Any(int, float, bool, str)
             }]
-        }],
-        Length(min=1),
-        validate_profile_object)
+
+data_object_schema = [{
+    Optional("pdo_mapping", default=False) : bool,
+    Required("default") : Any(int, float, bool, str),
+}]
+
+
+object_schema_base = {
+    Required("index"): int,
+    Required("name"): str,
+    Optional("category", default="optional"): str,
+    Required("data"): data_schema
+}
+
+profile_schema = Schema({
+    Required("functionalities"): {
+        Required("baudrate"): {
+            Optional("baudrate_10", default=False): bool,
+            Optional("baudrate_20", default=False): bool,
+            Optional("baudrate_50", default=False): bool,
+            Optional("baudrate_125", default=False): bool,
+            Optional("baudrate_250", default=False): bool,
+            Optional("baudrate_500", default=False): bool,
+            Optional("baudrate_800", default=False): bool,
+            Optional("baudrate_1000", default=False): bool
+        },
+        Required("simpleBootUpMaster"): bool,
+        Required("simpleBootUpSlave"): bool,
+        Required("granularity"): int,
+        Required("dynamicChannelsSupported"): bool,
+        Required("compactPDO"): bool,
+        Required("groupMessaging"): bool,
+        Required("LSS_Supported"): bool
+    },
+    Required("profiles"): [{
+        Required("profile"): int,
+        Required("name"): str,
+        Required("objects"): All([object_schema_base], Length(min=1), validate_profile_object)
     }]
 })
 
 config_schema = Schema({
-    Required("objectDictionary") : All([{
-        Required("alias") : str,
-        Required("index") : int,
-        Optional("profile", default=0) : int,
-        Optional("name", default="none") : str,
-        Optional("category", default="optional") : Any("optional", "mandatory", "conditional"),
-        Optional("type", default="none") : str,
-        Optional("data", default=[]) : [{
-            Optional("type") : str,
-            Optional("name") : str,
-            Optional("access") : All(str, validate_access),
-            Optional("pdo_mapping", default=False) : bool,
-            Optional("default", default=True ): bool,
-            Optional("default_value", default="none") : Any(str, int, float, bool)
-        }]
-    }],
-    validate_object)
+    Required("fileInfo"): {
+        Required("fileVersion") : int,
+        Required("fileRevision") : int,
+        Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
+        Required("description") : str,
+        Required("createdBy") : str,
+        Required("creationTime"): str,
+        Required("creationDate") : str,
+        Required("modifiedBy") : str,
+    },
+    Required("deviceInfo"): {
+        Required("vendorName"): str,
+        Required("vendorNumber"): int,
+        Required("productNumber"): int,
+        Required("revisionNumber"): int,
+        Required("orderCode"): int
+    },
+    Required("objectDictionary"): All([{
+        Required("alias"): str,
+        Required("index"): int,
+        Optional("profile", default=0): int,
+        Optional("name", default="none"): str,
+        Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
+        Optional("data", default=[]): Any(data_schema, data_object_schema),
+    }], validate_object)
 })

@@ -13,6 +13,8 @@
 |  Number of errors | uint8 |
 |  Standard error field | uint32 |
 |  Standard error field | uint32 |
+| **5120**| RPDO Communication parameter |
+|  RPDO Communication parameter | uint8 |
 ## Profile 402 Profile for drives and motion control
 | Index | Name |
 | --- | --- |

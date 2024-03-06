@@ -2,6 +2,7 @@
 import os
 import yaml
 import jinja2
+from datetime import datetime
 from voluptuous import MultipleInvalid
 from .schema import profile_schema, config_schema
 from .type import Access, Type, DataType, ObjectType
@@ -26,7 +27,6 @@ class Data:
         self.access = data["access"]
         self.pdo_mapping = data["pdo_mapping"]
         self.default = data["default"]
-        self.default_value = data["default_value"]
     
     @property
     def data_type(self):
@@ -38,7 +38,7 @@ class SubObject:
     parameter_name: str
     data_type: DataType
     access: Access
-    default_value: str
+    default: str
     pdo_mapping: bool
 
     def __init__(self, data: Data, index: int, subindex: int) -> None:
@@ -47,7 +47,7 @@ class SubObject:
         self.parameter_name = data.name
         self.data_type = data.data_type
         self.access = data.access
-        self.default_value = data.default_value
+        self.default = data.default
         self.pdo_mapping = int(data.pdo_mapping)
 
     @property
@@ -69,15 +69,22 @@ class Object:
         self.index = object["index"]
         self.profile = object["profile"]
         if self.profile != 0:
-            profile = next(profile for profile in profiles if profile.profile == self.profile)
-            profileObject = next(profileObject for profileObject in profile.objects if profileObject.index == self.index)
+            try:
+                profile = next(profile for profile in profiles if profile.profile == self.profile)
+            except StopIteration:
+                print(f"Profile {self.profile} not found")
+                exit(1)
+            try:
+                profileObject = next(profileObject for profileObject in profile.objects if profileObject.index == self.index)
+            except StopIteration:
+                print(f"Object {hex(self.index)} not found in profile {profile.profile}")
+                exit(1)
             self.name = profileObject.name
             self.category = profileObject.category
             self.data = profileObject.data
         else:
             self.name = object["name"]
             self.category = object["category"]
-            self.type = object["type"]
             self.data = [Data(data) for data in object["data"]]
 
     @property
@@ -94,6 +101,10 @@ class Object:
     @property
     def get_subobjects(self):
         return [SubObject(data, self.index, index) for index, data in enumerate(self.data)]
+
+    @property
+    def index_hex(self):
+        return hex(self.index)[2:]
             
 
 class ProfileObject:
@@ -128,17 +139,35 @@ class ObjectDictionary:
     profiles: []
     objects: []
 
-    def __init__(self, profiles: dict, od: dict) -> None:
+    def __init__(self, profiles: dict, od: dict, file_name: str) -> None:
+        self.file_name = file_name
         try:
-            self.profiles = [Profile(profile) for profile in profile_schema(profiles)["profiles"]]
+            self.profile = profile_schema(profiles)
+            self.profiles = [Profile(profile) for profile in self.profile["profiles"]]
+            self.fonctionalities = self.profile["functionalities"]
         except MultipleInvalid as e:
             print("sw-motion-generator profile error: " + str(e))
             exit(1)
         try:
-            self.objects = [Object(object, self.profiles) for object in config_schema(od)["objectDictionary"]]
+            self.config = config_schema(od)
+            self.objects = [Object(object, self.profiles) for object in self.config["objectDictionary"]]
+            self.objects.sort(key=lambda x: x.index)
+            self.file_info = self.config["fileInfo"]
+            self.device_info = self.config["deviceInfo"]
         except MultipleInvalid as e:
             print("sw-motion-generator objectDictionary error: " + str(e))
             exit(1)
+
+        self.nrOfRXPDO = 0
+        self.nrOfTXPDO = 0
+        for object in self.objects:
+            if object.index >= 0x1400 and object.index < 0x1600:
+                self.nrOfRXPDO += 1
+            if object.index >= 0x1800 and object.index < 0x1A00:
+                self.nrOfTXPDO += 1
+
+        self.mandatoryObjects = [object for object in self.objects if object.category == "mandatory"]
+        self.optionalObjects = [object for object in self.objects if object.category == "optional"]
 
     def to_md(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
@@ -148,6 +177,17 @@ class ObjectDictionary:
     def to_eds(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
         template = env.get_template(EDS_TEMPLATE)
-        return template.render(objects=self.objects)
+        return template.render(
+            objects=self.objects, 
+            file_name=self.file_name, 
+            file_info=self.file_info, 
+            device_info=self.device_info,
+            fonctionalities=self.fonctionalities,
+            time=datetime.now().strftime("%H:%M"),
+            date=datetime.now().strftime("%Y-%m-%d"),
+            nrOfRXPDO=self.nrOfRXPDO,
+            nrOfTXPDO=self.nrOfTXPDO,
+            mandatoryObjects=self.mandatoryObjects,
+            optionalObjects=self.optionalObjects)
 
 

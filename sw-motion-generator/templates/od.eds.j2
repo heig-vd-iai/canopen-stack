@@ -1,13 +1,13 @@
-{% for object in objects %}
-{% for subobject in object.get_subobjects %}
-{% if object.category == "mandatory" %}
+{% macro data(object, subobject) -%}
 {% if object.object_type == "0x07" %}
 [{{subobject.index_hex}}]
 ParameterName={{subobject.parameter_name}}
 ObjectType={{object.object_type}}
 DataType={{subobject.data_type}}
 AccessType={{subobject.access}}
-DefaultValue={{subobject.default_value}}
+{% if subobject.default != "none" %}
+DefaultValue={{subobject.default}}
+{% endif %}
 PDOMapping={{subobject.pdo_mapping}}
 {% else %}
 [{{subobject.index_hex}}sub{{subobject.subindex}}]
@@ -15,35 +15,74 @@ ParameterName={{subobject.parameter_name}}
 ObjectType={{object.object_type}}
 DataType={{subobject.data_type}}
 AccessType={{subobject.access}}
-DefaultValue={{subobject.default_value}}
+DefaultValue={{subobject.default}}
 PDOMapping={{subobject.pdo_mapping}}
 {% endif %}
+{%- endmacro %}
 
+[FileInfo]
+FileName={{file_name}}.eds
+FileVersion={{file_info.fileVersion}}
+FileRevision={{file_info.fileRevision}}
+EDSVersion={{file_info.EDSVersion}}
+Description={{file_info.description}}
+CreationTime={{file_info.creationTime}}
+CreationDate={{file_info.creationDate}}
+CreatedBy={{file_info.createdBy}}
+ModificationTime={{time}}
+ModificationDate={{date}}
+ModifieddBy={{file_info.modifiedBy}}
+
+[DeviceInfo]
+VendorName={{device_info.vendorName}}
+VendorNumber={{device_info.vendorNumber}}
+ProductName={{device_info.productName}}
+ProductNumber={{device_info.productNumber}}
+RevisionNumber={{device_info.revisionNumber}}
+OrderCode={{device_info.orderCode}}
+Baudrate_10={{1 if fonctionalities.baudrate["baudrate_10"] else 0}}
+Baudrate_20={{1 if fonctionalities.baudrate["baudrate_20"] else 0}}
+Baudrate_50={{1 if fonctionalities.baudrate["baudrate_50"] else 0}}
+Baudrate_125={{1 if fonctionalities.baudrate["baudrate_125"] else 0}}
+Baudrate_250={{1 if fonctionalities.baudrate["baudrate_250"] else 0}}
+Baudrate_500={{1 if fonctionalities.baudrate["baudrate_500"] else 0}}
+Baudrate_800={{1 if fonctionalities.baudrate["baudrate_800"] else 0}}
+Baudrate_1000={{1 if fonctionalities.baudrate["baudrate_1000"] else 0}}
+SimpleBootUpMaster={{fonctionalities.simpleBootUpMaster}}
+SimpleBootUpSlave={{fonctionalities.simpleBootUpSlave}}
+Granularity={{fonctionalities.granularity}}
+DynamicChannelsSupported={{fonctionalities.dynamicChannelsSupported}}
+CompactPDO={{fonctionalities.compactPDO}}
+GroupMessaging={{fonctionalities.groupMessaging}}
+NrOfRXPDO={{nrOfRXPDO}}
+NrOfTXPDO={{nrOfTXPDO}}
+LSS_Supported={{fonctionalities.LSS_Supported}}
+
+[MandatoryObjects]
+SupportedObjects={{mandatoryObjects|length}}
+{% for object in mandatoryObjects %}
+{{ loop.index + 1 }}=0x{{ object.index_hex }}
+{% endfor %}
+
+
+{% for object in objects %}
+{% for subobject in object.get_subobjects %}
+{% if object.category == "mandatory" %}
+{{ data(object, subobject) }}
 {% endif %}
 {% endfor %}
+{% endfor %}
+
+[OptionalObjects]
+SupportedObjects={{optionalObjects|length}}
+{% for object in optionalObjects %}
+{{ loop.index + 1 }}=0x{{ object.index_hex }}
 {% endfor %}
 
 {% for object in objects %}
 {% for subobject in object.get_subobjects %}
 {% if object.category != "mandatory" %}
-{% if object.object_type == "0x07" %}
-[{{subobject.index_hex}}]
-ParameterName={{subobject.parameter_name}}
-ObjectType={{object.object_type}}
-DataType={{subobject.data_type}}
-AccessType={{subobject.access}}
-DefaultValue={{subobject.default_value}}
-PDOMapping={{subobject.pdo_mapping}}
-{% else %}
-[{{subobject.index_hex}}sub{{subobject.subindex}}]
-ParameterName={{subobject.parameter_name}}
-ObjectType={{object.object_type}}
-DataType={{subobject.data_type}}
-AccessType={{subobject.access}}
-DefaultValue={{subobject.default_value}}
-PDOMapping={{subobject.pdo_mapping}}
-{% endif %}
-
+{{ data(object, subobject) }}
 {% endif %}
 {% endfor %}
 {% endfor %}

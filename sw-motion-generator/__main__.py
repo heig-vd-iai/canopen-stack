@@ -11,7 +11,8 @@ script_dir = os.path.dirname(__file__)
 def cli(config_file=None):
     with open(script_dir +"/profiles.yaml", "r") as p_file:
         with open(config_file) as c_file:
-            od = ObjectDictionary(yaml.safe_load(p_file), yaml.safe_load(c_file))
+            file_name = os.path.splitext(os.path.basename(c_file.name))[0]
+            od = ObjectDictionary(yaml.safe_load(p_file), yaml.safe_load(c_file), file_name)
 
     with open("doc.md", "w") as file:
         file.write(od.to_md())
