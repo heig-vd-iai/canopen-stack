@@ -13,6 +13,8 @@ TEMPLATE_DIR = os.path.join(script_dir, "templates")
 
 DOCUMENTATION_TEMPLATE = "documentation.md.j2"
 EDS_TEMPLATE = "od.eds.j2"
+CPP_TEMPLATE = "cpp.j2"
+HPP_TEMPLATE = "hpp.j2"
 
 LOGICAL_DEVICE_OFFSET = 0x800
 
@@ -29,6 +31,8 @@ class Data:
         self.access = data["access"]
         self.pdo_mapping = data["pdo_mapping"]
         self.default = data["default"]
+        self.low_limit = data["lowLimit"]
+        self.high_limit = data["highLimit"]
     
     @property
     def data_type(self):
@@ -51,10 +55,16 @@ class SubObject:
         self.access = data.access
         self.default = data.default
         self.pdo_mapping = int(data.pdo_mapping)
+        self.low_limit = data.low_limit
+        self.high_limit = data.high_limit
 
     @property
     def index_hex(self):
         return hex(self.index)[2:]
+
+    @property
+    def cpp_instance_name(self):
+        return f"object{self.index_hex}sub{self.subindex}"
 
 
 class Object:
@@ -71,12 +81,14 @@ class Object:
         self.alias = object["alias"]
         self.profile = object["profile"]
         self.remote = object["remote"]
+        self.description = object["description"]
+        self.module = object["module"]
         if "logicalDevices" in object:
-            self.getter = object["logicalDevices"][axis]["get"]
-            self.setter = object["logicalDevices"][axis]["set"]
+            self.get = object["logicalDevices"][axis]["get"]
+            self.set = object["logicalDevices"][axis]["set"]
         else:
-            self.getter = object["get"]
-            self.setter = object["set"]
+            self.get = object["get"]
+            self.set = object["set"]
         if self.profile != 0:
             try:
                 profile = next(profile for profile in profiles if profile.profile == self.profile)
@@ -99,6 +111,10 @@ class Object:
                     self.data[i].default = data["default"]
                     if "pdo_mapping" in data:
                         self.data[i].pdo_mapping = data["pdo_mapping"]
+                    if "lowLimit" in data:
+                        self.data[i].lowLimit = data["lowLimit"]
+                    if "highLimit" in data:
+                        self.data[i].highLimit = data["highLimit"]
                     
         else:
             self.name = object["name"]
@@ -168,7 +184,6 @@ class ObjectDictionary:
             exit(1)
         try:
             self.config = config_schema(od)
-            # self.objects = [Object(object, self.profiles) for object in self.config["objectDictionary"].items()]
             self.objects = []
             for object in self.config["objectDictionary"].items():
                 if "logicalDevices" not in object[1]:
@@ -212,5 +227,22 @@ class ObjectDictionary:
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects)
+    
+    def to_cpp(self):
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        template = env.get_template(CPP_TEMPLATE)
+        return template.render(
+            objects=self.objects, 
+            info=self.info,
+            fonctionalities=self.fonctionalities,
+            time=datetime.now().strftime("%H:%M"),
+            date=datetime.now().strftime("%Y-%m-%d"),
+            nrOfRXPDO=self.nrOfRXPDO,
+            nrOfTXPDO=self.nrOfTXPDO,
+            mandatoryObjects=self.mandatoryObjects,
+            optionalObjects=self.optionalObjects)
+
+    def to_hpp(self):
+        pass
 
 

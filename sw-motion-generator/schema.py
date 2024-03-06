@@ -39,16 +39,20 @@ def validate_object(objects):
     return objects
 
 data_schema = [{
-                Required("type") : str,
-                Optional("name", default="none") : str,
-                Required("access") : All(str, validate_access),
-                Optional("pdo_mapping", default=False) : bool,
-                Optional("default", default="none") : Any(int, float, bool, str)
+    Required("type") : str,
+    Optional("name", default="none") : str,
+    Required("access") : All(str, validate_access),
+    Optional("pdo_mapping", default=False) : bool,
+    Optional("default", default="none") : Any(int, float, bool, str),
+    Optional("lowLimit", default="none"): str,
+    Optional("highLimit", default="none"): str,
 }]
 
 data_object_schema = [{
     Optional("pdo_mapping", default=False) : bool,
     Required("default") : Any(int, float, bool, str),
+    Optional("lowLimit", default="none"): str,
+    Optional("highLimit", default="none"): str,
 }]
 
 
@@ -110,6 +114,9 @@ config_schema = Schema({
             Required("alias"): str,
             Optional("profile", default=0): int,
             Optional("name", default="none"): str,
+            Optional("module", default=""): str,
+            Optional("description", default=""): str,
+            Optional("descriptionFile", default=""): str,
             Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
             Optional("data"): Any(data_schema, data_object_schema),
             Optional("logicalDevices"): Any([int], int, {

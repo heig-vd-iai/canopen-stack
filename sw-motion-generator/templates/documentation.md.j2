@@ -15,7 +15,8 @@
 # Object Dictionary
 
 {% for object in objects %}
-## Object {{ object.index_hex }} {{ object.name }}
+## Object {{ object.index_hex }} {{ object.name }} | {{ object.module}}
+{{ object.description }}
 {% if object.remote%}
 [x] Remote
 {% else %}
@@ -27,7 +28,7 @@
 | {{ data.name }} | {{ data.type }} | {{ data.default }}
 {% endfor %}
 - getter 
-    - {{object.getter}}
+    - {{object.get}}
 - setter 
-    - {{object.setter}}
+    - {{object.set}}
 {% endfor %}

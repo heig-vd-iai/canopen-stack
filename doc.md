@@ -25,7 +25,8 @@
 
 # Object Dictionary
 
-## Object 1000 Device type
+## Object 1000 Device type | 
+
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -34,7 +35,8 @@
     - none
 - setter 
     - none
-## Object 1001 Error register
+## Object 1001 Error register | 
+
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -43,7 +45,8 @@
     - none
 - setter 
     - none
-## Object 1002 Manufacturer status register
+## Object 1002 Manufacturer status register | 
+
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -52,7 +55,8 @@
     - none
 - setter 
     - none
-## Object 1003 Pre-defined error field
+## Object 1003 Pre-defined error field | 
+
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -63,7 +67,8 @@
     - none
 - setter 
     - none
-## Object 1400 RPDO Communication parameter
+## Object 1400 RPDO Communication parameter | communication
+
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -72,7 +77,8 @@
     - none
 - setter 
     - none
-## Object 2000 break
+## Object 2000 break | break-system
+break system for stop the motor when it's needed
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -81,8 +87,9 @@
     - none
 - setter 
     - none
-## Object 6040 Controlword
-[ ] Remote
+## Object 6040 Controlword | state-machine
+
+[x] Remote
 | Name | Type | default |
 | --- | --- | --- |
 | Controlword | uint16 | 10
@@ -90,7 +97,8 @@
     - sys.axis[0].getControlWord()
 - setter 
     - sys.axis[0].setControlWord()
-## Object 6041 Statusword
+## Object 6041 Statusword | state-machine
+
 [x] Remote
 | Name | Type | default |
 | --- | --- | --- |
@@ -99,16 +107,18 @@
     - sys.axis[0].getStatusWord()
 - setter 
     - none
-## Object 6840 Controlword
-[ ] Remote
+## Object 6840 Controlword | state-machine
+
+[x] Remote
 | Name | Type | default |
 | --- | --- | --- |
 | Controlword | uint16 | 10
 - getter 
-    - none
+    - sys.axis[1].getControlWord()
 - setter 
     - sys.axis[1].setControlWord()
-## Object 6841 Statusword
+## Object 6841 Statusword | state-machine
+
 [x] Remote
 | Name | Type | default |
 | --- | --- | --- |
