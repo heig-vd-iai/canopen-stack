@@ -22,24 +22,24 @@ PDOMapping={{subobject.pdo_mapping}}
 
 [FileInfo]
 FileName={{file_name}}.eds
-FileVersion={{file_info.fileVersion}}
-FileRevision={{file_info.fileRevision}}
-EDSVersion={{file_info.EDSVersion}}
-Description={{file_info.description}}
-CreationTime={{file_info.creationTime}}
-CreationDate={{file_info.creationDate}}
-CreatedBy={{file_info.createdBy}}
+FileVersion={{info.fileVersion}}
+FileRevision={{info.fileRevision}}
+EDSVersion={{fonctionalities.EDSVersion}}
+Description={{info.description}}
+CreationTime={{info.creationTime}}
+CreationDate={{info.creationDate}}
+CreatedBy={{info.createdBy}}
 ModificationTime={{time}}
 ModificationDate={{date}}
-ModifieddBy={{file_info.modifiedBy}}
+ModifieddBy={{info.modifiedBy}}
 
 [DeviceInfo]
-VendorName={{device_info.vendorName}}
-VendorNumber={{device_info.vendorNumber}}
-ProductName={{device_info.productName}}
-ProductNumber={{device_info.productNumber}}
-RevisionNumber={{device_info.revisionNumber}}
-OrderCode={{device_info.orderCode}}
+VendorName={{info["device"].vendorName}}
+VendorNumber={{info["device"].vendorNumber}}
+ProductName={{info["device"].productName}}
+ProductNumber={{info["device"].productNumber}}
+RevisionNumber={{info["device"].revisionNumber}}
+OrderCode={{info["device"].orderCode}}
 Baudrate_10={{1 if fonctionalities.baudrate["baudrate_10"] else 0}}
 Baudrate_20={{1 if fonctionalities.baudrate["baudrate_20"] else 0}}
 Baudrate_50={{1 if fonctionalities.baudrate["baudrate_50"] else 0}}
@@ -65,11 +65,9 @@ SupportedObjects={{mandatoryObjects|length}}
 {% endfor %}
 
 
-{% for object in objects %}
+{% for object in mandatoryObjects %}
 {% for subobject in object.get_subobjects %}
-{% if object.category == "mandatory" %}
 {{ data(object, subobject) }}
-{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -79,7 +77,7 @@ SupportedObjects={{optionalObjects|length}}
 {{ loop.index + 1 }}=0x{{ object.index_hex }}
 {% endfor %}
 
-{% for object in objects %}
+{% for object in optionalObjects %}
 {% for subobject in object.get_subobjects %}
 {% if object.category != "mandatory" %}
 {{ data(object, subobject) }}

@@ -16,10 +16,26 @@ def validate_profile_object(objects):
     return objects
 
 def validate_object(objects):
-    for object in objects:
-        if object["profile"] == 0:
-            if not object["data"] or any("type" not in data or "name" not in data or "access" not in data for data in object["data"]):
-                raise Invalid(f"Non Standard object need data fields [[{hex(object['index'])}]]")
+    for index, object in objects.items():
+        if index >= 0x6000:
+            if "logicalDevices" not in object:
+                object["logicalDevices"] = 0
+            if isinstance(object["logicalDevices"], list):
+                axis_dict = {}
+                for axis in object["logicalDevices"]:
+                    axis_dict[axis] = {"get": object["get"].replace("?#", str(axis)), "set": object["set"].replace("?#", str(axis))}
+                object["logicalDevices"] = axis_dict
+            if isinstance(object["logicalDevices"], int):
+                object["logicalDevices"] = {object["logicalDevices"]: {"get": object["get"].replace("?#", "0"), "set": object["set"].replace("?#", "0")}
+            }
+        else:
+            if "logicalDevices" in object:
+                raise Invalid(f"Only Standardized profile area object can have logical device field [{hex(index)}]")
+        if "data" in object:
+            if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
+                raise Invalid(f"If there are more than one data fields, they must have a name [{hex(index)}]")
+            if len(object["data"]) == 1:
+                object["data"][0]["name"] = object["name"]
     return objects
 
 data_schema = [{
@@ -28,7 +44,7 @@ data_schema = [{
                 Required("access") : All(str, validate_access),
                 Optional("pdo_mapping", default=False) : bool,
                 Optional("default", default="none") : Any(int, float, bool, str)
-            }]
+}]
 
 data_object_schema = [{
     Optional("pdo_mapping", default=False) : bool,
@@ -45,6 +61,7 @@ object_schema_base = {
 
 profile_schema = Schema({
     Required("functionalities"): {
+        Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
         Required("baudrate"): {
             Optional("baudrate_10", default=False): bool,
             Optional("baudrate_20", default=False): bool,
@@ -71,29 +88,39 @@ profile_schema = Schema({
 })
 
 config_schema = Schema({
-    Required("fileInfo"): {
+    Required("info"): {
         Required("fileVersion") : int,
         Required("fileRevision") : int,
-        Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
         Required("description") : str,
         Required("createdBy") : str,
         Required("creationTime"): str,
         Required("creationDate") : str,
         Required("modifiedBy") : str,
+        Required("device"): {
+            Required("vendorName"): str,
+            Required("vendorNumber"): int,
+            Required("productNumber"): int,
+            Required("revisionNumber"): int,
+            Required("orderCode"): int
+        },
     },
-    Required("deviceInfo"): {
-        Required("vendorName"): str,
-        Required("vendorNumber"): int,
-        Required("productNumber"): int,
-        Required("revisionNumber"): int,
-        Required("orderCode"): int
-    },
-    Required("objectDictionary"): All([{
-        Required("alias"): str,
-        Required("index"): int,
-        Optional("profile", default=0): int,
-        Optional("name", default="none"): str,
-        Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
-        Optional("data", default=[]): Any(data_schema, data_object_schema),
-    }], validate_object)
+    
+    Required("objectDictionary"): All({
+        int: {
+            Required("alias"): str,
+            Optional("profile", default=0): int,
+            Optional("name", default="none"): str,
+            Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
+            Optional("data"): Any(data_schema, data_object_schema),
+            Optional("logicalDevices"): Any([int], int, {
+                int:{
+                    Optional("get", default="none"): str,
+                    Optional("set", default="none"): str,
+                }
+            }),
+            Optional("get", default="none"): str,
+            Optional("set", default="none"): str,
+            Optional("remote", default=False): bool
+        }
+    }, validate_object)
 })

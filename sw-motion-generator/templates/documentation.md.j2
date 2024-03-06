@@ -11,3 +11,23 @@
 {% endfor %}
 {% endfor %}
 {% endfor %}
+
+# Object Dictionary
+
+{% for object in objects %}
+## Object {{ object.index_hex }} {{ object.name }}
+{% if object.remote%}
+[x] Remote
+{% else %}
+[ ] Remote
+{% endif %}
+| Name | Type | default |
+| --- | --- | --- |
+{% for data in object.data %}
+| {{ data.name }} | {{ data.type }} | {{ data.default }}
+{% endfor %}
+- getter 
+    - {{object.getter}}
+- setter 
+    - {{object.setter}}
+{% endfor %}

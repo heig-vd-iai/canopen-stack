@@ -1,4 +1,5 @@
 functionalities:
+  EDSVersion: "4.0"
   baudrate:
     baudrate_10: true
     baudrate_20: true

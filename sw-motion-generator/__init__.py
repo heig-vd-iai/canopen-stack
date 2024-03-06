@@ -14,6 +14,8 @@ TEMPLATE_DIR = os.path.join(script_dir, "templates")
 DOCUMENTATION_TEMPLATE = "documentation.md.j2"
 EDS_TEMPLATE = "od.eds.j2"
 
+LOGICAL_DEVICE_OFFSET = 0x800
+
 class Data:
     type: str
     name: str
@@ -64,10 +66,17 @@ class Object:
     type: str
     data: []
 
-    def __init__(self, object: dict, profiles: dict) -> None:
+    def __init__(self, object: dict, profiles: dict, index: int, axis: int) -> None:
+        self.index = index + LOGICAL_DEVICE_OFFSET  * axis
         self.alias = object["alias"]
-        self.index = object["index"]
         self.profile = object["profile"]
+        self.remote = object["remote"]
+        if "logicalDevices" in object:
+            self.getter = object["logicalDevices"][axis]["get"]
+            self.setter = object["logicalDevices"][axis]["set"]
+        else:
+            self.getter = object["get"]
+            self.setter = object["set"]
         if self.profile != 0:
             try:
                 profile = next(profile for profile in profiles if profile.profile == self.profile)
@@ -75,13 +84,22 @@ class Object:
                 print(f"Profile {self.profile} not found")
                 exit(1)
             try:
-                profileObject = next(profileObject for profileObject in profile.objects if profileObject.index == self.index)
+                profileObject = next(profileObject for profileObject in profile.objects if profileObject.index == index)
             except StopIteration:
                 print(f"Object {hex(self.index)} not found in profile {profile.profile}")
                 exit(1)
             self.name = profileObject.name
             self.category = profileObject.category
             self.data = profileObject.data
+            if "data" in object:
+                if len(object["data"]) != len(self.data):
+                    print(f"Data length mismatch for object {hex(self.index)}")
+                    exit(1)
+                for i, data in enumerate(object["data"]):
+                    self.data[i].default = data["default"]
+                    if "pdo_mapping" in data:
+                        self.data[i].pdo_mapping = data["pdo_mapping"]
+                    
         else:
             self.name = object["name"]
             self.category = object["category"]
@@ -150,10 +168,16 @@ class ObjectDictionary:
             exit(1)
         try:
             self.config = config_schema(od)
-            self.objects = [Object(object, self.profiles) for object in self.config["objectDictionary"]]
+            # self.objects = [Object(object, self.profiles) for object in self.config["objectDictionary"].items()]
+            self.objects = []
+            for object in self.config["objectDictionary"].items():
+                if "logicalDevices" not in object[1]:
+                    self.objects.append(Object(object[1], self.profiles, object[0], 0))
+                else:
+                    for axis in object[1]["logicalDevices"]:
+                        self.objects.append(Object(object[1], self.profiles, object[0], axis))
             self.objects.sort(key=lambda x: x.index)
-            self.file_info = self.config["fileInfo"]
-            self.device_info = self.config["deviceInfo"]
+            self.info = self.config["info"]
         except MultipleInvalid as e:
             print("sw-motion-generator objectDictionary error: " + str(e))
             exit(1)
@@ -172,7 +196,7 @@ class ObjectDictionary:
     def to_md(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
         template = env.get_template(DOCUMENTATION_TEMPLATE)
-        return template.render(profiles=self.profiles)
+        return template.render(profiles=self.profiles, objects=self.objects)
 
     def to_eds(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
@@ -180,8 +204,7 @@ class ObjectDictionary:
         return template.render(
             objects=self.objects, 
             file_name=self.file_name, 
-            file_info=self.file_info, 
-            device_info=self.device_info,
+            info=self.info,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
             date=datetime.now().strftime("%Y-%m-%d"),

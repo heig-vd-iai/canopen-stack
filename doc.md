@@ -22,3 +22,98 @@
 |  Controlword | uint16 |
 | **24641**| Statusword |
 |  Statusword | uint16 |
+
+# Object Dictionary
+
+## Object 1000 Device type
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Device type | uint32 | none
+- getter 
+    - none
+- setter 
+    - none
+## Object 1001 Error register
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Error register | uint8 | none
+- getter 
+    - none
+- setter 
+    - none
+## Object 1002 Manufacturer status register
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Manufacturer status register | uint32 | none
+- getter 
+    - none
+- setter 
+    - none
+## Object 1003 Pre-defined error field
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Number of errors | uint8 | 0
+| Standard error field | uint32 | none
+| Standard error field | uint32 | none
+- getter 
+    - none
+- setter 
+    - none
+## Object 1400 RPDO Communication parameter
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| RPDO Communication parameter | uint8 | 0
+- getter 
+    - none
+- setter 
+    - none
+## Object 2000 break
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| break | uint16 | none
+- getter 
+    - none
+- setter 
+    - none
+## Object 6040 Controlword
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Controlword | uint16 | 10
+- getter 
+    - sys.axis[0].getControlWord()
+- setter 
+    - sys.axis[0].setControlWord()
+## Object 6041 Statusword
+[x] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Statusword | uint16 | 0
+- getter 
+    - sys.axis[0].getStatusWord()
+- setter 
+    - none
+## Object 6840 Controlword
+[ ] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Controlword | uint16 | 10
+- getter 
+    - none
+- setter 
+    - sys.axis[1].setControlWord()
+## Object 6841 Statusword
+[x] Remote
+| Name | Type | default |
+| --- | --- | --- |
+| Statusword | uint16 | 0
+- getter 
+    - sys.axis[1].getStatusWord()
+- setter 
+    - none
