@@ -43,16 +43,16 @@ data_schema = [{
     Optional("name", default="none") : str,
     Required("access") : All(str, validate_access),
     Optional("pdo_mapping", default=False) : bool,
-    Optional("default", default="none") : Any(int, float, bool, str),
-    Optional("lowLimit", default="none"): str,
-    Optional("highLimit", default="none"): str,
+    Optional("default", default=0) : Any(int, float, bool, str),
+    Optional("lowLimit", default="none"): Any(str, int, float),
+    Optional("highLimit", default="none"): Any(str, int, float),
 }]
 
 data_object_schema = [{
-    Optional("pdo_mapping", default=False) : bool,
-    Required("default") : Any(int, float, bool, str),
-    Optional("lowLimit", default="none"): str,
-    Optional("highLimit", default="none"): str,
+    Optional("pdo_mapping") : bool,
+    Optional("default") : Any(int, float, bool, str),
+    Optional("lowLimit"): Any(str, int, float),
+    Optional("highLimit"): Any(str, int, float),
 }]
 
 

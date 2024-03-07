@@ -1,6 +1,6 @@
 /**
  * This file contains the declaration of the ObjectDictionnary class.
- * Generated on {{date.strftime("%B %d, %Y")}}
+ * Generated on {{date}}
  *
  * NOTICE: Auto-generated from the device's yaml file, do not edit manually!
  */
@@ -32,8 +32,8 @@
 /* These defines map an object to its dictionnary array index */
 {% set counter = namespace(value=0) %}
 {% for object in objects %}
-{% for subobject in object.entries %}
-#define OD_OBJECT_{{ object.index_hexstr }}_SUB{{ subobject.subindex}} {{ counter.value }}
+{% for subobject in object.get_subobjects %}
+#define OD_OBJECT_{{ object.index_hex }}_SUB{{ subobject.subindex}} {{ counter.value }}
 {% set counter.value = counter.value + 1 %}
 {% endfor %}
 {% endfor %}
@@ -97,12 +97,12 @@ int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
 
 {% for object in objects %}
-{% for subobject in object.entries %}
-{% if subobject.accessType != "wo" and subobject.getter != "getLocalData" %}
-int8_t get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
+{% for subobject in object.get_subobject %}
+{% if subobject.access != "wo" and object.get != "getLocalData" %}
+int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
-{% if subobject.setter != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or subobject.setter != "getLocalData")  %}
-int8_t set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+{% if object.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or object.set != "getLocalData")  %}
+int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
 {%endfor%}
@@ -113,8 +113,8 @@ class ObjectDictionnary : IObjectDictionnary{
 private:
     //METADATA
     {% for object in objects %}
-    {% for subobject in object.entries %}
-    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata{(Access){{subobject.meta_data}}, {% if subobject.type_value == 0x09 %}{ {{subobject.value}} }{% else %}{{subobject.value}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
+    {% for subobject in object.get_subobjects %}
+    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{(Access){{subobject.meta_data}}, {% if subobject.type == string %}{ {{subobject.default}} }{% else %}{{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
     {% endfor %}
     {% endfor %}
     //END METADATA
@@ -125,16 +125,16 @@ public:
     // This table is used to find an object by its index.
     const std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
         {% for object in objects %}
-        {% for subobject in object.entries %}
-        std::make_pair(0x{{ object.index_hexstr }}, {{ subobject.subindex }}),
+        {% for subobject in object.get_subobjects %}
+        std::make_pair(0x{{ object.index_hex }}, {{ subobject.subindex }}),
         {% endfor %}
         {% endfor %}
     };
 
     const Metadata *objectMetadataTable[{{ subindex_count }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
-    &{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}Metadata,
+    {% for subobject in object.get_subobjects %}
+    &{{subobject.cpp_instance_name}}Metadata,
     {% endfor %}
     {% endfor %}
     };
@@ -144,10 +144,10 @@ public:
     // This table contain all the objects getter
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
-        {% for subobject in object.entries %}
-        {% if subobject.getter != "getLocalData" %}
-        &get{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
-        {% elif subobject.remote_getter != "none" %}
+        {% for subobject in object.get_subobjects %}
+        {% if object.get != "none" and not object.remote%}
+        &get{{subobject.cpp_instance_name}},
+        {% elif object.remote %}
         &getRemoteData,
         {% else %}
         &getLocalData_{{subobject.ctype_name}},
@@ -159,10 +159,10 @@ public:
     // This table contain all the objects setter
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
-        {% for subobject in object.entries %}
-        {% if subobject.setter != "setLocalData" or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
-        &set{{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
-        {% elif subobject.remote_setter != "none" %}
+        {% for subobject in object.get_subobjects %}
+        {% if (object.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
+        &set{{subobject.cpp_instance_name}},
+        {% elif object.remote %}
         &setRemoteData,
         {% else %}
         &setLocalData_{{subobject.ctype_name}},
@@ -176,9 +176,9 @@ public:
     // bool type data table
     bool boolTable[{{ type_count.bool }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x01 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -187,9 +187,9 @@ public:
     // int8_t type data table
     int8_t i8Table[{{ type_count.i8 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x02 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -198,9 +198,9 @@ public:
     // int16_t type data table
     int16_t i16Table[{{ type_count.i16 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x03 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -209,9 +209,9 @@ public:
     // int32_t type data table
     int32_t i32Table[{{ type_count.i32 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x04 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -220,9 +220,9 @@ public:
     // int64_t type data table
     int64_t i64Table[{{ type_count.i64 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x15 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -231,9 +231,9 @@ public:
     // uint8_t type data table
     uint8_t u8Table[{{ type_count.u8 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x05 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -242,9 +242,9 @@ public:
     // uint16_t type data table
     uint16_t u16Table[{{ type_count.u16 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x06 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -253,9 +253,9 @@ public:
     // uint32_t type data table
     uint32_t u32Table[{{ type_count.u32 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x07 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -264,9 +264,9 @@ public:
     // uint64_t type data table
     uint64_t u64Table[{{ type_count.u64 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x1B %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -275,9 +275,9 @@ public:
     // float type data table
     float f32Table[{{ type_count.f32 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x08 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -286,9 +286,9 @@ public:
     // float64 type data table
     double f64Table[{{ type_count.f64 }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x11 %}
-    {{ subobject.value }},
+    {{ subobject.default }},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -296,9 +296,9 @@ public:
 
     // string type data variable
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x09 %}
-    char {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}}[{{subobject.size//8}}] ={ {{ subobject.value }} };
+    char {{subobject.cpp_instance_name}}[{{subobject.size//8}}] ={ {{ subobject.default }} };
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -306,9 +306,9 @@ public:
     // string type data table
     char *stringTable[{{ type_count.str }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x09 %}
-    {{ object.cpp_instance_name }}{{subobject.cpp_instance_name}},
+    {{subobject.cpp_instance_name}},
     {% endif %}
     {% endfor %}
     {% endfor %}
@@ -330,7 +330,7 @@ public:
 
     uint8_t dataIndexTable[{{ subindex_count }}] = {
     {% for object in objects %}
-    {% for subobject in object.entries %}
+    {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == 0x01 %}
     {{ counterBool.value }},
     {% set counterBool.value = counterBool.value + 1 %}

@@ -16,18 +16,32 @@ extern IPC *remoteIPC;
 
 using namespace CANopen;
 
-False
-False
-False
-False
-False
-False
-False
-False
-True
-True
-True
-True
+int8_t getobject2000sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return foo(data, id, abortCode);
+}
+int8_t setobject2000sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    abortCode = data. < 0 ? SDOAbortCode_DownloadValueTooLow : data. > 32767 ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
+    if (abortCode != SDOAbortCode_OK) return -1;
+    return toto(data, id, abortCode);
+}
+int8_t getobject2000sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
+    return foo(data, id, abortCode);
+}
+int8_t setobject2000sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    abortCode = data. < 0 ? SDOAbortCode_DownloadValueTooLow : data. > 32767 ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
+    if (abortCode != SDOAbortCode_OK) return -1;
+    return toto(data, id, abortCode);
+}
+int8_t setobject6040sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    abortCode = data. < 0 ? SDOAbortCode_DownloadValueTooLow : data. > 32767 ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
+    if (abortCode != SDOAbortCode_OK) return -1;
+    return setRemoteData(data, id, abortCode);
+}
+int8_t setobject6840sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
+    abortCode = data. < 0 ? SDOAbortCode_DownloadValueTooLow : data. > 32767 ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
+    if (abortCode != SDOAbortCode_OK) return -1;
+    return setRemoteData(data, id, abortCode);
+}
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;

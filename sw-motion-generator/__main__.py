@@ -20,8 +20,8 @@ def cli(config_file=None):
     with open("od.eds", "w") as file:
         file.write(od.to_eds())
 
-    # with open("od.hpp", "w") as file:
-    #     file.write(od.to_hpp())
+    with open("od.hpp", "w") as file:
+        file.write(od.to_hpp())
 
     with open("od.cpp", "w") as file:
         file.write(od.to_cpp())

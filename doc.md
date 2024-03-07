@@ -30,7 +30,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Device type | uint32 | none
+| Device type | uint32 | 0
 - getter 
     - none
 - setter 
@@ -40,7 +40,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Error register | uint8 | none
+| Error register | uint8 | 0
 - getter 
     - none
 - setter 
@@ -50,7 +50,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Manufacturer status register | uint32 | none
+| Manufacturer status register | uint32 | 0
 - getter 
     - none
 - setter 
@@ -61,8 +61,8 @@
 | Name | Type | default |
 | --- | --- | --- |
 | Number of errors | uint8 | 0
-| Standard error field | uint32 | none
-| Standard error field | uint32 | none
+| Standard error field | uint32 | 0
+| Standard error field | uint32 | 0
 - getter 
     - none
 - setter 
@@ -82,11 +82,12 @@ break system for stop the motor when it's needed
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| break | uint16 | none
+| break | uint16 | 0
+| break force | uint32 | 0
 - getter 
-    - none
+    - foo
 - setter 
-    - none
+    - toto
 ## Object 6040 Controlword | state-machine
 
 [x] Remote
