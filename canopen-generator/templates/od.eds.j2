@@ -1,0 +1,86 @@
+{% macro data(object, subobject) -%}
+{% if object.object_type == "0x07" %}
+[{{subobject.index_hex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+{% if subobject.default != "none" %}
+DefaultValue={{subobject.default}}
+{% endif %}
+PDOMapping={{subobject.pdo_mapping}}
+{% else %}
+[{{subobject.index_hex}}sub{{subobject.subindex}}]
+ParameterName={{subobject.parameter_name}}
+ObjectType={{object.object_type}}
+DataType={{subobject.data_type}}
+AccessType={{subobject.access}}
+DefaultValue={{subobject.default}}
+PDOMapping={{subobject.pdo_mapping}}
+{% endif %}
+{%- endmacro %}
+
+[FileInfo]
+FileName={{file_name}}.eds
+FileVersion={{info.fileVersion}}
+FileRevision={{info.fileRevision}}
+EDSVersion={{fonctionalities.EDSVersion}}
+Description={{info.description}}
+CreationTime={{info.creationTime}}
+CreationDate={{info.creationDate}}
+CreatedBy={{info.createdBy}}
+ModificationTime={{time}}
+ModificationDate={{date}}
+ModifieddBy={{info.modifiedBy}}
+
+[DeviceInfo]
+VendorName={{info["device"].vendorName}}
+VendorNumber={{info["device"].vendorNumber}}
+ProductName={{info["device"].productName}}
+ProductNumber={{info["device"].productNumber}}
+RevisionNumber={{info["device"].revisionNumber}}
+OrderCode={{info["device"].orderCode}}
+Baudrate_10={{1 if fonctionalities.baudrate[10] else 0}}
+Baudrate_20={{1 if fonctionalities.baudrate[20] else 0}}
+Baudrate_50={{1 if fonctionalities.baudrate[50] else 0}}
+Baudrate_125={{1 if fonctionalities.baudrate[125] else 0}}
+Baudrate_250={{1 if fonctionalities.baudrate[250] else 0}}
+Baudrate_500={{1 if fonctionalities.baudrate[500] else 0}}
+Baudrate_800={{1 if fonctionalities.baudrate[800] else 0}}
+Baudrate_1000={{1 if fonctionalities.baudrate[1000] else 0}}
+SimpleBootUpMaster={{fonctionalities.simpleBootUpMaster}}
+SimpleBootUpSlave={{fonctionalities.simpleBootUpSlave}}
+Granularity={{fonctionalities.granularity}}
+DynamicChannelsSupported={{fonctionalities.dynamicChannelsSupported}}
+CompactPDO={{fonctionalities.compactPDO}}
+GroupMessaging={{fonctionalities.groupMessaging}}
+NrOfRXPDO={{nrOfRXPDO}}
+NrOfTXPDO={{nrOfTXPDO}}
+LSS_Supported={{fonctionalities.LSS_Supported}}
+
+[MandatoryObjects]
+SupportedObjects={{mandatoryObjects|length}}
+{% for object in mandatoryObjects %}
+{{ loop.index + 1 }}=0x{{ object.index_hex }}
+{% endfor %}
+
+
+{% for object in mandatoryObjects %}
+{% for subobject in object.get_subobjects %}
+{{ data(object, subobject) }}
+{% endfor %}
+{% endfor %}
+
+[OptionalObjects]
+SupportedObjects={{optionalObjects|length}}
+{% for object in optionalObjects %}
+{{ loop.index + 1 }}=0x{{ object.index_hex }}
+{% endfor %}
+
+{% for object in optionalObjects %}
+{% for subobject in object.get_subobjects %}
+{% if object.category != "mandatory" %}
+{{ data(object, subobject) }}
+{% endif %}
+{% endfor %}
+{% endfor %}

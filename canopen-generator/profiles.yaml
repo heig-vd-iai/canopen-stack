@@ -1,0 +1,213 @@
+functionalities:
+  EDSVersion: "4.0"
+  baudrate:
+    10: true
+    20: true
+    50: true
+    125: true
+    250: true
+    500: true
+    800: true
+    1000: true
+  simpleBootUpMaster: false
+  simpleBootUpSlave: true
+  granularity: 8
+  dynamicChannelsSupported: false
+  compactPDO: false
+  groupMessaging: false
+  LSS_Supported: false
+
+
+profiles:
+  301:
+    name: Application layer and communication profile
+    objects:
+      0x1000:
+        name: Device type
+        category: mandatory
+        data:
+        - type : uint32
+          access: ro
+      0x1001:
+        name: Error register
+        category: mandatory
+        data:
+        - type: uint8
+          access: ro
+          pdo_mapping: true
+      0x1002:
+        name: Manufacturer status register
+        category: optional
+        data:
+        - type: uint32
+          access: ro
+          pdo_mapping: true
+      0x1003:
+        name: Pre-defined error field
+        category: optional
+        data:
+        - type: uint8
+          name: Number of errors
+          access: rw
+          default: 0
+        - type: uint32
+          name: Standard error field
+          access: ro
+        - type: uint32
+          name: Standard error field
+          access: ro
+      0x1010:
+        name: Store parameters
+        category: optional
+        data:
+          - type: uint8
+            name: Number of entries
+            access: ro
+            default: 4
+          - type: uint32
+            name: save all parameters
+            access: rw
+          - type: uint32
+            name: save communication parameters
+            access: rw
+          - type: uint32
+            name: save application parameters
+            access: rw
+          - type: uint32
+            name: save manufacturer specific parameters
+            access: rw
+      0x1011:
+        name: Restore default parameters
+        category: optional
+        data:
+          - type: uint8
+            name: Number of entries
+            access: ro
+            default: 4
+          - type: uint32
+            name: restore all parameters
+            access: rw
+          - type: uint32
+            name: restore communication parameters
+            access: rw
+          - type: uint32
+            name: restore application parameters
+            access: rw
+          - type: uint32
+            name: restore manufacturer specific parameters
+            access: rw
+
+      0x1018:
+        name: Identity object
+        category: mandatory
+        data:
+        - type: uint8
+          name: Number of entries
+          access: ro
+          default: 4
+        - type: uint32
+          name: Vendor-ID
+          access: ro
+        - type: uint32
+          name: Product code
+          access: ro
+        - type: uint32
+          name: Revision number
+          access: ro
+        - type: uint32
+          name: Serial number
+          access: ro
+
+      0x1019:
+        name: Synchronous counter overflow value
+        category: optional
+        data:
+        - type: uint8
+          access: rw
+
+      0x1400:
+        name: Receive PDO 1 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000200
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+
+      0x1401:
+        name: Receive PDO 2 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000300
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+      
+      0x1402:
+        name: Receive PDO 3 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000400
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+      0x1402:
+        name: Receive PDO 3 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000500
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+      
+
+  402:
+    name: Profile for drives and motion control
+    objects:
+      0x6040:
+        name: Controlword
+        category: mandatory
+        data:
+        - type: uint16
+          access: rw
+          pdo_mapping: true
+          default: 0
+      0x6041:
+        name: Statusword
+        category: mandatory
+        data:
+        - type: uint16
+          access: ro
+          pdo_mapping: true
+          default: 0
+
+
+      
