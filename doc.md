@@ -13,14 +13,38 @@
 |  Number of errors | uint8 |
 |  Standard error field | uint32 |
 |  Standard error field | uint32 |
+| **1010**| Store parameters |
+|  Number of entries | uint8 |
+|  save all parameters | uint32 |
+|  save communication parameters | uint32 |
+|  save application parameters | uint32 |
+|  save manufacturer specific parameters | uint32 |
+| **1011**| Restore default parameters |
+|  Number of entries | uint8 |
+|  restore all parameters | uint32 |
+|  restore communication parameters | uint32 |
+|  restore application parameters | uint32 |
+|  restore manufacturer specific parameters | uint32 |
 | **1018**| Identity object |
 |  Number of entries | uint8 |
 |  Vendor-ID | uint32 |
 |  Product code | uint32 |
 |  Revision number | uint32 |
 |  Serial number | uint32 |
-| **1400**| RPDO Communication parameter |
-|  RPDO Communication parameter | uint8 |
+| **1019**| Synchronous counter overflow value |
+|  Synchronous counter overflow value | uint8 |
+| **1400**| Receive PDO 1 communication parameter |
+|  Number of of entries | uint8 |
+|  COB-ID | uint32 |
+|  Transmission type | uint8 |
+| **1401**| Receive PDO 2 communication parameter |
+|  Number of of entries | uint8 |
+|  COB-ID | uint32 |
+|  Transmission type | uint8 |
+| **1402**| Receive PDO 3 communication parameter |
+|  Number of of entries | uint8 |
+|  COB-ID | uint32 |
+|  Transmission type | uint8 |
 ## Profile 402 Profile for drives and motion control
 | Index | Name |
 | --- | --- |
@@ -73,12 +97,14 @@
     - none
 - setter 
     - none
-## Object 1400 RPDO Communication parameter | communication
+## Object 1400 Receive PDO 1 communication parameter | communication
 
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| RPDO Communication parameter | uint8 | 0
+| Number of of entries | uint8 | 2
+| COB-ID | uint32 | 2147484161
+| Transmission type | uint8 | 0
 - getter 
     - none
 - setter 
