@@ -67,14 +67,14 @@ profile_schema = Schema({
     Required("functionalities"): {
         Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
         Required("baudrate"): {
-            Optional("baudrate_10", default=False): bool,
-            Optional("baudrate_20", default=False): bool,
-            Optional("baudrate_50", default=False): bool,
-            Optional("baudrate_125", default=False): bool,
-            Optional("baudrate_250", default=False): bool,
-            Optional("baudrate_500", default=False): bool,
-            Optional("baudrate_800", default=False): bool,
-            Optional("baudrate_1000", default=False): bool
+            Optional(10, default=False): bool,
+            Optional(20, default=False): bool,
+            Optional(50, default=False): bool,
+            Optional(125, default=False): bool,
+            Optional(250, default=False): bool,
+            Optional(500, default=False): bool,
+            Optional(800, default=False): bool,
+            Optional(1000, default=False): bool
         },
         Required("simpleBootUpMaster"): bool,
         Required("simpleBootUpSlave"): bool,
@@ -103,6 +103,7 @@ config_schema = Schema({
         Required("device"): {
             Required("vendorName"): str,
             Required("vendorNumber"): int,
+            Required("productName"): str,
             Required("productNumber"): int,
             Required("revisionNumber"): int,
             Required("orderCode"): int

@@ -1,14 +1,14 @@
 functionalities:
   EDSVersion: "4.0"
   baudrate:
-    baudrate_10: true
-    baudrate_20: true
-    baudrate_50: true
-    baudrate_125: true
-    baudrate_250: true
-    baudrate_500: true
-    baudrate_800: true
-    baudrate_1000: true
+    10: true
+    20: true
+    50: true
+    125: true
+    250: true
+    500: true
+    800: true
+    1000: true
   simpleBootUpMaster: false
   simpleBootUpSlave: true
   granularity: 8
