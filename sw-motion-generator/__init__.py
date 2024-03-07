@@ -158,23 +158,22 @@ class Object:
 
 class ProfileObject:
 
-    def __init__(self, object: dict) -> None:
-        self.index = object["index"]
+    def __init__(self, object: dict, index) -> None:
+        self.index = index
         self.name = object["name"]
         self.category = object["category"]
         self.data = [Data(data) for data in object["data"]]
 
-    def to_md(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
-        template = env.get_template(DOCUMENTATION_TEMPLATE)
-        return template.render(object=self)
+    @property
+    def index_hex(self):
+        return hex(self.index)[2:]
 
 class Profile:
 
-    def __init__(self, profile: dict) -> None:
-        self.profile = profile["profile"]
+    def __init__(self, profile: dict, profile_index) -> None:
+        self.profile = profile_index
         self.name = profile["name"]
-        self.objects = [ProfileObject(object) for object in profile["objects"]]
+        self.objects = [ProfileObject(object, index) for index, object in profile["objects"].items()]
 
 
 class ObjectDictionary:
@@ -183,7 +182,7 @@ class ObjectDictionary:
         self.file_name = file_name
         try:
             self.profile = profile_schema(profiles)
-            self.profiles = [Profile(profile) for profile in self.profile["profiles"]]
+            self.profiles = [Profile(profile, index) for index, profile in self.profile["profiles"].items()]
             self.fonctionalities = self.profile["functionalities"]
         except MultipleInvalid as e:
             print("sw-motion-generator profile error: " + str(e))

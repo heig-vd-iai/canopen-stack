@@ -5,7 +5,7 @@
 | Index | Name |
 | --- | --- |
 {% for object in profile.objects %}
-| **{{ object.index }}**| {{ object.name }} |
+| **{{ object.index_hex }}**| {{ object.name }} |
 {% for data in object.data %}
 |  {{ data.name }} | {{ data.type }} |
 {% endfor %}

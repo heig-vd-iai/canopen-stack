@@ -19,75 +19,100 @@ functionalities:
 
 
 profiles:
-- profile: 301
-  name: Application layer and communication profile
-  objects:
-  - index: 0x1000
-    name: Device type
-    category: mandatory
-    data:
-    - type : uint32
-      access: ro
-      pdo_mapping: False
-  - index: 0x1001
-    name: Error register
-    category: mandatory
-    data:
-    - type: uint8
-      access: ro
-      pdo_mapping: true
-  - index: 0x1002
-    name: Manufacturer status register
-    category: optional
-    data:
-    - type: uint32
-      access: ro
-      pdo_mapping: true
-  - index: 0x1003
-    name: Pre-defined error field
-    category: optional
-    data:
-    - type: uint8
-      name: Number of errors
-      access: rw
-      pdo_mapping: False
-      default: 0
-    - type: uint32
-      name: Standard error field
-      access: ro
-      pdo_mapping: False
-    - type: uint32
-      name: Standard error field
-      access: ro
-      pdo_mapping: False
-  - index: 0x1400
-    name: RPDO Communication parameter
-    category: mandatory
-    data:
-    - type: uint8
-      name: Number of RPDOs supported
-      access: ro
-      pdo_mapping: False
-      default: 0
-- profile: 402
-  name: Profile for drives and motion control
-  objects:
-  - index: 0x6040
-    name: Controlword
-    category: mandatory
-    data:
-    - type: uint16
-      access: rw
-      pdo_mapping: true
-      default: 0
-  - index: 0x6041
-    name: Statusword
-    category: mandatory
-    data:
-    - type: uint16
-      access: ro
-      pdo_mapping: true
-      default: 0
+  301:
+    name: Application layer and communication profile
+    objects:
+      0x1000:
+        name: Device type
+        category: mandatory
+        data:
+        - type : uint32
+          access: ro
+          pdo_mapping: False
+      0x1001:
+        name: Error register
+        category: mandatory
+        data:
+        - type: uint8
+          access: ro
+          pdo_mapping: true
+      0x1002:
+        name: Manufacturer status register
+        category: optional
+        data:
+        - type: uint32
+          access: ro
+          pdo_mapping: true
+      0x1003:
+        name: Pre-defined error field
+        category: optional
+        data:
+        - type: uint8
+          name: Number of errors
+          access: rw
+          pdo_mapping: False
+          default: 0
+        - type: uint32
+          name: Standard error field
+          access: ro
+          pdo_mapping: False
+        - type: uint32
+          name: Standard error field
+          access: ro
+          pdo_mapping: False
+      0x1018:
+        name: Identity object
+        category: mandatory
+        data:
+        - type: uint8
+          name: Number of entries
+          access: ro
+          pdo_mapping: False
+          default: 4
+        - type: uint32
+          name: Vendor-ID
+          access: ro
+          pdo_mapping: False
+        - type: uint32
+          name: Product code
+          access: ro
+          pdo_mapping: False
+        - type: uint32
+          name: Revision number
+          access: ro
+          pdo_mapping: False
+        - type: uint32
+          name: Serial number
+          access: ro
+          pdo_mapping: False
+      0x1400:
+        name: RPDO Communication parameter
+        category: mandatory
+        data:
+        - type: uint8
+          name: Number of RPDOs supported
+          access: ro
+          pdo_mapping: False
+          default: 0
+  402:
+    name: Profile for drives and motion control
+    objects:
+      0x6040:
+        name: Controlword
+        category: mandatory
+        data:
+        - type: uint16
+          access: rw
+          pdo_mapping: true
+          default: 0
+      0x6041:
+        name: Statusword
+        category: mandatory
+        data:
+        - type: uint16
+          access: ro
+          pdo_mapping: true
+          default: 0
 
 
       

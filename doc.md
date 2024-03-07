@@ -3,24 +3,30 @@
 ## Profile 301 Application layer and communication profile
 | Index | Name |
 | --- | --- |
-| **4096**| Device type |
+| **1000**| Device type |
 |  Device type | uint32 |
-| **4097**| Error register |
+| **1001**| Error register |
 |  Error register | uint8 |
-| **4098**| Manufacturer status register |
+| **1002**| Manufacturer status register |
 |  Manufacturer status register | uint32 |
-| **4099**| Pre-defined error field |
+| **1003**| Pre-defined error field |
 |  Number of errors | uint8 |
 |  Standard error field | uint32 |
 |  Standard error field | uint32 |
-| **5120**| RPDO Communication parameter |
+| **1018**| Identity object |
+|  Number of entries | uint8 |
+|  Vendor-ID | uint32 |
+|  Product code | uint32 |
+|  Revision number | uint32 |
+|  Serial number | uint32 |
+| **1400**| RPDO Communication parameter |
 |  RPDO Communication parameter | uint8 |
 ## Profile 402 Profile for drives and motion control
 | Index | Name |
 | --- | --- |
-| **24640**| Controlword |
+| **6040**| Controlword |
 |  Controlword | uint16 |
-| **24641**| Statusword |
+| **6041**| Statusword |
 |  Statusword | uint16 |
 
 # Object Dictionary

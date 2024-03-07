@@ -7,7 +7,7 @@ def validate_access(value):
     return value
 
 def validate_profile_object(objects):
-    for object in objects:
+    for index, object in objects.items():
         if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
             raise Invalid(f"If there are more than one data fields, they must have a name [{hex(object['index'])}]")
             
@@ -55,14 +55,6 @@ data_object_schema = [{
     Optional("highLimit"): Any(str, int, float),
 }]
 
-
-object_schema_base = {
-    Required("index"): int,
-    Required("name"): str,
-    Optional("category", default="optional"): str,
-    Required("data"): data_schema
-}
-
 profile_schema = Schema({
     Required("functionalities"): {
         Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
@@ -84,11 +76,18 @@ profile_schema = Schema({
         Required("groupMessaging"): bool,
         Required("LSS_Supported"): bool
     },
-    Required("profiles"): [{
-        Required("profile"): int,
-        Required("name"): str,
-        Required("objects"): All([object_schema_base], Length(min=1), validate_profile_object)
-    }]
+    Required("profiles"): {
+        int: {
+                Required("name"): str,
+                Required("objects"): All({
+                    int:{
+                        Required("name"): str,
+                        Optional("category", default="optional"): str,
+                        Required("data"): data_schema,
+                    }
+                }, Length(min=1), validate_profile_object)
+            }
+    }
 })
 
 config_schema = Schema({
