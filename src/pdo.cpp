@@ -30,7 +30,7 @@ MapParameter::MapParameter() {
     odID = -1;
     entriesNumber = 0;
     for (uint8_t i = 0; i < OD_PDO_MAPPING_MAX; i++) {
-        mappedObjects[i] = 0;
+        mappedObjects[i] = -1;
     }
 }
 
@@ -73,20 +73,21 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
                 abortCode = SDOAbortCodes::SDOAbortCode_MappedPDOLengthExceeded;
                 return -1;
             }
-            entriesNumber = value;
         }
+        entriesNumber = value;
     } else {
         PDOMapEntry entry;
         entry.value = data.u32;
         if (!node.od().isSubValid(entry.bits.index, entry.bits.subindex)) {
             abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
-            return -1;
-        }
-        Metadata meta =
-            *node.od().getMetadata(entry.bits.index, entry.bits.subindex);
-        if (!meta.access.bits.mappable || !meta.access.bits.readable) {
-            abortCode = SDOAbortCodes::SDOAbortCode_CannotMapToPDO;
-            return -1;
+            entry.value = -1;
+        }else{
+            Metadata meta =
+                *node.od().getMetadata(entry.bits.index, entry.bits.subindex);
+            if (!meta.access.bits.mappable || !meta.access.bits.readable) {
+                abortCode = SDOAbortCodes::SDOAbortCode_CannotMapToPDO;
+                return -1;
+            }
         }
         mappedObjects[id - odID - 1] = entry.value;
     }
@@ -304,9 +305,9 @@ void PDO::initRPDO(unsigned index) {
 
 void PDO::remapTPDO(unsigned index) {
     TPDO *tpdo = tpdos + index;
-    unsigned count = tpdo->mapParameter.getCount();
+    // unsigned count = tpdo->mapParameter.getCount();
     uint32_t sizeSum = tpdo->size = tpdo->count = 0;
-    for (unsigned i = 0; i < count; i++) {
+    for (unsigned i = 0; i < OD_PDO_MAPPING_MAX; i++) {
         PDOMapEntry content = {tpdo->mapParameter.getMappedValue(i)};
         int32_t id =
             node.od().findObject(content.bits.index, content.bits.subindex);
@@ -314,7 +315,6 @@ void PDO::remapTPDO(unsigned index) {
         if (sizeSum > PDO_DLC) break;
         tpdo->mappedEntries[i] = id;
         tpdo->size = sizeSum;
-        tpdo->count++;
     }
     node.hardware().configRemoteTPDO(
         index, tpdo->mappedEntries);  // assuming all TPDOs are remote TODO: add
@@ -323,9 +323,9 @@ void PDO::remapTPDO(unsigned index) {
 
 void PDO::remapRPDO(unsigned index) {
     RPDO *rpdo = rpdos + index;
-    unsigned count = rpdo->mapParameter.getCount();
+    // unsigned count = rpdo->mapParameter.getCount();
     uint32_t sizeSum = rpdo->size = rpdo->count = 0;
-    for (unsigned i = 0; i < count; i++) {
+    for (unsigned i = 0; i < OD_PDO_MAPPING_MAX; i++) {
         PDOMapEntry content = {rpdo->mapParameter.getMappedValue(i)};
         int32_t id =
             node.od().findObject(content.bits.index, content.bits.subindex);

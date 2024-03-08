@@ -313,7 +313,7 @@ profiles:
         - type: uint8
           name: Number of of entries
           access: ro
-          default: 2
+          default: 6
         - type: uint32
           name: COB-ID
           default: $NODEID+0x80000180
@@ -340,7 +340,7 @@ profiles:
         - type: uint8
           name: Number of of entries
           access: ro
-          default: 2
+          default: 6
         - type: uint32
           name: COB-ID
           default: $NODEID+0x80000280
@@ -367,7 +367,7 @@ profiles:
         - type: uint8
           name: Number of of entries
           access: ro
-          default: 2
+          default: 6
         - type: uint32
           name: COB-ID
           default: $NODEID+0x80000380
@@ -394,7 +394,7 @@ profiles:
         - type: uint8
           name: Number of of entries
           access: ro
-          default: 2
+          default: 6
         - type: uint32
           name: COB-ID
           default: $NODEID+0x80000480

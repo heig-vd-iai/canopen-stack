@@ -434,7 +434,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Number of of entries | uint8 | 2
+| Number of of entries | uint8 | 6
 | COB-ID | uint32 | 2147484033
 | Transmission type | uint8 | 0
 | Inhibit time | uint16 | 0
@@ -450,7 +450,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Number of of entries | uint8 | 2
+| Number of of entries | uint8 | 6
 | COB-ID | uint32 | 2147484289
 | Transmission type | uint8 | 0
 | Inhibit time | uint16 | 0
@@ -466,7 +466,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Number of of entries | uint8 | 2
+| Number of of entries | uint8 | 6
 | COB-ID | uint32 | 2147484545
 | Transmission type | uint8 | 0
 | Inhibit time | uint16 | 0
@@ -482,7 +482,7 @@
 [ ] Remote
 | Name | Type | default |
 | --- | --- | --- |
-| Number of of entries | uint8 | 2
+| Number of of entries | uint8 | 6
 | COB-ID | uint32 | 2147484801
 | Transmission type | uint8 | 0
 | Inhibit time | uint16 | 0
