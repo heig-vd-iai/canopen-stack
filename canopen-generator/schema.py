@@ -105,7 +105,8 @@ config_schema = Schema({
             Required("productName"): str,
             Required("productNumber"): int,
             Required("revisionNumber"): int,
-            Required("orderCode"): int
+            Required("orderCode"): int,
+            Required("nodeID"): int,
         },
     },
     

@@ -5,7 +5,7 @@ import jinja2
 from datetime import datetime
 from voluptuous import MultipleInvalid
 from .schema import profile_schema, config_schema
-from .type import Access, Type, DataType, ObjectType, Ctype_name
+from .type import Access, Type, DataType, ObjectType, Ctype_name, Type_code
 
 script_dir = os.path.dirname(__file__)
 
@@ -15,6 +15,7 @@ DOCUMENTATION_TEMPLATE = "documentation.md.j2"
 EDS_TEMPLATE = "od.eds.j2"
 CPP_TEMPLATE = "cpp.j2"
 HPP_TEMPLATE = "hpp.j2"
+REMOTE_TEMPLATE = "remote.j2"
 
 LOGICAL_DEVICE_OFFSET = 0x800
 
@@ -61,6 +62,10 @@ class SubObject:
     @property
     def ctype_name(self):
         return Ctype_name[self.type].value
+    
+    @property
+    def type_code(self):
+        return Type_code[self.type].value
 
     @property
     def meta_data(self) -> str:
@@ -156,6 +161,10 @@ class Object:
     @property
     def index_hex(self):
         return hex(self.index)[2:]
+
+    @property
+    def subNumber(self):
+        return len(self.data)
             
 
 class ProfileObject:
@@ -308,6 +317,21 @@ class ObjectDictionary:
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects,
             type_count=self.type_count,
-            subindex_count=self.subindex_count)
+            subindex_count=self.subindex_count,
+            node_id=self.info["device"]["nodeID"])
+
+    def to_remote(self):
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        template = env.get_template(REMOTE_TEMPLATE)
+        return template.render(
+            objects=self.objects, 
+            info=self.info,
+            fonctionalities=self.fonctionalities,
+            time=datetime.now().strftime("%H:%M"),
+            date=datetime.now().strftime("%Y-%m-%d"),
+            nrOfRXPDO=self.nrOfRXPDO,
+            nrOfTXPDO=self.nrOfTXPDO,
+            mandatoryObjects=self.mandatoryObjects,
+            optionalObjects=self.optionalObjects)
 
 

@@ -26,6 +26,9 @@ def cli(config_file=None):
     with open("od.cpp", "w") as file:
         file.write(od.to_cpp())
 
+    with open("od_remote.hpp", "w") as file:
+        file.write(od.to_remote())
+
 
 if __name__ == "__main__":
     cli()

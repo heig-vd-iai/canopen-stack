@@ -96,7 +96,6 @@ profiles:
           - type: uint32
             name: restore manufacturer specific parameters
             access: rw
-
       0x1018:
         name: Identity object
         category: mandatory
@@ -117,14 +116,12 @@ profiles:
         - type: uint32
           name: Serial number
           access: ro
-
       0x1019:
         name: Synchronous counter overflow value
         category: optional
         data:
         - type: uint8
           access: rw
-
       0x1400:
         name: Receive PDO 1 communication parameter
         category: optional
@@ -140,7 +137,6 @@ profiles:
         - type: uint8
           name: Transmission type
           access: rw
-
       0x1401:
         name: Receive PDO 2 communication parameter
         category: optional
@@ -156,7 +152,6 @@ profiles:
         - type: uint8
           name: Transmission type
           access: rw
-      
       0x1402:
         name: Receive PDO 3 communication parameter
         category: optional
@@ -172,8 +167,8 @@ profiles:
         - type: uint8
           name: Transmission type
           access: rw
-      0x1402:
-        name: Receive PDO 3 communication parameter
+      0x1403:
+        name: Receive PDO 4 communication parameter
         category: optional
         data:
         - type: uint8
@@ -187,7 +182,362 @@ profiles:
         - type: uint8
           name: Transmission type
           access: rw
-      
+      0x1600:
+        name: Receive PDO 1 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1601:
+        name: Receive PDO 2 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1602:
+        name: Receive PDO 3 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1603:
+        name: Receive PDO 4 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1800:
+        name: Transmit PDO 1 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000180
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+        - type: uint16
+          name: Inhibit time
+          access: rw
+        - type: uint8
+          name: Compatibility entry
+          access: rw
+        - type: uint16
+          name: Event timer
+          access: rw
+        - type: uint8
+          name: Sync start value
+          access: rw
+      0x1801:
+        name: Transmit PDO 2 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000280
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+        - type: uint16
+          name: Inhibit time
+          access: rw
+        - type: uint8
+          name: Compatibility entry
+          access: rw
+        - type: uint16
+          name: Event timer
+          access: rw
+        - type: uint8
+          name: Sync start value
+          access: rw
+      0x1802:
+        name: Transmit PDO 3 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000380
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+        - type: uint16
+          name: Inhibit time
+          access: rw
+        - type: uint8
+          name: Compatibility entry
+          access: rw
+        - type: uint16
+          name: Event timer
+          access: rw
+        - type: uint8
+          name: Sync start value
+          access: rw
+      0x1803:
+        name: Transmit PDO 4 communication parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: ro
+          default: 2
+        - type: uint32
+          name: COB-ID
+          default: $NODEID+0x80000480
+          access: rw
+        - type: uint8
+          name: Transmission type
+          access: rw
+        - type: uint16
+          name: Inhibit time
+          access: rw
+        - type: uint8
+          name: Compatibility entry
+          access: rw
+        - type: uint16
+          name: Event timer
+          access: rw
+        - type: uint8
+          name: Sync start value
+          access: rw
+      0x1A00:
+        name: Transmit PDO 1 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1A01:
+        name: Transmit PDO 2 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1A02:
+        name: Transmit PDO 3 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
+      0x1A03:
+        name: Transmit PDO 4 mapping parameter
+        category: optional
+        data:
+        - type: uint8
+          name: Number of of entries
+          access: rw
+        - type: uint32
+          name: 1st object to be mapped
+          access: rw
+        - type: uint32
+          name: 2nd object to be mapped
+          access: rw
+        - type: uint32
+          name: 3rd object to be mapped
+          access: rw
+        - type: uint32
+          name: 4th object to be mapped
+          access: rw
+        - type: uint32
+          name: 5th object to be mapped
+          access: rw
+        - type: uint32
+          name: 6th object to be mapped
+          access: rw
+        - type: uint32
+          name: 7th object to be mapped
+          access: rw
+        - type: uint32
+          name: 8th object to be mapped
+          access: rw
 
   402:
     name: Profile for drives and motion control
@@ -208,6 +558,132 @@ profiles:
           access: ro
           pdo_mapping: true
           default: 0
-
-
+      0x6060:
+        name: Modes of operation
+        data:
+        - type: int8
+          access: rw
+          pdo_mapping: true
+      0x6061:
+        name: Modes of operation display
+        data:
+        - type: int8
+          access: ro
+          pdo_mapping: true
+      0x6062:
+        name: Position demand value
+        data:
+        - type: int32
+          access: ro
+          pdo_mapping: true
+      0x6064:
+        name: Position actual value
+        data:
+        - type: int32
+          access: ro
+          pdo_mapping: true
+      0x606B:
+        name: Velocity demand value
+        data:
+        - type: int32
+          access: ro
+          pdo_mapping: true
+      0x606C:
+        name: Velocity actual value
+        data:
+        - type: int32
+          access: ro
+          pdo_mapping: true
+      0x6071:
+        name: Target torque
+        data:
+        - type: int16
+          access: rw
+          pdo_mapping: true
+      0x6075:
+        name: motor rated current #TODO: add commissionning
+        data:
+        - type: uint32
+          access: rw
+      0x6076:
+        name: motor rated torque 
+        data:
+        - type: uint32
+          access: rw
+      0x6077:
+        name: Torque actual value
+        data:
+        - type: int16
+          access: ro
+          pdo_mapping: true
+      0x6078:
+        name: Current actual value
+        data:
+        - type: int16
+          access: ro
+          pdo_mapping: true
+      0x607A:
+        name: Target position
+        data:
+        - type: int32
+          access: rw
+          pdo_mapping: true
+      0x6080:
+        name: Max motor speed
+        data:
+        - type: uint32
+          access: rw
+      0x6081:
+        name: Profile velocity
+        data:
+        - type: uint32
+          access: rw
+      0x6083:
+        name: Profile acceleration
+        data:
+        - type: uint32
+          access: rw
+      0x6084:
+        name: Profile deceleration
+        data:
+        - type: uint32
+          access: rw
+      0x608F:
+        name: Position encoder resolution
+        data:
+        - type: uint8
+          name: Highes sub-index supported
+          access: rw
+          default: 2
+        - type: uint32 #TODO: remote get/set different
+          name: Encoder increments
+          access: rw
+        - type: uint32
+          name: motor revolutions
+          access: rw
+      0x60A8:
+        name: SI unit Position
+        data:
+        - type: uint32
+          access: rw
+          default: 0xFD010000
+      0x60A9:
+        name: SI unit Velocity
+        data:
+        - type: uint32
+          access: rw
+          default: 0xFD010300
+      0x60AA:
+        name: SI unit Acceleration
+        data:
+        - type: uint32
+          access: rw
+          default: 0xFD015700
+      0x60AB:
+        name: SI unit Jerk
+        data:
+        - type: uint32
+          access: rw
+          default: 0xFD01A000
+        
       

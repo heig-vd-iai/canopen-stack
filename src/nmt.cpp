@@ -28,10 +28,10 @@ void NMT::updateSM(NMTServiceCommands command) {
                     node._hb.resetToggleBit();
                     break;
             }
-            if (restorePending || !node._od.loadData(pg)) {
-                restorePending = false;
-                node._od.restoreData(pg);
-            }
+            // if (restorePending || !node._od.loadData(pg)) {
+            //     restorePending = false;
+            //     node._od.restoreData(pg);
+            // }
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
             if(pg == ParameterGroup_All){

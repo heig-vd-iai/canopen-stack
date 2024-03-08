@@ -3,7 +3,6 @@
  */
 #include "od.hpp"
 #include "node.hpp"
-#include "ipcCommunication.hpp"
 #include "driverlib_cm.h"
 extern "C" {
 #include "cm.h"
@@ -11,8 +10,6 @@ extern "C" {
 
 #include <cstring>
 
-extern IPC localIPC;
-extern IPC *remoteIPC;
 
 using namespace CANopen;
 

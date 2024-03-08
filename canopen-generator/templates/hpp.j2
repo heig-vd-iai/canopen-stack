@@ -11,8 +11,8 @@
 #define OD_PDO_MAPPING_MAX 8
 #define OD_ENTRY_SIZE_MAX 1024
 #define OD_OBJECTS_COUNT {{ objects | length }}
-#define OD_TPDO_COUNT {{ tpdo_count }}
-#define OD_RPDO_COUNT {{ rpdo_count }}
+#define OD_TPDO_COUNT {{ nrOfTXPDO }}
+#define OD_RPDO_COUNT {{ nrOfRXPDO }}
 #define OBJECT_INDEX_COUNT 0
 
 #define X1A00_MAP_DISABLED 0
@@ -44,64 +44,37 @@
 using namespace CANopen;
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
-
 {% for object in objects %}
-{% for subobject in object.get_subobject %}
-{% if subobject.access != "wo" and object.get != "getLocalData" %}
+{% for subobject in object.get_subobjects %}
+{% if subobject.access != "wo" and object.get != "none" and not object.remote %}
 int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
-{% if object.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or object.set != "getLocalData")  %}
+{% if object.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or object.set != "none" and not object.remote)  %}
 int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
@@ -145,7 +118,7 @@ public:
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if object.get != "none" and not object.remote%}
+        {% if subobject.access != "wo" and object.get != "none" and not object.remote%}
         &get{{subobject.cpp_instance_name}},
         {% elif object.remote %}
         &getRemoteData,
@@ -160,7 +133,7 @@ public:
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if (object.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
+        {% if subobject.access != "ro" and (object.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
         &set{{subobject.cpp_instance_name}},
         {% elif object.remote %}
         &setRemoteData,

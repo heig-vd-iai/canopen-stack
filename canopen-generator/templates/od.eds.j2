@@ -3,7 +3,7 @@
 [{{subobject.index_hex}}]
 ParameterName={{subobject.parameter_name}}
 ObjectType={{object.object_type}}
-DataType={{subobject.data_type}}
+DataType={{subobject.type_value}}
 AccessType={{subobject.access}}
 {% if subobject.default != "none" %}
 DefaultValue={{subobject.default}}
@@ -13,7 +13,7 @@ PDOMapping={{subobject.pdo_mapping}}
 [{{subobject.index_hex}}sub{{subobject.subindex}}]
 ParameterName={{subobject.parameter_name}}
 ObjectType={{object.object_type}}
-DataType={{subobject.data_type}}
+DataType={{subobject.type_value}}
 AccessType={{subobject.access}}
 DefaultValue={{subobject.default}}
 PDOMapping={{subobject.pdo_mapping}}
@@ -48,15 +48,15 @@ Baudrate_250={{1 if fonctionalities.baudrate[250] else 0}}
 Baudrate_500={{1 if fonctionalities.baudrate[500] else 0}}
 Baudrate_800={{1 if fonctionalities.baudrate[800] else 0}}
 Baudrate_1000={{1 if fonctionalities.baudrate[1000] else 0}}
-SimpleBootUpMaster={{fonctionalities.simpleBootUpMaster}}
-SimpleBootUpSlave={{fonctionalities.simpleBootUpSlave}}
+SimpleBootUpMaster={{1 if fonctionalities.simpleBootUpMaster else 0}}
+SimpleBootUpSlave={{1 if fonctionalities.simpleBootUpSlave else 0}}
 Granularity={{fonctionalities.granularity}}
-DynamicChannelsSupported={{fonctionalities.dynamicChannelsSupported}}
-CompactPDO={{fonctionalities.compactPDO}}
-GroupMessaging={{fonctionalities.groupMessaging}}
+DynamicChannelsSupported={{1 if fonctionalities.dynamicChannelsSupported else 0}}
+CompactPDO={{1 if fonctionalities.compactPDO else 0}}
+GroupMessaging={{1 if fonctionalities.groupMessaging else 0}}
 NrOfRXPDO={{nrOfRXPDO}}
 NrOfTXPDO={{nrOfTXPDO}}
-LSS_Supported={{fonctionalities.LSS_Supported}}
+LSS_Supported={{1 if fonctionalities.LSS_Supported else 0}}
 
 [MandatoryObjects]
 SupportedObjects={{mandatoryObjects|length}}
@@ -66,6 +66,13 @@ SupportedObjects={{mandatoryObjects|length}}
 
 
 {% for object in mandatoryObjects %}
+{% if object.object_type != "0x07" %}
+[{{object.index_hex}}]
+ParameterName={{object.parameter_name}}
+ObjectType={{object.object_type}}
+SubNumber={{object.subNumber}}
+
+{% endif %}
 {% for subobject in object.get_subobjects %}
 {{ data(object, subobject) }}
 {% endfor %}
@@ -78,6 +85,13 @@ SupportedObjects={{optionalObjects|length}}
 {% endfor %}
 
 {% for object in optionalObjects %}
+{% if object.object_type != "0x07" %}
+[{{object.index_hex}}]
+ParameterName={{object.parameter_name}}
+ObjectType={{object.object_type}}
+SubNumber={{object.subNumber}}
+
+{% endif %}
 {% for subobject in object.get_subobjects %}
 {% if object.category != "mandatory" %}
 {{ data(object, subobject) }}
