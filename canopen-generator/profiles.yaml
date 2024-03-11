@@ -126,6 +126,8 @@ profiles:
       0x1011:
         name: Restore default parameters
         category: optional
+        get: node.od().getRestore
+        set: node.od().restoreData
         data:
           - type: uint8
             name: highest sub-index supported
@@ -146,6 +148,12 @@ profiles:
           - type: uint32
             name: restore manufacturer specific parameters B
             access: rw
+      0x1017:
+        name: Producer hearbeat time
+        category: mandatory #if guarding not supported
+        data:
+        - type: uint16
+          access: rw
       0x1018:
         name: Identity object
         category: mandatory
@@ -169,12 +177,41 @@ profiles:
       0x1019:
         name: Synchronous counter overflow value
         category: optional
+        get: node.sync().getData
+        set: node.sync().setData
         data:
         - type: uint8
           access: rw
+      0x1020:
+        name: Verify configuration
+        category: optional
+        data:
+        - type: uint8
+          name: Highest sub-index supported
+          access: ro
+          default: 2
+        - type: uint32
+          name: Configuration date
+          access: rw
+        - type: uint32
+          name: Configuration time
+          access: rw
+      0x1029:
+        name: Error behavior
+        category: optional
+        data:
+        - type: uint32
+          Highest sub-index supported
+          access: ro
+        - type: uint8
+          name: Communication error
+          access: rw
+
       0x1400:
         name: Receive PDO 1 communication parameter
         category: optional
+        get: node.pdo().rpdos[0].commParameter.getData
+        set: node.pdo().rpdos[0].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -190,6 +227,8 @@ profiles:
       0x1401:
         name: Receive PDO 2 communication parameter
         category: optional
+        get: node.pdo().rpdos[1].commParameter.getData
+        set: node.pdo().rpdos[1].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -205,6 +244,8 @@ profiles:
       0x1402:
         name: Receive PDO 3 communication parameter
         category: optional
+        get: node.pdo().rpdos[2].commParameter.getData
+        set: node.pdo().rpdos[2].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -220,6 +261,8 @@ profiles:
       0x1403:
         name: Receive PDO 4 communication parameter
         category: optional
+        get: node.pdo().rpdos[3].commParameter.getData
+        set: node.pdo().rpdos[3].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -235,6 +278,8 @@ profiles:
       0x1600:
         name: Receive PDO 1 mapping parameter
         category: optional
+        get: node.pdo().rpdos[0].mapParameter.getData
+        set: node.pdo().rpdos[0].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -266,6 +311,8 @@ profiles:
       0x1601:
         name: Receive PDO 2 mapping parameter
         category: optional
+        get: node.pdo().rpdos[1].mapParameter.getData
+        set: node.pdo().rpdos[1].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -297,6 +344,8 @@ profiles:
       0x1602:
         name: Receive PDO 3 mapping parameter
         category: optional
+        get: node.pdo().rpdos[2].mapParameter.getData
+        set: node.pdo().rpdos[2].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -328,6 +377,8 @@ profiles:
       0x1603:
         name: Receive PDO 4 mapping parameter
         category: optional
+        get: node.pdo().rpdos[3].mapParameter.getData
+        set: node.pdo().rpdos[3].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -359,6 +410,8 @@ profiles:
       0x1800:
         name: Transmit PDO 1 communication parameter
         category: optional
+        get: node.pdo().tpdos[0].commParameter.getData
+        set: node.pdo().tpdos[0].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -386,6 +439,8 @@ profiles:
       0x1801:
         name: Transmit PDO 2 communication parameter
         category: optional
+        get: node.pdo().tpdos[1].commParameter.getData
+        set: node.pdo().tpdos[1].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -413,6 +468,8 @@ profiles:
       0x1802:
         name: Transmit PDO 3 communication parameter
         category: optional
+        get: node.pdo().tpdos[2].commParameter.getData
+        set: node.pdo().tpdos[2].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -440,6 +497,8 @@ profiles:
       0x1803:
         name: Transmit PDO 4 communication parameter
         category: optional
+        get: node.pdo().tpdos[3].commParameter.getData
+        set: node.pdo().tpdos[3].commParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -467,6 +526,8 @@ profiles:
       0x1A00:
         name: Transmit PDO 1 mapping parameter
         category: optional
+        get: node.pdo().tpdos[0].mapParameter.getData
+        set: node.pdo().tpdos[0].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -497,6 +558,8 @@ profiles:
           access: rw
       0x1A01:
         name: Transmit PDO 2 mapping parameter
+        get: node.pdo().tpdos[1].mapParameter.getData
+        set: node.pdo().tpdos[1].mapParameter.setData
         category: optional
         data:
         - type: uint8
@@ -529,6 +592,8 @@ profiles:
       0x1A02:
         name: Transmit PDO 3 mapping parameter
         category: optional
+        get: node.pdo().tpdos[2].mapParameter.getData
+        set: node.pdo().tpdos[2].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
@@ -560,6 +625,8 @@ profiles:
       0x1A03:
         name: Transmit PDO 4 mapping parameter
         category: optional
+        get: node.pdo().tpdos[3].mapParameter.getData
+        set: node.pdo().tpdos[3].mapParameter.setData
         data:
         - type: uint8
           name: Number of of entries
