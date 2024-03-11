@@ -15,19 +15,19 @@ using namespace CANopen;
 
 {% for object in objects %}
 {% for subobject in object.get_subobjects %}
-{% if subobject.access != "wo" and object.get != "none" and not subobject.remote %}
+{% if subobject.access != "wo" and subobject.get != "none" and not subobject.remote %}
 int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return {{ object.get }}(data, id, abortCode);
+    return {{ subobject.get }}(data, id, abortCode);
 }
 {%endif%}
-{% if subobject.access != "ro" and ((subobject.low_limit != "none" and high_limit != "none") or object.set != "none") %}
+{% if subobject.access != "ro" and ((subobject.low_limit != "none" and high_limit != "none") or subobject.set != "none") %}
 int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode){
     {% if subobject.low_limit != "none" and subobject.high_limit != "none" %}
     abortCode = data.{{subobject.type_code}} < {{ subobject.low_limit }} ? SDOAbortCode_DownloadValueTooLow : data.{{subobject.type_code}} > {{ subobject.high_limit }} ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
     if (abortCode != SDOAbortCode_OK) return -1;
     {% endif %}
-    {% if object.set != "none" and not subobject.remote %}
-    return {{ object.set }}(data, id, abortCode);
+    {% if subobject.set != "none" and not subobject.remote %}
+    return {{ subobject.set }}(data, id, abortCode);
     {% elif subobject.remote %}
     return setRemoteData(data, id, abortCode);
     {% else %}

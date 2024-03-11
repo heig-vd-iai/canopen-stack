@@ -13,14 +13,14 @@ inline void emptySetter(const Data &data) {}
 
 {% for object in objects %}
 {% for subobject in object.get_subobjects %}
-{% if object.get != "none" and object.remote %}
+{% if subobject.get != "none" and object.remote %}
 inline void get{{subobject.cpp_instance_name}}(Data &data) {
-    data.{{subobject.type_code}} = {{object.get}}();
+    data.{{subobject.type_code}} = {{subobject.get}}();
 }
 {% endif %}
-{% if object.set != "none" and object.remote %}
+{% if subobject.set != "none" and object.remote %}
 inline void set{{subobject.cpp_instance_name}}(const Data &data) {
-    {{object.set}}(data.{{subobject.type_code}});
+    {{subobject.set}}(data.{{subobject.type_code}});
 }
 {% endif %}
 {% endfor %}
@@ -29,7 +29,7 @@ inline void set{{subobject.cpp_instance_name}}(const Data &data) {
 void (*remoteGetter[{{ subindex_count }}])(Data &data) = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if object.get != "none" and object.remote %}
+    {% if subobject.get != "none" and object.remote %}
     &get{{subobject.cpp_instance_name}},
     {%else%}
     emptyGetter,
@@ -41,7 +41,7 @@ void (*remoteGetter[{{ subindex_count }}])(Data &data) = {
 void (*remoteSetter[{{ subindex_count }}])(const Data &data) = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if object.set != "none" and object.remote %}
+    {% if subobject.set != "none" and object.remote %}
     &set{{subobject.cpp_instance_name}},
     {%else%}
     emptySetter,

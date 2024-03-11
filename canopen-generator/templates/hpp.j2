@@ -71,10 +71,10 @@ int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% for object in objects %}
 {% for subobject in object.get_subobjects %}
-{% if subobject.access != "wo" and object.get != "none" and not object.remote %}
+{% if subobject.access != "wo" and subobject.get != "none" and not object.remote %}
 int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
-{% if object.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or object.set != "none" and not object.remote)  %}
+{% if subobject.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or subobject.set != "none" and not object.remote)  %}
 int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 {% endif %}
 {%endfor%}
@@ -118,7 +118,7 @@ public:
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if subobject.access != "wo" and object.get != "none" and not object.remote%}
+        {% if subobject.access != "wo" and subobject.get != "none" and not object.remote%}
         &get{{subobject.cpp_instance_name}},
         {% elif object.remote %}
         &getRemoteData,
@@ -133,7 +133,7 @@ public:
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if subobject.access != "ro" and (object.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
+        {% if subobject.access != "ro" and (subobject.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
         &set{{subobject.cpp_instance_name}},
         {% elif object.remote %}
         &setRemoteData,

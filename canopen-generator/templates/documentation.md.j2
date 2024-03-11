@@ -22,13 +22,9 @@
 {% else %}
 [ ] Remote
 {% endif %}
-| Name | Type | default |
-| --- | --- | --- |
+| Name | Type | default | get | set |
+| --- | --- | --- | --- | --- |
 {% for data in object.data %}
-| {{ data.name }} | {{ data.type }} | {{ data.default }}
+| {{ data.name }} | {{ data.type }} | {{ data.default }} | {{data.get}} | {{data.set}} |
 {% endfor %}
-- getter 
-    - {{object.get}}
-- setter 
-    - {{object.set}}
 {% endfor %}

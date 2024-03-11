@@ -315,6 +315,7 @@ void PDO::remapTPDO(unsigned index) {
         if (sizeSum > PDO_DLC) break;
         tpdo->mappedEntries[i] = id;
         tpdo->size = sizeSum;
+        if(id != -1) tpdo->count++;
     }
     node.hardware().configRemoteTPDO(
         index, tpdo->mappedEntries);  // assuming all TPDOs are remote TODO: add
@@ -333,7 +334,7 @@ void PDO::remapRPDO(unsigned index) {
         if (sizeSum > PDO_DLC) break;
         rpdo->mappedEntries[i] = id;
         rpdo->size = sizeSum;
-        rpdo->count++;
+        if(id != -1) rpdo->count++;
     }
     node.hardware().configRemoteRPDO(index, rpdo->mappedEntries);
 }

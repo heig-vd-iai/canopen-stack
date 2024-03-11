@@ -17,21 +17,10 @@ def validate_profile_object(objects):
 
 def validate_object(objects):
     for index, object in objects.items():
-        if index >= 0x6000:
-            if "logicalDevices" not in object:
-                object["logicalDevices"] = 0
-            if isinstance(object["logicalDevices"], list):
-                axis_dict = {}
-                for axis in object["logicalDevices"]:
-                    axis_dict[axis] = {"get": object["get"].replace("?#", str(axis)), "set": object["set"].replace("?#", str(axis))}
-                object["logicalDevices"] = axis_dict
-            if isinstance(object["logicalDevices"], int):
-                object["logicalDevices"] = {object["logicalDevices"]: {"get": object["get"].replace("?#", "0"), "set": object["set"].replace("?#", "0")}
-            }
-        else:
+        if index < 0x6000:
             if "logicalDevices" in object:
                 raise Invalid(f"Only Standardized profile area object can have logical device field [{hex(index)}]")
-        if "data" in object:
+        if "data" in object and object["profile"] == 0:
             if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
                 raise Invalid(f"If there are more than one data fields, they must have a name [{hex(index)}]")
             if len(object["data"]) == 1:
@@ -46,6 +35,8 @@ data_schema = [{
     Optional("default", default=0) : Any(int, float, bool, str),
     Optional("lowLimit", default="none"): Any(str, int, float),
     Optional("highLimit", default="none"): Any(str, int, float),
+    Optional("get", default="none"): str,
+    Optional("set", default="none"): str,
 }]
 
 data_object_schema = [{
@@ -53,6 +44,8 @@ data_object_schema = [{
     Optional("default") : Any(int, float, bool, str),
     Optional("lowLimit"): Any(str, int, float),
     Optional("highLimit"): Any(str, int, float),
+    Optional("get"): str,
+    Optional("set"): str,
 }]
 
 profile_schema = Schema({
@@ -84,6 +77,8 @@ profile_schema = Schema({
                         Required("name"): str,
                         Optional("category", default="optional"): str,
                         Required("data"): data_schema,
+                        Optional("get", default="none"): str,
+                        Optional("set", default="none"): str,
                     }
                 }, Length(min=1), validate_profile_object)
             }
@@ -120,12 +115,7 @@ config_schema = Schema({
             Optional("descriptionFile", default=""): str,
             Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
             Optional("data"): Any(data_schema, data_object_schema),
-            Optional("logicalDevices"): Any([int], int, {
-                int:{
-                    Optional("get", default="none"): str,
-                    Optional("set", default="none"): str,
-                }
-            }),
+            Optional("logicalDevices"): Any([int]),
             Optional("get", default="none"): str,
             Optional("set", default="none"): str,
             Optional("remote", default=False): bool

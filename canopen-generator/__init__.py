@@ -29,6 +29,8 @@ class Data:
         self.default = data["default"]
         self.low_limit = data["lowLimit"]
         self.high_limit = data["highLimit"]
+        self.get = data["get"]
+        self.set = data["set"]
         if str(self.default).startswith("$NODEID+"):
             self.default = int(str(self.default).split("+")[-1], 0) + 1 ## TODO: add node id
     
@@ -50,6 +52,8 @@ class SubObject:
         self.low_limit = data.low_limit
         self.high_limit = data.high_limit
         self.remote = object.remote
+        self.get = data.get
+        self.set = data.set
 
     @property
     def index_hex(self):
@@ -101,12 +105,9 @@ class Object:
         self.remote = object["remote"]
         self.description = object["description"]
         self.module = object["module"]
-        if "logicalDevices" in object:
-            self.get = object["logicalDevices"][axis]["get"]
-            self.set = object["logicalDevices"][axis]["set"]
-        else:
-            self.get = object["get"]
-            self.set = object["set"]
+        self.get = object["get"]
+        self.set = object["set"]
+        self.logicalDevice = axis
         if self.profile != 0:
             try:
                 profile = next(profile for profile in profiles if profile.profile == self.profile)
@@ -135,13 +136,23 @@ class Object:
                         self.data[i].low_limit = data["lowLimit"]
                     if "highLimit" in data:
                         self.data[i].high_limit = data["highLimit"]
-
-
-                    
+                    if "get" in data:
+                        self.data[i].get = data["get"]
+                    if "set" in data:
+                        self.data[i].set = data["set"]
         else:
             self.name = object["name"]
             self.category = object["category"]
             self.data = [Data(data) for data in object["data"]]
+        for i, data in enumerate(self.data):
+            if data.get == "none":
+                data.get = self.get
+            if data.set == "none":
+                data.set = self.set
+            data.get = data.get.replace("?#", str(axis))
+            data.set = data.set.replace("?#", str(axis))
+
+        self.subobjects = [SubObject(data, self.index, index, self) for index, data in enumerate(self.data)]
 
     @property
     def object_type(self):
@@ -156,7 +167,7 @@ class Object:
     
     @property
     def get_subobjects(self):
-        return [SubObject(data, self.index, index, self) for index, data in enumerate(self.data)]
+        return self.subobjects
 
     @property
     def index_hex(self):
