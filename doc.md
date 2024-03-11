@@ -11,20 +11,36 @@
 |  Manufacturer status register | uint32 |
 | **1003**| Pre-defined error field |
 |  Number of errors | uint8 |
-|  Standard error field | uint32 |
-|  Standard error field | uint32 |
+|  1st Standard error field | uint32 |
+|  2nt Standard error field | uint32 |
+|  3th Standard error field | uint32 |
+|  4th Standard error field | uint32 |
+|  5th Standard error field | uint32 |
+|  6th Standard error field | uint32 |
+|  7th Standard error field | uint32 |
+|  8th Standard error field | uint32 |
+| **1007**| Synchronous window length |
+|  Synchronous window length | uint32 |
+| **1008**| Manufacturer device name |
+|  Manufacturer device name | string |
+| **1009**| Manufacturer hardware version |
+|  Manufacturer hardware version | string |
+| **100a**| Manufacturer software version |
+|  Manufacturer software version | string |
 | **1010**| Store parameters |
-|  Number of entries | uint8 |
+|  highest sub-index supported | uint8 |
 |  save all parameters | uint32 |
 |  save communication parameters | uint32 |
 |  save application parameters | uint32 |
-|  save manufacturer specific parameters | uint32 |
+|  save manufacturer specific parameters A | uint32 |
+|  save manufacturer specific parameters B | uint32 |
 | **1011**| Restore default parameters |
-|  Number of entries | uint8 |
+|  highest sub-index supported | uint8 |
 |  restore all parameters | uint32 |
 |  restore communication parameters | uint32 |
 |  restore application parameters | uint32 |
-|  restore manufacturer specific parameters | uint32 |
+|  restore manufacturer specific parameters A | uint32 |
+|  restore manufacturer specific parameters B | uint32 |
 | **1018**| Identity object |
 |  Number of entries | uint8 |
 |  Vendor-ID | uint32 |
@@ -239,28 +255,36 @@
 | Name | Type | default | get | set |
 | --- | --- | --- | --- | --- |
 | Number of errors | uint8 | 0 | none | none |
-| Standard error field | uint32 | 0 | none | none |
-| Standard error field | uint32 | 0 | none | none |
+| 1st Standard error field | uint32 | 0 | none | none |
+| 2nt Standard error field | uint32 | 0 | none | none |
+| 3th Standard error field | uint32 | 0 | none | none |
+| 4th Standard error field | uint32 | 0 | none | none |
+| 5th Standard error field | uint32 | 0 | none | none |
+| 6th Standard error field | uint32 | 0 | none | none |
+| 7th Standard error field | uint32 | 0 | none | none |
+| 8th Standard error field | uint32 | 0 | none | none |
 ## Object 1010 Store parameters | 
 
 [ ] Remote
 | Name | Type | default | get | set |
 | --- | --- | --- | --- | --- |
-| Number of entries | uint8 | 4 | node.od().getSave | node.od().saveData |
+| highest sub-index supported | uint8 | 5 | node.od().getSave | node.od().saveData |
 | save all parameters | uint32 | 0 | node.od().getSave | node.od().saveData |
 | save communication parameters | uint32 | 0 | node.od().getSave | node.od().saveData |
 | save application parameters | uint32 | 0 | node.od().getSave | node.od().saveData |
-| save manufacturer specific parameters | uint32 | 0 | node.od().getSave | node.od().saveData |
+| save manufacturer specific parameters A | uint32 | 0 | node.od().getSave | node.od().saveData |
+| save manufacturer specific parameters B | uint32 | 0 | node.od().getSave | node.od().saveData |
 ## Object 1011 Restore default parameters | 
 
 [ ] Remote
 | Name | Type | default | get | set |
 | --- | --- | --- | --- | --- |
-| Number of entries | uint8 | 4 | node.od().getRestore | node.od().restoreData |
+| highest sub-index supported | uint8 | 5 | node.od().getRestore | node.od().restoreData |
 | restore all parameters | uint32 | 0 | node.od().getRestore | node.od().restoreData |
 | restore communication parameters | uint32 | 0 | node.od().getRestore | node.od().restoreData |
 | restore application parameters | uint32 | 0 | node.od().getRestore | node.od().restoreData |
-| restore manufacturer specific parameters | uint32 | 0 | node.od().getRestore | node.od().restoreData |
+| restore manufacturer specific parameters A | uint32 | 0 | node.od().getRestore | node.od().restoreData |
+| restore manufacturer specific parameters B | uint32 | 0 | node.od().getRestore | node.od().restoreData |
 ## Object 1018 Identity object | 
 
 [ ] Remote

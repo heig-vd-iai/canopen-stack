@@ -121,6 +121,10 @@ class Object:
                 exit(1)
             self.name = profileObject.name
             self.category = profileObject.category
+            if profileObject.get != "none":
+                self.get = profileObject.get
+            if profileObject.set != "none":
+                self.set = profileObject.set
             self.data = profileObject.data
             # Overwrite data with object specific data
             if "data" in object:
@@ -185,6 +189,8 @@ class ProfileObject:
         self.name = object["name"]
         self.category = object["category"]
         self.data = [Data(data) for data in object["data"]]
+        self.get = object["get"]
+        self.set = object["set"]
 
     @property
     def index_hex(self):

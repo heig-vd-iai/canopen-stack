@@ -1,5 +1,4 @@
 functionalities:
-  EDSVersion: "4.0"
   baudrate:
     10: true
     20: true
@@ -51,19 +50,64 @@ profiles:
           access: rw
           default: 0
         - type: uint32
-          name: Standard error field
+          name: 1st Standard error field
           access: ro
         - type: uint32
-          name: Standard error field
+          name: 2nt Standard error field
+          access: ro
+        - type: uint32
+          name: 3th Standard error field
+          access: ro
+        - type: uint32
+          name: 4th Standard error field
+          access: ro
+        - type: uint32
+          name: 5th Standard error field
+          access: ro
+        - type: uint32
+          name: 6th Standard error field
+          access: ro
+        - type: uint32
+          name: 7th Standard error field
+          access: ro
+        - type: uint32
+          name: 8th Standard error field
+          access: ro
+      0x1007:
+        name: Synchronous window length
+        category: optional
+        data:
+        - type: uint32
+          access: rw
+          default: 0
+      0x1008:
+        name: Manufacturer device name
+        category: optional
+        data:
+        - type: string
+          access: ro
+      0x1009:
+        name: Manufacturer hardware version
+        category: optional
+        data:
+        - type: string
+          access: ro
+      0x100A:
+        name: Manufacturer software version
+        category: optional
+        data:
+        - type: string
           access: ro
       0x1010:
         name: Store parameters
         category: optional
+        get: node.od().getSave
+        set: node.od().saveData
         data:
           - type: uint8
-            name: Number of entries
+            name: highest sub-index supported
             access: ro
-            default: 4
+            default: 5
           - type: uint32
             name: save all parameters
             access: rw
@@ -74,16 +118,19 @@ profiles:
             name: save application parameters
             access: rw
           - type: uint32
-            name: save manufacturer specific parameters
+            name: save manufacturer specific parameters A
+            access: rw
+          - type: uint32
+            name: save manufacturer specific parameters B
             access: rw
       0x1011:
         name: Restore default parameters
         category: optional
         data:
           - type: uint8
-            name: Number of entries
+            name: highest sub-index supported
             access: ro
-            default: 4
+            default: 5
           - type: uint32
             name: restore all parameters
             access: rw
@@ -94,7 +141,10 @@ profiles:
             name: restore application parameters
             access: rw
           - type: uint32
-            name: restore manufacturer specific parameters
+            name: restore manufacturer specific parameters A
+            access: rw
+          - type: uint32
+            name: restore manufacturer specific parameters B
             access: rw
       0x1018:
         name: Identity object
@@ -653,7 +703,7 @@ profiles:
         data:
         - type: uint8
           name: Highes sub-index supported
-          access: rw
+          access: ro
           default: 2
         - type: uint32 #TODO: remote get/set different
           name: Encoder increments

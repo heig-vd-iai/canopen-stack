@@ -50,7 +50,6 @@ data_object_schema = [{
 
 profile_schema = Schema({
     Required("functionalities"): {
-        Required("EDSVersion", default="4.0") : All(str, Length(min=3, max=3)),
         Required("baudrate"): {
             Optional(10, default=False): bool,
             Optional(20, default=False): bool,
