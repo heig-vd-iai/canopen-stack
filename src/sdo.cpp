@@ -331,7 +331,7 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
 }
 
 void SDO::update(uint32_t timestamp_us) {
-    if (!enabled) return;
+    if ( __builtin_expect(!enabled, false)) return;
     SDOAbortCodes abortCode = SDOAbortCode_OK;
     switch (serverState) {
         case SDOServerState_BlockUploading:
@@ -379,11 +379,11 @@ void SDO::update(uint32_t timestamp_us) {
         default:
             break;
     }
-    if (abortCode != SDOAbortCode_OK) {
+    if ( __builtin_expect(abortCode != SDOAbortCode_OK, false)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
     }
-    if (serverState != SDOServerState_Ready &&
-        isTimeout(timestamp_us, SDO_TIMEOUT_US))
+    if ( __builtin_expect(serverState != SDOServerState_Ready &&
+        isTimeout(timestamp_us, SDO_TIMEOUT_US), false))
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_TimedOut);
 }

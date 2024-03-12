@@ -373,8 +373,6 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
 
 void PDO::sendTPDO(unsigned index, uint32_t timestamp_us) {
     TPDO *tpdo = tpdos + index;
-    if (!enabled || !tpdo->commParameter.isEnabled() || tpdo->count == 0)
-        return;
     Frame frame = Frame::fromCobId(tpdo->commParameter.getActualCobId());
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
@@ -443,6 +441,7 @@ void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us) {
 void PDO::update(uint32_t timestamp_us) {
     if (!enabled) return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) {
+        if(!tpdos[i].commParameter.isEnabled() || tpdos[i].count == 0) continue;
         TPDO *tpdo = tpdos + i;
         uint8_t transmission = tpdo->commParameter.getTransmissionType();
         if ((transmission != EVENT1 && transmission != EVENT2) ||
@@ -455,6 +454,7 @@ void PDO::update(uint32_t timestamp_us) {
         sendTPDO(i, timestamp_us);
     }
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) {
+        if(!rpdos[i].commParameter.isEnabled() || rpdos[i].count == 0) continue;
         RPDO *rpdo = rpdos + i;
         if (!rpdo->commParameter.isTimerSupported()) continue;
         uint32_t timer_us = rpdo->commParameter.getEventTimer_us();
