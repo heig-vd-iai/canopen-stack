@@ -146,7 +146,10 @@ class Object:
                     if "set" in data:
                         self.data[i].set = data["set"]
         else:
-            self.name = object["name"]
+            if "name" in object:
+                self.name = object["name"]
+            else:
+                raise ValueError(f"Object name not found[{hex(index)}]")
             self.category = object["category"]
             self.data = [Data(data) for data in object["data"]]
         for i, data in enumerate(self.data):
@@ -240,7 +243,7 @@ class ObjectDictionary:
         except StopIteration:
             print("Object 0x1000 Device type not found")
             exit(1)
-        self.objects[device_type_index].data[0].default = f"0x {additional_info}{self.logical_devices[0]:04X}"
+        self.objects[device_type_index].data[0].default = f"0x{additional_info}{self.logical_devices[0]:04X}"
         for i in range(1, len(self.logical_devices)):
             self.objects.append(Object({
                 "name": f"Device Type Logical Device {i}",

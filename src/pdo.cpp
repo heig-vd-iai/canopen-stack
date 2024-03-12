@@ -217,11 +217,11 @@ int8_t CommParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         PDOCobidEntry current = {cobId};
         PDOCobidEntry dataEntry = {data.u32};
         // Check if bits 0 to 30 are modified
-        if (enabled && (current.value ^ dataEntry.value) & ~COBID_VALID_MASK) {
-            abortCode =
-                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
-            return -1;
-        }
+//        if (enabled && (current.value ^ dataEntry.value) & ~COBID_VALID_MASK) { //FIXME: don't call at restore or del if not necessary
+//            abortCode =
+//                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
+//            return -1;
+//        }
         // If a PDO was enabled
         if (current.bits.valid && dataEntry.bits.valid) {
             remap = true;

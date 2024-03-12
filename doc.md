@@ -520,7 +520,7 @@
 [ ] Remote
 | Name | Type | default | get | set |
 | --- | --- | --- | --- | --- |
-| Device type | uint32 | 0x FFFF0192 | none | none |
+| Device type | uint32 | 0x00000192 | none | none |
 ## Object 1001 Error register | 
 
 [ ] Remote
@@ -917,15 +917,3 @@
 | Name | Type | default | get | set |
 | --- | --- | --- | --- | --- |
 | SI unit Jerk | uint32 | 4244742144 | none | none |
-## Object 67FF Device Type Logical Device 1 | none
-Logical device
-[ ] Remote
-| Name | Type | default | get | set |
-| --- | --- | --- | --- | --- |
-| none | int16 | 0x0192 | none | none |
-## Object 6FFF Device Type Logical Device 2 | none
-Logical device
-[ ] Remote
-| Name | Type | default | get | set |
-| --- | --- | --- | --- | --- |
-| none | int16 | 0x0192 | none | none |
