@@ -7,6 +7,10 @@
 #include "node.hpp"
 using namespace CANopen;
 
+HB::HB(){
+    odID = node.od().findObject(HEARTBEAT_INDEX, 0);
+}
+
 void HB::publishState(NMTStates state, uint8_t toggleBit) {
     HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
     node.hardware().sendFrame(frame);
@@ -14,13 +18,10 @@ void HB::publishState(NMTStates state, uint8_t toggleBit) {
 }
 
 void HB::update(uint32_t timestamp_us) { //TODO: add local data
-#ifdef OD_OBJECT_1017
-    uint16_t heartbeatTime_ms = 0;
-    node._od.at(OD_OBJECT_1017)->getValue(0, &heartbeatTime_ms);
+    if (heartbeatTime_ms == 0) return;
     uint32_t heartbeatTime_us = (uint32_t)heartbeatTime_ms * 1000;
     if (heartbeatTime_ms > 0 && timestamp_us - lastPublish >= heartbeatTime_us)
         publishState(node._nmt.getState());
-#endif
 }
 
 void HB::receiveFrame(Frame &frame) {
@@ -30,3 +31,15 @@ void HB::receiveFrame(Frame &frame) {
 }
 
 void HB::resetToggleBit() { toggleBit = 0; }
+
+int8_t HB::setData(const Data &data, uint32_t id, SDOAbortCodes &abortCode) {
+    if(id == odID){
+        heartbeatTime_ms = data.u16;
+    }
+}
+
+int8_t HB::getData(Data &data, uint32_t id, SDOAbortCodes &abortCode) {
+    if(id == odID){
+        data.u16 = heartbeatTime_ms;
+    }
+}

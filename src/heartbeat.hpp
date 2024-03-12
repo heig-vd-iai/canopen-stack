@@ -5,9 +5,11 @@
 #include <cstdint>
 
 #include "enums.hpp"
+#include "unions.hpp"
 #define HEARTBEAT_DLC 1
 #define HEARTBEAT_STATE_OFFSET 0
 #define TOGGLE_OFFSET 7
+#define HEARTBEAT_INDEX 0x1017
 
 namespace CANopen {
 /**
@@ -19,6 +21,10 @@ class HB {
    private:
     uint32_t lastPublish = 0;
     uint8_t toggleBit = 0;
+    uint16_t heartbeatTime_ms = 0;
+    uint32_t odID;
+
+    HB();
 
     /**
      * Internal method to publish the NMT state.
@@ -47,8 +53,12 @@ class HB {
      */
     void resetToggleBit();
 
+
    public:
     friend class NMT;
     friend class Node;
+    int8_t getData(Data &data, uint32_t odID, SDOAbortCodes &abortCode);
+
+    int8_t setData(const Data &data, uint32_t odID, SDOAbortCodes &abortCode);
 };
 }  // namespace CANopen

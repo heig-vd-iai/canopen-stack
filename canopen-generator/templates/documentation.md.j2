@@ -1,7 +1,14 @@
 # Standard Profile Definitions
 
+# Table of Contents
 {% for profile in profiles %}
-## Profile {{ profile.profile }} {{ profile.name}}
+- [Profile {{ profile.profile }} {{ profile.name}}](#profile-{{ profile.profile }})
+{% endfor %}
+- [Object Dictionary](#object-dictionary)
+
+{% for profile in profiles %}
+# Profile {{ profile.profile }}
+## {{ profile.name }}
 | Index | Name |
 | --- | --- |
 {% for object in profile.objects %}
@@ -15,16 +22,17 @@
 # Object Dictionary
 
 {% for object in objects %}
-## Object {{ object.index_hex | upper }} {{ object.name }} | {{ object.module}}
+## Object {{ object.index_hex | upper }} {{ object.name }} [{{ object.module}}]
 {{ object.description }}
 {% if object.remote%}
 [x] Remote
 {% else %}
 [ ] Remote
 {% endif %}
-| Name | Type | default | get | set |
-| --- | --- | --- | --- | --- |
+
+| Name | Type | default |
+| --- | --- | --- |
 {% for data in object.data %}
-| {{ data.name }} | {{ data.type }} | {{ data.default }} | {{data.get}} | {{data.set}} |
+| {{ data.name }} | {{ data.type }} | {{ data.default }} |
 {% endfor %}
 {% endfor %}

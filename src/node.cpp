@@ -74,5 +74,5 @@ void Node::update() {
     uint32_t timestamp = node.hardware().getTime_us();
    _hb.update(timestamp);
    _sdo.update(timestamp);
-    _pdo.update(timestamp);
+   _pdo.update(timestamp);
 }

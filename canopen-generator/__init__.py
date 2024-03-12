@@ -267,7 +267,6 @@ class ObjectDictionary:
                         next(object for object in self.objects if object.index == profileObject.index)
                     except StopIteration:
                         print(f"Mandatory object {hex(profileObject.index)} not found")
-                        exit(1)
 
         # count pdo parameter
         self.nrOfRXPDO = 0

@@ -151,6 +151,8 @@ profiles:
       0x1017:
         name: Producer hearbeat time
         category: mandatory #if guarding not supported
+        get: node.hb().getData
+        set: node.hb().setData
         data:
         - type: uint16
           access: rw
