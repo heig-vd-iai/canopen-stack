@@ -107,6 +107,7 @@ class Object:
         self.module = object["module"]
         self.get = object["get"]
         self.set = object["set"]
+        self.category = object["category"]
         self.logicalDevice = axis
         if self.profile != 0:
             try:
@@ -156,8 +157,6 @@ class Object:
             data.get = data.get.replace("?#", str(axis))
             data.set = data.set.replace("?#", str(axis))
 
-        self.subobjects = [SubObject(data, self.index, index, self) for index, data in enumerate(self.data)]
-
     @property
     def object_type(self):
         if len(self.data) == 1:
@@ -171,7 +170,7 @@ class Object:
     
     @property
     def get_subobjects(self):
-        return self.subobjects
+        return [SubObject(data, self.index, index, self) for index, data in enumerate(self.data)]
 
     @property
     def index_hex(self):
@@ -191,6 +190,7 @@ class ProfileObject:
         self.data = [Data(data) for data in object["data"]]
         self.get = object["get"]
         self.set = object["set"]
+        self.category = object["category"]
 
     @property
     def index_hex(self):
@@ -224,11 +224,37 @@ class ObjectDictionary:
                 else:
                     for axis in object[1]["logicalDevices"]:
                         self.objects.append(Object(object[1], self.profiles, object[0], axis))
-            self.objects.sort(key=lambda x: x.index)
             self.info = self.config["info"]
+            self.logical_devices = self.config["logicalDevices"]
         except MultipleInvalid as e:
             print("sw-motion-generator objectDictionary error: " + str(e))
             exit(1)
+
+        # Configure logical devices object with profile used
+        if len(self.logical_devices) == 1:
+            additional_info = "0000"
+        else:
+            additional_info = "FFFF"
+        try:
+            device_type_index = next(index for index, object in enumerate(self.objects) if object.index == 0x1000)
+        except StopIteration:
+            print("Object 0x1000 Device type not found")
+            exit(1)
+        self.objects[device_type_index].data[0].default = f"0x {additional_info}{self.logical_devices[0]:04X}"
+        for i in range(1, len(self.logical_devices)):
+            self.objects.append(Object({
+                "name": f"Device Type Logical Device {i}",
+                "alias": f"deviceTypeLogicalDevice{i}",
+                "profile": 0,
+                "remote": False,
+                "description": "Logical device",
+                "module": "none",
+                "get": "none",
+                "set": "none",
+                "category": "optional",
+                "data": [{"type": "int16", "name":"none", "access": "ro", "pdo_mapping": 0, "default": f"0x{self.logical_devices[i]:04X}", "lowLimit": "none", "highLimit": "none", "get": "none", "set": "none"}]
+            }, self.profiles, 0x67FF, i-1))
+        self.objects.sort(key=lambda x: x.index)
 
         # count pdo parameter
         self.nrOfRXPDO = 0

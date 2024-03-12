@@ -201,7 +201,7 @@ profiles:
         category: optional
         data:
         - type: uint32
-          Highest sub-index supported
+          name: Highest sub-index supported
           access: ro
         - type: uint8
           name: Communication error
@@ -943,7 +943,7 @@ profiles:
           access: ro
           pdo_mapping: true
       0x6075:
-        name: motor rated current #TODO: add commissionning
+        name: motor rated current
         data:
         - type: uint32
           access: rw
@@ -1150,6 +1150,29 @@ profiles:
           name: Denominator
           access: rw
           default: 1
+      0x6098:
+        name: Homing method
+        data:
+        - type: int8
+          access: rw
+      0x6099:
+        name: Homing speed
+        data:
+        - type: uint8
+          name: Highes sub-index supported
+          access: ro
+          default: 2
+        - type: uint32
+          name: Speed during search for switch
+          access: rw
+        - type: uint32
+          name: Speed during search for zero
+          access: rw
+      0x609A:
+        name: Homing acceleration
+        data:
+        - type: uint32
+          access: rw
       0x60A2:
         name: Jerk factor
         data:
@@ -1168,7 +1191,7 @@ profiles:
       0x60A3:
         name: Profile jerk use
         data:
-        - type: int8
+        - type: uint8
           access: rw
           default: 1
       0x60A4:
@@ -1235,29 +1258,6 @@ profiles:
         data:
         - type: int32
           access: rw
-      0x6098:
-        name: Homing method
-        data:
-        - type: uint8
-          access: rw
-      0x6099:
-        name: Homing speed
-        data:
-        - type: uint8
-          name: Highes sub-index supported
-          access: ro
-          default: 2
-        - type: uint32
-          name: Speed during search for switch
-          access: rw
-        - type: uint32
-          name: Speed during search for zero
-          access: rw
-      0x609A:
-        name: Homing acceleration
-        data:
-        - type: uint32
-          access: rw
       0x60B0:
         name: Position offset
         data:
@@ -1306,7 +1306,7 @@ profiles:
       0x60C0:
         name: Interpolation sub mode select
         data:
-        - type: uint16
+        - type: int16
           access: rw
       0x60C1:
         name: Interpolation data record
@@ -1334,7 +1334,7 @@ profiles:
           access: rw
           default: -3
       0x60C4:
-        name: Interpolation data configuration:
+        name: Interpolation data configuration
         data:
         - type: uint8
           name: Highes sub-index supported
@@ -1359,7 +1359,7 @@ profiles:
           name: Size of data record
           access: wo
           default: 1
-        - type: int8
+        - type: uint8
           name: Buffer clear
           access: wo
           default: 0
@@ -1430,7 +1430,7 @@ profiles:
           name: Highes sub-index supported
           access: ro
           default: 1 # define number of supported homing methods
-        - type: uint8
+        - type: int8
           name: Homing method 1
           access: rw
       0x60E4:
@@ -1495,6 +1495,11 @@ profiles:
         - type: uint32
           name: 1st additional feed constant feed
           access: rw
+      0x60EA:
+        name: Commutation angle
+        data:
+        - type: uint16
+          access: rw
       0x60EB:
         name: Additional position encoder resolution - motor revolutions
         data:
@@ -1538,7 +1543,7 @@ profiles:
       0x60F2:
         name: Positioning option code
         data:
-        - type: int16
+        - type: uint16
           access: rw
       0x60F4:
         name: Following error actual value
@@ -1585,19 +1590,59 @@ profiles:
         data:
         - type: int32
           access: rw
+      0x6402:
+        name: Motor type
+        data:
+        - type: uint16
+          access: rw
+      0x6403:
+        name: Motor catalogue number
+        data:
+        - type: string
+          access: rw
+      0x6404:
+        name: Motor manufacturer
+        data:
+        - type: string
+          access: rw
+      0x6405:
+        name: http motor catalogue address
+        data:
+        - type: string
+          access: rw
+      0x6406:
+        name: Motor calibration date
+        data:
+        - type: uint64 #time of date
+          access: rw
+      0x6407:
+        name: Motor service periode
+        data:
+        - type: uint32
+          access: rw
       0x6502:
         name: Supported drive modes
         category: mandatory
         data:
         - type: uint32
           access: ro
+      0x6503:
+        name: Drive calatogue number
+        data:
+        - type: string
+          access: rw
+      0x6505:
+        name: http drive catalogue address
+        data:
+        - type: string
+          access: rw
       0x67FE:
         name: Version number
         category: mandatory
         data:
         - type: uint32
           access: ro
-          default: 0 #TODO: add version number
+          default: 0x30100 # 3.1.0
       
         
       

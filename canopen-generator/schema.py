@@ -103,7 +103,9 @@ config_schema = Schema({
             Required("nodeID"): int,
         },
     },
-    
+    Required("logicalDevices"):{
+        int: int 
+    },
     Required("objectDictionary"): All({
         int: {
             Required("alias"): str,
