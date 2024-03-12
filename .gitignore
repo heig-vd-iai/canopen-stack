@@ -46,6 +46,8 @@ doc/latex
 # OD save file
 *.dat
 od.hpp
+od.cpp
+od_remote.hpp
 od.eds
 
 sw-motion.yaml

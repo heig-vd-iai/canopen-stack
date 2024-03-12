@@ -259,6 +259,16 @@ class ObjectDictionary:
             }, self.profiles, 0x67FF, i-1))
         self.objects.sort(key=lambda x: x.index)
 
+        # test if all mandatory is present
+        for profile in self.profiles:
+            for profileObject in profile.objects:
+                if profileObject.category == "mandatory":
+                    try:
+                        next(object for object in self.objects if object.index == profileObject.index)
+                    except StopIteration:
+                        print(f"Mandatory object {hex(profileObject.index)} not found")
+                        exit(1)
+
         # count pdo parameter
         self.nrOfRXPDO = 0
         self.nrOfTXPDO = 0
