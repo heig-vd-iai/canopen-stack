@@ -21,7 +21,7 @@ struct Metadata {
 
 struct Metadata_bool : public Metadata {
     bool defaultValue;
-    Metadata_bool(bool defaultValue, Access access) {
+    Metadata_bool(Access access, bool defaultValue) {
         this->defaultValue = defaultValue;
         this->access = access;
         this->dataType = DataType::BOOL;

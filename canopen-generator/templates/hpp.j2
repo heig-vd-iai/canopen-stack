@@ -120,7 +120,7 @@ public:
         {% for subobject in object.get_subobjects %}
         {% if subobject.access != "wo" and subobject.get != "none" and not object.remote%}
         &get{{subobject.cpp_instance_name}},
-        {% elif object.remote %}
+        {% elif object.remote and subobject.get != "none" %}
         &getRemoteData,
         {% else %}
         &getLocalData_{{subobject.ctype_name}},
@@ -135,7 +135,7 @@ public:
         {% for subobject in object.get_subobjects %}
         {% if subobject.access != "ro" and (subobject.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
         &set{{subobject.cpp_instance_name}},
-        {% elif object.remote %}
+        {% elif object.remote and subobject.set != "none" %}
         &setRemoteData,
         {% else %}
         &setLocalData_{{subobject.ctype_name}},

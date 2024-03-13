@@ -49,6 +49,7 @@ od.hpp
 od.cpp
 od_remote.hpp
 od.eds
+doc.md
 
 sw-motion.yaml
 sw-motion-lite.yaml
