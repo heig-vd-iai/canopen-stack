@@ -59,6 +59,8 @@ class Type_code(Enum):
     uint16 = "u16"
     uint32 = "u32"
     uint64 = "u64"
+    float32 = "f32"
+    float64 = "f64"
 
 
 class ObjectType(Enum):

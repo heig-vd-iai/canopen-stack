@@ -322,6 +322,12 @@ class ObjectDictionary:
                     type_num.u32 += 1
                 elif subobject.type == "uint64":
                     type_num.u64 += 1
+                elif subobject.type == "float32":
+                    type_num.f32 += 1
+                elif subobject.type == "float64":
+                    type_num.f64 += 1
+                elif subobject.type == "string":
+                    type_num.str += 1
         return type_num
 
     def to_md(self):

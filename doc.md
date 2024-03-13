@@ -815,6 +815,114 @@
 | 6th object to be mapped | uint32 | 0 |
 | 7th object to be mapped | uint32 | 0 |
 | 8th object to be mapped | uint32 | 0 |
+## Object 2100 dc-link voltage [power]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| dc-link voltage | uint32 | 0 |
+## Object 2101 dc-link min-max voltage [power]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Highest sub-index supported | uint8 | 2 |
+| Min voltage | uint32 | 0 |
+| Max voltage | uint32 | 0 |
+## Object 2102 theta invert [power]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| theta invert | bool | 0 |
+## Object 2103 velocity loop prescaler [power]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| velocity loop prescaler | uint16 | 0 |
+## Object 2200 Current Control [control]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Highest sub-index supported | uint8 | 8 |
+| Kp D | float32 | 0 |
+| Ki D | float32 | 0 |
+| Kp Q | float32 | 0 |
+| Ki Q | float32 | 0 |
+| Max sum | float32 | 0 |
+| clamp min ratio | float32 | 0 |
+| clamp max ratio | float32 | 0 |
+## Object 2201 Speed Control [control]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Highest sub-index supported | uint8 | 5 |
+| Kp | float32 | 0 |
+| Ki | float32 | 0 |
+| Max sum | float32 | 0 |
+| clamp min ratio | float32 | 0 |
+| clamp max ratio | float32 | 0 |
+## Object 2202 Position Control [control]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Highest sub-index supported | uint8 | 3 |
+| Kp | float32 | 0 |
+| Max sum | float32 | 0 |
+| min error | float32 | 0 |
+## Object 2203 trajectory filter pow [control]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| trajectory filter pow | uint8 | 0 |
+## Object 2300 Motor Pair [motor]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Motor Pair | uint16 | 0 |
+## Object 2301 Motor resistance [motor]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Motor resistance | float32 | 0 |
+## Object 2302 Motor inductance [motor]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Motor inductance | float32 | 0 |
+## Object 2303 Motor peak current [motor]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Motor peak current | uint32 | 0 |
+## Object 2304 Motor back emf constant [motor]
+
+[x] Remote
+
+| Name | Type | default |
+| --- | --- | --- |
+| Motor back emf constant | uint32 | 0 |
 ## Object 6040 Controlword [state-machine]
 
 [x] Remote
