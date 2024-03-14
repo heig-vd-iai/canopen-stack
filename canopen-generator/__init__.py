@@ -74,26 +74,12 @@ class SubObject:
 
     @property
     def meta_data(self) -> str:
-        meta : str = "{.bits = {"
-        if self.access == "ro" or self.access == "const":
-            meta += ".readable = true, .writeable = false, "
-        if self.access == "wo":
-            meta += ".readable = false, .writeable = true, "
-        if self.access == "rw":
-            meta += ".readable = true, .writeable = true, "
-        if self.pdo_mapping:
-            meta += ".mappable = true, "
-        else:
-            meta += ".mappable = false, "
-        if self.low_limit == "none" or self.high_limit == "none":
-            meta += ".limited = false, "
-        else:
-            meta += ".limited = true, "
-        if self.remote == False:
-            meta += ".remote = false"
-        else:
-            meta += ".remote = true"
-        meta += "}}"
+        readable = True if self.access != "wo" else False
+        writeable = True if self.access != "ro" or self.access != "c" else False
+        mappable = True if self.pdo_mapping else False
+        limited = True if self.low_limit != "none" and self.high_limit != "none" else False
+        remote = True if self.remote else False
+        meta = f"0b{int(remote)}{int(limited)}{int(mappable)}{int(writeable)}{int(readable)}"
         return meta
 
 
