@@ -103,6 +103,14 @@ config_schema = Schema({
             Required("nodeID"): int,
         },
     },
+    Required("factoryParameters"):{
+        Required("pwmFrequency"): int,
+        Required("pwmDeadBand"): int,
+        Required("adcSampwin"): int,
+        Required("absoluteMaxVoltage"): int,
+        Required("absoluteMaxCurrent"): int,
+        Required("velocityPrescale") : int,
+    },
     Required("logicalDevices"):{
         int: int 
     },

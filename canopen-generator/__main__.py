@@ -22,12 +22,19 @@ def cli(config_file=None):
 
     with open("od.hpp", "w") as file:
         file.write(od.to_hpp())
+    os.rename("od.hpp", "../cm/od.hpp") #TODO: user input for path
 
     with open("od.cpp", "w") as file:
         file.write(od.to_cpp())
+    os.rename("od.cpp", "../cm/od.cpp")
 
     with open("od_remote.hpp", "w") as file:
         file.write(od.to_remote())
+    os.rename("od_remote.hpp", "../cpu1/od_remote.hpp")
+
+    with open("remote_config.hpp", "w") as file:
+        file.write(od.to_config())
+    os.rename("remote_config.hpp", "../cpu1/remote_config.hpp")
 
 
 if __name__ == "__main__":

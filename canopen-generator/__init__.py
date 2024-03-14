@@ -16,6 +16,7 @@ EDS_TEMPLATE = "od.eds.j2"
 CPP_TEMPLATE = "cpp.j2"
 HPP_TEMPLATE = "hpp.j2"
 REMOTE_TEMPLATE = "remote.j2"
+CONFIG_TEMPLATE = "config.j2"
 
 LOGICAL_DEVICE_OFFSET = 0x800
 
@@ -228,6 +229,7 @@ class ObjectDictionary:
                     for axis in object[1]["logicalDevices"]:
                         self.objects.append(Object(object[1], self.profiles, object[0], axis))
             self.info = self.config["info"]
+            self.factory_parameters = self.config["factoryParameters"]
             self.logical_devices = self.config["logicalDevices"]
         except MultipleInvalid as e:
             print("sw-motion-generator objectDictionary error: " + str(e))
@@ -387,6 +389,7 @@ class ObjectDictionary:
         return template.render(
             objects=self.objects, 
             info=self.info,
+            factory_parameters=self.factory_parameters,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
             date=datetime.now().strftime("%Y-%m-%d"),
@@ -394,5 +397,12 @@ class ObjectDictionary:
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects)
+
+    def to_config(self):
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        template = env.get_template(CONFIG_TEMPLATE)
+        return template.render(
+            factory_parameters=self.factory_parameters,
+        )
 
 

@@ -675,7 +675,6 @@ profiles:
         - type: uint16
           access: ro
           pdo_mapping: true
-          default: 0
       0x6040:
         name: Controlword
         category: mandatory
