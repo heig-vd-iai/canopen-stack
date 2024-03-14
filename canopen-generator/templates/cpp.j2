@@ -276,7 +276,7 @@ bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
         bool result = true;
         result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
         result &= node.hardware().saveDataToFlash(ParameterGroup_Application); //TODO: meta generate
-//        result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA); 
+        result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA); 
         return result;
     }
     return node.hardware().saveDataToFlash(parameterGroup);
@@ -323,7 +323,7 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
         bool result = true;
         result &= node.hardware().loadDataFromFlash(ParameterGroup_Communication);
         result &= node.hardware().loadDataFromFlash(ParameterGroup_Application); //TODO: meta generate
-        // result &= node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA); 
+        result &= node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA);
         return result;
     }
     return node.hardware().loadDataFromFlash(parameterGroup);
