@@ -50,6 +50,7 @@ od.cpp
 od_remote.hpp
 od.eds
 doc.md
+config_remote.hpp
 
 sw-motion.yaml
 sw-motion-lite.yaml
