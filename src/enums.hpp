@@ -217,6 +217,7 @@ enum EMCYErrorCodes {
     EMCYErrorCode_Voltage = 0x3000,
     EMCYErrorCode_Voltage_Main = 0x3100,
     EMCYErrorCode_Voltage_InsideDevice = 0x3200,
+    EMCYErrorCode_DC_Link_Under_Voltage = 0x3220,
     EMCYErrorCode_Voltage_Output = 0x3300,
     EMCYErrorCode_Temperature = 0x4000,
     EMCYErrorCode_Temperature_Ambient = 0x4100,

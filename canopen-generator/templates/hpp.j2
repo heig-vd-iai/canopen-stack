@@ -87,7 +87,7 @@ private:
     //METADATA
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    const Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{ {{ subobject.meta_data }}, {% if subobject.type == string %}{ {{subobject.default}} }{% else %}{{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
+    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{ {{ subobject.meta_data }}, {% if subobject.type == string %}{ {{subobject.default}} }{% else %}{{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %} };
     {% endfor %}
     {% endfor %}
     //END METADATA

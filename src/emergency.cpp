@@ -79,6 +79,7 @@ void ErrorRegister::reset() { value = 0; }
 
 int8_t ErrorRegister::getData(Data &data, int32_t odID,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
     if (odID != this->odID) {
         abortCode = SDOAbortCode_ObjectNonExistent;
         return -1;
@@ -89,6 +90,7 @@ int8_t ErrorRegister::getData(Data &data, int32_t odID,
 
 int8_t ErrorRegister::setData(const Data &data, int32_t odID,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
     if (odID != this->odID) {
         abortCode = SDOAbortCode_ObjectNonExistent;
         return -1;
@@ -132,11 +134,20 @@ void PreDefinesErrorField::clearErrors() {
 
 int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
                                      SDOAbortCodes &abortCode) {
-    data.u8 = errorsNumber;
+    abortCode = SDOAbortCode_OK;
+    if (odID == this->odID) {
+        data.u8 = errorsNumber;
+        return 0;
+    }
+    if (odID >= this->odID + 1 && odID < this->odID + 1 + PREDEFINED_ERROR_FIELD_SIZE) {
+        data.u32 = errorsField[odID - this->odID - 1];
+        return 0;
+    }
 }
 
 int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
                                      SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
     if (odID == this->odID) {
         if (data.u8 == 0) {
             clearErrors();
@@ -167,6 +178,7 @@ ErrorBehaviorValue ErrorBehavior::getInternalDeviceError() {
 
 int8_t ErrorBehavior::getData(Data &data, int32_t odID,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
     if (odID == this->odID) {
         data.u8 = numberOfEntries;
     }
@@ -183,6 +195,7 @@ int8_t ErrorBehavior::getData(Data &data, int32_t odID,
 
 int8_t ErrorBehavior::setData(const Data &data, int32_t odID,
                               SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
     if (odID == this->odID + 1) {
         communicationError = (ErrorBehaviorValue)data.u8;
     } else if (odID == this->odID + 2) {
@@ -246,6 +259,7 @@ void EMCY::raiseError(uint16_t errorCode,
         case EMCYErrorCode_Voltage_Main:
         case EMCYErrorCode_Voltage_InsideDevice:
         case EMCYErrorCode_Voltage_Output:
+        case EMCYErrorCode_DC_Link_Under_Voltage:
             errorRegister.setErrorBit(ErrorRegisterBit_Voltage);
             break;
         case EMCYErrorCode_Temperature:

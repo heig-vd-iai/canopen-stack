@@ -30,6 +30,8 @@ profiles:
       0x1001:
         name: Error register
         category: mandatory
+        get: node.emcy().errorRegister.getData
+        set: node.emcy().errorRegister.setData
         data:
         - type: uint8
           access: ro
@@ -44,6 +46,8 @@ profiles:
       0x1003:
         name: Pre-defined error field
         category: optional
+        get: node.emcy().preDefinedErrorField.getData
+        set: node.emcy().preDefinedErrorField.setData
         data:
         - type: uint8
           name: Number of errors
@@ -201,6 +205,8 @@ profiles:
       0x1029:
         name: Error behavior
         category: optional
+        get: node.emcy().errorBehavior.getData
+        set: node.emcy().errorBehavior.setData
         data:
         - type: uint32
           name: Highest sub-index supported
