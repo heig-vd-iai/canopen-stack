@@ -259,6 +259,7 @@ void EMCY::raiseError(uint16_t errorCode,
         case EMCYErrorCode_Voltage_Main:
         case EMCYErrorCode_Voltage_InsideDevice:
         case EMCYErrorCode_Voltage_Output:
+        case EMCYErrorCode_DC_Link_Over_Voltage:
         case EMCYErrorCode_DC_Link_Under_Voltage:
             errorRegister.setErrorBit(ErrorRegisterBit_Voltage);
             break;
