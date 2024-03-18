@@ -210,11 +210,16 @@ profiles:
         data:
         - type: uint32
           name: Highest sub-index supported
+          default: 2
           access: ro
         - type: uint8
-          name: Communication error
+          name: Communication error behavior
+          default: 1
           access: rw
-
+        - type: uint8
+          name: Internal device error behavior
+          default: 1
+          access: rw
       0x1400:
         name: Receive PDO 1 communication parameter
         category: optional

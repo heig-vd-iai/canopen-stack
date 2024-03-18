@@ -164,8 +164,12 @@ ErrorBehavior::ErrorBehavior() {}
 
 void ErrorBehavior::init() {
     odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
-    communicationError = {ErrorBehaviorValue_PreOperational};
-    internalDeviceError = {ErrorBehaviorValue_PreOperational};
+    Data data;
+    SDOAbortCodes abortCode;
+    getLocalData_uint8_t(data, odID+1, abortCode);
+    communicationError = (ErrorBehaviorValue)data.u8;
+    getLocalData_uint8_t(data, odID+2, abortCode);
+    internalDeviceError = (ErrorBehaviorValue)data.u8;
 }
 
 ErrorBehaviorValue ErrorBehavior::getCommunicationError() {
@@ -182,7 +186,7 @@ int8_t ErrorBehavior::getData(Data &data, int32_t odID,
     if (odID == this->odID) {
         data.u8 = numberOfEntries;
     }
-    if (odID == this->odID + 1) {
+    else if (odID == this->odID + 1) {
         data.u8 = (uint8_t)communicationError;
     } else if (odID == this->odID + 2) {
         data.u8 = (uint8_t)internalDeviceError;
@@ -252,6 +256,7 @@ void EMCY::raiseError(uint16_t errorCode,
         case EMCYErrorCode_Current:
         case EMCYErrorCode_Current_InputSide:
         case EMCYErrorCode_Current_InsideDevice:
+        case EMCYErrorCode_Continuous_Over_Current_Device_Internal:
         case EMCYErrorCode_Current_OutputSide:
             errorRegister.setErrorBit(ErrorRegisterBit_Current);
             break;
@@ -288,7 +293,7 @@ void EMCY::raiseError(uint16_t errorCode,
     preDefinedErrorField.pushError(errorCode, manufacturerCode);
     sendError(errorCode, manufacturerCode);
     NMTServiceCommands command = NMTServiceCommand_None;
-    switch (errorBehavior.getCommunicationError()) {
+    switch (errorBehavior.getInternalDeviceError()) { //TODO: make difference with communication error
         default:
         case ErrorBehaviorValue_PreOperational:
             if (node._nmt.getState() == NMTState_Operational)

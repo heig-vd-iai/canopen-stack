@@ -213,6 +213,7 @@ enum EMCYErrorCodes {
     EMCYErrorCode_Current = 0x2000,
     EMCYErrorCode_Current_InputSide = 0x2100,
     EMCYErrorCode_Current_InsideDevice = 0x2200,
+    EMCYErrorCode_Continuous_Over_Current_Device_Internal = 0x2220,
     EMCYErrorCode_Current_OutputSide = 0x2300,
     EMCYErrorCode_Voltage = 0x3000,
     EMCYErrorCode_Voltage_Main = 0x3100,
