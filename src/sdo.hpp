@@ -41,7 +41,9 @@ class SDO {
     enum SDOServerStates {
         SDOServerState_Ready,
         SDOServerState_UploadPending,
+        SDOServerState_UploadSegmentPending,
         SDOServerState_DownloadPending,
+        SDOServerState_DownloadSegmentPending,
         SDOServerState_Uploading,
         SDOServerState_Downloading,
         SDOServerState_BlockPending,
@@ -148,6 +150,8 @@ class SDO {
      * @param timestamp_us Frame reception timestamp in microseconds.
      */
     void downloadSegment(class SDOFrame &request, uint32_t timestamp_us);
+
+    void downloadSegmentSend(uint32_t timestamp_us);
 
     /**
      * This method handles block upload initiate frames.

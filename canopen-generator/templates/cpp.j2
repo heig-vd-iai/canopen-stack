@@ -86,17 +86,17 @@ int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCo
     return 0;
 }
 
-//int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    data.i64 = node.od().i64Table[node.od().dataIndexTable[id]];
-//    return 0;
-//}
-//
-//int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    node.od().i64Table[node.od().dataIndexTable[id]] = data.i64;
-//    return 0;
-//}
+int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   data.i64 = node.od().i64Table[node.od().dataIndexTable[id]];
+   return 0;
+}
+
+int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   node.od().i64Table[node.od().dataIndexTable[id]] = data.i64;
+   return 0;
+}
 
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
@@ -134,17 +134,17 @@ int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortC
     return 0;
 }
 
-//int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    data.u64 = node.od().u64Table[node.od().dataIndexTable[id]];
-//    return 0;
-//}
-//
-//int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    node.od().u64Table[node.od().dataIndexTable[id]] = data.u64;
-//    return 0;
-//}
+int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   data.u64 = node.od().u64Table[node.od().dataIndexTable[id]];
+   return 0;
+}
+
+int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   node.od().u64Table[node.od().dataIndexTable[id]] = data.u64;
+   return 0;
+}
 
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
@@ -158,17 +158,17 @@ int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode
     return 0;
 }
 
-//int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    data.f64 = node.od().f64Table[node.od().dataIndexTable[id]];
-//    return 0;
-//}
-//
-//int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-//    abortCode = SDOAbortCode_OK;
-//    node.od().f64Table[node.od().dataIndexTable[id]] = data.f64;
-//    return 0;
-//}
+int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   data.f64 = node.od().f64Table[node.od().dataIndexTable[id]];
+   return 0;
+}
+
+int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+   abortCode = SDOAbortCode_OK;
+   node.od().f64Table[node.od().dataIndexTable[id]] = data.f64;
+   return 0;
+}
 
 int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return -1; //TODO: implement

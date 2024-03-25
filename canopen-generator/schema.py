@@ -29,7 +29,8 @@ def validate_object(objects):
 
 data_schema = [{
     Required("type") : str,
-    Optional("name", default="none") : str,
+    Optional("name") : str,
+    Optional("length", default=1) : int,
     Required("access") : All(str, validate_access),
     Optional("pdo_mapping", default=False) : bool,
     Optional("default", default=0) : Any(int, float, bool, str),
@@ -40,6 +41,7 @@ data_schema = [{
 }]
 
 data_object_schema = [{
+    Optional("length", default=1) : int,
     Optional("pdo_mapping") : bool,
     Optional("default") : Any(int, float, bool, str),
     Optional("lowLimit"): Any(str, int, float),

@@ -32,6 +32,7 @@ class Data:
         self.high_limit = data["highLimit"]
         self.get = data["get"]
         self.set = data["set"]
+        self.length = data["length"]
         if str(self.default).startswith("$NODEID+"):
             self.default = int(str(self.default).split("+")[-1], 0) + 1 ## TODO: add node id
     
@@ -55,6 +56,7 @@ class SubObject:
         self.remote = object.remote
         self.get = data.get
         self.set = data.set
+        self.length = data.length
 
     @property
     def index_hex(self):
@@ -132,6 +134,8 @@ class Object:
                         self.data[i].get = data["get"]
                     if "set" in data:
                         self.data[i].set = data["set"]
+                    if "length" in data:
+                        self.data[i].length = data["length"]
         else:
             if "name" in object:
                 self.name = object["name"]

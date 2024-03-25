@@ -363,9 +363,10 @@ struct Metadata_double_limited : public Metadata_double {
    }
 };
 
-struct Metadata_char : public Metadata {
-    char *defaultValue;
-    Metadata_char(uint8_t access, char *defaultValue) {
+struct Metadata_string : public Metadata {
+    std::string defaultValue;
+    uint16_t length;
+    Metadata_string(uint8_t access, std::string defaultValue, uint16_t length) {
         this->defaultValue = defaultValue;
         this->access.value = access;
         this->dataType = DataType::VISIBLE_STRING;

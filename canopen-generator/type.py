@@ -47,7 +47,7 @@ class Ctype_name(Enum):
     uint64 = "uint64_t"
     float32 = "float"
     float64 = "double"
-    string = "std::string"
+    string = "string"
 
 class Type_code(Enum):
     bool = "b"
@@ -61,6 +61,7 @@ class Type_code(Enum):
     uint64 = "u64"
     float32 = "f32"
     float64 = "f64"
+    string = "str"
 
 
 class ObjectType(Enum):

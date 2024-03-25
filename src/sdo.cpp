@@ -5,6 +5,7 @@
 
 #include <cstring>
 
+#include "IObjectDictionnary.hpp"
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
@@ -44,7 +45,8 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
-    if (!node.od().getMetadata(id)->access.bits.readable) {
+    Metadata metadata = *node.od().getMetadata(id);
+    if (!metadata.access.bits.readable) {
         sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
         return;
     }
@@ -239,11 +241,18 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
             return;
         }
         if (ret == 1) {
-            serverState = SDOServerState_DownloadPending;
+            serverState = SDOServerState_DownloadSegmentPending;
             transferData.timestamp_us = timestamp_us;
+        } else {
+            downloadInitiateSend(timestamp_us);
         }
+    }else{
+        downloadSegmentSend(timestamp_us);
     }
-    transferData.remainingBytes -= payloadSize;
+}
+
+void SDO::downloadSegmentSend(uint32_t timestamp_us){
+    transferData.remainingBytes -= SDO_SEGMENT_DATA_LENGTH - transferData.recvCommand.bits_segment.n;
     transferData.sendCommand.bits_segment.ccs =
         SDOCommandSpecifier_ServerDownloadSegment;
     transferData.sendCommand.bits_segment.t =
@@ -254,15 +263,154 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
 }
 
 void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
-    // TODO: block
+    SDOBlockCommandByte recvCommand = {request.getCommandByte()};
+    switch ((SDOSubCommands)recvCommand.bits_upClient.cs) {
+        case SDOSubCommand_ClientUploadInitiate: {
+            uint16_t index = request.getIndex();
+            uint8_t subindex = request.getSubindex();
+            int32_t id = node.od().findObject(index, subindex);
+            if (id == -1) {
+                sendAbort(index, subindex, SDOAbortCode_ObjectNonExistent);
+                return;
+            }
+            if (id == -2) {
+                sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
+                return;
+            }
+            if (!node.od().getMetadata(id)->access.bits.readable) {
+                sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
+                return;
+            }
+            transferData.index = index;
+            transferData.subindex = subindex;
+            transferData.odID = id;
+            transferData.remainingBytes = transferData.lastBlockRemainingBytes =
+                node.od().getSize(id);
+            transferData.blksize = request.getInitiateBlockSize();
+            transferData.seqno = SDO_BLOCK_SEQNO_MIN;
+            SDOAbortCodes abortCode;
+            int8_t ret = node.od().readData(transferData.data,
+                                            transferData.odID, abortCode);
+            if (abortCode != SDOAbortCode_OK) {
+                sendAbort(transferData.index, transferData.subindex, abortCode);
+                return;
+            }
+            if (ret == 1) {
+                transferData.timestamp_us = timestamp_us;
+                serverState = SDOServerState_BlockPending;
+            } else
+                blockUploadInitiateSend(timestamp_us);
+            break;
+        }
+        case SDOSubCommand_ClientUploadStart: {
+            serverState = SDOServerState_BlockUploading;
+            transferData.timestamp_us = timestamp_us;
+            break;
+        }
+        default:
+            sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            break;
+    }
 }
 
-void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {}
+void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {
+    SDOBlockCommandByte sendCommand = {0};
+    sendCommand.bits_upServerInitiate.scs =
+        SDOCommandSpecifier_ServerBlockUpload;
+    sendCommand.bits_upServerInitiate.sc = false;
+    sendCommand.bits_upServerInitiate.s = true;
+    sendCommand.bits_upServerInitiate.ss = SDOSubCommand_ServerUploadInitiate;
+    SDOBlockFrame response(node.nodeId, sendCommand.value);
+    response.setIndex(transferData.index);
+    response.setSubindex(transferData.subindex);
+    response.setSize(transferData.size);
+    node.hardware().sendFrame(response);
+    serverState = SDOServerState_Ready;
+    transferData.timestamp_us = timestamp_us;
+}
 
 void SDO::blockUploadReceive(class SDOBlockFrame &request,
-                             uint32_t timestamp_us) {}
+                             uint32_t timestamp_us) {
+    SDOBlockCommandByte recvCommand = {request.getCommandByte()};
+    switch ((SDOSubCommands)recvCommand.bits_upClient.cs) {
+        case SDOSubCommand_ClientUploadResponse: {
+            uint32_t ackseq = request.getAckseq();
+            if (ackseq <
+                transferData.seqno -
+                    1U) {  // Lost data, begin next sub-block at failed offset
+                transferData.seqno = SDO_BLOCK_SEQNO_MIN;
+                transferData.remainingBytes =
+                    transferData.lastBlockRemainingBytes -
+                    ackseq * SDO_BLOCK_DATA_LENGTH;
+            } else {  // All clear
+                if (transferData.remainingBytes >
+                    0) {  // Begin sending next block
+                    transferData.lastBlockRemainingBytes =
+                        transferData.remainingBytes;
+                    transferData.seqno = SDO_BLOCK_SEQNO_MIN;
+                    transferData.blksize = request.getSubBlockSize();
+                } else {  // All data was sent, initiate block end
+                    SDOBlockCommandByte sendCommand = {0};
+                    sendCommand.bits_upServerEnd.scs =
+                        SDOCommandSpecifier_ServerBlockUpload;
+                    sendCommand.bits_upServerEnd.n =
+                        SDO_BLOCK_DATA_LENGTH -
+                        transferData.lastBlockRemainingBytes %
+                            SDO_BLOCK_DATA_LENGTH;
+                    sendCommand.bits_upServerEnd.ss =
+                        SDOSubCommand_ServerUploadEnd;
+                    SDOBlockFrame response(node.nodeId, sendCommand.value);
+                    response.setCRC(0);
+                    node.hardware().sendFrame(response);
+                }
+            }
+            transferData.timestamp_us = timestamp_us;
+            break;
+        }
+        case SDOSubCommand_ServerUploadEnd: {
+            serverState = SDOServerState_Ready;
+            break;
+        }
+        default:
+            sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            break;
+    }
+}
 
-void SDO::blockUploadSubBlock(uint32_t timestamp_us) {}
+void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
+    if (transferData.seqno > transferData.blksize || transferData.remainingBytes == 0)
+        return;
+    SDOBlockCommandByte cmd = {0};
+    uint32_t payloadSize;
+    cmd.bits_upServerSub.seqno = transferData.seqno++;
+    if (transferData.remainingBytes > SDO_BLOCK_DATA_LENGTH)
+    {
+        payloadSize = SDO_BLOCK_DATA_LENGTH;
+        cmd.bits_upServerSub.c = false;
+    }
+    else
+    {
+        payloadSize = transferData.remainingBytes;
+        cmd.bits_upServerSub.c = true;
+    }
+    uint32_t bytesSent = transferData.size - transferData.remainingBytes;
+    SDOBlockFrame frame(node.nodeId, cmd.value);
+    uint32_t abortCode;
+    Data data;
+    int8_t ret = node.od().readData(data, transferData.odID, abortCode);
+    if (abortCode != SDOAbortCode_OK)
+    {
+        sendAbort(transferData.index, transferData.subindex, abortCode);
+        return;
+    }
+    memcpy(frame.data + SDO_BLOCK_DATA_OFFSET, &data.u8 + bytesSent, payloadSize);
+    if(ret == 1){
+        serverState = SDOServerState_BlockUploading;
+    }
+    transferData.remainingBytes -= payloadSize;
+    node.hardware().sendFrame(frame);
+    transferData.timestamp_us = timestamp_us;
+}
 
 void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
 }
@@ -331,7 +479,7 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
 }
 
 void SDO::update(uint32_t timestamp_us) {
-    if ( __builtin_expect(!enabled, false)) return;
+    if (__builtin_expect(!enabled, false)) return;
     SDOAbortCodes abortCode = SDOAbortCode_OK;
     switch (serverState) {
         case SDOServerState_BlockUploading:
@@ -353,10 +501,6 @@ void SDO::update(uint32_t timestamp_us) {
             } else {
                 remoteAccesAttempt++;
             }
-            if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
-                sendAbort(transferData.index, transferData.subindex,
-                          SDOAbortCode_AccessFailedHardwareError);
-            }
             break;
         case SDOServerState_DownloadPending:
             if (node.od().writeData(transferData.data, transferData.index,
@@ -369,21 +513,30 @@ void SDO::update(uint32_t timestamp_us) {
                 remoteAccesAttempt++;
             }
 
-            if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
-                sendAbort(transferData.index, transferData.subindex,
-                          SDOAbortCode_AccessFailedHardwareError);
-            }
             break;
+        case SDOServerState_DownloadSegmentPending:
+            if (node.od().writeData(transferData.data, transferData.index,
+                                    transferData.subindex, abortCode) == 0) {
+                remoteAccesAttempt = 0;
+                downloadInitiateSend(timestamp_us);
+            } else {
+                remoteAccesAttempt++;
+            }
         case SDOServerState_BlockPending:
             break;
         default:
             break;
     }
-    if ( __builtin_expect(abortCode != SDOAbortCode_OK, false)) {
+    if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
+                sendAbort(transferData.index, transferData.subindex,
+                          SDOAbortCode_AccessFailedHardwareError);
+            }
+    if (__builtin_expect(abortCode != SDOAbortCode_OK, false)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
     }
-    if ( __builtin_expect(serverState != SDOServerState_Ready &&
-        isTimeout(timestamp_us, SDO_TIMEOUT_US), false))
+    if (__builtin_expect(serverState != SDOServerState_Ready &&
+                             isTimeout(timestamp_us, SDO_TIMEOUT_US),
+                         false))
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_TimedOut);
 }

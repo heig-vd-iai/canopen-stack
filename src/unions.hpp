@@ -3,6 +3,7 @@
  */
 #pragma once
 #include <stdint.h>
+#include <string>
 
 namespace CANopen {
 /**
@@ -150,5 +151,6 @@ union Data{
     uint64_t u64;
     float f32;
     double f64;
+    std::string* str;
 };
 }  // namespace CANopen

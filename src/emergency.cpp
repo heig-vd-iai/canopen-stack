@@ -166,6 +166,7 @@ void ErrorBehavior::init() {
     odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
     Data data;
     SDOAbortCodes abortCode;
+    numberOfEntries = 2;
     getLocalData_uint8_t(data, odID+1, abortCode);
     communicationError = (ErrorBehaviorValue)data.u8;
     getLocalData_uint8_t(data, odID+2, abortCode);

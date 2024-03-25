@@ -299,9 +299,9 @@ enum DataType {
     UNSIGNED8 = 0x05,
     UNSIGNED16 = 0x06,
     UNSIGNED32 = 0x07,
+    DOMAIN = 0x0F,
     UNSIGNED64 = 0x1B,
     REAL32 = 0x08,
     REAL64 = 0x11,
     VISIBLE_STRING = 0x09,
-    ARRAY
 };
