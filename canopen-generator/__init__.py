@@ -153,6 +153,8 @@ class Object:
 
     @property
     def object_type(self):
+        if self.data[0].type == "domain":
+            return ObjectType.domain.value
         if len(self.data) == 1:
             return ObjectType.var.value
         else:

@@ -339,14 +339,14 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     int count = 0;
 
     if (parameterGroup == ParameterGroup_Communication) { //TODO: meta generate
-        minIndex = 0x1000; 
+        minIndex = 0x1000; //TODO: move to define
         maxIndex = 0x1FFF;
     } else if (parameterGroup == ParameterGroup_Application) {
         minIndex = 0x6000;
         maxIndex = 0x9FFF;
     } else if (parameterGroup == ParameterGroup_ManufacturerA) {
         minIndex = 0x2000;
-        maxIndex = 0x5FFF;
+        maxIndex = 0x4FFF;
     }
     for (int i = 0; i < length; i++) {
         if (objectIndexTable[i].first >= minIndex &&
@@ -485,6 +485,8 @@ uint16_t ObjectDictionnary::getSize(int32_t id) {
             return sizeof(double);
         case DataType::VISIBLE_STRING:
             return sizeof(char);  // TODO: read string length
+        case DataType::DOMAIN:
+            return DOMAIN_MAX_SIZE;
         default:
             return 0;
     }

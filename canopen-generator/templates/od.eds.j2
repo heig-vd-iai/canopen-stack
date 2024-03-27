@@ -1,5 +1,5 @@
 {% macro data(object, subobject) -%}
-{% if object.object_type == "0x07" %}
+{% if object.object_type == "0x07" or object.object_type == "0x02" %}
 [{{subobject.index_hex}}]
 ParameterName={{subobject.parameter_name}}
 ObjectType={{object.object_type}}
@@ -66,7 +66,7 @@ SupportedObjects={{mandatoryObjects|length}}
 
 
 {% for object in mandatoryObjects %}
-{% if object.object_type != "0x07" %}
+{% if object.object_type != "0x07" and object.object_type != "0x02" %}
 [{{object.index_hex}}]
 ParameterName={{object.name}}
 ObjectType={{object.object_type}}
@@ -85,7 +85,7 @@ SupportedObjects={{optionalObjects|length}}
 {% endfor %}
 
 {% for object in optionalObjects %}
-{% if object.object_type != "0x07" %}
+{% if object.object_type != "0x07" and object.object_type != "0x02" %}
 [{{object.index_hex}}]
 ParameterName={{object.name}}
 ObjectType={{object.object_type}}

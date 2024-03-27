@@ -20,20 +20,22 @@ class Type(Enum):
     float32 = "float32"
     float64 = "float64"
     string = "string"
+    domain = "domain"
 
 class DataType(Enum):
-    bool = 0x01
-    int8 = 0x02
-    int16 = 0x03
-    int32 = 0x04
-    int64 = 0x15
-    uint8 = 0x05
-    uint16 = 0x06
-    uint32 = 0x07
-    uint64 = 0x1B
-    float32 = 0x08
-    float64 = 0x11
-    string = 0x09
+    bool = "0x01"
+    int8 = "0x02"
+    int16 = "0x03"
+    int32 = "0x04"
+    int64 = "0x15"
+    uint8 = "0x05"
+    uint16 = "0x06"
+    uint32 = "0x07"
+    uint64 = "0x1B"
+    float32 = "0x08"
+    float64 = "0x11"
+    string = "0x09"
+    domain = "0x0F"
 
 class Ctype_name(Enum):
     bool = "bool"
@@ -48,6 +50,7 @@ class Ctype_name(Enum):
     float32 = "float"
     float64 = "double"
     string = "string"
+    domain = "domain"
 
 class Type_code(Enum):
     bool = "b"
@@ -62,6 +65,7 @@ class Type_code(Enum):
     float32 = "f32"
     float64 = "f64"
     string = "str"
+    domain = "domain"
 
 
 class ObjectType(Enum):

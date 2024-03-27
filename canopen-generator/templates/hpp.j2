@@ -28,6 +28,8 @@
 
 #define MAX_WRITE_TRY 100
 
+#define DOMAIN_MAX_SIZE 800
+
 
 /* These defines map an object to its dictionnary array index */
 {% set counter = namespace(value=0) %}
@@ -87,7 +89,7 @@ private:
     //METADATA
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{ {{ subobject.meta_data }}, {% if subobject.type == "string" %}"{{subobject.default}}"{% else %}{{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %}{% if subobject.type == "string" %}, {{subobject.length}}{% endif %}};
+    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{{"{"}}{{ subobject.meta_data }}{% if subobject.type == "string" %}, "{{subobject.default}}"{% elif subobject.type != "domain" %}, {{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %}{% if subobject.type == "string" %}, {{subobject.length}}{% endif %}};
     {% endfor %}
     {% endfor %}
     //END METADATA

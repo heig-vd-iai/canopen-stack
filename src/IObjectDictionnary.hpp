@@ -372,6 +372,13 @@ struct Metadata_string : public Metadata {
         this->dataType = DataType::VISIBLE_STRING;
     }
 };
+
+struct Metadata_domain : public Metadata {
+    Metadata_domain(uint8_t access) {
+        this->access.value = access;
+        this->dataType = DataType::DOMAIN;
+    }
+};
 #pragma pack(pop)
 
 class IObjectDictionnary {

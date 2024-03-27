@@ -56,6 +56,7 @@ class SDO {
     bool enabled = false;
     uint16_t remoteAccesAttempt = 0;
     SDOServerStates serverState = SDOServerState_Ready;
+    uint8_t domainBuffer[DOMAIN_MAX_SIZE];
     struct {
         int32_t odID;
         uint16_t index;
@@ -72,6 +73,7 @@ class SDO {
         unsigned retries;
         Data data;
         SDOCommandByte sendCommand, recvCommand;
+        bool isDomain = false;
     } transferData;
     struct {
         uint8_t data[SDO_BUFFSIZE] = {0};

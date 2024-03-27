@@ -152,5 +152,6 @@ union Data{
     float f32;
     double f64;
     std::string* str;
+    uint16_t* domain;
 };
 }  // namespace CANopen
