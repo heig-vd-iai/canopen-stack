@@ -308,40 +308,40 @@ public:
     uint8_t dataIndexTable[{{ subindex_count }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x01 %}
+    {% if subobject.type_value == "0x01" %}
     {{ counterBool.value }},
     {% set counterBool.value = counterBool.value + 1 %}
-    {% elif subobject.type_value == 0x02 %}
+    {% elif subobject.type_value == "0x02" %}
     {{ counterI8.value }},
     {% set counterI8.value = counterI8.value + 1 %}
-    {% elif subobject.type_value == 0x03 %}
+    {% elif subobject.type_value == "0x03" %}
     {{ counterI16.value }},
     {% set counterI16.value = counterI16.value + 1 %}
-    {% elif subobject.type_value == 0x04 %}
+    {% elif subobject.type_value == "0x04" %}
     {{ counterI32.value }},
     {% set counterI32.value = counterI32.value + 1 %}
-    {% elif subobject.type_value == 0x15 %}
+    {% elif subobject.type_value == "0x15" %}
     {{ counterI64.value }},
     {% set counterI64.value = counterI64.value + 1 %}
-    {% elif subobject.type_value == 0x05 %}
+    {% elif subobject.type_value == "0x05" %}
     {{ counterU8.value }},
     {% set counterU8.value = counterU8.value + 1 %}
-    {% elif subobject.type_value == 0x06 %}
+    {% elif subobject.type_value == "0x06" %}
     {{ counterU16.value }},
     {% set counterU16.value = counterU16.value + 1 %}
-    {% elif subobject.type_value == 0x07 %}
+    {% elif subobject.type_value == "0x07" %}
     {{ counterU32.value }},
     {% set counterU32.value = counterU32.value + 1 %}
-    {% elif subobject.type_value == 0x16 %}
+    {% elif subobject.type_value == "0x16" %}
     {{ counterU64.value }},
     {% set counterU64.value = counterU64.value + 1 %}
-    {% elif subobject.type_value == 0x08 %}
+    {% elif subobject.type_value == "0x08" %}
     {{ counterF32.value }},
     {% set counterF32.value = counterF32.value + 1 %}
-    {% elif subobject.type_value == 0x09 %}
+    {% elif subobject.type_value == "0x09" %}
     {{ counterF64.value }},
     {% set counterF64.value = counterF64.value + 1 %}
-    {% elif subobject.type_value == 0x0A %}
+    {% elif subobject.type_value == "0x0A" %}
     {{ counterString.value }},
     {% set counterString.value = counterString.value + 1 %}
     {% endif %}
