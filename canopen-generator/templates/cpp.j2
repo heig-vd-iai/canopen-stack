@@ -178,6 +178,14 @@ int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode)
     return -1; //TODO: implement
 }
 
+int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return -1; //TODO: implement
+}
+
+int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return -1; //TODO: implement
+}
+
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     node.hardware().getRemoteData(data, id, abortCode);
 }
@@ -185,6 +193,7 @@ int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
     node.hardware().setRemoteData(data, id, abortCode);
 }
+
 
 int32_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t lower = 0;

@@ -57,6 +57,7 @@ class SDO {
     uint16_t remoteAccesAttempt = 0;
     SDOServerStates serverState = SDOServerState_Ready;
     uint8_t domainBuffer[DOMAIN_MAX_SIZE];
+    uint16_t count = 0; //TODO: remove debug
     struct {
         int32_t odID;
         uint16_t index;
