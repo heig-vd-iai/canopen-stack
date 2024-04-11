@@ -154,7 +154,7 @@ public:
     bool boolTable[{{ type_count.bool }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x01 %}
+    {% if subobject.type_value == "0x01" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -165,7 +165,7 @@ public:
     int8_t i8Table[{{ type_count.i8 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x02 %}
+    {% if subobject.type_value == "0x02" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -176,7 +176,7 @@ public:
     int16_t i16Table[{{ type_count.i16 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x03 %}
+    {% if subobject.type_value == "0x03" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -187,7 +187,7 @@ public:
     int32_t i32Table[{{ type_count.i32 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x04 %}
+    {% if subobject.type_value == "0x04" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -198,7 +198,7 @@ public:
     int64_t i64Table[{{ type_count.i64 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x15 %}
+    {% if subobject.type_value == "0x15" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -209,7 +209,7 @@ public:
     uint8_t u8Table[{{ type_count.u8 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x05 %}
+    {% if subobject.type_value == "0x05" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -220,7 +220,7 @@ public:
     uint16_t u16Table[{{ type_count.u16 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x06 %}
+    {% if subobject.type_value == "0x06" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -231,7 +231,7 @@ public:
     uint32_t u32Table[{{ type_count.u32 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x07 %}
+    {% if subobject.type_value == "0x07" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -242,7 +242,7 @@ public:
     uint64_t u64Table[{{ type_count.u64 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x1B %}
+    {% if subobject.type_value == "0x1B" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -253,7 +253,7 @@ public:
     float f32Table[{{ type_count.f32 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x08 %}
+    {% if subobject.type_value == "0x08" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -264,7 +264,7 @@ public:
     double f64Table[{{ type_count.f64 }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x11 %}
+    {% if subobject.type_value == "0x11" %}
     {{ subobject.default }},
     {% endif %}
     {% endfor %}
@@ -274,7 +274,7 @@ public:
     // string type data variable
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x09 %}
+    {% if subobject.type_value == "0x09" %}
     char {{subobject.cpp_instance_name}}[{{subobject.length}}] ={ {{ subobject.default }} };
     {% endif %}
     {% endfor %}
@@ -284,7 +284,7 @@ public:
     char *stringTable[{{ type_count.str }}] = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == 0x09 %}
+    {% if subobject.type_value == "0x09" %}
     {{subobject.cpp_instance_name}},
     {% endif %}
     {% endfor %}

@@ -47,7 +47,6 @@ class SubObject:
         self.subindex = subindex
         self.parameter_name = data.name
         self.type = data.type
-        self.type_value = data.data_type
         self.access = data.access
         self.default = data.default
         self.pdo_mapping = int(data.pdo_mapping)
@@ -73,6 +72,10 @@ class SubObject:
     @property
     def type_code(self):
         return Type_code[self.type].value
+
+    @property
+    def type_value(self):
+        return DataType[self.type].value
 
     @property
     def meta_data(self) -> str:
