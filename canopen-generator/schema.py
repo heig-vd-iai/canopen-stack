@@ -129,7 +129,8 @@ config_schema = Schema({
             Optional("logicalDevices"): Any([int]),
             Optional("get", default="none"): str,
             Optional("set", default="none"): str,
-            Optional("remote", default=False): bool
+            Optional("remote", default=False): bool,
+            Optional("unit", default="none"): str,
         }
     }, validate_object)
 })
