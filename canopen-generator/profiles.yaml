@@ -109,7 +109,7 @@ profiles:
         set: node.od().saveData
         data:
           - type: uint8
-            name: highest sub-index supported
+            name: highestt sub-index supported
             access: ro
             default: 5
           - type: uint32
@@ -134,7 +134,7 @@ profiles:
         set: node.od().restoreData
         data:
           - type: uint8
-            name: highest sub-index supported
+            name: highestt sub-index supported
             access: ro
             default: 5
           - type: uint32
@@ -193,7 +193,7 @@ profiles:
         category: optional
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -209,7 +209,7 @@ profiles:
         set: node.emcy().errorBehavior.setData
         data:
         - type: uint32
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           default: 2
           access: ro
         - type: uint8
@@ -724,7 +724,7 @@ profiles:
         name: vl velocity min max amount
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -737,7 +737,7 @@ profiles:
         name: vl velocity acceleration
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -750,7 +750,7 @@ profiles:
         name: vl velocity deceleration
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -763,7 +763,7 @@ profiles:
         name: vl velocity quick stop
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -776,7 +776,7 @@ profiles:
         name: vl set-point factor
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: int16
@@ -791,7 +791,7 @@ profiles:
         name: vl dimension factor
         data:
         - type: uint8
-          name: Highest sub-index supported
+          name: Highestt sub-index supported
           access: ro
           default: 2
         - type: int32
@@ -1001,7 +1001,7 @@ profiles:
         name: Position range limit
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: int32
@@ -1014,7 +1014,7 @@ profiles:
         name: Software position limit
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: int32
@@ -1076,7 +1076,7 @@ profiles:
         name: Position encoder resolution
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1091,7 +1091,7 @@ profiles:
         name: Velocity sensor resolution
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1106,7 +1106,7 @@ profiles:
         name: Gear ratio
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1121,7 +1121,7 @@ profiles:
         name: Feed constant
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1136,7 +1136,7 @@ profiles:
         name: Velocity factor
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1151,7 +1151,7 @@ profiles:
         name: Acceleration factor
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1171,7 +1171,7 @@ profiles:
         name: Homing speed
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1189,7 +1189,7 @@ profiles:
         name: Jerk factor
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -1210,7 +1210,7 @@ profiles:
         name: Profile jerk
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 6
         - type: uint32
@@ -1324,9 +1324,9 @@ profiles:
         name: Interpolation data record
         data:
         - type: int8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
-          default: 1 #TODO: auto-generate large array
+          default: 1
         - type: int32
           name: Interpolation data record 1
           access: rw
@@ -1334,7 +1334,7 @@ profiles:
         name: Interpolation time period
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: rw
           default: 2
         - type: uint8
@@ -1349,7 +1349,7 @@ profiles:
         name: Interpolation data configuration
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 6
         - type: uint32
@@ -1379,7 +1379,7 @@ profiles:
         name: Touch probe source
         data:
         - type: int8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: int16
@@ -1439,17 +1439,18 @@ profiles:
         name: Supported homing methods
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
-          default: 1 # define number of supported homing methods
+          default: 1
+          length: 255
         - type: int8
-          name: Homing method 1
-          access: rw
+          name: "?#st suported homing method"
+          access: ro
       0x60E4:
         name: Additional position actual value
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: int32
@@ -1460,7 +1461,7 @@ profiles:
         name: Additional velocity actual value
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: int32
@@ -1471,7 +1472,7 @@ profiles:
         name: Additional position encoder resolution - encoder increments
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1481,7 +1482,7 @@ profiles:
         name: Additional velocity encoder resolution - encoder increments per second
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1491,7 +1492,7 @@ profiles:
         name: Additional gear ratio - motor shaft revolutions
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1501,7 +1502,7 @@ profiles:
         name: Additional feed constant - feed
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1516,7 +1517,7 @@ profiles:
         name: Additional position encoder resolution - motor revolutions
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1526,7 +1527,7 @@ profiles:
         name: Additional velocity encoder resolution - motor revolutions per second
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1536,7 +1537,7 @@ profiles:
         name: Additional gear ratio - driving shaft revolutions
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1546,7 +1547,7 @@ profiles:
         name: Additional feed constant - driving shaft revolutions
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 1
         - type: uint32
@@ -1587,7 +1588,7 @@ profiles:
         name: Digital outputs
         data:
         - type: uint8
-          name: Highes sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32

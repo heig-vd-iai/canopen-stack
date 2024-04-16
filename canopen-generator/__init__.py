@@ -119,9 +119,25 @@ class Object:
             if profileObject.set != "none":
                 self.set = profileObject.set
             self.data = profileObject.data
+            length = self.data[0].length
+            if length > 1:
+                name = self.data[1].name
+                for i in range(1, length):
+                    self.data.append(Data({
+                        "type": self.data[1].type,
+                        "name": name.replace("?#", str(i)),
+                        "access": self.data[1].access,
+                        "pdo_mapping": self.data[1].pdo_mapping,
+                        "default": self.data[1].default,
+                        "lowLimit": self.data[1].low_limit,
+                        "highLimit": self.data[1].high_limit,
+                        "get": self.data[1].get,
+                        "set": self.data[1].set,
+                        "length": 1
+                    }))
             # Overwrite data with object specific data
             if "data" in object:
-                if len(object["data"]) != len(self.data):
+                if len(object["data"]) > len(self.data):
                     print(f"Data length mismatch for object {hex(self.index)}")
                     exit(1)
                 for i, data in enumerate(object["data"]):
@@ -139,6 +155,7 @@ class Object:
                         self.data[i].set = data["set"]
                     if "length" in data:
                         self.data[i].length = data["length"]
+                self.data = self.data[:len(object["data"])]
         else:
             if "name" in object:
                 self.name = object["name"]

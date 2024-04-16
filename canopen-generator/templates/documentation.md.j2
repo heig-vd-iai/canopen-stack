@@ -6,6 +6,10 @@
 {% endfor %}
 - [Object Dictionary](#object-dictionary)
 
+# CANOpen profiles
+<details close>
+<summary>click to collapse</summary>
+
 {% for profile in profiles %}
 # Profile {{ profile.profile }}
 ## {{ profile.name }}
@@ -19,7 +23,11 @@
 {% endfor %}
 {% endfor %}
 
+</details>
+
 # Object Dictionary
+<details close>
+<summary>click to collapse</summary>
 
 {% for object in objects %}
 ## Object {{ object.index_hex | upper }} {{ object.name }} [{{ object.module}}]
@@ -36,3 +44,5 @@
 | {{ data.name }} | {{ data.type }} | {{ data.default }} |
 {% endfor %}
 {% endfor %}
+
+</details>

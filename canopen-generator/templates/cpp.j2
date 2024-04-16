@@ -20,7 +20,7 @@ int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes 
     return {{ subobject.get }}(data, id, abortCode);
 }
 {%endif%}
-{% if ((subobject.low_limit != "none" and high_limit != "none") or subobject.set != "none") %}
+{% if ((subobject.low_limit != "none" and high_limit != "none") or subobject.set != "none" and not subobject.remote) %}
 int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode){
     {% if subobject.low_limit != "none" and subobject.high_limit != "none" %}
     abortCode = data.{{subobject.type_code}} < {{ subobject.low_limit }} ? SDOAbortCode_DownloadValueTooLow : data.{{subobject.type_code}} > {{ subobject.high_limit }} ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;

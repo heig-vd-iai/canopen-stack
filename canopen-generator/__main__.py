@@ -16,6 +16,7 @@ def cli(config_file=None):
 
     with open("doc.md", "w") as file:
         file.write(od.to_md())
+    os.rename("doc.md", "../docs/objectDictionnary.md")
 
     with open("od.eds", "w") as file:
         file.write(od.to_eds())
