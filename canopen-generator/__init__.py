@@ -387,6 +387,7 @@ class ObjectDictionary:
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
             date=datetime.now().strftime("%Y-%m-%d"),
+            signature=datetime.now().strftime("%Y%m%d%H%M"),
             nrOfRXPDO=self.nrOfRXPDO,
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,

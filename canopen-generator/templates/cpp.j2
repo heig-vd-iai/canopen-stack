@@ -282,6 +282,11 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
     if (parameterGroup == 1){
+        uint64_t signature;
+        node.hardware().loadSignatureFromFlash(signature);
+        if (signature != od_signature){
+            node.hardware().saveSignatureToFlash(od_signature);
+        }
         bool result = true;
         result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
         result &= node.hardware().saveDataToFlash(ParameterGroup_Application); //TODO: meta generate
@@ -328,6 +333,11 @@ int8_t ObjectDictionnary::getSave(Data &data, int32_t id, SDOAbortCodes &abortCo
 }
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
+    uint64_t signature;
+    node.hardware().loadSignatureFromFlash(signature);
+    if (signature != od_signature){
+        return false;
+    }
     if (parameterGroup == 1){
         bool result = true;
         result &= node.hardware().loadDataFromFlash(ParameterGroup_Communication);

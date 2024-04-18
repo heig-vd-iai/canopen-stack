@@ -841,14 +841,14 @@ profiles:
         name: Modes of operation
         category: mandatory # if more than one mode supported
         data:
-        - type: int8
+        - type: int16
           access: rw
           pdo_mapping: true
       0x6061:
         name: Modes of operation display
         category: mandatory # if more than one mode supported
         data:
-        - type: int8
+        - type: int16
           access: ro
           pdo_mapping: true
       0x6062:
@@ -1026,7 +1026,7 @@ profiles:
       0x607E:
         name: Polarity
         data:
-        - type: int8
+        - type: uint8
           access: rw
           default: 0
       0x607F:
@@ -1165,7 +1165,7 @@ profiles:
       0x6098:
         name: Homing method
         data:
-        - type: int8
+        - type: int16
           access: rw
       0x6099:
         name: Homing speed
@@ -1323,7 +1323,7 @@ profiles:
       0x60C1:
         name: Interpolation data record
         data:
-        - type: int8
+        - type: int16
           name: Highest sub-index supported
           access: ro
           default: 1
@@ -1378,7 +1378,7 @@ profiles:
       0x60D0:
         name: Touch probe source
         data:
-        - type: int8
+        - type: int16
           name: Highest sub-index supported
           access: ro
           default: 1
@@ -1443,7 +1443,7 @@ profiles:
           access: ro
           default: 1
           length: 255
-        - type: int8
+        - type: int16
           name: "?#st suported homing method"
           access: ro
       0x60E4:

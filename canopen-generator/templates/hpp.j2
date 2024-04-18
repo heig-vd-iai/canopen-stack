@@ -43,7 +43,10 @@
 #ifndef _OD_DEFINES_ONLY
 #include "IObjectDictionnary.hpp"
 
+
 using namespace CANopen;
+
+const uint64_t od_signature = {{ signature }}u;
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
