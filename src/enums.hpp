@@ -278,7 +278,9 @@ enum ParameterGroups { //TODO: move to od.hpp and metagenerate manufacturer spec
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3,
-    ParameterGroup_ManufacturerA = 4
+    ParameterGroup_ManufacturerA = 4,
+    ParameterGroup_Units = 5,
+    ParameterGroup_FeedConstant = 6,
 };
 
 enum AccessType {
