@@ -221,7 +221,7 @@ class Profile:
 
 
 class ObjectDictionary:
-
+    # TODO: verifiy double object
     def __init__(self, profiles: dict, od: dict, file_name: str) -> None:
         self.file_name = file_name
         try:

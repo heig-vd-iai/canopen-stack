@@ -340,10 +340,9 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
     }
     if (parameterGroup == 1){
         bool result = true;
-        result &= node.hardware().loadDataFromFlash(ParameterGroup_Units);
-        result &= node.hardware().loadDataFromFlash(ParameterGroup_FeedConstant);
         result &= node.hardware().loadDataFromFlash(ParameterGroup_Communication);
         result &= node.hardware().loadDataFromFlash(ParameterGroup_Application); //TODO: meta generate
+        result &= node.hardware().loadDataFromFlash(ParameterGroup_Application); // load 2 time for load first unit TODO: find better way
         result &= node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA);
         return result;
     }
