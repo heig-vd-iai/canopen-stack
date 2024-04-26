@@ -49,6 +49,7 @@ int8_t MapParameter::getData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
         data.u32 = mappedObjects[id - odID - 1];
         return 0;
     } else {
+        data.u32 = -1;
         abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
         return -1;
     }
