@@ -1026,7 +1026,7 @@ profiles:
       0x607E:
         name: Polarity
         data:
-        - type: uint8
+        - type: uint16
           access: rw
           default: 0
       0x607F:
