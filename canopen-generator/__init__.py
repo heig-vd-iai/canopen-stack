@@ -12,6 +12,7 @@ script_dir = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(script_dir, "templates")
 
 DOCUMENTATION_TEMPLATE = "documentation.md.j2"
+MODULE_DOCUMENTATION_TEMPLATE = "module_documentation.md.j2"
 EDS_TEMPLATE = "od.eds.j2"
 CPP_TEMPLATE = "cpp.j2"
 HPP_TEMPLATE = "hpp.j2"
@@ -100,6 +101,7 @@ class Object:
         self.get = object["get"]
         self.set = object["set"]
         self.category = object["category"]
+        self.module = object["module"]
         self.logicalDevice = axis
         if self.profile != 0:
             try:
@@ -293,6 +295,14 @@ class ObjectDictionary:
 
         self.mandatoryObjects = [object for object in self.objects if object.category == "mandatory"]
         self.optionalObjects = [object for object in self.objects if object.category == "optional"]
+
+        
+        self.modules = []
+        for object in self.objects:
+            if object.module not in self.modules:
+                self.modules.append(object.module)
+
+        self.modules_descriptions = self.config["modules_description"]
     
     @property
     def subindex_count(self):
@@ -347,7 +357,15 @@ class ObjectDictionary:
     def to_md(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
         template = env.get_template(DOCUMENTATION_TEMPLATE)
-        return template.render(profiles=self.profiles, objects=self.objects)
+        return template.render(profiles=self.profiles, objects=self.objects, modules=self.modules)
+
+    def to_doc(self, module):
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        template = env.get_template(MODULE_DOCUMENTATION_TEMPLATE)
+        return template.render(profiles=self.profiles,
+                                objects=[object for object in self.objects if object.module == module], 
+                                module=module,
+                                description=self.modules_descriptions[module]["description"] if module in self.modules_descriptions else "")
 
     def to_eds(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)

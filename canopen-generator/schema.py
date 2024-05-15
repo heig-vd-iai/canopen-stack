@@ -132,5 +132,11 @@ config_schema = Schema({
             Optional("remote", default=False): bool,
             Optional("unit", default="none"): str,
         }
-    }, validate_object)
+    }, validate_object),
+    Optional("modules_description"): All({
+        str: {
+            Optional("description"): str,
+            Optional("descriptionFile"): str
+        }
+    })
 })

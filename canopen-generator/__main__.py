@@ -1,9 +1,11 @@
 from . import ObjectDictionary
 import click
+import jinja2
 import yaml
 import os
 
 script_dir = os.path.dirname(__file__)
+TEMPLATE_DIR = os.path.join(script_dir, "templates")
 
 
 @click.command()
@@ -17,6 +19,17 @@ def cli(config_file=None):
     with open("doc.md", "w") as file:
         file.write(od.to_md())
     os.rename("doc.md", "../docs/objectDictionnary.md")
+
+    for module in od.modules:
+        with open(f"{module}.md", "w") as file:
+            file.write(od.to_doc(module))
+        os.rename(f"{module}.md", f"../docs/modules/{module}.md")
+    
+    with open("_sidebar.md", "w") as file:
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        template = env.get_template("_sidebar.md.j2")
+        file.write(template.render(modules=od.modules))
+    os.rename("_sidebar.md", "../docs/_sidebar.md")
 
     with open("od.eds", "w") as file:
         file.write(od.to_eds())

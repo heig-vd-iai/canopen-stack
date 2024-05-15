@@ -46,3 +46,18 @@
 {% endfor %}
 
 </details>
+
+# Object Dictionary sort by module
+<details close>
+<summary>click to collapse</summary>
+
+{% for module in modules %}
+## Module {{ module }}
+| Index | name |
+| --- | --- |
+{% for object in objects %}
+{% if object.module == module %}
+| {{ object.index_hex }} | {{ object.name }} |
+{% endif %}
+{% endfor %}
+{% endfor %}

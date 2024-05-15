@@ -200,9 +200,9 @@ int32_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t upper = length - 1;
     while (lower <= upper) {
         int32_t mid = lower + (upper - lower) / 2;
-        if (objectIndexTable[mid].first == index && objectIndexTable[mid].second == 0)
+        if (CANopenOD::objectIndexTable[mid].first == index && CANopenOD::objectIndexTable[mid].second == 0)
             return mid;
-        else if (objectIndexTable[mid].first < index)
+        else if (CANopenOD::objectIndexTable[mid].first < index)
             lower = mid + 1;
         else
             upper = mid - 1;
@@ -214,8 +214,8 @@ int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
     int32_t indexPos = findObject(index);
     if (indexPos == -1) return -1;
     int32_t id = indexPos + subindex;
-    if (objectIndexTable[id].first == index &&
-        objectIndexTable[id].second == subindex)
+    if (CANopenOD::objectIndexTable[id].first == index &&
+        CANopenOD::objectIndexTable[id].second == subindex)
         return id;
     return -2;
 }
@@ -369,8 +369,8 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
         maxIndex = 0x4FFF;
     }
     for (int i = 0; i < length; i++) {
-        if (objectIndexTable[i].first >= minIndex &&
-            objectIndexTable[i].first <= maxIndex) {
+        if (CANopenOD::objectIndexTable[i].first >= minIndex &&
+            CANopenOD::objectIndexTable[i].first <= maxIndex) {
             size = getSize(i);
             tmp = getMetadata(i)->getDefaultValue();
             int8_t ret;

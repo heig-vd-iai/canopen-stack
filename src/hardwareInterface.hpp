@@ -25,6 +25,7 @@ class HardwareInterface {
      */
     virtual uint32_t getTime_us() = 0;
     virtual void updateError() = 0;
+    virtual void resetRemote() = 0;
     virtual int8_t getRemoteData(Data &data, int32_t id,
                                  SDOAbortCodes &abortCode) = 0;
     virtual int8_t setRemoteData(const Data &data, int32_t id,
