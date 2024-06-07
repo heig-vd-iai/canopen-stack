@@ -3,6 +3,7 @@
  */
 #include "node.hpp"
 #include "frame.hpp"
+#include "cm.h"
 
 namespace CANopen {
     Node node;
@@ -31,9 +32,13 @@ HardwareInterface &Node::hardware() { return *_hardware; }
 void Node::init(HardwareInterface *hardware) {
     _hardware = hardware; 
     _hardware->init();
+    DEVICE_DELAY_US(1000);
     _pdo.init();
+    DEVICE_DELAY_US(1000);
     _sync.init();
+    DEVICE_DELAY_US(1000);
     _emcy.init();
+    DEVICE_DELAY_US(1000);
     _nmt.initSM(); 
 }
 

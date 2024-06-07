@@ -224,9 +224,9 @@ int8_t CommParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
 //            return -1;
 //        }
         // If a PDO was enabled
-        if (current.bits.valid && dataEntry.bits.valid) {
+//        if (current.bits.valid && dataEntry.bits.valid) { //TODO: dont work all time identify why
             remap = true;
-        }
+//        }
         cobId = data.u32;
     } else if (id == odID + INDEX_TRANSMISSION) {
         if (SYNC_MAX < data.u8 && data.u8 < RTR_SYNC) {
