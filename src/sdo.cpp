@@ -553,6 +553,7 @@ void SDO::update(uint32_t timestamp_us) {
     }
     if (__builtin_expect(abortCode != SDOAbortCode_OK, false)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
+        abortCode = SDOAbortCode_OK;
     }
     if (__builtin_expect(serverState != SDOServerState_Ready &&
                              isTimeout(timestamp_us, SDO_TIMEOUT_US),
