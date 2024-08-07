@@ -10,6 +10,7 @@ using namespace CANopen;
 
 void NMT::initSM() { updateSM(); }
 
+
 void NMT::updateSM(NMTServiceCommands command) {
     NMTStates nextState = currentState;
     ParameterGroups pg;
@@ -29,8 +30,7 @@ void NMT::updateSM(NMTServiceCommands command) {
                     node._hb.resetToggleBit();
                     break;
             }
-            if (restorePending || !node._od.loadData(pg)) {
-                restorePending = false;
+            if (!node._od.loadData(pg)) {
                 node._od.restoreData(pg);
             }
             node._pdo.reloadTPDO();

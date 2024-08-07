@@ -550,6 +550,9 @@ void SDO::update(uint32_t timestamp_us) {
     if (remoteAccesAttempt > SDO_REMOTE_ACCESS_MAX_ATTEMPTS) {
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_AccessFailedHardwareError);
+        serverState = SDOServerState_Ready;
+        remoteAccesAttempt = 0;
+
     }
     if (__builtin_expect(abortCode != SDOAbortCode_OK, false)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
