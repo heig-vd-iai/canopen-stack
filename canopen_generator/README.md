@@ -6,7 +6,6 @@ The file generate is:
 - od.cpp (Object dictionary)
 - od_remote.hpp (Object dictionary for remote core)
 - doc.md (Documentation)
-- remote_config.hpp (Remote configuration #define )
 
 ## Usage
 

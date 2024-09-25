@@ -46,9 +46,9 @@ def cli(config_file=None):
         file.write(od.to_remote())
     os.rename("od_remote.hpp", "../cpu1/od_remote.hpp")
 
-    with open("remote_config.hpp", "w") as file:
-        file.write(od.to_config())
-    os.rename("remote_config.hpp", "../cpu1/remote_config.hpp")
+    # with open("remote_config.hpp", "w") as file:
+    #     file.write(od.to_config())
+    # os.rename("remote_config.hpp", "../cpu1/remote_config.hpp")
 
 
 if __name__ == "__main__":
