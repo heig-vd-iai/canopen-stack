@@ -29,7 +29,7 @@
 #define SDO_BLOCK_SEQNO_MAX 127
 #define SDO_BLOCK_MAX_RETRIES 1
 
-#define SDO_REMOTE_ACCESS_MAX_ATTEMPTS 50
+#define SDO_REMOTE_ACCESS_MAX_ATTEMPTS 10000
 
 namespace CANopen {
 /**
@@ -57,7 +57,7 @@ class SDO {
     uint16_t remoteAccesAttempt = 0;
     SDOServerStates serverState = SDOServerState_Ready;
     uint8_t domainBuffer[DOMAIN_MAX_SIZE];
-    uint16_t count = 0; //TODO: remove debug
+    uint16_t count = 0;  // TODO: remove debug
     struct {
         int32_t odID;
         uint16_t index;
