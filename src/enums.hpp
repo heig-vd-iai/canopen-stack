@@ -3,7 +3,7 @@
  */
 #pragma once
 
-namespace CANopen {
+// namespace CANopen {
 /**
  * Enumeration representing the CANopen function codes.
  * See CiA301:2011§7.3.3 (p. 81)
@@ -201,7 +201,7 @@ enum PhysUnit {
     PhysUnit_INC = 0xB5,
     PhysUnit_STEP = 0xB6
 };
-}  // namespace CANopen
+// }  // namespace CANopen
 
 /**
  * Enumeration representing all of the available EMCY error codes.

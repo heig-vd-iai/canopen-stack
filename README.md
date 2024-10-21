@@ -180,6 +180,18 @@ Here is the list of standard objects, with unsupported ones being crossed :
 | ...        | ...                                |
 | ~~0x1FFF~~ | ~~Object dispatching list~~        |
 
+Objects are stored in the object dictionary using getter and setter functions. These functions are implemented as arrays of function pointers:
+
+Getter Table: int8_t (*objectGetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)
+Setter Table: int8_t (*objectSetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)
+Return Values
+The getter and setter functions return the following values:
+
+0: The value was successfully found or set.
+-1: An error occurred while accessing or modifying the value.
+1: The data is in the process of being retrieved or updated.
+This structure allows for efficient and organized access to objects within the dictionary, ensuring consistent error handling and status reporting.
+
 ## Hardware Interface
 This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
 

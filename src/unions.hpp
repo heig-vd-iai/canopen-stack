@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string>
 
-namespace CANopen {
+// namespace CANopen {
 /**
  * Metadata bitfield of an ObjectEntry.
  * The metadata specifies the read and write permissions, PDO mappability and
@@ -154,4 +154,4 @@ union Data{
     std::string* str;
     uint16_t* domain;
 };
-}  // namespace CANopen
+// }  // namespace CANopen
