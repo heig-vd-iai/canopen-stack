@@ -7,6 +7,7 @@
 #include "enums.hpp"
 #include "unions.hpp"
 
+namespace CANopen {
 
 #pragma pack(push, 1)
 struct Metadata {
@@ -411,3 +412,4 @@ class IObjectDictionnary {
     virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
     virtual uint16_t getSize(int32_t id) = 0;
 };
+} // namespace CANopen
