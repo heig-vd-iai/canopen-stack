@@ -10,6 +10,9 @@
 #include "frame.hpp"
 #include "node.hpp"
 #include "unions.hpp"
+#ifdef ETHERCAT  // TODO: configure in run time
+#include "ethercat.hpp"
+#endif
 using namespace CANopen;
 
 void SDO::enable() { enabled = true; }
@@ -27,7 +30,11 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode) {
     response.setIndex(index);
     response.setSubindex(subindex);
     response.setAbortCode(abortCode);
+#ifdef ETHERCAT
+    EthercatStack::ethercat.coe.sdo.response(response);
+#else
     node.hardware().sendFrame(response);
+#endif
     serverState = SDOServerState_Ready;
 }
 
@@ -51,7 +58,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         return;
     }
     if (__builtin_expect(metadata.dataType == DataType::DOMAIN, false)) {
-        transferData.data.domain = (uint16_t*)domainBuffer;
+        transferData.data.domain = (uint16_t *)domainBuffer;
         transferData.isDomain = true;
     } else {
         transferData.isDomain = false;
@@ -93,14 +100,18 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
         sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
         SDOAbortCodes abortCode;
-        memcpy(response.data + SDO_INITIATE_DATA_OFFSET,
-                &transferData.data.u8, size);
+        memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &transferData.data.u8,
+               size);
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
     response.setCommandByte(sendCommand.value);
     response.setIndex(transferData.index);
     response.setSubindex(transferData.subindex);
+#ifdef ETHERCAT
+    EthercatStack::ethercat.coe.sdo.response(response);
+#else
     node.hardware().sendFrame(response);
+#endif
     serverState = sendCommand.bits_initiate.e ? SDOServerState_Ready
                                               : SDOServerState_Uploading;
     transferData.timestamp_us = timestamp_us;
@@ -128,7 +139,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
         SDO_SEGMENT_DATA_LENGTH - payloadSize;
     transferData.sendCommand.bits_segment.c = !transferData.remainingBytes;
     SDOFrame response(node.nodeId, transferData.sendCommand.value);
-    if(transferData.isDomain){
+    if (transferData.isDomain) {
         memcpy(response.data + SDO_SEGMENT_DATA_OFFSET,
                domainBuffer + bytesSent, payloadSize);
     } else {
@@ -136,7 +147,11 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
                &transferData.data.u8 + bytesSent, payloadSize);
     }
     transferData.remainingBytes -= payloadSize;
+#ifdef ETHERCAT
+    EthercatStack::ethercat.coe.sdo.response(response);
+#else
     node.hardware().sendFrame(response);
+#endif
     if (transferData.sendCommand.bits_segment.c)
         serverState = SDOServerState_Ready;
     transferData.timestamp_us = timestamp_us;
@@ -215,7 +230,11 @@ void SDO::downloadInitiateSend(uint32_t timestamp_us) {
     SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
+#ifdef ETHERCAT
+    EthercatStack::ethercat.coe.sdo.response(response);
+#else
     node.hardware().sendFrame(response);
+#endif
     if (!recvCommand.bits_initiate.e)
         serverState = SDOServerState_Downloading;
     else
@@ -270,7 +289,11 @@ void SDO::downloadSegmentSend(uint32_t timestamp_us) {
     transferData.sendCommand.bits_segment.t =
         transferData.recvCommand.bits_segment.t;
     SDOFrame response(node.nodeId, transferData.sendCommand.value);
+#ifdef ETHERCAT
+    EthercatStack::ethercat.coe.sdo.response(response);
+#else
     node.hardware().sendFrame(response);
+#endif
     transferData.timestamp_us = timestamp_us;
 }
 
@@ -294,8 +317,9 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
                 sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
                 return;
             }
-            if (__builtin_expect(metadata.dataType == DataType::DOMAIN, false)) {
-                transferData.data.domain = (uint16_t*)domainBuffer;
+            if (__builtin_expect(metadata.dataType == DataType::DOMAIN,
+                                 false)) {
+                transferData.data.domain = (uint16_t *)domainBuffer;
                 transferData.isDomain = true;
             } else {
                 transferData.isDomain = false;
@@ -412,9 +436,9 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
     }
     uint32_t bytesSent = transferData.size - transferData.remainingBytes;
     SDOBlockFrame frame(node.nodeId, cmd.value);
-    if(transferData.isDomain){
-        memcpy(frame.data + SDO_BLOCK_DATA_OFFSET,
-               domainBuffer + bytesSent, payloadSize);
+    if (transferData.isDomain) {
+        memcpy(frame.data + SDO_BLOCK_DATA_OFFSET, domainBuffer + bytesSent,
+               payloadSize);
     } else {
         memcpy(frame.data + SDO_BLOCK_DATA_OFFSET,
                &transferData.data.u8 + bytesSent, payloadSize);
@@ -435,7 +459,7 @@ void SDO::blockDownloadEnd(class SDOBlockFrame &request,
 void SDO::blockDownloadEndSub(uint32_t timestamp_us) {}
 
 void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
-    if (!enabled || frame.nodeId != node.nodeId) return;
+//    if (!enabled || frame.nodeId != node.nodeId) return;
     SDOCommandByte cmd = {frame.getCommandByte()};
     switch (serverState) {
         case SDOServerState_Ready:
@@ -552,7 +576,6 @@ void SDO::update(uint32_t timestamp_us) {
                   SDOAbortCode_AccessFailedHardwareError);
         serverState = SDOServerState_Ready;
         remoteAccesAttempt = 0;
-
     }
     if (__builtin_expect(abortCode != SDOAbortCode_OK, false)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);

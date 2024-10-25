@@ -218,20 +218,6 @@ class SDO {
     void blockDownloadEndSub(uint32_t timestamp_us);
 
     /**
-     * Receive and process an SDO frame.
-     * @param frame SDOFrame to be processed.
-     * @param timestamp_us Timestamp in microseconds of the frame reception.
-     */
-    void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
-
-    /**
-     * Check for general SDO or block download timeouts and send block upload
-     * sub-blocks.
-     * @param timestamp_us Current timestamp in microseconds.
-     */
-    void update(uint32_t timestamp_us);
-
-    /**
      * Empty and reset the download buffer.
      */
     void bufferReset();
@@ -246,6 +232,20 @@ class SDO {
    public:
     friend class NMT;
     friend class Node;
+
+    /**
+     * Receive and process an SDO frame.
+     * @param frame SDOFrame to be processed.
+     * @param timestamp_us Timestamp in microseconds of the frame reception.
+     */
+    void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
+
+    /**
+     * Check for general SDO or block download timeouts and send block upload
+     * sub-blocks.
+     * @param timestamp_us Current timestamp in microseconds.
+     */
+    void update(uint32_t timestamp_us);
 
     /**
      * Constructor for the SDO class.
