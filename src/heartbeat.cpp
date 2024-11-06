@@ -14,7 +14,7 @@ HB::HB(){
 void HB::publishState(NMTStates state, uint8_t toggleBit) {
     HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
     node.hardware().sendFrame(frame);
-    lastPublish = node.hardware().getTime_us();
+    lastPublish = node.getTime_us();
 }
 
 void HB::update(uint32_t timestamp_us) { //TODO: add local data

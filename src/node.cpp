@@ -76,8 +76,10 @@ void Node::receiveFrame(Frame frame) {
 
 void Node::update() {
     hardware().update();
-    uint32_t timestamp = node.hardware().getTime_us();
-   _hb.update(timestamp);
-   _sdo.update(timestamp);
-   _pdo.update(timestamp);
+    timestamp_us = node.hardware().getTime_us();
+   _hb.update(timestamp_us);
+   _sdo.update(timestamp_us);
+   _pdo.update(timestamp_us);
 }
+
+uint32_t Node::getTime_us() { return timestamp_us; }

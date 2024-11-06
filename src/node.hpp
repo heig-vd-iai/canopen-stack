@@ -28,6 +28,7 @@ class Node {
     SYNC _sync;
     EMCY _emcy;
     HardwareInterface *_hardware;
+    uint32_t timestamp_us;
 
    public:
     friend NMT;
@@ -110,6 +111,12 @@ class Node {
      * This method should be called periodically.
      */
     void update();
+
+    /**
+     * Get the current timestamp in microseconds.
+     * @return The current timestamp in microseconds.
+     */
+    uint32_t getTime_us();
 };
 extern Node node;
 }  // namespace CANopen

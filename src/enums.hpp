@@ -3,7 +3,7 @@
  */
 #pragma once
 
-// namespace CANopen {
+//namespace CANopen {
 /**
  * Enumeration representing the CANopen function codes.
  * See CiA301:2011§7.3.3 (p. 81)
@@ -201,7 +201,6 @@ enum PhysUnit {
     PhysUnit_INC = 0xB5,
     PhysUnit_STEP = 0xB6
 };
-// }  // namespace CANopen
 
 /**
  * Enumeration representing all of the available EMCY error codes.
@@ -291,7 +290,7 @@ enum AccessType {
 };
 
 enum DataType {
-    BOOL = 0x01,
+//    BOOL = 0x01,
     INTEGER8 = 0x02,
     INTEGER16 = 0x03,
     INTEGER32 = 0x04,
@@ -301,7 +300,8 @@ enum DataType {
     UNSIGNED32 = 0x07,
     DOMAIN = 0x0F,
     UNSIGNED64 = 0x1B,
-    REAL32 = 0x08,
-    REAL64 = 0x11,
+//    REAL32 = 0x08,
+//    REAL64 = 0x11,
     VISIBLE_STRING = 0x09,
 };
+//}  // namespace CANopen

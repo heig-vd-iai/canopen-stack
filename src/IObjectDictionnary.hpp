@@ -24,7 +24,7 @@ struct Metadata_bool : public Metadata {
     Metadata_bool(uint8_t access, bool defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
-        this->dataType = DataType::BOOL;
+        this->dataType = (DataType)0x01;
     }
     Data getDefaultValue() override {
         Data data;
@@ -303,7 +303,7 @@ struct Metadata_float : public Metadata {
     Metadata_float(uint8_t access, float defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
-        this->dataType = DataType::REAL32;
+        this->dataType = (DataType)0x08;
     }
     Data getDefaultValue() override {
         Data data;
@@ -321,7 +321,7 @@ struct Metadata_float_limited : public Metadata_float {
         this->min = min;
         this->max = max;
         this->access.value = access;
-        this->dataType = DataType::REAL32;
+        this->dataType = (DataType)0x08;
     }
     Data getDefaultValue() override {
         Data data;
@@ -336,7 +336,7 @@ struct Metadata_double : public Metadata {
    Metadata_double(uint8_t access, double defaultValue) {
        this->defaultValue = defaultValue;
        this->access.value = access;
-       this->dataType = DataType::REAL64;
+       this->dataType = (DataType)0x11;
    }
    Data getDefaultValue() override {
        Data data;
@@ -354,7 +354,7 @@ struct Metadata_double_limited : public Metadata_double {
        this->min = min;
        this->max = max;
        this->access.value = access;
-       this->dataType = DataType::REAL64;
+       this->dataType = (DataType)0x11;
    }
    Data getDefaultValue() override {
        Data data;
