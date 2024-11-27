@@ -480,7 +480,7 @@ uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
 
 uint16_t ObjectDictionnary::getSize(int32_t id) {
     switch (objectMetadataTable[id]->dataType) {
-        case DataType::BOOL:
+        case 0x01: //TODO: use enume type. now limitation for TI ethercat stack
             return sizeof(bool);
         case DataType::INTEGER8:
             return sizeof(int8_t);
@@ -498,9 +498,9 @@ uint16_t ObjectDictionnary::getSize(int32_t id) {
             return sizeof(uint32_t);
         case DataType::UNSIGNED64:
             return sizeof(uint64_t);
-        case DataType::REAL32:
+        case 0x08:
             return sizeof(float);
-        case DataType::REAL64:
+        case 0x11:
             return sizeof(double);
         case DataType::VISIBLE_STRING:
             return sizeof(char);  // TODO: read string length

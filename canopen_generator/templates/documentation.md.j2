@@ -1,55 +1,4 @@
-# Standard Profile Definitions
-
-# Table of Contents
-{% for profile in profiles %}
-- [Profile {{ profile.profile }} {{ profile.name}}](#profile-{{ profile.profile }})
-{% endfor %}
-- [Object Dictionary](#object-dictionary)
-
-# CANOpen profiles
-<details close>
-<summary>click to collapse</summary>
-
-{% for profile in profiles %}
-# Profile {{ profile.profile }}
-## {{ profile.name }}
-| Index | Name |
-| --- | --- |
-{% for object in profile.objects %}
-| **{{ object.index_hex | upper }}**| {{ object.name }} |
-{% for data in object.data %}
-|  {{ data.name }} | {{ data.type }} |
-{% endfor %}
-{% endfor %}
-{% endfor %}
-
-</details>
-
 # Object Dictionary
-<details close>
-<summary>click to collapse</summary>
-
-{% for object in objects %}
-## Object {{ object.index_hex | upper }} {{ object.name }} [{{ object.module}}]
-{{ object.description }}
-{% if object.remote%}
-[x] Remote
-{% else %}
-[ ] Remote
-{% endif %}
-
-| Name | Type | default |
-| --- | --- | --- |
-{% for data in object.data %}
-| {{ data.name }} | {{ data.type }} | {{ data.default }} |
-{% endfor %}
-{% endfor %}
-
-</details>
-
-# Object Dictionary sort by module
-<details close>
-<summary>click to collapse</summary>
 
 {% for module in modules %}
 ## Module {{ module }}
@@ -57,7 +6,23 @@
 | --- | --- |
 {% for object in objects %}
 {% if object.module == module %}
-| {{ object.index_hex }} | {{ object.name }} |
+| {{ object.index_hex }} | [{{ object.name }}](/modules/{{object.module}}.md?id={{ object.name | replace(' ', '-') }}) |
 {% endif %}
+{% endfor %}
+{% endfor %}
+
+{% for object in objects %}
+## {{ object.index_hex | upper }}
+{{ object.description }}
+{% if object.remote%}
+- [x] Remote
+{% else %}
+- [ ] Remote
+{% endif %}
+
+| Name | Type | default |
+| --- | --- | --- |
+{% for data in object.data %}
+| {{ data.name }} | {{ data.type }} | {{ data.default }} |
 {% endfor %}
 {% endfor %}

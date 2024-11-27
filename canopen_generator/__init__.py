@@ -360,12 +360,22 @@ class ObjectDictionary:
         return template.render(profiles=self.profiles, objects=self.objects, modules=self.modules)
 
     def to_doc(self, module):
+        if module in self.modules_descriptions:
+            if "descriptionFile" in self.modules_descriptions[module]:
+                with open(self.modules_descriptions[module]["descriptionFile"], 'r') as file:
+                    description = file.read()
+            elif "description" in self.modules_descriptions[module]:
+                description = self.modules_descriptions[module]["description"]
+            else:
+                description = ""
+        else:
+            description = ""
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
         template = env.get_template(MODULE_DOCUMENTATION_TEMPLATE)
         return template.render(profiles=self.profiles,
                                 objects=[object for object in self.objects if object.module == module], 
                                 module=module,
-                                description=self.modules_descriptions[module]["description"] if module in self.modules_descriptions else "")
+                                description=description)
 
     def to_eds(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
