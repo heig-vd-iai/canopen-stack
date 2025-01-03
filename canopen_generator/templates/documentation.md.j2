@@ -6,23 +6,8 @@
 | --- | --- |
 {% for object in objects %}
 {% if object.module == module %}
-| {{ object.index_hex }} | [{{ object.name }}](/modules/{{object.module}}.md?id={{ object.name | replace(' ', '-') }}) |
+| {{ object.index_hex }} | [{{ object.name }}](/Object-Dictionary/{{object.module}}/#{{ object.name | replace(' ', '-') | lower }}) |
 {% endif %}
 {% endfor %}
-{% endfor %}
 
-{% for object in objects %}
-## {{ object.index_hex | upper }}
-{{ object.description }}
-{% if object.remote%}
-- [x] Remote
-{% else %}
-- [ ] Remote
-{% endif %}
-
-| Name | Type | default |
-| --- | --- | --- |
-{% for data in object.data %}
-| {{ data.name }} | {{ data.type }} | {{ data.default }} |
-{% endfor %}
 {% endfor %}
