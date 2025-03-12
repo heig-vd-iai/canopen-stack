@@ -15,10 +15,16 @@ canopen-slave.so: $(OBJS) | build
 build/%.o: src/%.cpp | build
 	$(CCX) -o $@ -c $< $(CXFLAGS) -MMD -MP
 
-clean:
-	$(RM) -f $(OBJS) $(EXEC) $(OBJS:.o=.d)
 
 build:
 	mkdir -p build
 
-.PHONY: all clean
+doc:
+	poetry install
+	poetry run python -mcanopen_generator -f --all config.yaml
+
+clean:
+	$(RM) -f $(OBJS) $(EXEC) $(OBJS:.o=.d)
+	$(RM) -r build dist
+
+.PHONY: all clean doc
