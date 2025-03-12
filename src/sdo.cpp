@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#include "IObjectDictionnary.hpp"
+#include "iobject-dictionnary.hpp"
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"

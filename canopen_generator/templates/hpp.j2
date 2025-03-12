@@ -43,7 +43,7 @@
 {% endfor %}
 
 #ifndef _OD_DEFINES_ONLY
-#include "IObjectDictionnary.hpp"
+#include "iobject-dictionnary.hpp"
 
 namespace CANopenOD{
 // INDEX
@@ -144,7 +144,7 @@ public:
     };
 
     // This table contain all the objects setter
-    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = { 
+    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
         {% if subobject.access != "ro" and (subobject.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
@@ -386,7 +386,7 @@ public:
 
     /**
     * Setter called by the od to save data
-    * @param data must contain "save" 
+    * @param data must contain "save"
     * @param id object id for parameter group
     * @param abortCode to set if the object is not found.
     */
@@ -396,7 +396,7 @@ public:
      * Getter called by the od to send information about the save
      * @param data to fill with the save status
      * @param id object id for parameter group
-     * @param abortCode to set if the object is not found. 
+     * @param abortCode to set if the object is not found.
     */
     int8_t getSave(Data &data, int32_t id, SDOAbortCodes &abortCode);
 

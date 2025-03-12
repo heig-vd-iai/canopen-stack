@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <functional>
 #include "unions.hpp"
-#include "enums.hpp"f
+#include "enums.hpp"
 
 #define SYNC_COUNTER_OFFSET 0
 #define SYNC_INDEX 0x1019

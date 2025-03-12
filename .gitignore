@@ -56,3 +56,8 @@ sw-motion.yaml
 sw-motion-lite.yaml
 
 doc.pdf
+
+# Must be generated
+src/od.hpp
+src/od.cpp
+dist/

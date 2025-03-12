@@ -1,5 +1,5 @@
 #pragma once
-#include "ipcCommunication.hpp"
+// #include "ipcCommunication.hpp"  TODO: Why this include? Where is the file?
 #include <stdint.h>
 
 

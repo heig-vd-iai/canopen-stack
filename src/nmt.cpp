@@ -2,7 +2,7 @@
  * Contains the definitions of the NMT class.
  */
 #include "nmt.hpp"
-#include "cm.h"
+//#include "cm.h" // TODO: This has no reason to be included here
 
 #include "frame.hpp"
 #include "node.hpp"
