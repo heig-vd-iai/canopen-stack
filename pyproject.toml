@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "CANopen Stack Slave"
+name = "canopen-stack-slave"
 version = "0.1.0"
 description = "CANopen slave library with autogeneration of EDS file"
 authors = [
