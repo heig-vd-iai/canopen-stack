@@ -1,17 +1,17 @@
-#!/usr/bin/python3
-import os
+import io
 from datetime import datetime
+from pathlib import Path
 
 import jinja2
-import yaml
 from voluptuous import MultipleInvalid
-
+import configparser
 from .schema import config_schema, profile_schema
-from .type import Access, Ctype_name, DataType, ObjectType, Type, Type_code
+from .type import Ctype_name, DataType, ObjectType, Type_code
 
-script_dir = os.path.dirname(__file__)
+import mdformat
 
-TEMPLATE_DIR = os.path.join(script_dir, "templates")
+SCRIPT_DIR = Path(__file__).parent.absolute()
+TEMPLATE_DIR = SCRIPT_DIR / "templates"
 
 DOCUMENTATION_TEMPLATE = "documentation.md.j2"
 MODULE_DOCUMENTATION_TEMPLATE = "module_documentation.md.j2"
@@ -185,7 +185,7 @@ class Object:
                 raise ValueError(f"Object name not found[{hex(index)}]")
             self.category = object["category"]
             self.data = [Data(data) for data in object["data"]]
-        for i, data in enumerate(self.data):
+        for _, data in enumerate(self.data):
             if data.get == "none":
                 data.get = self.get
             if data.set == "none":
@@ -424,9 +424,12 @@ class ObjectDictionary:
             lstrip_blocks=True,
         )
         template = env.get_template(DOCUMENTATION_TEMPLATE)
-        return template.render(
+
+        text = template.render(
             profiles=self.profiles, objects=self.objects, modules=self.modules
         )
+
+        return mdformat.text(text, extensions={"tables"})
 
     def to_doc(self, module):
         if module in self.modules_descriptions:
@@ -454,7 +457,8 @@ class ObjectDictionary:
             description=description,
         )
 
-    def to_eds(self):
+    def to_eds_old(self):
+        """ Deprecated EDS file generation from Jinja2 template """
         env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
             trim_blocks=True,
@@ -473,6 +477,103 @@ class ObjectDictionary:
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects,
         )
+
+    def to_eds(self, filename=None):
+        """ Generate EDS file from object dictionary """
+        config = configparser.ConfigParser(allow_no_value=True)
+        config.optionxform = str # Preserve case (not the default case on INI files)
+
+        config["FileInfo"] = {
+            "FileName": f"{self.file_name}.eds",
+            "FileVersion": self.info["fileVersion"],
+            "FileRevision": self.info["fileRevision"],
+            "EDSVersion": "4.0",
+            "Description": self.info["description"],
+            "CreationTime": self.info["creationTime"],
+            "CreationDate": self.info["creationDate"],
+            "CreatedBy": self.info["createdBy"],
+            "ModificationTime": datetime.now().strftime("%H:%M"),
+            "ModificationDate": datetime.now().strftime("%Y-%m-%d"),
+            "ModifiedBy": self.info["modifiedBy"],
+        }
+
+        config["DeviceInfo"] = {
+            "VendorName": self.info["device"]["vendorName"],
+            "VendorNumber": str(self.info["device"]["vendorNumber"]),
+            "ProductName": self.info["device"]["productName"],
+            "ProductNumber": str(self.info["device"]["productNumber"]),
+            "RevisionNumber": str(self.info["device"]["revisionNumber"]),
+            "OrderCode": self.info["device"]["orderCode"],
+            **{f"Baudrate_{rate}": str(int(self.fonctionalities["baudrate"].get(rate, False))) for rate in [10, 20, 50, 125, 250, 500, 800, 1000]},
+            "SimpleBootUpMaster": str(int(self.fonctionalities.get("simpleBootUpMaster", False))),
+            "SimpleBootUpSlave": str(int(self.fonctionalities.get("simpleBootUpSlave", False))),
+            "Granularity": str(self.fonctionalities["granularity"]),
+            "DynamicChannelsSupported": str(int(self.fonctionalities.get("dynamicChannelsSupported", False))),
+            "CompactPDO": str(int(self.fonctionalities.get("compactPDO", False))),
+            "GroupMessaging": str(int(self.fonctionalities.get("groupMessaging", False))),
+            "NrOfRXPDO": str(self.nrOfRXPDO),
+            "NrOfTXPDO": str(self.nrOfTXPDO),
+            "LSS_Supported": str(int(self.fonctionalities.get("LSS_Supported", False))),
+        }
+
+        config["MandatoryObjects"] = {
+            "SupportedObjects": str(len(self.mandatoryObjects)),
+            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(self.mandatoryObjects)}
+        }
+
+        for obj in self.mandatoryObjects:
+            if obj.object_type not in ["0x07", "0x02"]:
+                config[f"{obj.index_hex}"] = {
+                    "ParameterName": obj.name,
+                    "ObjectType": obj.object_type,
+                    "SubNumber": str(obj.subNumber),
+                }
+
+            for sub in obj.get_subobjects:
+                section_name = f"{sub.index_hex}sub{sub.subindex}" if obj.object_type not in ["0x07", "0x02"] else sub.index_hex
+                config[section_name] = {
+                    "ParameterName": sub.parameter_name,
+                    "ObjectType": obj.object_type,
+                    "DataType": sub.type_value,
+                    "AccessType": sub.access,
+                    "PDOMapping": sub.pdo_mapping,
+                }
+                if sub.default != "none":
+                    config[section_name]["DefaultValue"] = str(sub.default)
+
+        config["OptionalObjects"] = {
+            "SupportedObjects": str(len(self.optionalObjects)),
+            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(self.optionalObjects)}
+        }
+
+        for obj in self.optionalObjects:
+            if obj.object_type not in ["0x07", "0x02"]:
+                config[f"{obj.index_hex}"] = {
+                    "ParameterName": obj.name,
+                    "ObjectType": obj.object_type,
+                    "SubNumber": str(obj.subNumber),
+                }
+
+            for sub in obj.get_subobjects:
+                if obj.category != "mandatory":
+                    section_name = f"{sub.index_hex}sub{sub.subindex}" if obj.object_type not in ["0x07", "0x02"] else sub.index_hex
+                    config[section_name] = {
+                        "ParameterName": sub.parameter_name,
+                        "ObjectType": obj.object_type,
+                        "DataType": sub.type_value,
+                        "AccessType": sub.access,
+                        "PDOMapping": sub.pdo_mapping,
+                    }
+                    if sub.default != "none":
+                        config[section_name]["DefaultValue"] = str(sub.default)
+
+        if filename:
+            with open(filename, "w") as configfile:
+                config.write(configfile)
+        else:
+            sb = io.StringIO()
+            config.write(sb)
+            return sb.getvalue()
 
     def to_cpp(self):
         env = jinja2.Environment(

@@ -12,7 +12,7 @@ def validate_access(value):
 
 
 def validate_profile_object(objects):
-    for index, object in objects.items():
+    for _, object in objects.items():
         if len(object["data"]) > 1 and not all(
             "name" in data for data in object["data"]
         ):

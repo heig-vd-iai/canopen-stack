@@ -2,11 +2,12 @@
 
 {% for module in modules %}
 ## Module {{ module }}
+
 | Index | name |
 | --- | --- |
 {% for object in objects %}
 {% if object.module == module %}
-| {{ object.index_hex }} | [{{ object.name }}](/Object-Dictionary/{{object.module}}/#{{ object.name | replace(' ', '-') | lower }}) |
+| {{ object.index_hex }} | [{{ object.name }}](modules/{{object.module}}/#{{ object.name | replace(' ', '-') | lower }}) |
 {% endif %}
 {% endfor %}
 

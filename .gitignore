@@ -54,3 +54,5 @@ config_remote.hpp
 
 sw-motion.yaml
 sw-motion-lite.yaml
+
+doc.pdf

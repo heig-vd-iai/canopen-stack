@@ -1,4 +1,7 @@
-import os
+"""
+Parse a CANopen configuration file and generate all the metadata files.
+"""
+from pathlib import Path
 
 import click
 import jinja2
@@ -6,58 +9,82 @@ import yaml
 
 from . import ObjectDictionary
 
-script_dir = os.path.dirname(__file__)
-TEMPLATE_DIR = os.path.join(script_dir, "templates")
+SCRIPT_DIR = Path(__file__).parent.absolute()
+TEMPLATE_DIR = SCRIPT_DIR / "templates"
+
+PROFILE_FILE = SCRIPT_DIR / "profiles.yaml"
 
 
 @click.command()
-@click.argument("config_file", type=click.Path(exists=True))
-def cli(config_file=None):
-    with open(script_dir + "/profiles.yaml", "r") as p_file:
-        with open(config_file) as c_file:
-            file_name = os.path.splitext(os.path.basename(c_file.name))[0]
-            od = ObjectDictionary(
-                yaml.safe_load(p_file), yaml.safe_load(c_file), file_name
+@click.argument("config", type=click.Path(exists=True))
+@click.option(
+    "--outdir", "-o", type=click.Path(), default="dist", help="Output directory"
+)
+@click.option("--profile", "-p", type=str, help="Path to the profile file if needed")
+@click.option("--all", "-a", is_flag=True, help="Generate all the files")
+@click.option("--eds", "-e", is_flag=True, help="Generate the EDS file")
+@click.option("--firmware", "-w", is_flag=True, help="Generate the C++ files")
+@click.option("--doc", "-d", is_flag=True, help="Generate the documentation")
+@click.option("--force", "-f", is_flag=True, help="Force the generation")
+def cli(config, outdir, profile, force, **kwargs):
+    if not profile:
+        profile = PROFILE_FILE
+
+    # Load profile and configuration
+    with open(profile, "r") as p:
+        with open(config) as config:
+            file_name = Path(config.name).stem
+            od = ObjectDictionary(yaml.safe_load(p), yaml.safe_load(config), file_name)
+
+    # Create output directory
+    outdir = Path(outdir)
+    if not outdir.exists():
+        outdir.mkdir()
+    if not outdir.is_dir():
+        raise click.BadParameter("Output directory must be a directory")
+    if not outdir.iterdir():
+        if not force:
+            raise click.BadParameter("Output directory must be empty")
+
+    # Generate files
+    if kwargs["all"] or kwargs["eds"]:
+        (outdir / "docs").mkdir(exist_ok=force)
+        (outdir / "docs/modules").mkdir(exist_ok=force)
+        with open(outdir / "docs/object-dictionnary.md", "w") as file:
+            file.write(od.to_md())
+
+        for module in od.modules:
+            with open(outdir / f"docs/modules/{module}.md", "w") as file:
+                file.write(od.to_doc(module))
+
+        with open(outdir / "docs/_sidebar.md", "w") as file:
+            env = jinja2.Environment(
+                loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+                trim_blocks=True,
+                lstrip_blocks=True,
             )
+            template = env.get_template("_sidebar.md.j2")
+            file.write(template.render(modules=od.modules))
 
-    with open("doc.md", "w") as file:
-        file.write(od.to_md())
-    os.rename("doc.md", "../docs/objectDictionnary.md")
+    if kwargs["all"] or kwargs["eds"]:
+        with open(outdir / "od.eds", "w") as file:
+            file.write(od.to_eds())
 
-    for module in od.modules:
-        with open(f"{module}.md", "w") as file:
-            file.write(od.to_doc(module))
-        os.rename(f"{module}.md", f"../docs/modules/{module}.md")
+    if kwargs["all"] or kwargs["firmware"]:
+        (outdir / "cm").mkdir(exist_ok=force)
+        (outdir / "cpu1").mkdir(exist_ok=force)
 
-    with open("_sidebar.md", "w") as file:
-        env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
-            trim_blocks=True,
-            lstrip_blocks=True,
-        )
-        template = env.get_template("_sidebar.md.j2")
-        file.write(template.render(modules=od.modules))
-    os.rename("_sidebar.md", "../docs/_sidebar.md")
+        with open(outdir / "cm/od.hpp", "w") as file:
+            file.write(od.to_hpp())
 
-    with open("od.eds", "w") as file:
-        file.write(od.to_eds())
+        with open(outdir / "cm/od.cpp", "w") as file:
+            file.write(od.to_cpp())
 
-    with open("od.hpp", "w") as file:
-        file.write(od.to_hpp())
-    os.rename("od.hpp", "../cm/od.hpp")  # TODO: user input for path
+        with open(outdir / "cpu1/od_remote.hpp", "w") as file:
+            file.write(od.to_remote())
 
-    with open("od.cpp", "w") as file:
-        file.write(od.to_cpp())
-    os.rename("od.cpp", "../cm/od.cpp")
-
-    with open("od_remote.hpp", "w") as file:
-        file.write(od.to_remote())
-    os.rename("od_remote.hpp", "../cpu1/od_remote.hpp")
-
-    # with open("remote_config.hpp", "w") as file:
-    #     file.write(od.to_config())
-    # os.rename("remote_config.hpp", "../cpu1/remote_config.hpp")
-
+        with open(outdir / "cpu1/remote_config.hpp", "w") as file:
+            file.write(od.to_config())
 
 if __name__ == "__main__":
     cli()
