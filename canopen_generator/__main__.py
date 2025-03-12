@@ -40,7 +40,7 @@ def cli(config, outdir, profile, force, **kwargs):
     # Create output directory
     outdir = Path(outdir)
     if not outdir.exists():
-        outdir.mkdir()
+        outdir.mkdir(parents=True)
     if not outdir.is_dir():
         raise click.BadParameter("Output directory must be a directory")
     if not outdir.iterdir():

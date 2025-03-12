@@ -450,12 +450,14 @@ class ObjectDictionary:
             lstrip_blocks=True,
         )
         template = env.get_template(MODULE_DOCUMENTATION_TEMPLATE)
-        return template.render(
+        text = template.render(
             profiles=self.profiles,
             objects=[object for object in self.objects if object.module == module],
             module=module,
             description=description,
         )
+        return mdformat.text(text, extensions={"tables"})
+
 
     def to_eds_old(self):
         """Deprecated EDS file generation from Jinja2 template"""
