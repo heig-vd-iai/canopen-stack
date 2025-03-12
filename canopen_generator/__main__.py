@@ -1,8 +1,10 @@
-from . import ObjectDictionary
+import os
+
 import click
 import jinja2
 import yaml
-import os
+
+from . import ObjectDictionary
 
 script_dir = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(script_dir, "templates")
@@ -11,10 +13,12 @@ TEMPLATE_DIR = os.path.join(script_dir, "templates")
 @click.command()
 @click.argument("config_file", type=click.Path(exists=True))
 def cli(config_file=None):
-    with open(script_dir +"/profiles.yaml", "r") as p_file:
+    with open(script_dir + "/profiles.yaml", "r") as p_file:
         with open(config_file) as c_file:
             file_name = os.path.splitext(os.path.basename(c_file.name))[0]
-            od = ObjectDictionary(yaml.safe_load(p_file), yaml.safe_load(c_file), file_name)
+            od = ObjectDictionary(
+                yaml.safe_load(p_file), yaml.safe_load(c_file), file_name
+            )
 
     with open("doc.md", "w") as file:
         file.write(od.to_md())
@@ -24,9 +28,13 @@ def cli(config_file=None):
         with open(f"{module}.md", "w") as file:
             file.write(od.to_doc(module))
         os.rename(f"{module}.md", f"../docs/modules/{module}.md")
-    
+
     with open("_sidebar.md", "w") as file:
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template("_sidebar.md.j2")
         file.write(template.render(modules=od.modules))
     os.rename("_sidebar.md", "../docs/_sidebar.md")
@@ -36,7 +44,7 @@ def cli(config_file=None):
 
     with open("od.hpp", "w") as file:
         file.write(od.to_hpp())
-    os.rename("od.hpp", "../cm/od.hpp") #TODO: user input for path
+    os.rename("od.hpp", "../cm/od.hpp")  # TODO: user input for path
 
     with open("od.cpp", "w") as file:
         file.write(od.to_cpp())

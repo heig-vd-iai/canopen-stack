@@ -1,11 +1,13 @@
 from enum import Enum
 
+
 class Access(Enum):
     rw = "rw"
     ro = "ro"
     wo = "wo"
     const = "const"
     none = "none"
+
 
 class Type(Enum):
     bool = "bool"
@@ -22,6 +24,7 @@ class Type(Enum):
     string = "string"
     domain = "domain"
 
+
 class DataType(Enum):
     bool = "0x01"
     int8 = "0x02"
@@ -37,6 +40,7 @@ class DataType(Enum):
     string = "0x09"
     domain = "0x0F"
 
+
 class Ctype_name(Enum):
     bool = "bool"
     int8 = "int8_t"
@@ -51,6 +55,7 @@ class Ctype_name(Enum):
     float64 = "double"
     string = "string"
     domain = "domain"
+
 
 class Type_code(Enum):
     bool = "b"
@@ -76,4 +81,3 @@ class ObjectType(Enum):
     var = "0x07"
     array = "0x08"
     record = "0x09"
-

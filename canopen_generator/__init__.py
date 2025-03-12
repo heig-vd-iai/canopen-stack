@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 import os
-import yaml
-import jinja2
 from datetime import datetime
+
+import jinja2
+import yaml
 from voluptuous import MultipleInvalid
-from .schema import profile_schema, config_schema
-from .type import Access, Type, DataType, ObjectType, Ctype_name, Type_code
+
+from .schema import config_schema, profile_schema
+from .type import Access, Ctype_name, DataType, ObjectType, Type, Type_code
 
 script_dir = os.path.dirname(__file__)
 
@@ -21,6 +23,7 @@ CONFIG_TEMPLATE = "config.j2"
 
 LOGICAL_DEVICE_OFFSET = 0x800
 
+
 class Data:
 
     def __init__(self, data: dict) -> None:
@@ -35,11 +38,14 @@ class Data:
         self.set = data["set"]
         self.length = data["length"]
         if str(self.default).startswith("$NODEID+"):
-            self.default = int(str(self.default).split("+")[-1], 0) + 1 ## TODO: add node id
-    
+            self.default = (
+                int(str(self.default).split("+")[-1], 0) + 1
+            )  ## TODO: add node id
+
     @property
     def data_type(self):
         return DataType[self.type].value
+
 
 class SubObject:
 
@@ -69,7 +75,7 @@ class SubObject:
     @property
     def ctype_name(self):
         return Ctype_name[self.type].value
-    
+
     @property
     def type_code(self):
         return Type_code[self.type].value
@@ -83,7 +89,9 @@ class SubObject:
         readable = True if self.access != "wo" else False
         writeable = True if self.access != "ro" or self.access != "c" else False
         mappable = True if self.pdo_mapping else False
-        limited = True if self.low_limit != "none" and self.high_limit != "none" else False
+        limited = (
+            True if self.low_limit != "none" and self.high_limit != "none" else False
+        )
         remote = True if self.remote else False
         meta = f"0b{int(remote)}{int(limited)}{int(mappable)}{int(writeable)}{int(readable)}"
         return meta
@@ -92,7 +100,7 @@ class SubObject:
 class Object:
 
     def __init__(self, object: dict, profiles: dict, index: int, axis: int) -> None:
-        self.index = index + LOGICAL_DEVICE_OFFSET  * axis
+        self.index = index + LOGICAL_DEVICE_OFFSET * axis
         self.alias = object["alias"]
         self.profile = object["profile"]
         self.remote = object["remote"]
@@ -105,14 +113,22 @@ class Object:
         self.logicalDevice = axis
         if self.profile != 0:
             try:
-                profile = next(profile for profile in profiles if profile.profile == self.profile)
+                profile = next(
+                    profile for profile in profiles if profile.profile == self.profile
+                )
             except StopIteration:
                 print(f"Profile {self.profile} not found")
                 exit(1)
             try:
-                profileObject = next(profileObject for profileObject in profile.objects if profileObject.index == index)
+                profileObject = next(
+                    profileObject
+                    for profileObject in profile.objects
+                    if profileObject.index == index
+                )
             except StopIteration:
-                print(f"Object {hex(self.index)} not found in profile {profile.profile}")
+                print(
+                    f"Object {hex(self.index)} not found in profile {profile.profile}"
+                )
                 exit(1)
             self.name = profileObject.name
             self.category = profileObject.category
@@ -125,18 +141,22 @@ class Object:
             if length > 1:
                 name = self.data[1].name
                 for i in range(1, length):
-                    self.data.append(Data({
-                        "type": self.data[1].type,
-                        "name": name.replace("?#", str(i)),
-                        "access": self.data[1].access,
-                        "pdo_mapping": self.data[1].pdo_mapping,
-                        "default": self.data[1].default,
-                        "lowLimit": self.data[1].low_limit,
-                        "highLimit": self.data[1].high_limit,
-                        "get": self.data[1].get,
-                        "set": self.data[1].set,
-                        "length": 1
-                    }))
+                    self.data.append(
+                        Data(
+                            {
+                                "type": self.data[1].type,
+                                "name": name.replace("?#", str(i)),
+                                "access": self.data[1].access,
+                                "pdo_mapping": self.data[1].pdo_mapping,
+                                "default": self.data[1].default,
+                                "lowLimit": self.data[1].low_limit,
+                                "highLimit": self.data[1].high_limit,
+                                "get": self.data[1].get,
+                                "set": self.data[1].set,
+                                "length": 1,
+                            }
+                        )
+                    )
             # Overwrite data with object specific data
             if "data" in object:
                 if len(object["data"]) > len(self.data):
@@ -157,7 +177,7 @@ class Object:
                         self.data[i].set = data["set"]
                     if "length" in data:
                         self.data[i].length = data["length"]
-                self.data = self.data[:len(object["data"])]
+                self.data = self.data[: len(object["data"])]
         else:
             if "name" in object:
                 self.name = object["name"]
@@ -185,10 +205,13 @@ class Object:
                 return ObjectType.array.value
             else:
                 return ObjectType.record.value
-    
+
     @property
     def get_subobjects(self):
-        return [SubObject(data, self.index, index, self) for index, data in enumerate(self.data)]
+        return [
+            SubObject(data, self.index, index, self)
+            for index, data in enumerate(self.data)
+        ]
 
     @property
     def index_hex(self):
@@ -197,7 +220,7 @@ class Object:
     @property
     def subNumber(self):
         return len(self.data)
-            
+
 
 class ProfileObject:
 
@@ -214,12 +237,15 @@ class ProfileObject:
     def index_hex(self):
         return hex(self.index)[2:]
 
+
 class Profile:
 
     def __init__(self, profile: dict, profile_index) -> None:
         self.profile = profile_index
         self.name = profile["name"]
-        self.objects = [ProfileObject(object, index) for index, object in profile["objects"].items()]
+        self.objects = [
+            ProfileObject(object, index) for index, object in profile["objects"].items()
+        ]
 
 
 class ObjectDictionary:
@@ -228,7 +254,10 @@ class ObjectDictionary:
         self.file_name = file_name
         try:
             self.profile = profile_schema(profiles)
-            self.profiles = [Profile(profile, index) for index, profile in self.profile["profiles"].items()]
+            self.profiles = [
+                Profile(profile, index)
+                for index, profile in self.profile["profiles"].items()
+            ]
             self.fonctionalities = self.profile["functionalities"]
         except MultipleInvalid as e:
             print("sw-motion-generator profile error: " + str(e))
@@ -241,7 +270,9 @@ class ObjectDictionary:
                     self.objects.append(Object(object[1], self.profiles, object[0], 0))
                 else:
                     for axis in object[1]["logicalDevices"]:
-                        self.objects.append(Object(object[1], self.profiles, object[0], axis))
+                        self.objects.append(
+                            Object(object[1], self.profiles, object[0], axis)
+                        )
             self.info = self.config["info"]
             self.factory_parameters = self.config["factoryParameters"]
             self.logical_devices = self.config["logicalDevices"]
@@ -255,24 +286,49 @@ class ObjectDictionary:
         else:
             additional_info = "FFFF"
         try:
-            device_type_index = next(index for index, object in enumerate(self.objects) if object.index == 0x1000)
+            device_type_index = next(
+                index
+                for index, object in enumerate(self.objects)
+                if object.index == 0x1000
+            )
         except StopIteration:
             print("Object 0x1000 Device type not found")
             exit(1)
-        self.objects[device_type_index].data[0].default = f"0x{additional_info}{self.logical_devices[0]:04X}"
+        self.objects[device_type_index].data[
+            0
+        ].default = f"0x{additional_info}{self.logical_devices[0]:04X}"
         for i in range(1, len(self.logical_devices)):
-            self.objects.append(Object({
-                "name": f"Device Type Logical Device {i}",
-                "alias": f"deviceTypeLogicalDevice{i}",
-                "profile": 0,
-                "remote": False,
-                "description": "Logical device",
-                "module": "none",
-                "get": "none",
-                "set": "none",
-                "category": "optional",
-                "data": [{"type": "int16", "name":"none", "access": "ro", "pdo_mapping": 0, "default": f"0x{self.logical_devices[i]:04X}", "lowLimit": "none", "highLimit": "none", "get": "none", "set": "none"}]
-            }, self.profiles, 0x67FF, i-1))
+            self.objects.append(
+                Object(
+                    {
+                        "name": f"Device Type Logical Device {i}",
+                        "alias": f"deviceTypeLogicalDevice{i}",
+                        "profile": 0,
+                        "remote": False,
+                        "description": "Logical device",
+                        "module": "none",
+                        "get": "none",
+                        "set": "none",
+                        "category": "optional",
+                        "data": [
+                            {
+                                "type": "int16",
+                                "name": "none",
+                                "access": "ro",
+                                "pdo_mapping": 0,
+                                "default": f"0x{self.logical_devices[i]:04X}",
+                                "lowLimit": "none",
+                                "highLimit": "none",
+                                "get": "none",
+                                "set": "none",
+                            }
+                        ],
+                    },
+                    self.profiles,
+                    0x67FF,
+                    i - 1,
+                )
+            )
         self.objects.sort(key=lambda x: x.index)
 
         # test if all mandatory is present
@@ -280,7 +336,11 @@ class ObjectDictionary:
             for profileObject in profile.objects:
                 if profileObject.category == "mandatory":
                     try:
-                        next(object for object in self.objects if object.index == profileObject.index)
+                        next(
+                            object
+                            for object in self.objects
+                            if object.index == profileObject.index
+                        )
                     except StopIteration:
                         print(f"Mandatory object {hex(profileObject.index)} not found")
 
@@ -293,21 +353,24 @@ class ObjectDictionary:
             if object.index >= 0x1800 and object.index < 0x1A00:
                 self.nrOfTXPDO += 1
 
-        self.mandatoryObjects = [object for object in self.objects if object.category == "mandatory"]
-        self.optionalObjects = [object for object in self.objects if object.category == "optional"]
+        self.mandatoryObjects = [
+            object for object in self.objects if object.category == "mandatory"
+        ]
+        self.optionalObjects = [
+            object for object in self.objects if object.category == "optional"
+        ]
 
-        
         self.modules = []
         for object in self.objects:
             if object.module not in self.modules:
                 self.modules.append(object.module)
 
         self.modules_descriptions = self.config["modules_description"]
-    
+
     @property
     def subindex_count(self):
         return sum(len(obj.data) for obj in self.objects)
-    
+
     class TypeNum:
         def __init__(self) -> None:
             self.bool = 0
@@ -321,7 +384,7 @@ class ObjectDictionary:
             self.u64 = 0
             self.f32 = 0
             self.f64 = 0
-            self.str = 0 
+            self.str = 0
 
     @property
     def type_count(self) -> TypeNum:
@@ -355,14 +418,22 @@ class ObjectDictionary:
         return type_num
 
     def to_md(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(DOCUMENTATION_TEMPLATE)
-        return template.render(profiles=self.profiles, objects=self.objects, modules=self.modules)
+        return template.render(
+            profiles=self.profiles, objects=self.objects, modules=self.modules
+        )
 
     def to_doc(self, module):
         if module in self.modules_descriptions:
             if "descriptionFile" in self.modules_descriptions[module]:
-                with open(self.modules_descriptions[module]["descriptionFile"], 'r') as file:
+                with open(
+                    self.modules_descriptions[module]["descriptionFile"], "r"
+                ) as file:
                     description = file.read()
             elif "description" in self.modules_descriptions[module]:
                 description = self.modules_descriptions[module]["description"]
@@ -370,19 +441,29 @@ class ObjectDictionary:
                 description = ""
         else:
             description = ""
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(MODULE_DOCUMENTATION_TEMPLATE)
-        return template.render(profiles=self.profiles,
-                                objects=[object for object in self.objects if object.module == module], 
-                                module=module,
-                                description=description)
+        return template.render(
+            profiles=self.profiles,
+            objects=[object for object in self.objects if object.module == module],
+            module=module,
+            description=description,
+        )
 
     def to_eds(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(EDS_TEMPLATE)
         return template.render(
-            objects=self.objects, 
-            file_name=self.file_name, 
+            objects=self.objects,
+            file_name=self.file_name,
             info=self.info,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
@@ -390,13 +471,18 @@ class ObjectDictionary:
             nrOfRXPDO=self.nrOfRXPDO,
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects)
-    
+            optionalObjects=self.optionalObjects,
+        )
+
     def to_cpp(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(CPP_TEMPLATE)
         return template.render(
-            objects=self.objects, 
+            objects=self.objects,
             info=self.info,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
@@ -404,13 +490,18 @@ class ObjectDictionary:
             nrOfRXPDO=self.nrOfRXPDO,
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects)
+            optionalObjects=self.optionalObjects,
+        )
 
     def to_hpp(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(HPP_TEMPLATE)
         return template.render(
-            objects=self.objects, 
+            objects=self.objects,
             info=self.info,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
@@ -422,13 +513,18 @@ class ObjectDictionary:
             optionalObjects=self.optionalObjects,
             type_count=self.type_count,
             subindex_count=self.subindex_count,
-            node_id=self.info["device"]["nodeID"])
+            node_id=self.info["device"]["nodeID"],
+        )
 
     def to_remote(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(REMOTE_TEMPLATE)
         return template.render(
-            objects=self.objects, 
+            objects=self.objects,
             info=self.info,
             factory_parameters=self.factory_parameters,
             fonctionalities=self.fonctionalities,
@@ -437,13 +533,16 @@ class ObjectDictionary:
             nrOfRXPDO=self.nrOfRXPDO,
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects)
+            optionalObjects=self.optionalObjects,
+        )
 
     def to_config(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR), trim_blocks=True, lstrip_blocks=True)
+        env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
         template = env.get_template(CONFIG_TEMPLATE)
         return template.render(
             factory_parameters=self.factory_parameters,
         )
-
-

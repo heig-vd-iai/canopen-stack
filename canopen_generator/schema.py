@@ -1,142 +1,171 @@
-from .type import Access, Type
-from voluptuous import Schema, Required, Optional, All, Length, Any, Invalid
+from voluptuous import All, Any, Invalid, Length, Optional, Required, Schema
+
+from .type import Access
+
 
 def validate_access(value):
     if value not in Access.__members__:
-        raise Invalid(f"Invalid access type. Must be one of {list(Access.__members__.values())}")
+        raise Invalid(
+            f"Invalid access type. Must be one of {list(Access.__members__.values())}"
+        )
     return value
+
 
 def validate_profile_object(objects):
     for index, object in objects.items():
-        if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
-            raise Invalid(f"If there are more than one data fields, they must have a name [{hex(object['index'])}]")
-            
+        if len(object["data"]) > 1 and not all(
+            "name" in data for data in object["data"]
+        ):
+            raise Invalid(
+                f"If there are more than one data fields, they must have a name [{hex(object['index'])}]"
+            )
+
         if len(object["data"]) == 1:
             object["data"][0]["name"] = object["name"]
     return objects
+
 
 def validate_object(objects):
     for index, object in objects.items():
         if index < 0x6000:
             if "logicalDevices" in object:
-                raise Invalid(f"Only Standardized profile area object can have logical device field [{hex(index)}]")
+                raise Invalid(
+                    f"Only Standardized profile area object can have logical device field [{hex(index)}]"
+                )
         if "data" in object and object["profile"] == 0:
-            if len(object["data"]) > 1 and not all("name" in data for data in object["data"]):
-                raise Invalid(f"If there are more than one data fields, they must have a name [{hex(index)}]")
+            if len(object["data"]) > 1 and not all(
+                "name" in data for data in object["data"]
+            ):
+                raise Invalid(
+                    f"If there are more than one data fields, they must have a name [{hex(index)}]"
+                )
             if len(object["data"]) == 1:
                 object["data"][0]["name"] = object["name"]
     return objects
 
-data_schema = [{
-    Required("type") : str,
-    Optional("name") : str,
-    Optional("length", default=1) : int,
-    Required("access") : All(str, validate_access),
-    Optional("pdo_mapping", default=False) : bool,
-    Optional("default", default=0) : Any(int, float, bool, str),
-    Optional("lowLimit", default="none"): Any(str, int, float),
-    Optional("highLimit", default="none"): Any(str, int, float),
-    Optional("get", default="none"): str,
-    Optional("set", default="none"): str,
-}]
 
-data_object_schema = [{
-    Optional("length", default=1) : int,
-    Optional("pdo_mapping") : bool,
-    Optional("default") : Any(int, float, bool, str),
-    Optional("lowLimit"): Any(str, int, float),
-    Optional("highLimit"): Any(str, int, float),
-    Optional("get"): str,
-    Optional("set"): str,
-}]
-
-profile_schema = Schema({
-    Required("functionalities"): {
-        Required("baudrate"): {
-            Optional(10, default=False): bool,
-            Optional(20, default=False): bool,
-            Optional(50, default=False): bool,
-            Optional(125, default=False): bool,
-            Optional(250, default=False): bool,
-            Optional(500, default=False): bool,
-            Optional(800, default=False): bool,
-            Optional(1000, default=False): bool
-        },
-        Required("simpleBootUpMaster"): bool,
-        Required("simpleBootUpSlave"): bool,
-        Required("granularity"): int,
-        Required("dynamicChannelsSupported"): bool,
-        Required("compactPDO"): bool,
-        Required("groupMessaging"): bool,
-        Required("LSS_Supported"): bool
-    },
-    Required("profiles"): {
-        int: {
-                Required("name"): str,
-                Required("objects"): All({
-                    int:{
-                        Required("name"): str,
-                        Optional("category", default="optional"): str,
-                        Required("data"): data_schema,
-                        Optional("get", default="none"): str,
-                        Optional("set", default="none"): str,
-                    }
-                }, Length(min=1), validate_profile_object)
-            }
+data_schema = [
+    {
+        Required("type"): str,
+        Optional("name"): str,
+        Optional("length", default=1): int,
+        Required("access"): All(str, validate_access),
+        Optional("pdo_mapping", default=False): bool,
+        Optional("default", default=0): Any(int, float, bool, str),
+        Optional("lowLimit", default="none"): Any(str, int, float),
+        Optional("highLimit", default="none"): Any(str, int, float),
+        Optional("get", default="none"): str,
+        Optional("set", default="none"): str,
     }
-})
+]
 
-config_schema = Schema({
-    Required("info"): {
-        Required("fileVersion") : int,
-        Required("fileRevision") : int,
-        Required("description") : str,
-        Required("createdBy") : str,
-        Required("creationTime"): str,
-        Required("creationDate") : str,
-        Required("modifiedBy") : str,
-        Required("device"): {
-            Required("vendorName"): str,
-            Required("vendorNumber"): int,
-            Required("productName"): str,
-            Required("productNumber"): int,
-            Required("revisionNumber"): int,
-            Required("orderCode"): int,
-            Required("nodeID"): int,
+data_object_schema = [
+    {
+        Optional("length", default=1): int,
+        Optional("pdo_mapping"): bool,
+        Optional("default"): Any(int, float, bool, str),
+        Optional("lowLimit"): Any(str, int, float),
+        Optional("highLimit"): Any(str, int, float),
+        Optional("get"): str,
+        Optional("set"): str,
+    }
+]
+
+profile_schema = Schema(
+    {
+        Required("functionalities"): {
+            Required("baudrate"): {
+                Optional(10, default=False): bool,
+                Optional(20, default=False): bool,
+                Optional(50, default=False): bool,
+                Optional(125, default=False): bool,
+                Optional(250, default=False): bool,
+                Optional(500, default=False): bool,
+                Optional(800, default=False): bool,
+                Optional(1000, default=False): bool,
+            },
+            Required("simpleBootUpMaster"): bool,
+            Required("simpleBootUpSlave"): bool,
+            Required("granularity"): int,
+            Required("dynamicChannelsSupported"): bool,
+            Required("compactPDO"): bool,
+            Required("groupMessaging"): bool,
+            Required("LSS_Supported"): bool,
         },
-    },
-    Required("factoryParameters"):{
-        Required("pwmFrequency"): int,
-        Required("pwmDeadBand"): int,
-        Required("adcSampwin"): int,
-        Required("absoluteMaxVoltage"): int,
-        Required("absoluteMaxCurrent"): int,
-        Required("velocityPrescale") : int,
-    },
-    Required("logicalDevices"):{
-        int: int 
-    },
-    Required("objectDictionary"): All({
-        int: {
-            Required("alias"): str,
-            Optional("profile", default=0): int,
-            Optional("name", default="none"): str,
-            Optional("module", default=""): str,
-            Optional("description", default=""): str,
-            Optional("descriptionFile", default=""): str,
-            Optional("category", default="optional"): Any("optional", "mandatory", "conditional"),
-            Optional("data"): Any(data_schema, data_object_schema),
-            Optional("logicalDevices"): Any([int]),
-            Optional("get", default="none"): str,
-            Optional("set", default="none"): str,
-            Optional("remote", default=False): bool,
-            Optional("unit", default="none"): str,
-        }
-    }, validate_object),
-    Optional("modules_description"): All({
-        str: {
-            Optional("description"): str,
-            Optional("descriptionFile"): str
-        }
-    })
-})
+        Required("profiles"): {
+            int: {
+                Required("name"): str,
+                Required("objects"): All(
+                    {
+                        int: {
+                            Required("name"): str,
+                            Optional("category", default="optional"): str,
+                            Required("data"): data_schema,
+                            Optional("get", default="none"): str,
+                            Optional("set", default="none"): str,
+                        }
+                    },
+                    Length(min=1),
+                    validate_profile_object,
+                ),
+            }
+        },
+    }
+)
+
+config_schema = Schema(
+    {
+        Required("info"): {
+            Required("fileVersion"): int,
+            Required("fileRevision"): int,
+            Required("description"): str,
+            Required("createdBy"): str,
+            Required("creationTime"): str,
+            Required("creationDate"): str,
+            Required("modifiedBy"): str,
+            Required("device"): {
+                Required("vendorName"): str,
+                Required("vendorNumber"): int,
+                Required("productName"): str,
+                Required("productNumber"): int,
+                Required("revisionNumber"): int,
+                Required("orderCode"): int,
+                Required("nodeID"): int,
+            },
+        },
+        Required("factoryParameters"): {
+            Required("pwmFrequency"): int,
+            Required("pwmDeadBand"): int,
+            Required("adcSampwin"): int,
+            Required("absoluteMaxVoltage"): int,
+            Required("absoluteMaxCurrent"): int,
+            Required("velocityPrescale"): int,
+        },
+        Required("logicalDevices"): {int: int},
+        Required("objectDictionary"): All(
+            {
+                int: {
+                    Required("alias"): str,
+                    Optional("profile", default=0): int,
+                    Optional("name", default="none"): str,
+                    Optional("module", default=""): str,
+                    Optional("description", default=""): str,
+                    Optional("descriptionFile", default=""): str,
+                    Optional("category", default="optional"): Any(
+                        "optional", "mandatory", "conditional"
+                    ),
+                    Optional("data"): Any(data_schema, data_object_schema),
+                    Optional("logicalDevices"): Any([int]),
+                    Optional("get", default="none"): str,
+                    Optional("set", default="none"): str,
+                    Optional("remote", default=False): bool,
+                    Optional("unit", default="none"): str,
+                }
+            },
+            validate_object,
+        ),
+        Optional("modules_description"): All(
+            {str: {Optional("description"): str, Optional("descriptionFile"): str}}
+        ),
+    }
+)
