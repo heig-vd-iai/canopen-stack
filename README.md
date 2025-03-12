@@ -3,6 +3,8 @@
 - [CANopen](#canopen)
   - [Introduction](#introduction)
   - [Getting Started](#getting-started)
+    - [Generate the object dictionnary](#generate-the-object-dictionnary)
+    - [Build local library](#build-local-library)
   - [Documentation](#documentation)
   - [Object Dictionnary](#object-dictionnary)
   - [Hardware Interface](#hardware-interface)
@@ -27,30 +29,24 @@ This implementation features the following:
 
 ## Getting Started
 
-Before compiling anything, it is mandatory to generate the object dictionnary header file.
-A Python script is provided in the /generator folder.
-Before using it, make sure to install the required packages from the requirements.txt file:
+Before compiling anything, you need a YAML configuration file that describes the device's object dictionnary. Why not a regular EDS? Because EDS doesn't have the full story for each objects.
+
+The Python module *canopen_generator* is used to generate the object dictionnary header file from the configuration file.
+
+### Generate the object dictionnary
 
 ```bash
-pip3 -r requirements.txt
+poetry install
+poetry run python -mcanopen_generator config.yaml
 ```
 
-You can run the generator.py script by providing the path of the EDS file and the node ID:
+### Build local library
+
+Despite the library would not be useful on a PC, it can still be compiled to check for errors. This library is meant to be embedded in a microcontroller, more specifically a TMS32F28388d with a CM core and a C2000 core.
 
 ```bash
-python3 -mgenerator --id=1 generator/example.eds > od.hpp
+make
 ```
-
-The node ID is required because it may be referenced in the EDS file, for example for PDO COB-ID.
-
-The script will do some basic verification, such as missing mandatory objects, missing mapped objects, or unsupported data types.
-
-> [NOTE]
-> Keep in mind that the verification performed is basic and as such you are
-> responsible for providing a well-build EDS file !
-
-On success, the program will create a file named od.hpp containing the custom object dictionnary class.
-It is a mandatory dependency for the rest of the library.
 
 ## Documentation
 
@@ -184,14 +180,15 @@ Here is the list of standard objects, with unsupported ones being crossed :
 
 Objects are stored in the object dictionary using getter and setter functions. These functions are implemented as arrays of function pointers:
 
-Getter Table: int8_t (*objectGetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)
-Setter Table: int8_t (*objectSetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)
-Return Values
+Getter Table: `int8_t (*objectGetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)`
+Setter Table: `int8_t (*objectSetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)`
+
 The getter and setter functions return the following values:
 
-0: The value was successfully found or set.
--1: An error occurred while accessing or modifying the value.
-1: The data is in the process of being retrieved or updated.
+- 0: The value was successfully found or set.
+- -1: An error occurred while accessing or modifying the value.
+- 1: The data is in the process of being retrieved or updated.
+
 This structure allows for efficient and organized access to objects within the dictionary, ensuring consistent error handling and status reporting.
 
 ## Hardware Interface

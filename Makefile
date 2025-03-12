@@ -1,5 +1,5 @@
 CCX?=g++
-CXFLAGS=-std=c++20 -O3 -fPIC #-Wall -Werror -pedantic
+CXFLAGS=-std=c++14 -O3 -fPIC #-Wall -Werror -pedantic
 LDXFLAGS=
 EXEC=canopen-slave.so
 SRCS=$(wildcard src/*.cpp)
