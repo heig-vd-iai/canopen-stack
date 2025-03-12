@@ -15,6 +15,7 @@
 This is a C++14 written CANopen slave library. It is based on the official [CIA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.
 
 This implementation features the following:
+
 - Automatic generation of the object dictionnary as a header file from a device's EDS file.
 - Non volatile storage of object dictionnary.
 - NMT slave that can be controlled by a master or by the application.
@@ -33,6 +34,7 @@ Before using it, make sure to install the required packages from the requirement
 ```bash
 pip3 -r requirements.txt
 ```
+
 You can run the generator.py script by providing the path of the EDS file and the node ID:
 
 ```bash
@@ -193,6 +195,7 @@ The getter and setter functions return the following values:
 This structure allows for efficient and organized access to objects within the dictionary, ensuring consistent error handling and status reporting.
 
 ## Hardware Interface
+
 This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
 
 The interface is done by simply writing the function definition of a few class methods :
@@ -341,6 +344,7 @@ if(voltage < MIN_VOLTAGE)
     throw "Error: Voltage too low !";
 }
 ```
+
 The corresponding bit in the error register will automatically be set, and the error will be pushed to the error history.
 
 Don't forget the generic error bit will be set as well.
@@ -379,6 +383,7 @@ int main()
 ```
 
 Data access is done from the object instance itself. Templated getter and setter are used to read/write from the entry :
+
 ```cpp
 float value;
 Object *obj = node.od()[OD_OBJECT_6048];
@@ -388,6 +393,7 @@ cout << "Value: " << value << endl;
 if (!obj->setValue(0, (float)64.23))
     throw "Error: Could not write value to entry. Invalid size ?";
 ```
+
 The operation will fail if the incorrect type is supplied. The read/write access is bypassed for these methods.
 
 ## Adding Objects
@@ -485,6 +491,7 @@ The maximum value depends on whether or not object 1019 is present: if it is, th
 - SDO block transfer CRC and PST not supported.
 
 Ignored and non-implemented objects :
+
 - Object 1005: standard SYNC COB-ID is used
 - Object 1012: standard TIME COB-ID is used
 - Object 1014: standard EMCY COB-ID is used

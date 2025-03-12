@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "CANopen Stack Slave"
+version = "0.1.0"
+description = "CANopen slave library with autogeneration of EDS file"
+authors = [
+    "Adrien Cardinale <adrien.cardinale@heig-vd.ch>",
+    "Yves Chevallier <yves.chevallier@heig-vd.ch>",
+    "Tristan Liebeherr"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "canopen_generator" }]
+
+[tool.poetry.scripts]
+lexic = "canopen_generator.__main__:cli"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+click = "^8.1.8"
+jinja2 = "^3.1.6"
+pyyaml = "^6.0.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+black = "^25.0.0"
+flake8 = "^7.0.0"
+ruff = "^0.9.9"
+pytest-timeout = "^2.3"
+pytest-cov = "^6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--cov=lexic --cov-report term-missing --doctest-modules"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "C", "I", "B"]
+ignore = ["E501"]
