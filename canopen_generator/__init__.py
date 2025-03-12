@@ -1,14 +1,14 @@
+import configparser
 import io
 from datetime import datetime
 from pathlib import Path
 
 import jinja2
+import mdformat
 from voluptuous import MultipleInvalid
-import configparser
+
 from .schema import config_schema, profile_schema
 from .type import Ctype_name, DataType, ObjectType, Type_code
-
-import mdformat
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 TEMPLATE_DIR = SCRIPT_DIR / "templates"
@@ -458,7 +458,7 @@ class ObjectDictionary:
         )
 
     def to_eds_old(self):
-        """ Deprecated EDS file generation from Jinja2 template """
+        """Deprecated EDS file generation from Jinja2 template"""
         env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
             trim_blocks=True,
@@ -479,9 +479,9 @@ class ObjectDictionary:
         )
 
     def to_eds(self, filename=None):
-        """ Generate EDS file from object dictionary """
+        """Generate EDS file from object dictionary"""
         config = configparser.ConfigParser(allow_no_value=True)
-        config.optionxform = str # Preserve case (not the default case on INI files)
+        config.optionxform = str  # Preserve case (not the default case on INI files)
 
         config["FileInfo"] = {
             "FileName": f"{self.file_name}.eds",
@@ -504,13 +504,26 @@ class ObjectDictionary:
             "ProductNumber": str(self.info["device"]["productNumber"]),
             "RevisionNumber": str(self.info["device"]["revisionNumber"]),
             "OrderCode": self.info["device"]["orderCode"],
-            **{f"Baudrate_{rate}": str(int(self.fonctionalities["baudrate"].get(rate, False))) for rate in [10, 20, 50, 125, 250, 500, 800, 1000]},
-            "SimpleBootUpMaster": str(int(self.fonctionalities.get("simpleBootUpMaster", False))),
-            "SimpleBootUpSlave": str(int(self.fonctionalities.get("simpleBootUpSlave", False))),
+            **{
+                f"Baudrate_{rate}": str(
+                    int(self.fonctionalities["baudrate"].get(rate, False))
+                )
+                for rate in [10, 20, 50, 125, 250, 500, 800, 1000]
+            },
+            "SimpleBootUpMaster": str(
+                int(self.fonctionalities.get("simpleBootUpMaster", False))
+            ),
+            "SimpleBootUpSlave": str(
+                int(self.fonctionalities.get("simpleBootUpSlave", False))
+            ),
             "Granularity": str(self.fonctionalities["granularity"]),
-            "DynamicChannelsSupported": str(int(self.fonctionalities.get("dynamicChannelsSupported", False))),
+            "DynamicChannelsSupported": str(
+                int(self.fonctionalities.get("dynamicChannelsSupported", False))
+            ),
             "CompactPDO": str(int(self.fonctionalities.get("compactPDO", False))),
-            "GroupMessaging": str(int(self.fonctionalities.get("groupMessaging", False))),
+            "GroupMessaging": str(
+                int(self.fonctionalities.get("groupMessaging", False))
+            ),
             "NrOfRXPDO": str(self.nrOfRXPDO),
             "NrOfTXPDO": str(self.nrOfTXPDO),
             "LSS_Supported": str(int(self.fonctionalities.get("LSS_Supported", False))),
@@ -518,7 +531,10 @@ class ObjectDictionary:
 
         config["MandatoryObjects"] = {
             "SupportedObjects": str(len(self.mandatoryObjects)),
-            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(self.mandatoryObjects)}
+            **{
+                str(i + 2): f"0x{obj.index_hex}"
+                for i, obj in enumerate(self.mandatoryObjects)
+            },
         }
 
         for obj in self.mandatoryObjects:
@@ -530,7 +546,11 @@ class ObjectDictionary:
                 }
 
             for sub in obj.get_subobjects:
-                section_name = f"{sub.index_hex}sub{sub.subindex}" if obj.object_type not in ["0x07", "0x02"] else sub.index_hex
+                section_name = (
+                    f"{sub.index_hex}sub{sub.subindex}"
+                    if obj.object_type not in ["0x07", "0x02"]
+                    else sub.index_hex
+                )
                 config[section_name] = {
                     "ParameterName": sub.parameter_name,
                     "ObjectType": obj.object_type,
@@ -543,7 +563,10 @@ class ObjectDictionary:
 
         config["OptionalObjects"] = {
             "SupportedObjects": str(len(self.optionalObjects)),
-            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(self.optionalObjects)}
+            **{
+                str(i + 2): f"0x{obj.index_hex}"
+                for i, obj in enumerate(self.optionalObjects)
+            },
         }
 
         for obj in self.optionalObjects:
@@ -556,7 +579,11 @@ class ObjectDictionary:
 
             for sub in obj.get_subobjects:
                 if obj.category != "mandatory":
-                    section_name = f"{sub.index_hex}sub{sub.subindex}" if obj.object_type not in ["0x07", "0x02"] else sub.index_hex
+                    section_name = (
+                        f"{sub.index_hex}sub{sub.subindex}"
+                        if obj.object_type not in ["0x07", "0x02"]
+                        else sub.index_hex
+                    )
                     config[section_name] = {
                         "ParameterName": sub.parameter_name,
                         "ObjectType": obj.object_type,

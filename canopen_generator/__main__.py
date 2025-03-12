@@ -1,6 +1,7 @@
 """
 Parse a CANopen configuration file and generate all the metadata files.
 """
+
 from pathlib import Path
 
 import click
@@ -85,6 +86,7 @@ def cli(config, outdir, profile, force, **kwargs):
 
         with open(outdir / "cpu1/remote_config.hpp", "w") as file:
             file.write(od.to_config())
+
 
 if __name__ == "__main__":
     cli()
