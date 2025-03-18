@@ -133,14 +133,16 @@ config_schema = Schema(
                 Required("nodeID"): int,
             },
         },
-        Required("factoryParameters"): {
-            Required("pwmFrequency"): int,
-            Required("pwmDeadBand"): int,
-            Required("adcSampwin"): int,
-            Required("absoluteMaxVoltage"): int,
-            Required("absoluteMaxCurrent"): int,
-            Required("velocityPrescale"): int,
-        },
+        # TODO: CANopen stack: this is not related to canopen
+        # En bref, ca n'a rien à foutre ici...
+        # Required("factoryParameters"): {
+        #     Required("pwmFrequency"): int,
+        #     Required("pwmDeadBand"): int,
+        #     Required("adcSampwin"): int,
+        #     Required("absoluteMaxVoltage"): int,
+        #     Required("absoluteMaxCurrent"): int,
+        #     Required("velocityPrescale"): int,
+        # },
         Required("logicalDevices"): {int: int},
         Required("objectDictionary"): All(
             {

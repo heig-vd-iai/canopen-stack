@@ -84,8 +84,8 @@ def cli(config, outdir, profile, force, **kwargs):
         with open(outdir / "cpu1/od_remote.hpp", "w") as file:
             file.write(od.to_remote())
 
-        with open(outdir / "cpu1/remote_config.hpp", "w") as file:
-            file.write(od.to_config())
+        # with open(outdir / "cpu1/remote_config.hpp", "w") as file:
+        #     file.write(od.to_config())
 
 
 if __name__ == "__main__":
