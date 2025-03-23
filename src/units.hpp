@@ -1,7 +1,9 @@
 #pragma once
 
 #include <math.h>
+
 #include <cstdint>
+
 #include "enums.hpp"
 #include "unions.hpp"
 
@@ -30,4 +32,4 @@ class Units {
     int8_t setData(const Data &data, int32_t odID, SDOAbortCodes &abortCode);
 };
 
-}  // namespace canopen
+}  // namespace CANopen

@@ -1,8 +1,9 @@
 #pragma once
-#include <cstdint>
 
 #include "enums.hpp"
 #include "unions.hpp"
+
+#include <cstdint>
 
 namespace CANopen {
 class Frame;

@@ -4,6 +4,7 @@
  */
 #pragma once
 #include <cstdint>
+
 #define CAN_DATA_LENGTH 8
 #define FUNCTION_OFFSET 7
 #define COBID_MASK 0x7FF

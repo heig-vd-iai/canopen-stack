@@ -1,8 +1,11 @@
 # CANOpen-Generator
+
 This python programe generate the eds file, the od.hpp file and the od.cpp file for the canopen-stack.
 
 ## Profile.yaml
+
 This file contain all definitions of standard object supported by the canopen-stack and application.
+
 ```yaml
 # profile.yaml
 functionalities:
@@ -22,7 +25,6 @@ functionalities:
   compactPDO: false
   groupMessaging: false
   LSS_Supported: false
-
 
 profiles:
   301:
@@ -49,4 +51,3 @@ profiles:
           access: rw
           pdo_mapping: true
           default: 0
-

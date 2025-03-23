@@ -2,7 +2,6 @@
  * Contains the definitions of the EMCY class.
  */
 #include "emergency.hpp"
-
 #include "frame.hpp"
 #include "node.hpp"
 
@@ -143,6 +142,8 @@ int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
         data.u32 = errorsField[odID - this->odID - 1];
         return 0;
     }
+    return 0; // TODO: Is this the expected return value?
+    // TODO: This function always return 0?
 }
 
 int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
@@ -158,6 +159,7 @@ int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
         abortCode = SDOAbortCode_OK;
         return 0;
     }
+    return 0; // TODO: Is this the expected return value?
 }
 
 ErrorBehavior::ErrorBehavior() {}
@@ -317,7 +319,7 @@ void EMCY::clearErrorBit(unsigned bit) {
 }
 
 void EMCY::clearErrorBit(EMCYErrorCodes code) {
-    ErrorRegisterBits bit;
+    ErrorRegisterBits bit = ErrorRegisterBit_Generic;
     switch (code) {
         case EMCYErrorCode_Generic:
         case EMCYErrorCode_DeviceHardware:

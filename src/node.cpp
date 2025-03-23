@@ -4,7 +4,6 @@
 #include "node.hpp"
 #include "frame.hpp"
 #include "hardware-delay.hpp"
-//#include "cm.h" // TODO: This has no reason to be included here
 
 namespace CANopen {
     Node node;

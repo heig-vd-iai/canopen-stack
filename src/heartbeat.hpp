@@ -2,16 +2,19 @@
  * Contains the declaration of the HB class.
  */
 #pragma once
-#include <cstdint>
 
 #include "enums.hpp"
 #include "unions.hpp"
+
+#include <cstdint>
+
 #define HEARTBEAT_DLC 1
 #define HEARTBEAT_STATE_OFFSET 0
 #define TOGGLE_OFFSET 7
 #define HEARTBEAT_INDEX 0x1017
 
 namespace CANopen {
+
 /**
  * Heartbeat object.
  * It automatically handles the following protocols: node guarding, heartbeat,

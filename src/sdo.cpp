@@ -50,7 +50,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
         return;
     }
-    if (__builtin_expect(metadata.dataType == DataType::DOMAIN, false)) {
+    if (UNLIKELY(metadata.dataType == DataType::DOMAIN)) {
         transferData.data.domain = (uint16_t*)domainBuffer;
         transferData.isDomain = true;
     } else {
@@ -294,7 +294,7 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
                 sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
                 return;
             }
-            if (__builtin_expect(metadata.dataType == DataType::DOMAIN, false)) {
+            if (UNLIKELY(metadata.dataType == DataType::DOMAIN)) {
                 transferData.data.domain = (uint16_t*)domainBuffer;
                 transferData.isDomain = true;
             } else {
@@ -491,7 +491,7 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
 }
 
 void SDO::update(uint32_t timestamp_us) {
-    if (__builtin_expect(!enabled, false)) return;
+    if (UNLIKELY(!enabled)) return;
     SDOAbortCodes abortCode = SDOAbortCode_OK;
     switch (serverState) {
         case SDOServerState_BlockUploading:
@@ -554,13 +554,12 @@ void SDO::update(uint32_t timestamp_us) {
         remoteAccesAttempt = 0;
 
     }
-    if (__builtin_expect(abortCode != SDOAbortCode_OK, false)) {
+    if (UNLIKELY(abortCode != SDOAbortCode_OK)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
         abortCode = SDOAbortCode_OK;
     }
-    if (__builtin_expect(serverState != SDOServerState_Ready &&
-                             isTimeout(timestamp_us, SDO_TIMEOUT_US),
-                         false))
+    if (UNLIKELY(serverState != SDOServerState_Ready &&
+                             isTimeout(timestamp_us, SDO_TIMEOUT_US)))
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_TimedOut);
 }

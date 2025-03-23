@@ -20,6 +20,7 @@
 #define MAX_COUNTER 240
 
 namespace CANopen {
+
 /**
  * SYNC object.
  * It automatically handles the reception of SYNC events and calls associated

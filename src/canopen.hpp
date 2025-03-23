@@ -3,5 +3,6 @@
  * It includes all of the CANopen library classes and types.
  */
 #pragma once
+
 #include "frame.hpp"
 #include "node.hpp"

@@ -366,7 +366,7 @@ class ObjectDictionary:
             if object.module not in self.modules:
                 self.modules.append(object.module)
 
-        self.modules_descriptions = self.config["modules_description"]
+        #self.modules_descriptions = self.config["modules_description"]
 
     @property
     def subindex_count(self):
@@ -433,18 +433,19 @@ class ObjectDictionary:
         return mdformat.text(text, extensions={"tables"})
 
     def to_doc(self, module):
-        if module in self.modules_descriptions:
-            if "descriptionFile" in self.modules_descriptions[module]:
-                with open(
-                    self.modules_descriptions[module]["descriptionFile"], "r"
-                ) as file:
-                    description = file.read()
-            elif "description" in self.modules_descriptions[module]:
-                description = self.modules_descriptions[module]["description"]
-            else:
-                description = ""
-        else:
-            description = ""
+        # if module in self.modules_descriptions:
+        #     if "descriptionFile" in self.modules_descriptions[module]:
+        #         with open(
+        #             self.modules_descriptions[module]["descriptionFile"], "r"
+        #         ) as file:
+        #             description = file.read()
+        #     elif "description" in self.modules_descriptions[module]:
+        #         description = self.modules_descriptions[module]["description"]
+        #     else:
+        #         description = ""
+        # else:
+        description = ""
+
         env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
             trim_blocks=True,

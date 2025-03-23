@@ -2,12 +2,11 @@
  * Contains the definitions of the PDO class.
  */
 #include "pdo.hpp"
-
-#include <cstring>
-
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
+
+#include <cstring>
 using namespace CANopen;
 
 MapParameter::MapParameter(int16_t index) {

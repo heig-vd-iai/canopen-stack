@@ -2,12 +2,12 @@
  * Contains the definitions of all of the frame classes.
  */
 #include "frame.hpp"
-
 #include "emergency.hpp"
 #include "heartbeat.hpp"
 #include "nmt.hpp"
 #include "sdo.hpp"
 #include "sync.hpp"
+
 using namespace CANopen;
 
 Frame::Frame(uint8_t nodeId, uint8_t functionCode)

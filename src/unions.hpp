@@ -3,9 +3,11 @@
  */
 #pragma once
 #include <stdint.h>
+
 #include <string>
 
 namespace CANopen {
+
 /**
  * Metadata bitfield of an ObjectEntry.
  * The metadata specifies the read and write permissions, PDO mappability and
@@ -13,7 +15,7 @@ namespace CANopen {
  */
 union Access {
     uint8_t value;
-    struct {  
+    struct {
         bool readable : 1;
         bool writeable : 1;
         bool mappable : 1;
@@ -139,7 +141,7 @@ union SDOBlockCommandByte {
     } bits_upServerEnd;
 };
 
-union Data{
+union Data {
     bool b;
     int8_t i8;
     int16_t i16;
