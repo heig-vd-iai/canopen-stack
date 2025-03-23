@@ -1,7 +1,9 @@
 from voluptuous import All, Any, Invalid, Length, Optional, Required, Schema
 
 from .type import Access
-
+import datetime
+import warnings
+import semver
 
 def validate_access(value):
     if value not in Access.__members__:
@@ -43,6 +45,34 @@ def validate_object(objects):
                 object["data"][0]["name"] = object["name"]
     return objects
 
+def deprecated(data):
+    """ EDS by default use a fileVersion which is an int. We want to enforce
+    the use of semver, or much better, take the version tag from Git. """
+    major, minor = 0, 0
+    if 'fileVersion' in data:
+        warnings.warn("'fileVersion' is deprecated, use 'version' instead", DeprecationWarning)
+        if ('version' in data):
+            raise Invalid("Both 'fileVersion' and 'version' are present")
+        major = int(data['fileVersion'])
+        del data['fileVersion']
+    if 'fileRevision' in data:
+        warnings.warn("'fileRevision' is deprecated, use 'version' instead", DeprecationWarning)
+        if ('version' in data):
+            raise Invalid("Both 'fileRevision' and 'version' are present")
+        minor = int(data['fileRevision'])
+        del data['fileRevision']
+
+    if major or minor:
+        data['version'] = semver.VersionInfo(major, minor)
+
+    return data
+
+semver_schema = All(
+    Any(
+        [int],
+        All(str, lambda s: [int(x) for x in s.split('.')])
+    ), Length(min=3, max=3)
+)
 
 data_schema = [
     {
@@ -115,13 +145,15 @@ profile_schema = Schema(
 
 config_schema = Schema(
     {
-        Required("info"): {
-            Required("fileVersion"): int,
-            Required("fileRevision"): int,
+        Required("info"): All({
+
             Required("description"): str,
-            Required("createdBy"): str,
-            Required("creationTime"): str,
-            Required("creationDate"): str,
+
+            # Normally taken from Git
+            Optional("createdBy"): Any(str, [str]),
+            Optional("createdAt"): datetime.datetime,
+            Optional("version"): semver_schema,
+
             Required("modifiedBy"): str,
             Required("device"): {
                 Required("vendorName"): str,
@@ -132,7 +164,17 @@ config_schema = Schema(
                 Required("orderCode"): int,
                 Required("nodeID"): int,
             },
+
+            # Deprecated values
+            Required("fileVersion"): int,
+            Optional("fileRevision"): int,
+
+            Optional("creationTime"): str,
+            Optional("creationDate"): str,
         },
+           deprecated,
+        ),
+
         # TODO: CANopen stack: this is not related to canopen
         # En bref, ca n'a rien à foutre ici...
         # Required("factoryParameters"): {

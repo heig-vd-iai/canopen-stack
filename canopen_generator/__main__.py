@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 import jinja2
 import yaml
+import warnings
 
 from . import ObjectDictionary
 
@@ -15,6 +16,12 @@ TEMPLATE_DIR = SCRIPT_DIR / "templates"
 
 PROFILE_FILE = SCRIPT_DIR / "profiles.yaml"
 
+def cli_warning_handler(message, category, filename, lineno, file=None, line=None):
+    click.secho(f"{category.__name__}: {message}", fg="yellow", err=True)
+
+# 📌 Rediriger les warnings vers notre handler
+warnings.showwarning = cli_warning_handler
+warnings.simplefilter("default")  # Important pour voir les DeprecationWarnings
 
 @click.command()
 @click.argument("config", type=click.Path(exists=True))
