@@ -8,10 +8,12 @@ authors = [
     "Tristan Liebeherr"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "canopen_generator" }]
+packages = [
+    { include = "canopen_generator" }
+]
 
 [tool.poetry.scripts]
-lexic = "canopen_generator.__main__:cli"
+can-meta-generator = "canopen_generator.__main__:cli"
 
 [tool.poetry.dependencies]
 python = "^3.12"

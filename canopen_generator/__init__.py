@@ -275,7 +275,7 @@ class ObjectDictionary:
                         )
             self.info = self.config["info"]
             # TODO: NON rien à foutre ici
-            #self.factory_parameters = self.config["factoryParameters"]
+            # self.factory_parameters = self.config["factoryParameters"]
             self.logical_devices = self.config["logicalDevices"]
         except MultipleInvalid as e:
             print("sw-motion-generator objectDictionary error: " + str(e))
@@ -366,7 +366,7 @@ class ObjectDictionary:
             if object.module not in self.modules:
                 self.modules.append(object.module)
 
-        #self.modules_descriptions = self.config["modules_description"]
+        # self.modules_descriptions = self.config["modules_description"]
 
     @property
     def subindex_count(self):
@@ -459,7 +459,6 @@ class ObjectDictionary:
             description=description,
         )
         return mdformat.text(text, extensions={"tables"})
-
 
     def to_eds_old(self):
         """Deprecated EDS file generation from Jinja2 template"""
@@ -658,7 +657,7 @@ class ObjectDictionary:
         return template.render(
             objects=self.objects,
             info=self.info,
-            #factory_parameters=self.factory_parameters,
+            # factory_parameters=self.factory_parameters,
             fonctionalities=self.fonctionalities,
             time=datetime.now().strftime("%H:%M"),
             date=datetime.now().strftime("%Y-%m-%d"),
