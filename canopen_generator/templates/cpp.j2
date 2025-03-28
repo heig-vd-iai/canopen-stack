@@ -457,6 +457,7 @@ Data *ObjectDictionnary::getData(int32_t id) {
     return &data;
 }
 
+#if 0 // These methods are never used, what's the purpose of them?
 void ObjectDictionnary::setData(const Data &data, uint16_t index,
                                 uint8_t subindex) {
     int32_t id = findObject(index, subindex);
@@ -470,6 +471,7 @@ void ObjectDictionnary::setData(const Data &data, int32_t id) {
     SDOAbortCodes abortCode;
     objectSetterTable[id](data, id, abortCode);
 }
+#endif
 
 uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
     int32_t id = findObject(index, subindex);

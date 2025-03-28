@@ -14,8 +14,7 @@ struct Metadata {
     Access access;
     DataType dataType;
     virtual Data getDefaultValue(){
-        Data data;
-        return data;
+        return (Data){0};
     }
 };
 
@@ -406,9 +405,11 @@ class IObjectDictionnary {
     virtual Metadata* getMetadata(int32_t id) = 0;
     virtual Data* getData(uint16_t index, uint8_t subindex) = 0;
     virtual Data* getData(int32_t id) = 0;
+    #if 0 // TODO: Not used?
     virtual void setData(const Data &data, uint16_t index,
-                         uint8_t subindex) = 0;
+                          uint8_t subindex) = 0;
     virtual void setData(const Data &data, int32_t id) = 0;
+    #endif
     virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
     virtual uint16_t getSize(int32_t id) = 0;
 };

@@ -48,9 +48,11 @@ namespace CANopenOD{
 // INDEX
 // This table is used to find an object by its index.
 constexpr std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
+    {% set counter = namespace(value=0) %}
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    std::make_pair(0x{{ object.index_hex }}, {{ subobject.subindex }}),
+    /* {{ "%04d"|format(counter.value) }} */ std::make_pair(0x{{ object.index_hex }}, {{ subobject.subindex }}),
+    {% set counter.value = counter.value + 1 %}
     {% endfor %}
     {% endfor %}
 };
@@ -118,9 +120,11 @@ public:
     // This table is used to find an object by its index.
 
     const Metadata *objectMetadataTable[{{ subindex_count }}] = {
+    {% set counter = namespace(value=0) %}
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    &{{subobject.cpp_instance_name}}Metadata,
+        /* {{ "%04d"|format(counter.value) }} */  &{{subobject.cpp_instance_name}}Metadata,
+    {% set counter.value = counter.value + 1 %}
     {% endfor %}
     {% endfor %}
     };
@@ -129,156 +133,70 @@ public:
     // GETTER/SETTER
     // This table contain all the objects getter
     int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
+        {% set counter = namespace(value=0) %}
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if subobject.access != "wo" and subobject.get != "none" and not object.remote%}
-        &get{{subobject.cpp_instance_name}},
+        {% if subobject.access != "wo" and subobject.get != "none" and not object.remote %}
+        /* {{ "%04d"|format(counter.value) }} */ &get{{subobject.cpp_instance_name}},
         {% elif object.remote and subobject.get != "none" %}
-        &getRemoteData,
+        /* {{ "%04d"|format(counter.value) }} */ &getRemoteData,
         {% else %}
-        &getLocalData_{{subobject.ctype_name}},
+        /* {{ "%04d"|format(counter.value) }} */ &getLocalData_{{subobject.ctype_name}},
         {% endif %}
+        {%- set counter.value = counter.value + 1 -%}
         {% endfor %}
         {% endfor %}
     };
 
     // This table contain all the objects setter
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = {
+        {% set counter = namespace(value=0) %}
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
         {% if subobject.access != "ro" and (subobject.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
-        &set{{subobject.cpp_instance_name}},
+        /* {{ "%04d"|format(counter.value) }} */ &set{{subobject.cpp_instance_name}},
         {% elif object.remote and subobject.set != "none" %}
-        &setRemoteData,
+        /* {{ "%04d"|format(counter.value) }} */ &setRemoteData,
         {% else %}
-        &setLocalData_{{subobject.ctype_name}},
+        /* {{ "%04d"|format(counter.value) }} */ &setLocalData_{{subobject.ctype_name}},
         {% endif %}
+        {%- set counter.value = counter.value + 1 -%}
         {% endfor %}
         {% endfor %}
     };
     // END GETTER/SETTER
 
-    //DATA
-    // bool type data table
-    bool boolTable[{{ type_count.bool }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x01" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
+    {% set datatypes = [
+        {'type': 'bool', 'code': '0x01', 'ctype': 'bool'},
+        {'type': 'i8', 'code': '0x02', 'ctype': 'int8_t'},
+        {'type': 'i16', 'code': '0x03', 'ctype': 'int16_t'},
+        {'type': 'i32', 'code': '0x04', 'ctype': 'int32_t'},
+        {'type': 'i64', 'code': '0x15', 'ctype': 'int64_t'},
+        {'type': 'u8', 'code': '0x05', 'ctype': 'uint8_t'},
+        {'type': 'u16', 'code': '0x06', 'ctype': 'uint16_t'},
+        {'type': 'u32', 'code': '0x07', 'ctype': 'uint32_t'},
+        {'type': 'u64', 'code': '0x1B', 'ctype': 'uint64_t'},
+        {'type': 'f32', 'code': '0x08', 'ctype': 'float'},
+        {'type': 'f64', 'code': '0x11', 'ctype': 'double'},
+    ] %}
+
+    {% for item in datatypes %}
+    // Default values for {{ item.type }}
+    {{ item.ctype }} {{ item.type }}Table[{{ type_count[item.type] }}] = {
+        {% set counter = namespace(value=0) %}
+        {% set counter_id = namespace(value=0) %}
+        {% for object in objects %}
+        {% for subobject in object.get_subobjects %}
+        {% if subobject.type_value == item.code %}
+        /* {{ "%04d"|format(counter_id.value) }} - {{ "%03d"|format(counter.value) }} */ {{ subobject.default }},
+        {% set counter_id.value = counter_id.value + 1 %}
+        {% endif %}
+        {%- set counter.value = counter.value + 1 -%}
+        {% endfor %}
+        {% endfor %}
     };
 
-    // int8_t type data table
-    int8_t i8Table[{{ type_count.i8 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x02" %}
-    {{ subobject.default }},
-    {% endif %}
     {% endfor %}
-    {% endfor %}
-    };
-
-    // int16_t type data table
-    int16_t i16Table[{{ type_count.i16 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x03" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // int32_t type data table
-    int32_t i32Table[{{ type_count.i32 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x04" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // int64_t type data table
-    int64_t i64Table[{{ type_count.i64 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x15" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // uint8_t type data table
-    uint8_t u8Table[{{ type_count.u8 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x05" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // uint16_t type data table
-    uint16_t u16Table[{{ type_count.u16 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x06" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // uint32_t type data table
-    uint32_t u32Table[{{ type_count.u32 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x07" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // uint64_t type data table
-    uint64_t u64Table[{{ type_count.u64 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x1B" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // float type data table
-    float f32Table[{{ type_count.f32 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x08" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
-
-    // float64 type data table
-    double f64Table[{{ type_count.f64 }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x11" %}
-    {{ subobject.default }},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-    };
 
     // string type data variable
     {% for object in objects %}
@@ -291,13 +209,13 @@ public:
 
     // string type data table
     char *stringTable[{{ type_count.str }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x09" %}
-    {{subobject.cpp_instance_name}},
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
+        {% for object in objects %}
+        {% for subobject in object.get_subobjects %}
+        {% if subobject.type_value == "0x09" %}
+        {{subobject.cpp_instance_name}},
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
     };
 
     // index data table
@@ -315,47 +233,47 @@ public:
     {% set counterString = namespace(value=0) %}
 
     uint8_t dataIndexTable[{{ subindex_count }}] = {
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    {% if subobject.type_value == "0x01" %}
-    {{ counterBool.value }},
-    {% set counterBool.value = counterBool.value + 1 %}
-    {% elif subobject.type_value == "0x02" %}
-    {{ counterI8.value }},
-    {% set counterI8.value = counterI8.value + 1 %}
-    {% elif subobject.type_value == "0x03" %}
-    {{ counterI16.value }},
-    {% set counterI16.value = counterI16.value + 1 %}
-    {% elif subobject.type_value == "0x04" %}
-    {{ counterI32.value }},
-    {% set counterI32.value = counterI32.value + 1 %}
-    {% elif subobject.type_value == "0x15" %}
-    {{ counterI64.value }},
-    {% set counterI64.value = counterI64.value + 1 %}
-    {% elif subobject.type_value == "0x05" %}
-    {{ counterU8.value }},
-    {% set counterU8.value = counterU8.value + 1 %}
-    {% elif subobject.type_value == "0x06" %}
-    {{ counterU16.value }},
-    {% set counterU16.value = counterU16.value + 1 %}
-    {% elif subobject.type_value == "0x07" %}
-    {{ counterU32.value }},
-    {% set counterU32.value = counterU32.value + 1 %}
-    {% elif subobject.type_value == "0x16" %}
-    {{ counterU64.value }},
-    {% set counterU64.value = counterU64.value + 1 %}
-    {% elif subobject.type_value == "0x08" %}
-    {{ counterF32.value }},
-    {% set counterF32.value = counterF32.value + 1 %}
-    {% elif subobject.type_value == "0x09" %}
-    {{ counterF64.value }},
-    {% set counterF64.value = counterF64.value + 1 %}
-    {% elif subobject.type_value == "0x0A" %}
-    {{ counterString.value }},
-    {% set counterString.value = counterString.value + 1 %}
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
+        {% for object in objects %}
+        {% for subobject in object.get_subobjects %}
+        {% if subobject.type_value == "0x01" %}
+        {{ counterBool.value }},
+        {% set counterBool.value = counterBool.value + 1 %}
+        {% elif subobject.type_value == "0x02" %}
+        {{ counterI8.value }},
+        {% set counterI8.value = counterI8.value + 1 %}
+        {% elif subobject.type_value == "0x03" %}
+        {{ counterI16.value }},
+        {% set counterI16.value = counterI16.value + 1 %}
+        {% elif subobject.type_value == "0x04" %}
+        {{ counterI32.value }},
+        {% set counterI32.value = counterI32.value + 1 %}
+        {% elif subobject.type_value == "0x15" %}
+        {{ counterI64.value }},
+        {% set counterI64.value = counterI64.value + 1 %}
+        {% elif subobject.type_value == "0x05" %}
+        {{ counterU8.value }},
+        {% set counterU8.value = counterU8.value + 1 %}
+        {% elif subobject.type_value == "0x06" %}
+        {{ counterU16.value }},
+        {% set counterU16.value = counterU16.value + 1 %}
+        {% elif subobject.type_value == "0x07" %}
+        {{ counterU32.value }},
+        {% set counterU32.value = counterU32.value + 1 %}
+        {% elif subobject.type_value == "0x16" %}
+        {{ counterU64.value }},
+        {% set counterU64.value = counterU64.value + 1 %}
+        {% elif subobject.type_value == "0x08" %}
+        {{ counterF32.value }},
+        {% set counterF32.value = counterF32.value + 1 %}
+        {% elif subobject.type_value == "0x09" %}
+        {{ counterF64.value }},
+        {% set counterF64.value = counterF64.value + 1 %}
+        {% elif subobject.type_value == "0x0A" %}
+        {{ counterString.value }},
+        {% set counterString.value = counterString.value + 1 %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
     };
     //END DATA
 
@@ -488,10 +406,11 @@ public:
 
     Data* getData(int32_t id);
 
+    #if 0 // TODO: Not used?
     void setData(const Data &data, uint16_t index, uint8_t subindex);
 
     void setData(const Data &data, int32_t id);
-
+    #endif
     uint16_t getSize(uint16_t index, uint8_t subindex);
 
     uint16_t getSize(int32_t id);
