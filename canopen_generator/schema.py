@@ -1,4 +1,4 @@
-from voluptuous import All, Any, Invalid, Length, Optional, Required, Schema
+from voluptuous import All, Any, Invalid, Length, Optional, Required, Schema, Coerce
 
 from .type import Access
 
@@ -44,6 +44,39 @@ def validate_object(objects):
     return objects
 
 
+def coerce_int_to_enum(value):
+    if isinstance(value, int):
+        return {"value": value}
+    elif isinstance(value, dict):
+        return value
+
+    raise ValueError
+
+def coerce_to_enum_items(value):
+    if isinstance(value, dict):
+        return {
+            'class': None,
+            'data': value
+        }
+
+    raise ValueError
+
+enum_items = {
+    str: All(
+        Coerce(coerce_int_to_enum),
+        {"value": int, Optional("name"): str, Optional("documentation"): str},
+    )
+}
+
+config_enum = Any(
+    {
+        Required("class"): str,
+        Required("data"): enum_items
+    },
+    All(enum_items, Coerce(coerce_to_enum_items))
+)
+
+
 data_schema = [
     {
         Required("type"): str,
@@ -56,6 +89,8 @@ data_schema = [
         Optional("highLimit", default="none"): Any(str, int, float),
         Optional("get", default="none"): str,
         Optional("set", default="none"): str,
+        Optional("enum"): config_enum,
+        Optional("documentation", default=""): str,
     }
 ]
 
@@ -68,6 +103,8 @@ data_object_schema = [
         Optional("highLimit"): Any(str, int, float),
         Optional("get"): str,
         Optional("set"): str,
+        Optional("enum"): config_enum,
+        Optional("documentation", default=""): str,
     }
 ]
 
@@ -103,6 +140,7 @@ profile_schema = Schema(
                             Required("data"): data_schema,
                             Optional("get", default="none"): str,
                             Optional("set", default="none"): str,
+                            # Optional("enum"): config_enum,
                         }
                     },
                     Length(min=1),
@@ -112,6 +150,7 @@ profile_schema = Schema(
         },
     }
 )
+
 
 config_schema = Schema(
     {
@@ -162,6 +201,8 @@ config_schema = Schema(
                     Optional("set", default="none"): str,
                     Optional("remote", default=False): bool,
                     Optional("unit", default="none"): str,
+                    Optional("documentation", default=""): str,
+                    # Optional("enum"): config_enum,
                 }
             },
             validate_object,

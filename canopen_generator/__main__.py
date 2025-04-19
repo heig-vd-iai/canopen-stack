@@ -85,6 +85,14 @@ def generate_remote(od: ObjectDictionary, outdir: Path, force: bool):
     with open(header, "w") as file:
         file.write(od.to_remote())
 
+def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
+    enum_file = outdir / "od_enum.hpp"
+    if not force and enum_file.exists():
+        raise FileExistsError(f"File {enum_file} already exists, won't overwrite it")
+
+    outdir.mkdir(parents=True, exist_ok=True)
+    with open(enum_file, "w") as file:
+        file.write(od.to_enum())
 
 @click.command()
 @click.argument("config", type=click.Path(exists=True))
@@ -143,6 +151,7 @@ def cli(config, profile, force, eds, code, doc):
     if code:
         generate_local(od, code, force)
         generate_remote(od, code, force)
+        generate_enum(od, code, force)
         gen += 1
 
     if not gen:
