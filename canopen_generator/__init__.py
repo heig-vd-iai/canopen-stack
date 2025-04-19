@@ -15,7 +15,6 @@ TEMPLATE_DIR = SCRIPT_DIR / "templates"
 
 DOCUMENTATION_TEMPLATE = "documentation.md.j2"
 MODULE_DOCUMENTATION_TEMPLATE = "module_documentation.md.j2"
-EDS_TEMPLATE = "od.eds.j2"
 CPP_TEMPLATE = "cpp.j2"
 HPP_TEMPLATE = "hpp.j2"
 REMOTE_TEMPLATE = "remote.j2"
@@ -101,7 +100,6 @@ class Object:
 
     def __init__(self, object: dict, profiles: dict, index: int, axis: int) -> None:
         self.index = index + LOGICAL_DEVICE_OFFSET * axis
-        self.alias = object["alias"]
         self.profile = object["profile"]
         self.remote = object["remote"]
         self.description = object["description"]
@@ -459,27 +457,6 @@ class ObjectDictionary:
             description=description,
         )
         return mdformat.text(text, extensions={"tables"})
-
-    def to_eds_old(self):
-        """Deprecated EDS file generation from Jinja2 template"""
-        env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
-            trim_blocks=True,
-            lstrip_blocks=True,
-        )
-        template = env.get_template(EDS_TEMPLATE)
-        return template.render(
-            objects=self.objects,
-            file_name=self.file_name,
-            info=self.info,
-            fonctionalities=self.fonctionalities,
-            time=datetime.now().strftime("%H:%M"),
-            date=datetime.now().strftime("%Y-%m-%d"),
-            nrOfRXPDO=self.nrOfRXPDO,
-            nrOfTXPDO=self.nrOfTXPDO,
-            mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects,
-        )
 
     def to_eds(self, filename=None):
         """Generate EDS file from object dictionary"""

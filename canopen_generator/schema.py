@@ -147,7 +147,7 @@ config_schema = Schema(
         Required("objectDictionary"): All(
             {
                 int: {
-                    Required("alias"): str,
+                    Optional("alias"): str,
                     Optional("profile", default=0): int,
                     Optional("name", default="none"): str,
                     Optional("module", default=""): str,
