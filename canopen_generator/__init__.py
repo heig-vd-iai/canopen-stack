@@ -32,6 +32,8 @@ class Data:
         self.high_limit = data["highLimit"]
         self.get = data["get"]
         self.set = data["set"]
+        self.writeable = True if self.access in ['rw', 'wo'] else False
+        self.readable = True if self.access in ['rw', 'ro'] else False
         self.length = data["length"]
         if str(self.default).startswith("$NODEID+"):
             self.default = (
@@ -62,7 +64,6 @@ class SubObject:
         self.get = data.get
         self.set = data.set
         self.length = data.length
-
     @property
     def index_hex(self):
         return hex(self.index)[2:]

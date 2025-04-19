@@ -76,9 +76,15 @@ config_enum = Any(
     All(enum_items, Coerce(coerce_to_enum_items))
 )
 
+def mutually_exclusive_accessor(obj):
+    if ('get' in obj and obj['get'] != 'none' or 'set' in obj and obj['set'] != 'none') and 'attribute' in obj:
+        print("PROUT", obj['get'], obj['set'], obj['attribute'])
+        raise Invalid("Cannot define 'get'/'set' together with 'attribute'")
+
+    return obj
 
 data_schema = [
-    {
+    All({
         Required("type"): str,
         Optional("name"): str,
         Optional("length", default=1): int,
@@ -89,13 +95,14 @@ data_schema = [
         Optional("highLimit", default="none"): Any(str, int, float),
         Optional("get", default="none"): str,
         Optional("set", default="none"): str,
+        Optional("attribute"): str,
         Optional("enum"): config_enum,
         Optional("documentation", default=""): str,
-    }
+    }, mutually_exclusive_accessor)
 ]
 
 data_object_schema = [
-    {
+    All({
         Optional("length", default=1): int,
         Optional("pdo_mapping"): bool,
         Optional("default"): Any(int, float, bool, str),
@@ -103,9 +110,10 @@ data_object_schema = [
         Optional("highLimit"): Any(str, int, float),
         Optional("get"): str,
         Optional("set"): str,
+        Optional("attribute"): str,
         Optional("enum"): config_enum,
         Optional("documentation", default=""): str,
-    }
+    }, mutually_exclusive_accessor)
 ]
 
 profile_schema = Schema(
@@ -140,6 +148,7 @@ profile_schema = Schema(
                             Required("data"): data_schema,
                             Optional("get", default="none"): str,
                             Optional("set", default="none"): str,
+                            Optional("attribute"): str,
                             # Optional("enum"): config_enum,
                         }
                     },
@@ -199,6 +208,7 @@ config_schema = Schema(
                     Optional("logicalDevices"): Any([int]),
                     Optional("get", default="none"): str,
                     Optional("set", default="none"): str,
+                    Optional("attribute"): str,
                     Optional("remote", default=False): bool,
                     Optional("unit", default="none"): str,
                     Optional("documentation", default=""): str,

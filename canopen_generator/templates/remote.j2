@@ -12,15 +12,27 @@ inline void emptySetter(const Data &data) {}
 
 {% for object in objects %}
 {% for subobject in object.get_subobjects %}
-{% if subobject.get != "none" and object.remote %}
+{% if object.remote %}
+{% if subobject.get != "none"%}
 inline void get{{subobject.cpp_instance_name}}(Data &data) {
     data.{{subobject.type_code}} = {{subobject.get}}();
 }
 {% endif %}
-{% if subobject.set != "none" and object.remote %}
+{% if subobject.set != "none"%}
 inline void set{{subobject.cpp_instance_name}}(const Data &data) {
     {{subobject.set}}(data.{{subobject.type_code}});
 }
+{% endif %}
+{% if subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute %}
+inline void set{{subobject.cpp_instance_name}}(const Data &data) {
+    {{subobject.data.data.attribute}} = {% if 'enum' in subobject.data.data and subobject.data.data.enum.class %}({{subobject.data.data.enum.class}}){% endif %}data.{{subobject.type_code}};
+}
+{% endif %}
+{% if subobject.data.access in ['wo', 'rw'] and subobject.data.data.attribute %}
+inline void get{{subobject.cpp_instance_name}}(Data &data) {
+    data.{{subobject.type_code}} = {{subobject.data.data.attribute}};
+}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -28,7 +40,7 @@ inline void set{{subobject.cpp_instance_name}}(const Data &data) {
 void (*remoteGetter[{{ subindex_count }}])(Data &data) = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.get != "none" and object.remote %}
+    {% if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute or subobject.get) != "none" and object.remote %}
     &get{{subobject.cpp_instance_name}},
     {%else%}
     emptyGetter,
@@ -40,7 +52,7 @@ void (*remoteGetter[{{ subindex_count }}])(Data &data) = {
 void (*remoteSetter[{{ subindex_count }}])(const Data &data) = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
-    {% if subobject.set != "none" and object.remote %}
+    {% if (subobject.data.access in ['wo', 'rw'] and subobject.data.data.attribute or subobject.set != "none")  and object.remote %}
     &set{{subobject.cpp_instance_name}},
     {%else%}
     emptySetter,
