@@ -98,8 +98,9 @@ class SubObject:
 
 
 class Object:
-
     def __init__(self, object: dict, profiles: dict, index: int, axis: int) -> None:
+        self.data = object
+        self.prout= object
         self.index = index + LOGICAL_DEVICE_OFFSET * axis
         self.profile = object["profile"]
         self.remote = object["remote"]
@@ -143,6 +144,7 @@ class Object:
                     self.data.append(
                         Data(
                             {
+                                "data": self.data[1],
                                 "type": self.data[1].type,
                                 "name": name.replace("?#", str(i)),
                                 "access": self.data[1].access,
@@ -586,6 +588,13 @@ class ObjectDictionary:
 
         """)
         for object in self.objects:
+            if 'enum' in object.prout:
+                content += template.render(
+                    object=object.index,
+                    subindex=0,
+                    class_name=object.prout['enum']['class'],
+                    items=object.prout['enum']['data']
+                ) + "\n\n"
             for sub in object.get_subobjects:
                 if 'enum' in sub.data.data:
                     content += template.render(

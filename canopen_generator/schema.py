@@ -212,7 +212,7 @@ config_schema = Schema(
                     Optional("remote", default=False): bool,
                     Optional("unit", default="none"): str,
                     Optional("documentation", default=""): str,
-                    # Optional("enum"): config_enum,
+                    Optional("enum"): config_enum,
                 }
             },
             validate_object,
