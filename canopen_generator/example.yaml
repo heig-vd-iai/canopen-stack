@@ -1,0 +1,208 @@
+
+# $ is the index value for arrays
+# @ is the value to set in the setter
+# # is the axis number for multi axis system
+profiles:
+  402:
+   objects:
+    0x603f:
+     objectType: var # (array, record)
+     mandatory: true
+     type: uint16
+     access: r # ro is ugly, r, w, rw is better
+features:
+  baudrate: # Supported baudrates
+    - 10
+    - 20
+    - 50
+    - 125
+    - 250
+    - 500
+    - 800
+    - 1000
+  LSS: true
+  SimpleBootUpMaster: 0
+  SimpleBootUpSlave: 0
+  Granularity: 8
+  DynamicChannelsSupported: 0
+  CompactPDO: 23
+  GroupMessaging: 0
+  NrOfRXPDO: 4
+  NrOfTXPDO: 4
+objectDictionnary:
+  0x1000:
+    profile: 301 # CiA Profile number
+    description: "This is the first object."
+  0x2100:
+    name: Current Loop Settings
+    description: "This is the second object."
+    path: axis.currentLoop
+    remote: cpu1
+    ring: run # down (switch on disabled), ready (ready, switched on), run (operation enabled, quick stop)
+    record:
+    - name: Kp
+      path: kp
+      description: Proportional gain
+      type: float32
+      unit: V/A
+      default: 0.0
+      limits:
+        min: 0.0
+        max: 1000.0
+      get: sys.axes[0].currentController.getKp()
+      set: sys.axes[0].currentController.setKp(@)
+    - name: Ki
+      path: ki
+      description: Integral gain
+      type: float32
+      unit: V/(A*s)
+      default: 0.0
+      limits:
+        min: 0.0
+        max: 10000.0
+      get: sys.axes[0].currentController.getKi()
+      set: sys.axes[0].currentController.setKi(@)
+    - name: Integral Limit
+      path: integralLimit
+      type: float32
+      default: 0.7
+      limits:
+        min: 0.0
+        max: 1.0
+      get: sys.axes[0].currentController.config.get_integral_limit()
+      set: sys.axes[0].currentController.config.set_integral_limit(@)
+  0x2101:
+    name: DC-Link Voltage
+    module: current-loop
+    remote: cpu1
+    pdo: true # Can be mapped in PDO
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axes[0].config.getDcLinkVoltage
+      set: sys.axes[0].config.setDcLinkVoltage
+  0x2700: # Record (struct)
+    name: Low Level Control Switches
+    description: Route the control signals to the desired module.
+    path: internals.controlSwitches
+    remote: cpu1
+    record:
+    - name: Position switch
+      path: position
+      type: int8
+      enum:
+        Zero: -1
+        ProfilePosition: 0
+        FunctionGenerator: 1
+      get: sys.axes[0].getPositionSwitch()
+      set: sys.axes[0].setPositionSwitch(@)
+    - name: Velocity switch
+      path: velocity
+      type: int8
+      enum:
+        Zero: -1
+        ProfileVelocity: 0 # Automatically declare enum VelocitySwitch with VELOCITY_SWITCH__PROFILE_VELOCITY
+        PositionController: 1
+        FunctionGenerator: 2
+      get: sys.axes[0].getVelocitySwitch()
+      set: sys.axes[0].setVelocitySwitch(@)
+    - name: Current switch
+      path: current
+      type: int8
+      enum:
+        Zero: -1
+        CurrentTarget: 0
+        ProfileTorque: 1
+        VelocityController: 2
+        FunctionGenerator: 3
+      get: sys.axes[0].getCurrentSwitch()
+      set: sys.axes[0].setCurrentSwitch(@)
+    - name: Voltage switch
+      path: voltage
+      type: int8
+      enum:
+        Zero: -1
+        VoltageTarget: 0
+        FunctionGenerator: 1
+      get: sys.axes[0].getVoltageSwitch()
+      set: sys.axes[0].setVoltageSwitch(@)
+    - name: Voltage switch
+      path: voltage
+      type: int8
+      enum:
+        Zero: -1
+        Hall: 0
+        ThetaGenerator: 1
+        FunctionGenerator: 2
+        Phaser: 3
+      get: sys.axes[0].getPhaseSwitch()
+      set: sys.axes[0].setPhaseSwitch(@)
+  0x2851: # Scalar value
+    name: Trigger mode
+    path: acquisition
+    enum:
+      Immediate: 0
+      BeginningOfMovement: 1
+      EndOfMovement: 2
+      TraceValue: 3
+    remote: cpu1
+    type: uint8
+    set: sys.monitoring.setTriggerMode()
+    get: sys.monitoring.getTriggerMode(@)
+  0x603f:
+    name: Error Code (Fault)
+    path: error
+    remote: cpu1
+    # if type is missing, but declared in the profile it is used otherwise: error
+    get: sys.axes[?#].getLastError() # ?# is axis number for multi axis system
+    enum:
+      NoError: 0
+      DriveOverCurrent: 0x2220
+      MotorOverCurrent: 0x2310
+      MotorI2T: 0x2350
+      LinkUnderVoltage: 0x3220
+      LinkOverVoltage: 0x3210
+      InternalError: 0x6100
+      PhasingFault: 0x8312
+
+  0x3000:
+    alias: ledMode
+    name: Led mode
+    module: servo-press
+    enum:
+      OFF: 0
+      ON: 1
+      BLINK: 2
+      BLINK_FAST: 3
+      WAVE: 4
+      PULSE: 5
+      BREATHING: 6
+      HEARTBEAT: 7
+      SPINNER: 8
+    remote: cpu1
+    type: uint16
+    get: sys.led.getMode()
+    set: sys.led.setMode(@)
+
+  0x9999:
+    name: Value with Conversion
+    unit: A
+    conv: _ * 1e-3 # Conversion function (python side)
+    get: sys.axes[0].attribute # Getter is juste a public attribute
+
+  0x9998:
+    name: Value with Conversion
+    unit: A
+    conv: _ * 1e-3 # Conversion function (python side)
+    set: sys.axes[0].attribute # If no () then assignment
+    limits:
+      min: 0.0
+      max: 100.0
+      clamp: true # If true, the value is clamped to the limits without error
+
+  0x9997:
+    name: An array
+    type: uint16
+    length: 10
+    get: sys.axes[0].array[$]
+    set: sys.axes[0].array[$] = @ # Could be sys.axes[0].setValue($, @)

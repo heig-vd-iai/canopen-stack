@@ -1,0 +1,6 @@
+// Object 0x{{"%04x"|format(object) }}:{{subindex}}
+enum {{class_name}} {
+    {% for key, value in items.items() %}
+    {{key}} = {{value.value}},
+    {% endfor %}
+};
