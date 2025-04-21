@@ -18,7 +18,6 @@ MODULE_DOCUMENTATION_TEMPLATE = "module_documentation.md.j2"
 
 LOGICAL_DEVICE_OFFSET = 0x800
 
-
 class Data:
 
     def __init__(self, data: dict) -> None:
@@ -45,12 +44,13 @@ class Data:
         return DataType[self.type].value
 
     def __repr__(self):
-        return repr(self.data)
+        return f"DATA({repr(self.data)})"
 
 class SubObject:
 
     def __init__(self, data: Data, index: int, subindex: int, object) -> None:
         self.data = data
+        self.prout = data
         self.index = index
         self.subindex = subindex
         self.parameter_name = data.name
@@ -64,6 +64,10 @@ class SubObject:
         self.get = data.get
         self.set = data.set
         self.length = data.length
+
+        # if 'encoderAVelocityResolution' in str(object.object):
+        #     print("Object", object.object)
+        #     print("Data", data)
     @property
     def index_hex(self):
         return hex(self.index)[2:]
@@ -99,8 +103,8 @@ class SubObject:
 
 class Object:
     def __init__(self, object: dict, profiles: dict, index: int, axis: int) -> None:
-        self.data = object
-        self.prout= object
+        self.prout = object
+        self.object = object
         self.index = index + LOGICAL_DEVICE_OFFSET * axis
         self.profile = object["profile"]
         self.remote = object["remote"]
@@ -108,6 +112,7 @@ class Object:
         self.module = object["module"]
         self.get = object["get"]
         self.set = object["set"]
+        self.attribute = object.get("attribute", None)
         self.category = object["category"]
         self.module = object["module"]
         self.logicalDevice = axis
@@ -158,6 +163,7 @@ class Object:
                             }
                         )
                     )
+
             # Overwrite data with object specific data
             if "data" in object:
                 if len(object["data"]) > len(self.data):
@@ -178,7 +184,11 @@ class Object:
                         self.data[i].set = data["set"]
                     if "length" in data:
                         self.data[i].length = data["length"]
+                    if "attribute" in data:
+                        self.data[i].data['attribute'] = data["attribute"]
+
                 self.data = self.data[: len(object["data"])]
+
         else:
             if "name" in object:
                 self.name = object["name"]
@@ -186,6 +196,7 @@ class Object:
                 raise ValueError(f"Object name not found[{hex(index)}]")
             self.category = object["category"]
             self.data = [Data(data) for data in object["data"]]
+
         for _, data in enumerate(self.data):
             if data.get == "none":
                 data.get = self.get
@@ -193,6 +204,9 @@ class Object:
                 data.set = self.set
             data.get = data.get.replace("?#", str(axis))
             data.set = data.set.replace("?#", str(axis))
+
+        if 'attribute' in object:
+            self.data[0].data['attribute'] = object['attribute']
 
     @property
     def object_type(self):
@@ -262,6 +276,7 @@ class ObjectDictionary:
         self.fonctionalities = self.profile["functionalities"]
 
         self.config = config_schema(od)
+
         self.objects = []
         for object in self.config["objectDictionary"].items():
             if "logicalDevices" not in object[1]:
@@ -271,6 +286,7 @@ class ObjectDictionary:
                     self.objects.append(
                         Object(object[1], self.profiles, object[0], axis)
                     )
+
         self.info = self.config["info"]
         # TODO: NON rien à foutre ici
         # self.factory_parameters = self.config["factoryParameters"]

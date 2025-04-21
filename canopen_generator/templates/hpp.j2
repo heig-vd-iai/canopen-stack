@@ -136,26 +136,28 @@ public:
         {% set counter = namespace(value=0) %}
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if subobject.access != "wo" and subobject.get != "none" and not object.remote %}
-        /* {{ "%04d"|format(counter.value) }} */ &get{{subobject.cpp_instance_name}},
-        {% elif object.remote and subobject.get != "none" %}
-        /* {{ "%04d"|format(counter.value) }} */ &getRemoteData,
+        /* {{ "%04d"|format(counter.value) }} - 0x{{ "%04x"|format(object.index) }} */
+        {%- if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute or subobject.get) != "none" and not object.remote %}
+        &get{{subobject.cpp_instance_name}},
+        {% elif object.remote and (subobject.data.data.attribute or subobject.get) != "none" %}
+        &getRemoteData,
         {% else %}
-        /* {{ "%04d"|format(counter.value) }} */ &getLocalData_{{subobject.ctype_name}},
+        &getLocalData_{{subobject.ctype_name}},
         {% endif %}
         {%- set counter.value = counter.value + 1 -%}
         {% endfor %}
         {% endfor %}
     };
 
+
     // This table contain all the objects setter
     int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = {
         {% set counter = namespace(value=0) %}
         {% for object in objects %}
         {% for subobject in object.get_subobjects %}
-        {% if subobject.access != "ro" and (subobject.set != "none" and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
+        {% if (subobject.data.access in ['wo', 'rw'] and (subobject.data.data.attribute or subobject.set != "none") and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
         /* {{ "%04d"|format(counter.value) }} */ &set{{subobject.cpp_instance_name}},
-        {% elif object.remote and subobject.set != "none" %}
+        {% elif object.remote and (subobject.data.data.attribute or subobject.set != "none") %}
         /* {{ "%04d"|format(counter.value) }} */ &setRemoteData,
         {% else %}
         /* {{ "%04d"|format(counter.value) }} */ &setLocalData_{{subobject.ctype_name}},
