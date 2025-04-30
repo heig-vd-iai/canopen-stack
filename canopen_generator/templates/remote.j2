@@ -59,3 +59,24 @@ void (*remoteSetter[{{ subindex_count }}])(const Data &data) = {
     {% endfor %}
     {% endfor %}
 };
+
+// Object is a 24 bit number: (object << 8 | subobject)
+int32_t remoteGetterBSTKeys[] = {
+    {% for item in tree_array %}
+    {% if item %}
+    {{item[0]}},
+    {% else %}
+    -1,
+    {% endif %}
+    {% endfor %}
+};
+
+void (*remoteGetterBSTMap[])(Data &data) = {
+    {% for item in tree_array %}
+    {% if item %}
+    &get{{item[1]}},
+    {% else %}
+    emptyGetter,
+    {% endif %}
+    {% endfor %}
+};

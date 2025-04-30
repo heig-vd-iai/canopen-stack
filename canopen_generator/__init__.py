@@ -7,6 +7,7 @@ import jinja2
 import mdformat
 from voluptuous import MultipleInvalid
 
+from . import tree
 from .schema import config_schema, profile_schema
 from .type import Ctype_name, DataType, ObjectType, Type_code
 
@@ -655,6 +656,18 @@ class ObjectDictionary:
 
     def to_remote(self):
         template = self.env.get_template("remote.j2")
+
+        # Compute BST tree for revert mapping
+        prout = []
+        for object in self.objects:
+            for subobject in object.get_subobjects:
+                if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.get('attribute', None) or subobject.get) != "none" and object.remote:
+                    prout.append((subobject.index << 8 | subobject.subindex, subobject.cpp_instance_name))
+
+        sorted_pairs = sorted(prout, key=lambda x: x[0])
+        root = tree.build_balanced_bst(sorted_pairs)
+        tree_array = tree.bst_to_array_zero_indexed(root)
+
         return template.render(
             objects=self.objects,
             info=self.info,
@@ -666,6 +679,7 @@ class ObjectDictionary:
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects,
+            tree_array=tree_array,
         )
 
     # def to_config(self):
