@@ -181,8 +181,8 @@ objectDictionnary:
       SPINNER: 8
     remote: cpu1
     type: uint16
-    get: sys.led.getMode()
-    set: sys.led.setMode(@)
+    get: BSP::led.getMode()
+    set: BSP::led.setMode(@)
 
   0x9999:
     name: Value with Conversion
