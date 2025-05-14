@@ -21,14 +21,17 @@ class TreeNode:
         self.left = None
         self.right = None
 
-def build_balanced_bst(pairs: list[tuple[int, str]]) -> TreeNode:
+def build_balanced_bst(data) -> TreeNode:
+    return _build_balanced_bst(sorted(data))
+
+def _build_balanced_bst(pairs) -> TreeNode:
     if not pairs:
         return None
     mid = len(pairs) // 2
     key, value = pairs[mid]
     root = TreeNode(key, value)
-    root.left = build_balanced_bst(pairs[:mid])
-    root.right = build_balanced_bst(pairs[mid + 1:])
+    root.left = _build_balanced_bst(pairs[:mid])
+    root.right = _build_balanced_bst(pairs[mid + 1:])
     return root
 
 def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:

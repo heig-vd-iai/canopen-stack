@@ -58,7 +58,7 @@ def validate_baudrates(value):
 def validate_type(value):
     if value not in datatypes:
         raise Invalid(f"Invalid type: {value}. valid types: {', '.join(datatypes.keys())}")
-    return value
+    return datatypes[value]
 
 
 def validate_unit_string(value):
@@ -77,6 +77,13 @@ def validate_enum_name(value):
     return value
 
 
+def validate_subindices_length(value):
+    if not isinstance(value, dict):
+        raise Invalid(f"Invalid subindex: {value}. Subindex must be a dictionary.")
+    if len(value) > 255:
+        raise Invalid(f"Invalid subindex: {value}. Subindex length must be less than 256.")
+    return value
+
 def validate_enum_data(value):
     if not isinstance(value, dict):
         raise Invalid(f"Invalid enum data: {value}. Enum data must be a dictionary.")
@@ -84,6 +91,12 @@ def validate_enum_data(value):
         raise Invalid(f"Invalid enum data: {value}. Enum values must be unique.")
     return value
 
+def update_access(value):
+    if 'get' in value and value['get'] is not None:
+        value['access'] = ''.join(set(value['access']) | {'r'})
+    if 'set' in value and value['set'] is not None:
+        value['access'] = ''.join(set(value['access']) | {'w'})
+    return value
 
 def post_validate_od(value):
     return value
@@ -112,28 +125,28 @@ var_common = {
         "data": All({All(str, validate_enum_name): int}, validate_enum_data),
     },
     # Default value; type must match the type of the object
-    Optional("default", 0): Any(int, float),
-    "access": All(str, Match(r"^r?w?$")),
+    Optional("default", default=0): Any(int, float),
+    Optional("access", default=''): All(str, Match(r"^r?w?$")),
     Optional("get", default=None): Any(None, str),
     Optional("set", default=None): Any(None, str),
 }
 
-var = {
+var = All({
     **header_common,
     "profile": int,
     Optional("type", default="var"): "var",
     **var_common,
-}
+}, update_access)
 
-array = {
+array = All({
     **header_common,
     "profile": int,
     Optional("type", default="array"): "array",
     Required("length"): All(int, Range(min=1, max=255)),
     **var_common,
-}
+}, update_access)
 
-record = {
+record = All({
     **header_common,
     "profile": int,
     Optional("type", default="record"): "record",
@@ -142,10 +155,10 @@ record = {
             {
                 **var_common,
             },
-            lambda x: len(x) < 255,
+            validate_subindices_length,
         )
     ],
-}
+}, update_access)
 
 domain = {
     **header_common,

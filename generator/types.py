@@ -13,7 +13,7 @@ class ObjectCode(int):
         return f"0x{self.index:04x}_{self.subindex:02d}"
 
     def __repr__(self):
-        return f"ObjectCode(index={self.index}, subindex={self.subindex})"
+        return f"ObjectCode(index={self.index:04x}, subindex={self.subindex})"
 
     def __getitem__(self, item):
         if item == 'index':

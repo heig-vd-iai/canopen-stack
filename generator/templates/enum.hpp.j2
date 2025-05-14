@@ -4,7 +4,7 @@
  */
 
 {% for (index, subindex), object in od_flat.items() %}
-// Object {{object.hex_code}}
+// Object {{object.eds_name}}
 enum {{class_name}} {
     {% for enum, value in items.items() %}
     {{enum}} = {{value.value}},

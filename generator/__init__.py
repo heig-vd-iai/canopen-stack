@@ -8,9 +8,6 @@ from .schema import SchemaConfig
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
 from .types import ObjectCode, datatypes
 
-def hex_code_to_str(index, subindex):
-    return f"0x{index:04x}_{subindex:02d}"
-
 def flatten_od(od):
     """
     Flattens the object dictionary. Hierarchical objects in the YAML file
@@ -23,18 +20,13 @@ def flatten_od(od):
     """
     flat_od = {}
     for index, object in od.items():
-        if object['get']:
-            object['access'] = ''.join(set(object['access']).add('w'))
-        if object['set']:
-            object['access'] = ''.join(set(object['access']).add('r'))
-
         match object['type']:
             case 'var':
                 """ VAR type are stored with the subindex 0 """
                 flat_od[ObjectCode(index, 0)] = object
             case 'array':
                 flat_od[ObjectCode(index, 0)] = {
-                    'type': 'uint8',
+                    'datatype': datatypes['uint8'],
                     'name': 'Number of array entries',
                     'access': 'r',
                     'default': object['length']
@@ -42,7 +34,7 @@ def flatten_od(od):
                 for subindex in range(object['length']):
                     flat_od[ObjectCode(index, subindex + 1)] = {
                         **object,
-                        'type': datatypes[object['datatype']],
+                        'datatype': object['datatype'],
                         'name': f'{object["name"]} {subindex + 1}',
                         'access': object['access'],
                         'get': object['get'].replace('#', str(subindex + 1)),
@@ -50,7 +42,7 @@ def flatten_od(od):
                     }
             case 'record':
                 flat_od[ObjectCode(index, 0)] = {
-                    'type': 'uint8',
+                    'datatype': datatypes['uint8'],
                     'name': 'Number of records',
                     'access': 'r',
                     'default': len(object['subindex'])
@@ -63,20 +55,16 @@ def flatten_od(od):
     # Add additional information to the flat object dictionary
     # used by the Jinja templates
     for code, object in flat_od.items():
-        object['c_type'] = object['datatype'].ctype
-        object['field'] = object['datatype'].field
-        object['index'] = code.index
-        object['subindex'] = code.subindex
-        object['id'] = index << 0x100 | (subindex & 0xff)
-        object['hex_code'] = hex_code_to_str(code)
-        object['eds_name'] = f"{code.index:04x}sub{code.subindex}"
+        object['id'] = code
 
     # Set the default index value.
     # Default values are grouped by types.
     index_counter = defaultdict(int)
     for object in flat_od.values():
         if object['default'] is not None:
-            index_counter[object['type']] += 1
+            index_counter[object['datatype']] += 1
+
+    return flat_od
 
 def get_objects_per_type(od_flat):
     """
@@ -84,11 +72,11 @@ def get_objects_per_type(od_flat):
     The keys are the datatype.
     """
     objects_per_type = {}
-    for code, object in od_flat.items():
-        if object.default is not None:
-            if object['type'] not in objects_per_type:
-                objects_per_type[object['type']] = None
-            objects_per_type[object['type']] = object['default']
+    for object in od_flat.values():
+        if object['default'] is not None:
+            if object['datatype'] not in objects_per_type:
+                objects_per_type[object['datatype']] = None
+            objects_per_type[object['datatype']] = object['default']
     return objects_per_type
 
 def get_bst_search_array(od_flat):
@@ -96,7 +84,7 @@ def get_bst_search_array(od_flat):
     Returns a dictionary with the number of objects per type.
     The keys are the datatype.
     """
-    root = build_balanced_bst(od_flat.items())
+    root = build_balanced_bst(list(od_flat.items()))
     return bst_to_array_zero_indexed(root)
 
 def get_git_info():
@@ -114,3 +102,18 @@ class Config:
             data = yaml.safe_load(f)
 
         self.config = SchemaConfig(data)
+        self.flattened_od = flatten_od(self.config['objects'])
+        self.objects_per_type = get_objects_per_type(self.flattened_od)
+        self.bst_search_array = get_bst_search_array(self.flattened_od)
+
+        try:
+            self.git_info = get_git_info()
+        except Exception as e:
+            self.git_info = {
+                'committer': 'unknown',
+                'branch': 'unknown',
+                'commit': 'unknown',
+                'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'first_commit_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            print(f"Error getting git info: {e}")
