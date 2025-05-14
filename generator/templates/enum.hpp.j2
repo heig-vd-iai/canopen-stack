@@ -3,14 +3,14 @@
  * This file is auto generated DO NOT EDIT!
  */
 
-{% for (index, subindex), object in od_flat.items() %}
-// Object {{object.eds_name}}
-enum {{class_name}} {
-    {% for enum, value in items.items() %}
-    {{enum}} = {{value.value}},
-    {% endfor %}
+{% for object in od_flat.values() if object.enum %}
+// Object {{object.id.eds_name}}
+enum {{object.enum.class | snake_case}} {
+{%- for enum, value in object.enum.data.items() %}
+    {{enum}} = {{value}},
+{%- endfor %}
 };
 
-typedef enum {{class_name}} {{class_name}};
+typedef enum {{object.enum.class | snake_case}} {{object.enum.class}};
 
 {% endfor %}

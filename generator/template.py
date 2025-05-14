@@ -1,10 +1,14 @@
 from jinja2 import Environment, FileSystemLoader
+from pathlib import Path
+import inflection
 
-def code_filter(value):
-    return f"0x{value:04x}"  # Format hexadécimal sur 4 chiffres
+SCRIPT_DIR = Path(__file__).parent.absolute()
+TEMPLATE_DIR = SCRIPT_DIR / "templates"
 
-# Initialisation de l'environnement Jinja
-env = Environment(loader=FileSystemLoader("templates"))
+env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
-# Ajout du filtre
-env.filters['code'] = code_filter
+def render_template(template_name, **kwargs):
+    template = env.get_template(template_name)
+    return template.render(**kwargs)
+
+env.filters['snake_case'] = inflection.underscore

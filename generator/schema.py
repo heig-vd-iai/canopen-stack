@@ -179,11 +179,11 @@ od = All(
 SchemaConfig = Schema(
     {
         "device": {
-            "vendor": {"name": str, "number": int},
-            "product": {"name": str, "number": int},
-            "revision": int,
+            Optional("vendor", default={'name': 'Unknown', 'number': 0x12345678}): {"name": str, "number": int},
+            Optional("product", default={'name': 'Unknown', 'number': 0x12345678}): {"name": str, "number": int},
+            Optional("revision", default=1): int,
             "baudrate": Coerce(set),
-            "node_id": All(int, Range(min=1, max=127)),
+            Optional("node_id", default=1): All(int, Range(min=1, max=127)),
         },
         "objects": od,
     }

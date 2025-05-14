@@ -7,7 +7,7 @@ class ObjectCode(int):
     def __init__(self, index, subindex):
         self.index = index
         self.subindex = subindex
-        self.eds_name = f"{index:04x}sub{subindex:02x}"
+        self.eds_name = f"{index:04x}sub{subindex:x}"
 
     def __str__(self):
         return f"0x{self.index:04x}_{self.subindex:02d}"
