@@ -1,0 +1,1642 @@
+# List of objects in official CiA profiles
+profiles:
+  301:
+    name: Application layer and communication profile
+    objects:
+      0x1000:
+        name: Device type
+        category: mandatory
+        datatype: uint32
+        access: r
+        pdo: false
+      0x1001:
+        name: Error register
+        category: mandatory
+        get: node.emcy().errorRegister.getData
+        datatype: uint8
+      0x1002:
+        name: Manufacturer status register
+        category: optional
+        datatype: uint32
+        access: r
+      0x1003:
+        name: Pre-defined error field
+        category: optional
+        get: node.emcy().preDefinedErrorField.getData
+        datatype: uint32
+        access: r
+        length: 8
+        pdo: false
+      0x1005:
+        name: COB_ID SYNC message
+        category: optional
+        get: node.emcy().preDefinedErrorField.getData
+        datatype: uint32
+        access: r
+        pdo: false
+        default: 0x80
+        bitfield:
+          0..28: CAN_ID
+          29:
+            name: frame
+            description:
+              0: 11-bit CAN-ID valid (CAN base frame)
+              1: 29-bit CAN-ID valid (CAN extended frame)
+          30:
+            name: gen
+            description:
+              0: CANopen device does not geneerate SYNC message
+              1: CANopen device generates SYNC message
+      0x1006:
+        name: Communication cycle period
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+        pdo: false
+      0x1007:
+        name: Synchronous window length
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+      0x1008:
+        name: Manufacturer device name
+        category: optional
+        datatype: string
+        access: const
+      0x1009:
+        name: Manufacturer hardware version
+        category: optional
+        datatype: string
+        access: const
+      0x100A:
+        name: Manufacturer software version
+        category: optional
+        datatype: string
+        access: const
+      0x100C:
+        name: Guard time
+        category: optional
+        unit: ms
+        datatype: uint16
+        access: rw
+      0x100D:
+        name: Life time factor
+        category: optional
+        datatype: uint8
+        access: rw
+      0x1010:
+        name: Store parameters
+        category: optional
+        get: node.od().getSave
+        set: node.od().saveData
+        data:
+          - datatype: uint8
+            name: highestt sub-index supported
+            access: ro
+            default: 5
+          - datatype: uint32
+            name: save all parameters
+            access: rw
+          - datatype: uint32
+            name: save communication parameters
+            access: rw
+          - datatype: uint32
+            name: save application parameters
+            access: rw
+          - datatype: uint32
+            name: save manufacturer specific parameters A
+            access: rw
+          - datatype: uint32
+            name: save manufacturer specific parameters B
+            access: rw
+      0x1011:
+        name: Restore default parameters
+        category: optional
+        get: node.od().getRestore
+        set: node.od().restoreData
+        data:
+          - datatype: uint8
+            name: highestt sub-index supported
+            access: ro
+            default: 5
+          - datatype: uint32
+            name: restore all parameters
+            access: rw
+          - datatype: uint32
+            name: restore communication parameters
+            access: rw
+          - datatype: uint32
+            name: restore application parameters
+            access: rw
+          - datatype: uint32
+            name: restore manufacturer specific parameters A
+            access: rw
+          - datatype: uint32
+            name: restore manufacturer specific parameters B
+            access: rw
+      0x1017:
+        name: Producer hearbeat time
+        category: mandatory #if guarding not supported
+        get: node.hb().getData
+        set: node.hb().setData
+        data:
+          - datatype: uint16
+            access: rw
+      0x1018:
+        name: Identity object
+        category: mandatory
+        data:
+          - datatype: uint8
+            name: Number of entries
+            access: ro
+            default: 4
+          - datatype: uint32
+            name: Vendor-ID
+            access: ro
+          - datatype: uint32
+            name: Product code
+            access: ro
+          - datatype: uint32
+            name: Revision number
+            access: ro
+          - datatype: uint32
+            name: Serial number
+            access: ro
+      0x1019:
+        name: Synchronous counter overflow value
+        category: optional
+        get: node.sync().getData
+        set: node.sync().setData
+        data:
+          - datatype: uint8
+            access: rw
+      0x1020:
+        name: Verify configuration
+        category: optional
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Configuration date
+            access: rw
+          - datatype: uint32
+            name: Configuration time
+            access: rw
+      0x1029:
+        name: Error behavior
+        category: optional
+        get: node.emcy().errorBehavior.getData
+        set: node.emcy().errorBehavior.setData
+        data:
+          - datatype: uint32
+            name: Highestt sub-index supported
+            default: 2
+            access: ro
+          - datatype: uint8
+            name: Communication error behavior
+            default: 1
+            access: rw
+          - datatype: uint8
+            name: Internal device error behavior
+            default: 1
+            access: rw
+      0x1400:
+        name: Receive PDO 1 communication parameter
+        category: optional
+        get: node.pdo().rpdos[0].commParameter.getData
+        set: node.pdo().rpdos[0].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000200
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+      0x1401:
+        name: Receive PDO 2 communication parameter
+        category: optional
+        get: node.pdo().rpdos[1].commParameter.getData
+        set: node.pdo().rpdos[1].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000300
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+      0x1402:
+        name: Receive PDO 3 communication parameter
+        category: optional
+        get: node.pdo().rpdos[2].commParameter.getData
+        set: node.pdo().rpdos[2].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000400
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+      0x1403:
+        name: Receive PDO 4 communication parameter
+        category: optional
+        get: node.pdo().rpdos[3].commParameter.getData
+        set: node.pdo().rpdos[3].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000500
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+      0x1600:
+        name: Receive PDO 1 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[0].mapParameter.getData
+        set: node.pdo().rpdos[0].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1601:
+        name: Receive PDO 2 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[1].mapParameter.getData
+        set: node.pdo().rpdos[1].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1602:
+        name: Receive PDO 3 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[2].mapParameter.getData
+        set: node.pdo().rpdos[2].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1603:
+        name: Receive PDO 4 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[3].mapParameter.getData
+        set: node.pdo().rpdos[3].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1800:
+        name: Transmit PDO 1 communication parameter
+        category: optional
+        get: node.pdo().tpdos[0].commParameter.getData
+        set: node.pdo().tpdos[0].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000180
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+          - datatype: uint16
+            name: Inhibit time
+            access: rw
+          - datatype: uint8
+            name: Compatibility entry
+            access: rw
+          - datatype: uint16
+            name: Event timer
+            access: rw
+          - datatype: uint8
+            name: Sync start value
+            access: rw
+      0x1801:
+        name: Transmit PDO 2 communication parameter
+        category: optional
+        get: node.pdo().tpdos[1].commParameter.getData
+        set: node.pdo().tpdos[1].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000280
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+          - datatype: uint16
+            name: Inhibit time
+            access: rw
+          - datatype: uint8
+            name: Compatibility entry
+            access: rw
+          - datatype: uint16
+            name: Event timer
+            access: rw
+          - datatype: uint8
+            name: Sync start value
+            access: rw
+      0x1802:
+        name: Transmit PDO 3 communication parameter
+        category: optional
+        get: node.pdo().tpdos[2].commParameter.getData
+        set: node.pdo().tpdos[2].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000380
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+          - datatype: uint16
+            name: Inhibit time
+            access: rw
+          - datatype: uint8
+            name: Compatibility entry
+            access: rw
+          - datatype: uint16
+            name: Event timer
+            access: rw
+          - datatype: uint8
+            name: Sync start value
+            access: rw
+      0x1803:
+        name: Transmit PDO 4 communication parameter
+        category: optional
+        get: node.pdo().tpdos[3].commParameter.getData
+        set: node.pdo().tpdos[3].commParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: COB-ID
+            default: $NODEID+0x80000480
+            access: rw
+          - datatype: uint8
+            name: Transmission type
+            access: rw
+          - datatype: uint16
+            name: Inhibit time
+            access: rw
+          - datatype: uint8
+            name: Compatibility entry
+            access: rw
+          - datatype: uint16
+            name: Event timer
+            access: rw
+          - datatype: uint8
+            name: Sync start value
+            access: rw
+      0x1A00:
+        name: Transmit PDO 1 mapping parameter
+        category: optional
+        get: node.pdo().tpdos[0].mapParameter.getData
+        set: node.pdo().tpdos[0].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1A01:
+        name: Transmit PDO 2 mapping parameter
+        get: node.pdo().tpdos[1].mapParameter.getData
+        set: node.pdo().tpdos[1].mapParameter.setData
+        category: optional
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1A02:
+        name: Transmit PDO 3 mapping parameter
+        category: optional
+        get: node.pdo().tpdos[2].mapParameter.getData
+        set: node.pdo().tpdos[2].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+      0x1A03:
+        name: Transmit PDO 4 mapping parameter
+        category: optional
+        get: node.pdo().tpdos[3].mapParameter.getData
+        set: node.pdo().tpdos[3].mapParameter.setData
+        data:
+          - datatype: uint8
+            name: Number of of entries
+            access: rw
+          - datatype: uint32
+            name: 1st object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 2nd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 3rd object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 4th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 5th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 6th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 7th object to be mapped
+            access: rw
+          - datatype: uint32
+            name: 8th object to be mapped
+            access: rw
+
+  402:
+    name: Profile for drives and motion control
+    objects:
+      0x6007:
+        name: Abort connection option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 1
+      0x603f:
+        name: Error code
+        category: mandatory
+        data:
+          - datatype: uint16
+            access: ro
+            pdo: true
+      0x6040:
+        name: Controlword
+        category: mandatory
+        data:
+          - datatype: uint16
+            access: rw
+            pdo: true
+            default: 0
+      0x6041:
+        name: Statusword
+        category: mandatory
+        data:
+          - datatype: uint16
+            access: ro
+            pdo: true
+            default: 0
+      0x6042:
+        name: vl target velocity
+        data:
+          - datatype: int16
+            access: rw
+            pdo: true
+      0x6043:
+        name: vl velocity demand
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6044:
+        name: vl velocity actual value
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6046:
+        name: vl velocity min max amount
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: vl velocity min amount
+            access: rw
+          - datatype: uint32
+            name: vl velocity max amount
+            access: rw
+      0x6048:
+        name: vl velocity acceleration
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Delta speed
+            access: rw
+          - datatype: uint16
+            name: Delta time
+            access: rw
+      0x6049:
+        name: vl velocity deceleration
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Delta speed
+            access: rw
+          - datatype: uint16
+            name: Delta time
+            access: rw
+      0x604A:
+        name: vl velocity quick stop
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Delta speed
+            access: rw
+          - datatype: uint16
+            name: Delta time
+            access: rw
+      0x604B:
+        name: vl set-point factor
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: int16
+            name: vl set-point factor numerator
+            access: rw
+            default: 1
+          - datatype: int16
+            name: vl set-point factor denominator
+            access: rw
+            default: 1
+      0x604C:
+        name: vl dimension factor
+        data:
+          - datatype: uint8
+            name: Highestt sub-index supported
+            access: ro
+            default: 2
+          - datatype: int32
+            name: vl dimension factor numerator
+            access: rw
+            default: 1
+          - datatype: int32
+            name: vl dimension factor denominator
+            access: rw
+            default: 1
+      0x605A:
+        name: Quick stop option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 2
+      0x605B:
+        name: Shutdown option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 0
+      0x605C:
+        name: Disable operation option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 1
+      0x605D:
+        name: Halt option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 1
+      0x605E:
+        name: Fault reaction option code
+        category: optional
+        data:
+          - datatype: int16
+            access: rw
+            default: 2
+      0x6060:
+        name: Modes of operation
+        category: mandatory # if more than one mode supported
+        data:
+          - datatype: int16
+            access: rw
+            pdo: true
+      0x6061:
+        name: Modes of operation display
+        category: mandatory # if more than one mode supported
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6062:
+        name: Position demand value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x6063:
+        name: Position actual value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x6064:
+        name: Position actual value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x6065:
+        name: Following error window
+        data:
+          - datatype: uint32
+            access: rw
+      0x6066:
+        name: Following error time out
+        data:
+          - datatype: uint16
+            access: rw
+      0x6067:
+        name: Position window
+        data:
+          - datatype: uint32
+            access: rw
+      0x6068:
+        name: Position window time
+        data:
+          - datatype: uint16
+            access: rw
+      0x6069:
+        name: Velocity sensor actual value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x606A:
+        name: Sensor selection code
+        data:
+          - datatype: int16
+            access: rw
+      0x606B:
+        name: Velocity demand value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x606C:
+        name: Velocity actual value
+        data:
+          - datatype: int32
+            access: ro
+            pdo: true
+      0x606D:
+        name: Velocity window
+        data:
+          - datatype: uint16
+            access: rw
+      0x606E:
+        name: Velocity window time
+        data:
+          - datatype: uint16
+            access: rw
+      0x606F:
+        name: Velocity threshold
+        data:
+          - datatype: uint16
+            access: rw
+      0x6070:
+        name: Velocity threshold time
+        data:
+          - datatype: uint16
+            access: rw
+      0x6071:
+        name: Target torque
+        data:
+          - datatype: int16
+            access: rw
+            pdo: true
+      0x6072:
+        name: Max torque
+        data:
+          - datatype: uint16
+            access: rw
+      0x6073:
+        name: Max current
+        data:
+          - datatype: uint16
+            access: rw
+      0x6074:
+        name: Torque demand
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6075:
+        name: motor rated current
+        data:
+          - datatype: uint32
+            access: rw
+      0x6076:
+        name: motor rated torque
+        data:
+          - datatype: uint32
+            access: rw
+      0x6077:
+        name: Torque actual value
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6078:
+        name: Current actual value
+        data:
+          - datatype: int16
+            access: ro
+            pdo: true
+      0x6079:
+        name: DC link voltage
+        data:
+          - datatype: uint32
+            access: ro
+      0x6087:
+        name: Torque slope
+        data:
+          - datatype: uint32
+            access: rw
+      0x6088:
+        name: Torque profile type
+        data:
+          - datatype: int16
+            access: rw
+      0x607A:
+        name: Target position
+        data:
+          - datatype: int32
+            access: rw
+            pdo: true
+      0x607B:
+        name: Position range limit
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: int32
+            name: Min position range limit
+            access: rw
+          - datatype: int32
+            name: Max position range limit
+            access: rw
+      0x607D:
+        name: Software position limit
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: int32
+            name: Min position limit
+            access: rw
+          - datatype: int32
+            name: Max position limit
+            access: rw
+      0x607E:
+        name: Polarity
+        data:
+          - datatype: uint16
+            access: rw
+            default: 0
+      0x607F:
+        name: Max profile velocity
+        data:
+          - datatype: uint32
+            access: rw
+      0x6080:
+        name: Max motor speed
+        data:
+          - datatype: uint32
+            access: rw
+      0x6081:
+        name: Profile velocity
+        category: mandatory
+        data:
+          - datatype: uint32
+            access: rw
+      0x6082:
+        name: End velocity
+        data:
+          - datatype: uint32
+            access: rw
+      0x6083:
+        name: Profile acceleration
+        category: mandatory
+        data:
+          - datatype: uint32
+            access: rw
+      0x6084:
+        name: Profile deceleration
+        data:
+          - datatype: uint32
+            access: rw
+      0x6085:
+        name: Quick stop deceleration
+        data:
+          - datatype: uint32
+            access: rw
+      0x6086:
+        name: Motion profile type
+        data:
+          - datatype: int16
+            access: rw
+            default: 0
+      0x608F:
+        name: Position encoder resolution
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Encoder increments
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: motor revolutions
+            access: rw
+            default: 1
+      0x6090:
+        name: Velocity sensor resolution
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Sensor increments
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: motor revolutions
+            access: rw
+            default: 1
+      0x6091:
+        name: Gear ratio
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Motor shaft revolutions
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: Driving shaft revolutions
+            access: rw
+            default: 1
+      0x6092:
+        name: Feed constant
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Feed
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: Shaft revolutions
+            access: rw
+            default: 1
+      0x6096:
+        name: Velocity factor
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Numerator
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: Denominator
+            access: rw
+            default: 1
+      0x6097:
+        name: Acceleration factor
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Numerator
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: Denominator
+            access: rw
+            default: 1
+      0x6098:
+        name: Homing method
+        data:
+          - datatype: int16
+            access: rw
+      0x6099:
+        name: Homing speed
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Speed during search for switch
+            access: rw
+          - datatype: uint32
+            name: Speed during search for zero
+            access: rw
+      0x609A:
+        name: Homing acceleration
+        data:
+          - datatype: uint32
+            access: rw
+      0x60A2:
+        name: Jerk factor
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Numerator
+            access: rw
+            default: 1
+          - datatype: uint32
+            name: Denominator
+            access: rw
+            default: 1
+      0x60A3:
+        name: Profile jerk use
+        data:
+          - datatype: uint8
+            access: rw
+            default: 1
+      0x60A4:
+        name: Profile jerk
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: profile jerk 1
+            access: rw
+          - datatype: uint32
+            name: profile jerk 2
+            access: rw
+          - datatype: uint32
+            name: profile jerk 3
+            access: rw
+          - datatype: uint32
+            name: profile jerk 4
+            access: rw
+          - datatype: uint32
+            name: profile jerk 5
+            access: rw
+          - datatype: uint32
+            name: profile jerk 6
+            access: rw
+      0x60A8:
+        name: SI unit Position
+        data:
+          - datatype: uint32
+            access: rw
+            default: 0xFD010000
+      0x60A9:
+        name: SI unit Velocity
+        data:
+          - datatype: uint32
+            access: rw
+            default: 0xFD010300
+      0x60AA:
+        name: SI unit Acceleration
+        data:
+          - datatype: uint32
+            access: rw
+            default: 0xFD015700
+      0x60AB:
+        name: SI unit Jerk
+        data:
+          - datatype: uint32
+            access: rw
+            default: 0xFD01A000
+      0x60C5:
+        name: Max acceleration
+        data:
+          - datatype: uint32
+            access: rw
+      0x60C6:
+        name: Max deceleration
+        data:
+          - datatype: uint32
+            access: rw
+      0x607C:
+        name: Home offset
+        data:
+          - datatype: int32
+            access: rw
+      0x60B0:
+        name: Position offset
+        data:
+          - datatype: int32
+            access: rw
+      0x60B1:
+        name: Velocity offset
+        data:
+          - datatype: int32
+            access: rw
+      0x60B2:
+        name: Torque offset
+        data:
+          - datatype: int16
+            access: rw
+      0x60B8:
+        name: Touch probe function
+        data:
+          - datatype: uint16
+            access: rw
+      0x60B9:
+        name: Touch probe status
+        data:
+          - datatype: uint16
+            access: ro
+      0x60BA:
+        name: Touch probe 1 positive edge
+        data:
+          - datatype: int32
+            access: ro
+      0x60BB:
+        name: Touch probe 1 negative edge
+        data:
+          - datatype: int32
+            access: ro
+      0x60BC:
+        name: Touch probe 2 positive edge
+        data:
+          - datatype: int32
+            access: ro
+      0x60BD:
+        name: Touch probe 2 negative edge
+        data:
+          - datatype: int32
+            access: ro
+      0x60C0:
+        name: Interpolation sub mode select
+        data:
+          - datatype: int16
+            access: rw
+      0x60C1:
+        name: Interpolation data record
+        data:
+          - datatype: int16
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: int32
+            name: Interpolation data record 1
+            access: rw
+      0x60C2:
+        name: Interpolation time period
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: rw
+            default: 2
+          - datatype: uint8
+            name: Interpolation time period
+            access: rw
+            default: 1
+          - datatype: int16
+            name: Interpolation time index
+            access: rw
+            default: -3
+      0x60C4:
+        name: Interpolation data configuration
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 6
+          - datatype: uint32
+            name: Maximum buffer size
+            access: ro
+          - datatype: uint32
+            name: Acutal buffe size
+            access: rw
+            default: 0
+          - datatype: uint8
+            name: Buffer organisation
+            access: rw
+            default: 0
+          - datatype: uint16
+            name: Buffer position
+            access: rw
+            default: 0
+          - datatype: uint8
+            name: Size of data record
+            access: wo
+            default: 1
+          - datatype: uint8
+            name: Buffer clear
+            access: wo
+            default: 0
+      0x60D0:
+        name: Touch probe source
+        data:
+          - datatype: int16
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: int16
+            name: Touch probe 1
+            access: ro
+      0x60D1:
+        name: Touch probe time stamp 1 positive value
+        data:
+          - datatype: uint32
+            access: ro
+      0x60D2:
+        name: Touch probe time stamp 1 negative value
+        data:
+          - datatype: uint32
+            access: ro
+      0x60D3:
+        name: Touch probe time stamp 2 positive value
+        data:
+          - datatype: uint32
+            access: ro
+      0x60D4:
+        name: Touch probe time stamp 2 negative value
+        data:
+          - datatype: uint32
+            access: ro
+      0x60D5:
+        name: Touch probe 1 positive edge counter
+        data:
+          - datatype: uint16
+            access: ro
+      0x60D6:
+        name: Touch probe 1 negative edge counter
+        data:
+          - datatype: uint16
+            access: ro
+      0x60D7:
+        name: Touch probe 2 positive edge counter
+        data:
+          - datatype: uint16
+            access: ro
+      0x60D8:
+        name: Touch probe 2 negative edge counter
+        data:
+          - datatype: uint16
+            access: ro
+      0x60E0:
+        name: Positive torque limit value
+        data:
+          - datatype: uint16
+            access: rw
+      0x60E1:
+        name: Negative torque limit value
+        data:
+          - datatype: uint16
+            access: rw
+      0x60E3:
+        name: Supported homing methods
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+            length: 255
+          - datatype: int16
+            name: "?#st suported homing method"
+            access: ro
+      0x60E4:
+        name: Additional position actual value
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: int32
+            name: 1st additional position actual value
+            access: ro
+            pdo: true
+      0x60E5:
+        name: Additional velocity actual value
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: int32
+            name: 1st additional velocity actual value
+            access: ro
+            pdo: true
+      0x60E6:
+        name: Additional position encoder resolution - encoder increments
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional position encoder increments
+            access: rw
+      0x60E7:
+        name: Additional velocity encoder resolution - encoder increments per second
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional velocity encoder increments per second
+            access: rw
+      0x60E8:
+        name: Additional gear ratio - motor shaft revolutions
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional gear ratio motor shaft revolutions
+            access: rw
+      0x60E9:
+        name: Additional feed constant - feed
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional feed constant feed
+            access: rw
+      0x60EA:
+        name: Commutation angle
+        data:
+          - datatype: uint16
+            access: rw
+      0x60EB:
+        name: Additional position encoder resolution - motor revolutions
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional position motor revolutions
+            access: rw
+      0x60EC:
+        name: Additional velocity encoder resolution - motor revolutions per second
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional velocity motor revolutions per second
+            access: rw
+      0x60ED:
+        name: Additional gear ratio - driving shaft revolutions
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional gear ratio driving shaft revolutions
+            access: rw
+      0x60EE:
+        name: Additional feed constant - driving shaft revolutions
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 1
+          - datatype: uint32
+            name: 1st additional feed constant shaft revolutions
+            access: rw
+      0x60F2:
+        name: Positioning option code
+        data:
+          - datatype: uint16
+            access: rw
+      0x60F4:
+        name: Following error actual value
+        data:
+          - datatype: int32
+            access: ro
+      0x60F8:
+        name: Max slippage
+        data:
+          - datatype: int32
+            access: rw
+      0x60FA:
+        name: Control effort
+        data:
+          - datatype: int32
+            access: ro
+      0x60FC:
+        name: Position demand internal value
+        data:
+          - datatype: int32
+            access: ro
+      0x60FD:
+        name: Digital inputs
+        data:
+          - datatype: uint32
+            access: ro
+            pdo: true
+      0x60FE:
+        name: Digital outputs
+        data:
+          - datatype: uint8
+            name: Highest sub-index supported
+            access: ro
+            default: 2
+          - datatype: uint32
+            name: Pyhsical outputs
+            access: rw
+            pdo: true
+          - datatype: uint32
+            name: Bit mask mask
+            access: rw
+      0x60FF:
+        name: target velocity
+        data:
+          - datatype: int32
+            access: rw
+      0x6402:
+        name: Motor type
+        data:
+          - datatype: uint16
+            access: rw
+      0x6403:
+        name: Motor catalogue number
+        data:
+          - datatype: string
+            access: rw
+      0x6404:
+        name: Motor manufacturer
+        data:
+          - datatype: string
+            access: rw
+      0x6405:
+        name: http motor catalogue address
+        data:
+          - datatype: string
+            access: rw
+      0x6406:
+        name: Motor calibration date
+        data:
+          - datatype: uint64 #time of date
+            access: rw
+      0x6407:
+        name: Motor service periode
+        data:
+          - datatype: uint32
+            access: rw
+      0x6502:
+        name: Supported drive modes
+        category: mandatory
+        data:
+          - datatype: uint32
+            access: ro
+      0x6503:
+        name: Drive calatogue number
+        data:
+          - datatype: string
+            access: rw
+      0x6505:
+        name: http drive catalogue address
+        data:
+          - datatype: string
+            access: rw
+      0x67FE:
+        name: Version number
+        category: mandatory
+        data:
+          - datatype: uint32
+            access: ro
+            default: 0x30100 # 3.1.0
