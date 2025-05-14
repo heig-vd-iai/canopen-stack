@@ -1,0 +1,79 @@
+/**
+ * Remote header for {{ remote }}
+ * This file is auto generated DO NOT EDIT!
+ */
+#pragma once
+
+/**
+ * Dummy getter and setter functions
+ */
+inline void emptyGetter(Data &data) {}
+inline void emptySetter(const Data &data) {}
+
+/**
+ * Remote getter and setter functions
+ */
+{% for (index, subindex), object in od_flat.items() %}
+{% if object.remote == remote %}
+{% if object.get %}
+inline void getobject{{eds_name}}(Data &data) {
+    data.{{object.field}} = {{object.get}};
+}
+{% endif %}
+{% if object.set %}
+inline void setobject{{eds_name}}(const Data &data) {
+    {{object.set}}(data.{{object.type_code}});
+}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+/**
+ * Remote getter and setter function pointers
+ */
+void (*remoteGetter[])(Data &data) = {
+    {% for (index, subindex), object in od_flat.items() %}
+    {% if 'r' in object.access %}
+    getobject{{eds_name}},
+    {%else%}
+    emptyGetter,
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+void (*remoteSetter[])(const Data &data) = {
+    {% for (index, subindex), object in od_flat.items() %}
+    {% if 'w' in object.access %}
+    setobject{{index}}sub{{subindex}},
+    {%else%}
+    emptySetter,
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+/**
+ * Binary search tree for reverse lookup
+ * Object is a 24 bit number: (object << 8 | subobject)
+ */
+int32_t remoteGetterBSTKeys[] = {
+    {% for item in tree_array %}
+    {% if item %}
+    {{item[0]}},
+    {% else %}
+    -1,
+    {% endif %}
+    {% endfor %}
+};
+
+void (*remoteGetterBSTMap[])(Data &data) = {
+    {% for item in tree_array %}
+    {% if item %}
+    &get{{item[1]}},
+    {% else %}
+    emptyGetter,
+    {% endif %}
+    {% endfor %}
+};

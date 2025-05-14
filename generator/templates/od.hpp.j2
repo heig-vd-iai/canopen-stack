@@ -1,0 +1,300 @@
+/**
+ *
+ * This file is auto generated DO NOT EDIT!
+ */
+
+#pragma once
+
+#define OD_NODE_ID {{ node_id }}
+#define OD_GRANULARITY 8
+#define OD_PDO_MAPPING_MAX 8
+#define OD_ENTRY_SIZE_MAX 1024
+#define OD_OBJECTS_COUNT {{ objects | length }}
+#define OD_TPDO_COUNT {{ nrOfTXPDO }}
+#define OD_RPDO_COUNT {{ nrOfRXPDO }}
+#define OBJECT_INDEX_COUNT 0
+
+#define X1A00_MAP_DISABLED 0
+#define X1A00_SAM_MPDO 0xFE
+#define X1A00_DAM_MPDO 0xFF
+
+#define SAVE_INDEX 0x1010
+#define SAVE_SIGNATURE 0x65766173
+#define RESTORE_INDEX 0x1011
+#define RESTORE_SIGNATURE 0x64616F6C
+
+#define MAX_SUB_INDEX 255
+
+#define MAX_WRITE_TRY 100
+
+#define DOMAIN_MAX_SIZE 800
+
+#define OD_LENGTH {{ len(objects) }}
+
+/**
+ * Array index for each object
+ */
+{% for object in objects %}
+#define OD_OBJECT_{{ "%04d"|format(object.index) }}_SUB{{ object.subindex }} {{ loop.index0 }}
+{% endfor %}
+
+#ifndef _OD_DEFINES_ONLY
+#include "iobject-dictionnary.hpp"
+
+namespace CANopenOD {
+
+constexpr std::pair<uint16_t, uint8_t> objectIndexTable[{{ len(objects) }}] = {
+    {% for object in objects %}
+    /* {{ "%04d"|format(loop.index0) }} */ std::make_pair({{ "0x%04d"|format(object.index) }}, {{ object.subindex }}),
+    {% endfor %}
+};
+
+}
+
+using namespace CANopen;
+
+const uint64_t od_signature = {{ signature }}u;
+
+int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+{% for object in objects %}
+{% if 'r' in object.access and object.get and object.remote == 'local' %}
+int8_t getobject{{ object.eds_name }}(Data &data, int32_t id, SDOAbortCodes &abortCode);
+{% endif %}
+{% if 'w' in object.access and object.set and object.remote == 'local' %}
+int8_t setobject{{ object.eds_name }}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+{% endif %}
+{%endfor%}
+
+class ObjectDictionnary : IObjectDictionnary{
+
+    {% for object in objects %}
+    Metadata_{{ object.type.ctype }}{% if (object.limits.low is not None) and (object.limits.high is not None) %}_limited{% endif %} object{{object.eds_name}}Metadata{{"{"}}{{ subobject.meta_data }}{% if subobject.type == "string" %}, "{{subobject.default}}"{% elif subobject.type != "domain" %}, {{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %}{% if object.type.name == "string" %}, {{object.length}}{% endif %}};
+    {% endfor %}
+    {% endfor %}
+
+public:
+    const uint32_t length = {{ len(objects) }};
+
+    /**
+     * Accessor to metadata.
+     */
+    const Metadata *objectMetadataTable[{{ len(objects) }}] = {
+    {% for object in objects %}
+        /* {{ "%04d"|format(loop.index0) }} */  &object{{object.eds_name}}Metadata,
+    {% endfor %}
+    };
+
+    /**
+     * Getter and setter functions for each local object.
+     */
+    int8_t (*objectGetterTable[{{len(objects)}}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
+        {% for object in objects %}
+        /* {{ "%04d"|format(loop.index0) }} - {{ object.eds_name }} */
+        {%- if 'r' in object.access and object.get and object.remote == 'local' %}
+        &getobject{{ object.eds_name }},
+        {% elif object.remote == 'local' and object.get %}
+        &getLocalData_{{subobject.ctype_name}},
+        {% else %}
+        &getRemoteData,
+        {% endif %}
+        {% endfor %}
+    };
+
+    int8_t (*objectSetterTable[{{len(objects)}}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = {
+        {% for object in objects %}
+        /* {{ "%04d"|format(loop.index0) }} - {{ object.eds_name }} */
+        {% if ('w' in object.access and object.set and object.remote == 'local') or (object.limits.low is not None and object.limits.high is not None) %}
+        &setobject{{object.eds_name}},
+        {% elif object.remote != 'local' and object.set %}
+        &setRemoteData,
+        {% else %}
+        &setLocalData_object{{object.eds_name}},
+        {% endif %}
+        {% endfor %}
+    };
+
+    /**
+     * Default values for each object depending on the type.
+     */
+    {% for datatype, data in default_values %}
+    // Default values for {{ datatype.name }}
+    {{ datatype.ctype }} {{ datatype.name }}Table[{{ len(data) }}] = {
+        {% for object in data %}
+        /* {{ "%04d"|format(loop.index0) }} - {{ object.eds_name }} */ {{ object.default }},
+        {% endfor %}
+    };
+    {% endfor %}
+
+    /**
+     * String type
+     */
+    {% for object in objects if object.type.name == 'string' %}
+    char object{{object.eds_name}}[{{object.string_length}}] = { {{ object.default }} };
+    {% endfor %}
+
+    char *stringTable[{{ type_count.str }}] = {
+        {% for object in objects if object.type.name == 'string' %}
+        {{subobject.cpp_instance_name}},
+        {% endfor %}
+    };
+
+    /**
+     * Cooresponding index for each default value of each type.
+     */
+    uint8_t dataIndexTable[{{ len(objects) }}] = {
+        {% for object in objects %}
+        {{object.default_index}},
+        {% endfor %}
+    }
+
+    /**
+     * Find an object in the dictionary.
+     * @param index The hex index of the object to find.
+     * @return index in objectDataTable if found, -1 otherwise.
+     */
+    int32_t findObject(uint16_t index);
+    int32_t findObject(uint16_t index, uint8_t subIndex);
+
+    /**
+     * Access an object in the dictionary by array index using the subscript operator.
+     * Under the hood, this method uses the at() method.
+     * @param index The array index of the object to access.
+     * @return index in objectDataTable if found, -1 otherwise.
+     */
+    int32_t operator[](uint16_t index);
+
+    /**
+     * Save data to non-volatile storage for a specified parameter group.
+     * This method is called by object 0x1010.
+     * @param parameterGroup The parameter group number.
+     * @return True if saving was successful, false otherwise.
+     */
+    bool saveData(uint8_t parameterGroup);
+
+    /**
+    * Setter called by the od to save data
+    * @param data must contain "save"
+    * @param id object id for parameter group
+    * @param abortCode to set if the object is not found.
+    */
+    int8_t saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
+     * Getter called by the od to send information about the save
+     * @param data to fill with the save status
+     * @param id object id for parameter group
+     * @param abortCode to set if the object is not found.
+    */
+    int8_t getSave(Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
+     * Load data from non-volatile storage for a specified parameter group.
+     * This method should be called on application startup to load the object dictionnary.
+     * @param parameterGroup The parameter group number.
+     * @return True if loading was successful, false otherwise.
+     */
+    bool loadData(uint8_t parameterGroup);
+
+    /**
+     * Restore data to default for a specified parameter group.
+     * This method is called by object 0x1011.
+     * @param parameterGroup The parameter group number.
+     * @return True if restoring was successful, false otherwise.
+     */
+    bool restoreData(uint8_t parameterGroup);
+
+    /**
+    * Setter called by the od to restore data
+    * @param data must contain "load"
+    * @param id object id for parameter group
+    * @param abortCode to set if the object is not found.
+    */
+    int8_t restoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
+     * Getter called by the od to send information about the restore
+     * @param data to fill with the save status
+     * @param id object id for parameter group
+     * @param abortCode to set if the object is not found.
+    */
+    int8_t getRestore(Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+    /**
+     * Test if an object exists in the dictionary.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @return True if the object exists, false otherwise.
+    */
+    bool isSubValid(uint16_t index, uint8_t subIndex);
+
+    /**
+     * Get the value of an object in the dictionary.
+     * @param data The data object to store the value in.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @param abortCode The abort code to set if the object is not found.
+     * @return 0 if the object was found, 1 if a request is pending, -1 otherwise.
+    */
+    int8_t readData(Data &data, uint16_t index, uint8_t subIndex, SDOAbortCodes &abortCode);
+    int8_t readData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t readData(Data &data, uint16_t index, uint8_t subIndex);
+    int8_t readData(Data &data, int32_t id);
+
+    /**
+     * Set the value of an object in the dictionary.
+     * @param data The data object to store the value in.
+     * @param index The hex index of the object to find.
+     * @param subIndex The subindex of the object to find.
+     * @param abortCode The abort code to set if the object is not found.
+     * @return 0 if the object was found, 1 if a request is pending, -1
+     * otherwise.
+     */
+    int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex, SDOAbortCodes &abortCode);
+    int8_t writeData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+    int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex);
+    int8_t writeData(const Data &data, int32_t id);
+
+    /**
+     * Get the metadata of an object in the dictionary.
+     * @param index The index to the object
+     * @param subIndex The subindex to the object
+     * @return The metadata of the object.
+     */
+    Metadata* getMetadata(uint16_t index, uint8_t subindex);
+    Metadata* getMetadata(int32_t id);
+
+    Data* getData(uint16_t index, uint8_t subindex);
+    Data* getData(int32_t id);
+
+    uint16_t getSize(uint16_t index, uint8_t subindex);
+    uint16_t getSize(int32_t id);
+};
+#endif // _OD_DEFINES_ONLY

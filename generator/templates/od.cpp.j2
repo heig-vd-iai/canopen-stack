@@ -1,0 +1,31 @@
+/**
+ * Object setter and getter.
+ * This file is auto generated DO NOT EDIT!
+ */
+
+{% for (index, subindex), object in od_flat.items() %}
+
+{% if object.remote == 'local' and 'r' in object.access %}
+int8_t getobject{{index}}sub{{subindex}}(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return {{ object.get }}(data, id, abortCode);
+}
+{%endif%}
+{% if object.remote == 'local' and object.limits.low is not None or object.set %}
+int8_t object{{index}}sub{{subindex}}(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    {% if object.limits.low is not None and object.limits.high is not None %}
+    abortCode = data.{{object.type.field}} < {{ object.limits.low }} ? SDOAbortCode_DownloadValueTooLow :
+        data.{{object.type.field}} > {{ object.limits.high }} ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;
+
+    if (abortCode != SDOAbortCode_OK) return -1;
+    {% endif %}
+    {% if subobject.set %}
+    return {{ subobject.set }}(data, id, abortCode);
+    {% elif subobject.remote %}
+    return setRemoteData(data, id, abortCode);
+    {% else %}
+    return setLocalData_{{ object.type.ctype }}(data, id, abortCode);
+    {% endif %}
+}
+{%endif%}
+{%endfor%}
+{%endfor%}

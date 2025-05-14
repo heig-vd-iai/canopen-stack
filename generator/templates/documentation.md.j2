@@ -1,0 +1,11 @@
+---
+notice: |
+  This file is auto-generated. Do not edit it directly.
+  Instead, modify the template in the `generator/templates` directory and re-run the generator.
+---
+
+# Object Dictionnary
+
+{% for object in objects %}
+## {{object.index}}:{{object.subindex}} {{ object.name }}
+{% endfor %}

@@ -1,0 +1,16 @@
+/**
+ * Enumeration types.
+ * This file is auto generated DO NOT EDIT!
+ */
+
+{% for (index, subindex), object in od_flat.items() %}
+// Object {{object.hex_code}}
+enum {{class_name}} {
+    {% for enum, value in items.items() %}
+    {{enum}} = {{value.value}},
+    {% endfor %}
+};
+
+typedef enum {{class_name}} {{class_name}};
+
+{% endfor %}
