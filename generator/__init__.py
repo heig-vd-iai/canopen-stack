@@ -1,5 +1,6 @@
 import os
 import datetime
+import yaml
 from enum import Enum
 from collections import namedtuple, defaultdict
 
@@ -22,6 +23,11 @@ def flatten_od(od):
     """
     flat_od = {}
     for index, object in od.items():
+        if object['get']:
+            object['access'] = ''.join(set(object['access']).add('w'))
+        if object['set']:
+            object['access'] = ''.join(set(object['access']).add('r'))
+
         match object['type']:
             case 'var':
                 """ VAR type are stored with the subindex 0 """
@@ -31,9 +37,9 @@ def flatten_od(od):
                     'type': 'uint8',
                     'name': 'Number of array entries',
                     'access': 'r',
-                    'default': len(object['length'])
+                    'default': object['length']
                 }
-                for subindex in range(len(object['length'])):
+                for subindex in range(object['length']):
                     flat_od[ObjectCode(index, subindex + 1)] = {
                         **object,
                         'type': datatypes[object['datatype']],
@@ -47,7 +53,7 @@ def flatten_od(od):
                     'type': 'uint8',
                     'name': 'Number of records',
                     'access': 'r',
-                    'default': len(object['record'])
+                    'default': len(object['subindex'])
                 }
                 for subindex, subobject in enumerate(object['subindex']):
                     flat_od[ObjectCode(index, subindex + 1)] = subobject
@@ -64,10 +70,6 @@ def flatten_od(od):
         object['id'] = index << 0x100 | (subindex & 0xff)
         object['hex_code'] = hex_code_to_str(code)
         object['eds_name'] = f"{code.index:04x}sub{code.subindex}"
-        if object['get']:
-            object['access'] = ''.join(set(object['access']).add('w'))
-        if object['set']:
-            object['access'] = ''.join(set(object['access']).add('r'))
 
     # Set the default index value.
     # Default values are grouped by types.
@@ -109,4 +111,6 @@ def get_git_info():
 class Config:
     def __init__(self, filename: str):
         with open(filename, 'r') as f:
-            self.schema = SchemaConfig(f.read())
+            data = yaml.safe_load(f)
+
+        self.config = SchemaConfig(data)
