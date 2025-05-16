@@ -1,14 +1,16 @@
-import os
-import io
-import datetime
-import yaml
-from enum import Enum
-from collections import namedtuple, defaultdict
 import configparser
-from .schema import SchemaConfig
+import datetime
+import io
+import os
+from collections import defaultdict, namedtuple
+from enum import Enum
+
+import yaml
+
+from .template import render_template
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
 from .types import ObjectCode, datatypes, object_types
-from .template import render_template
+from .validation.config import SchemaConfig
 
 
 def flatten_od(od):
@@ -33,7 +35,7 @@ def flatten_od(od):
                     "type": "var",
                     "name": "Number of array entries",
                     "access": "r",
-                    "limits": {'min': None, 'max': None},
+                    "limits": {"min": None, "max": None},
                     "default": object["length"],
                     "parent_type": object["type"],
                 }
@@ -53,7 +55,7 @@ def flatten_od(od):
                     "type": "var",
                     "name": "Number of records",
                     "access": "r",
-                    "limits": {'min': None, 'max': None},
+                    "limits": {"min": None, "max": None},
                     "default": len(object["subindex"]),
                     "parent_type": object["type"],
                 }
@@ -105,18 +107,18 @@ def get_bst_search_array(od_flat):
 
 def get_git_info():
     def to_date(date):
-        return  datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+        return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S %z")
 
     return {
         "committer": os.popen("git config user.name").read().strip(),
         "branch": os.popen("git rev-parse --abbrev-ref HEAD").read().strip(),
         "commit": os.popen("git rev-parse HEAD").read().strip(),
         "date": to_date(os.popen("git show -s --format=%ci HEAD").read().strip()),
-        "first_commit_date": to_date(os.popen(
-            "git show -s --format=%ci $(git rev-list --max-parents=0 HEAD)"
-        )
-        .read()
-        .strip()),
+        "first_commit_date": to_date(
+            os.popen("git show -s --format=%ci $(git rev-list --max-parents=0 HEAD)")
+            .read()
+            .strip()
+        ),
     }
 
 
@@ -215,12 +217,12 @@ class Config:
             key = hex(code.index)[2:]
             keyfull = f"{key}sub{code.subindex:02x}"
 
-            if 'parent_type' in item:
+            if "parent_type" in item:
                 eds[key] = {
                     "ParameterName": item["name"],
                     "ObjectType": str(object_types[item["parent_type"]]),
                     "DataType": str(item["datatype"].code),
-                    "SubNumber": str(item['default']),
+                    "SubNumber": str(item["default"]),
                 }
 
             eds[keyfull] = {
@@ -229,7 +231,7 @@ class Config:
                 "DataType": item["datatype"].code,
                 "AccessType": access,
                 "DefaultValue": str(item["default"]),
-                "PDOMapping": str(int(bool(item["pdo"])) if 'pdo' in item else 0),
+                "PDOMapping": str(int(bool(item["pdo"])) if "pdo" in item else 0),
                 **lowlimit,
                 **highlimit,
             }
@@ -247,7 +249,7 @@ class Config:
             config.write(output)
             return output.getvalue()
 
-        with open(filename, 'w') as configfile:
+        with open(filename, "w") as configfile:
             config.write(configfile)
             configfile.write("\n")
 

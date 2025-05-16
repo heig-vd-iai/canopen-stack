@@ -14,15 +14,21 @@ and convert it to an array representation.
 'fifteen'
 """
 
+
 class TreeNode:
+    """Node of a binary search tree."""
+
     def __init__(self, key: int, value: str):
         self.key = key
         self.value = value
         self.left = None
         self.right = None
 
+
 def build_balanced_bst(data) -> TreeNode:
+    """Create a balanced BST from a list of key-value pairs."""
     return _build_balanced_bst(sorted(data))
+
 
 def _build_balanced_bst(pairs) -> TreeNode:
     if not pairs:
@@ -31,8 +37,9 @@ def _build_balanced_bst(pairs) -> TreeNode:
     key, value = pairs[mid]
     root = TreeNode(key, value)
     root.left = _build_balanced_bst(pairs[:mid])
-    root.right = _build_balanced_bst(pairs[mid + 1:])
+    root.right = _build_balanced_bst(pairs[mid + 1 :])
     return root
+
 
 def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
     """Convert a balanced BST to an array representation."""
@@ -50,7 +57,9 @@ def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
     insert(root, 0)
     return result
 
+
 def search_bst_array(tree: list[tuple[int, str] | None], key: int) -> str | None:
+    """Search for a key in a BST represented as an array."""
     index = 0
     while index < len(tree):
         node = tree[index]
