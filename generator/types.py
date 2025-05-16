@@ -71,3 +71,36 @@ objects_ranges = {
     (0xB000, 0xBFFF): "Standardized system variable area",
     # Reserved range
 }
+
+units = {
+    'm': 0x1,
+    'kg': 0x2,
+    's': 0x3,
+    'A': 0x4,
+    'K': 0x5,
+    'mol': 0x6,
+    'cd': 0x7,
+    'rad': 0x10,
+    'sr': 0x11,
+    'Hz': 0x20,
+    'N': 0x21,
+    'Pa': 0x22,
+    'J': 0x23,
+    'W': 0x24,
+    'C': 0x25,
+    'V': 0x26,
+    'F': 0x27,
+    'Ohm': 0x28,
+    'S': 0x29,
+    'Wb': 0x2A,
+    'T': 0x2b,
+    'H': 0x2c,
+    '°C': 0x2d,
+    'lm': 0x2E,
+    'lx': 0x2F,
+    'Bq': 0x30,
+    'Gy': 0x31,
+    'Sv': 0x32,
+}
+
+# prefix = 10**(int8)prefix

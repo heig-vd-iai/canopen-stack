@@ -15,22 +15,22 @@ profiles:
       - EN 61800-7-201:2016
       - IEC 61800-7-201:2015
       - CiA 402
-    enumerations:
-      OperationMode:
-        override-ranges:
-          - [-128, -1]
-        data:
-          OPERATION_MODE__NO_MODE_CHANGE: 0
-          OPERATION_MODE__PROFILE_POSITION_MODE: 1
-          OPERATION_MODE__VELOCITY_MODE: 3
-          OPERATION_MODE__TORQUE_PROFILE_MODE: 4
 
-          OPERATION_MODE__HOMING_MODE: 6
-          OPERATION_MODE__INTERPOLATED_POSITION_MODE: 7
-          OPERATION_MODE__CYCLIC_SYNC_POSITION_MODE: 8
-          OPERATION_MODE__CYCLIC_SYNC_VELOCITY_MODE: 9
-          OPERATION_MODE__CYCLIC_SYNC_TORQUE_MODE: 10
-          OPERATION_MODE__CYCLIC_SYNC_TORQUE_WITH_COMMUTATION_ANGLE: 11
+    # Features are conditional features that, if available conditionally
+    # change the category of certain objects. They can be listed in the
+    # configuration file (YAML).
+    features:
+      vl: Velocity Mode
+      cstca: Current Mode (CST/CA)
+      pp: Profile Position Mode
+      pv: Profile Velocity Mode
+      ip: Interpolated Position Mode
+      pc: Position Mode
+      hm: Homing Mode
+      csp: Cyclic Synchronous Position Mode
+      tq: Torque Mode
+      csv: Cyclic Synchronous Velocity Mode
+    # Objects definition according to the CiA standard
     objects:
       0x6007:
         name: Abort connection option code
@@ -39,7 +39,6 @@ profiles:
           bus-off, heartbeat, life guarding, NMT stopped state entered, reset application, and reset
           communication. Table 35 specifies the value definition, Table 36 specifies the object description,
           and Table 37 specifies the entry description.
-        category: optional
         datatype: int16
         access: rw
         default: 1
@@ -58,7 +57,6 @@ profiles:
           This object shall provide the error code of the last error which occurred in the drive device. Table 24
           specifies the value definition, Table 33 specifies the object description, and Table 34 specifies the
           entry description.
-        category: optional
         datatype: uint16
         access: r
       0x6040:
@@ -73,11 +71,11 @@ profiles:
           1: Enable Voltage
           2: Quick Stop
           3: Enable Operation
-          4..6: Operation Mode Specific
+          6..4: Operation Mode Specific
           7: Fault Reset
           8: Halt
           9: Operation Manufacturer Specific
-          11..15: Manufacturer Specific
+          15..11: Manufacturer Specific
       0x6041:
         name: Statusword
           This object shall provide the status of the PDS FSA.
@@ -105,8 +103,8 @@ profiles:
           8: Manufacturer Specific
           9: Target Reached
           10: Internal Limit Active
-          12..13: Operation Mode Specific
-          14..15: Manufacturer Specific
+          13..12: Operation Mode Specific
+          15..14: Manufacturer Specific
       0x6042:
         name: vl target velocity
         description: |
@@ -222,7 +220,6 @@ profiles:
         description: |
           This object shall indicate what action is performed when the quick stop function is executed. The
           slow down ramp is the deceleration value of the used mode of operations.
-        category: optional
         datatype: int16
         access: rw
         default: 2
@@ -242,7 +239,6 @@ profiles:
             QUICK_STOP_OPTION_CODE__VOLTAGE_LIMIT_THEN_QUICK_STOP_ACTIVE: 8
       0x605B:
         name: Shutdown option code
-        category: optional
         datatype: int16
         access: rw
         default: 0
@@ -259,7 +255,6 @@ profiles:
           This object shall indicate what action is performed if there is a transition from operation enabled
           state to switched on state. The slow down ramp is the deceleration value of the used mode of
           operations.
-        category: optional
         datatype: int16
         access: rw
         default: 1
@@ -275,7 +270,6 @@ profiles:
         description: |
           This object shall indicate what action is performed when the halt function is executed. The slow
           down ramp is the deceleration value of the used mode of operations.
-        category: optional
         datatype: int16
         access: rw
         default: 1
@@ -294,7 +288,6 @@ profiles:
         description: |
           This object shall indicate what action is performed when fault is detected in the PDS. The slow down
           ramp is the deceleration value of the used mode of operations.
-        category: optional
         datatype: int16
         access: rw
         default: 2
@@ -316,7 +309,23 @@ profiles:
         datatype: int16
         access: rw
         pdo: true
-        enum: OperationMode
+        enum:
+          class: OperationMode
+          override-ranges:
+            - [-128, -1]
+          data:
+            OPERATION_MODE__NO_MODE_CHANGE: 0
+            OPERATION_MODE__PROFILE_POSITION_MODE: 1
+            OPERATION_MODE__VELOCITY_MODE: 3
+            OPERATION_MODE__TORQUE_PROFILE_MODE: 4
+
+            OPERATION_MODE__HOMING_MODE: 6
+            OPERATION_MODE__INTERPOLATED_POSITION_MODE: 7
+            OPERATION_MODE__CYCLIC_SYNC_POSITION_MODE: 8
+            OPERATION_MODE__CYCLIC_SYNC_VELOCITY_MODE: 9
+            OPERATION_MODE__CYCLIC_SYNC_TORQUE_MODE: 10
+            OPERATION_MODE__CYCLIC_SYNC_TORQUE_WITH_COMMUTATION_ANGLE: 11
+
       0x6061:
         name: Modes of operation display
         description: |
@@ -325,13 +334,28 @@ profiles:
         datatype: int16
         access: r
         pdo: true
-        enum: OperationMode
+        enum:
+          class: OperationMode
+          override-ranges:
+            - [-128, -1]
+          data:
+            OPERATION_MODE__NO_MODE_CHANGE: 0
+            OPERATION_MODE__PROFILE_POSITION_MODE: 1
+            OPERATION_MODE__VELOCITY_MODE: 3
+            OPERATION_MODE__TORQUE_PROFILE_MODE: 4
+
+            OPERATION_MODE__HOMING_MODE: 6
+            OPERATION_MODE__INTERPOLATED_POSITION_MODE: 7
+            OPERATION_MODE__CYCLIC_SYNC_POSITION_MODE: 8
+            OPERATION_MODE__CYCLIC_SYNC_VELOCITY_MODE: 9
+            OPERATION_MODE__CYCLIC_SYNC_TORQUE_MODE: 10
+            OPERATION_MODE__CYCLIC_SYNC_TORQUE_WITH_COMMUTATION_ANGLE: 11
+
       0x6062:
         name: Position demand value
         description: |
           This object shall provide the demanded position value. The value shall be given in user-defined
           position units.
-        data:
         datatype: int32
         access: r
         pdo: true
@@ -341,16 +365,14 @@ profiles:
           This object shall provide the actual value of the position measurement device, which shall be one of
           the two input values of the closed-loop position control. If necessary, the data unit may be
           transformed from user-defined units to increments. The value shall be given in internal units.
-        category: optional
         datatype: int32
         access: r
         pdo: true
       0x6064:
         name: Position actual value
-        data:
-          - datatype: int32
-            access: r
-            pdo: true
+        datatype: int32
+        access: r
+        pdo: true
       0x6065:
         name: Following error window
         description: |
@@ -359,7 +381,6 @@ profiles:
           error occurs. A following error may occur when a drive is blocked, unreachable profile velocity
           occurs, or at wrong closed-loop coefficients. The value shall be given in user-defined position units.
           If the value of the following error window is FFFF FFFFh, the following control shall be switched off.
-        category: optional
         datatype: uint32
         access: rw
       0x6066:
@@ -369,7 +390,6 @@ profiles:
           the statusword shall be set to 1. The reaction of the drive when a following error occurs is
           manufacturer-specific. The value shall be given in ms.
         unit: ms
-        category: optional
         datatype: uint16
         access: rw
       0x6067:
@@ -383,7 +403,6 @@ profiles:
           limiting functions and transformation into internal machine units before it may be used with this
           function. The value shall be given in user-defined position units. If the value of the position window
           is FFFF FFFFh, the position window control shall be switched off.
-        category: optional
         datatype: uint32
         access: rw
       0x6068:
@@ -392,7 +411,6 @@ profiles:
           This object shall indicate the configured time, during which the actual position within the position
           window is measured. The value shall be given in ms.
         unit: ms
-        category: optional
         datatype: uint16
         access: rw
       0x6069:
@@ -401,7 +419,6 @@ profiles:
           This object shall provide the value read from a velocity sensor. The value shall be given in
           increments per second.
         unit: inc/s
-        category: optional
         datatype: int32
         access: r
         pdo: true
@@ -433,7 +450,7 @@ profiles:
           This object shall provide the actual velocity value derived either from the velocity sensor or the
           position sensor. The value shall be given in user-defined velocity units.
         unit: udv
-        mandatory-if:
+        mandatory_conditions:
           - pv
           - csv
         datatype: int32
@@ -445,9 +462,9 @@ profiles:
           This object shall indicate the configured velocity window. The value shall be given in user-defined
           velocity units.
         unit: udv
-        data:
-          - datatype: uint16
-            access: rw
+        datatype: uint16
+        access: rw
+
       0x606E:
         name: Velocity window time
         description: |
@@ -717,6 +734,7 @@ profiles:
 
           $$ positionEncoderResolution = \frac{encoderIncrements}{motorRevolutions} $$
         access: rw
+        datatype: uint32
         default: 1
         data:
           - name: Encoder increments
@@ -790,6 +808,7 @@ profiles:
           class: HomingMethod
           override-ranges:
             - [-128, -1]
+          data: {}
       0x6099:
         name: Homing speed
         description: |
@@ -843,15 +862,15 @@ profiles:
           - name: Profile jerk 1
             category: mandatory
           - name: Profile jerk 2
-            category: optional
+
           - name: Profile jerk 3
-            category: optional
+
           - name: Profile jerk 4
-            category: optional
+
           - name: Profile jerk 5
-            category: optional
+
           - name: Profile jerk 6
-            category: optional
+
       0x60A8:
         name: SI unit Position
         description: |
@@ -1061,9 +1080,20 @@ profiles:
         access: r
       0x60C0:
         name: Interpolation sub mode select
-        data:
-          - datatype: int16
-            access: rw
+        description: |
+          This object shall indicate the actually chosen interpolation mode. If linear interpolation is the only
+          algorithm avalaible, then it is not necessary to implement this object. If a manufacturer-specific
+          interpolation mode is selected, the corresponding interpolation data record shall be implemented in
+          the manufacturer-specific profile area of the object dictionary. If the linear interpolation mode is
+          selected, the interpolation data given in object 60C1h shall be used.
+        datatype: int16
+        access: rw
+        enum:
+          class: InterpolationSubModeSelect
+          override-ranges:
+            - [-32768, -1]
+          data:
+            INTERPOLATION_SUB_MODE_SELECT__LINEAR_INTERPOLATION: 0
       0x60C1:
         name: Interpolation data record
         description: |
@@ -1103,7 +1133,7 @@ profiles:
           of interpolation data, and shall provide objects to define the size of the data record and to clear the
           buffers. This object is used to enable the drive device to receive the needed data in advance. It also
           is used to store the positions and further data sent by the control device.
-        data:
+        record:
           - name: Maximum buffer size
             datatype: uint32
             access: r
@@ -1121,11 +1151,11 @@ profiles:
             default: 0
           - name: Size of data record
             datatype: uint8
-            access: wo
+            access: w
             default: 1
           - name: Buffer clear
             datatype: uint8
-            access: wo
+            access: w
             default: 0
       0x60C5:
         name: Max acceleration
@@ -1147,9 +1177,8 @@ profiles:
         access: rw
       0x607C:
         name: Home offset
-        data:
-          - datatype: int32
-            access: rw
+        datatype: int32
+        access: rw
       0x60D0:
         name: Touch probe source
         datatype: int16
@@ -1255,6 +1284,8 @@ profiles:
         description:
           This object shall provide the supported homing methods of the drive.
         type: array
+        datatype: int8
+        length: 255
         access: r
       0x60E4:
         name: Additional position actual value
@@ -1317,7 +1348,8 @@ profiles:
         description: |
           This object shall indicate the electrical commutation angle for the space vector modulation. The
           value shall be given in multiples of $360°/2^{16}$, whereby the electrical angle is used.
-        unit: degree * 360 / 65536
+        unit: degree
+        #scale: 360 / 65536
         datatype: uint16
         access: rw
       0x60EB:
@@ -1456,7 +1488,7 @@ profiles:
         description: |
           This object shall provide the output of the trajectory generator in profile position mode. This value
           shall be given in increments of the position encoder.
-        unit: incp
+        #unit: incp
         datatype: int32
         access: r
       0x60FD:

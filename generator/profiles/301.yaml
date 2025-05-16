@@ -3,6 +3,16 @@
 profiles:
   301:
     name: Application layer and communication profile
+    description: CANopen application layer and communication profile
+    standards:
+      - EN 50325-3-1:2015
+      - CiA 301
+    features:
+      pdo_synchronous: PDOs can be sent synchronously
+      guarding: Node Guarding
+      heartbeat: Heartbeat producer and consumer
+      emergency: Emergency message
+      modular: Modular Device
     objects:
       0x1000:
         name: Device type
@@ -57,7 +67,7 @@ profiles:
         pdo: false
         default: 0x80
         bitfield:
-          0..28: CAN_ID
+          28..0: CAN_ID
           29:
             name: frame
             description:
@@ -155,7 +165,7 @@ profiles:
         access: rw
         default: 0x100
         bitfield:
-          0..28: CAN_ID
+          28..0: CAN_ID
           29:
             name: frame
             description:
@@ -178,7 +188,7 @@ profiles:
         access: rw
         default: 0
         bitfield:
-          0..28: CAN_ID
+          28..0: CAN_ID
           29:
             name: frame
             description:
@@ -208,7 +218,8 @@ profiles:
           This object shall indicate the configured inhibit time for the EMCY message
 
           The value shall be given in multiples of 100 μs. The value 0 shall disable the inhibit time.
-        unit: 100*us
+        unit: us
+        scale: 100
         category: optional
         datatype: uint16
         access: rw
@@ -225,10 +236,10 @@ profiles:
           NOTE: Before the reception of the first heartbeat the status of the heartbeat producer is
           unknown.
         bitfield:
-          0..15:
+          15..0:
             name: Heartbeat time
             unit: ms
-          16..23:
+          23..16:
             name: Node-ID
         category: optional
         datatype: uint16
@@ -255,7 +266,7 @@ profiles:
 
           The value of 0000 0000h shall be reserved.
         category: mandatory
-        subindex:
+        record:
           - name: Vendor-ID
             description: |
               Sub-index 01h shall contain the unique value1 that is allocated uniquely to
@@ -263,22 +274,22 @@ profiles:
               invalid vendor-ID.
             datatype: uint32
             category: mandatory
-            access: ro
+            access: r
             pdo: false
             bitfield:
-              0..15: Minor revision number
-              16..31: Major revision number
+              15..0: Minor revision number
+              31..16: Major revision number
           - name: Product code
             description: |
               Sub-index 02h shall contain the unique value that identifies a specific
               type of CANopen devices.
             datatype: uint32
             category: mandatory
-            access: ro
+            access: r
             pdo: false
             bitfield:
-              0..15: Minor revision number
-              16..31: Major revision number
+              15..0: Minor revision number
+              31..16: Major revision number
           - name: Revision number
             description: |
               Sub-index 03h shall contain the major revision number and the minor revision
@@ -289,11 +300,11 @@ profiles:
               with the same CANopen behavior. The value of 0000 0000h shall be reserved.
             datatype: uint32
             category: mandatory
-            access: ro
+            access: r
             pdo: false
             bitfield:
-              0..15: Minor revision number
-              16..31: Major revision number
+              15..0: Minor revision number
+              31..16: Major revision number
           - name: Serial number
             description: |
               Sub-index 04h shall contain the serial number that identifies uniquely a
@@ -301,11 +312,11 @@ profiles:
               The value of 0000 0000h shall be reserved.
             datatype: uint32
             category: mandatory
-            access: ro
+            access: r
             pdo: false
             bitfield:
-              0..15: Minor revision number
-              16..31: Major revision number
+              15..0: Minor revision number
+              31..16: Major revision number
       0x1019:
         name: Synchronous counter overflow value
         description: |
@@ -397,7 +408,7 @@ profiles:
           - name: Communication Error
             category: mandatory
             default: 2
-            access: ro
+            access: r
 
       0x1400:
         name: Receive PDO 1 communication parameter (CAN-ID 200h + Node-ID)
@@ -405,12 +416,12 @@ profiles:
           This object contains the communication parameters for the PDOs the CANopen
           device is able to receive.
         category: optional
-        subindex:
+        record:
           - name: COB-ID used by RPDO
             datatype: uint32
             category: mandatory
             bitfield:
-              0..28: CAN_ID
+              28..0: CAN_ID
               29:
                 name: frame
                 description:
@@ -421,7 +432,7 @@ profiles:
                 description:
                   0: PDO exists / is valid
                   1: PDO does not exist / is not valid
-            default: $NODEID+0x80000200
+            default: 0x80000200 # + $NODEID
             access: rw
             pdo: false
             get: node.pdo().rpdos[0].commParameter.getData
@@ -436,12 +447,12 @@ profiles:
           This object contains the communication parameters for the PDOs the CANopen
           device is able to receive.
         category: optional
-        subindex:
+        record:
           - name: COB-ID used by RPDO
             datatype: uint32
             category: mandatory
             bitfield:
-              0..28: CAN_ID
+              28..0: CAN_ID
               29:
                 name: frame
                 description:
@@ -452,7 +463,7 @@ profiles:
                 description:
                   0: PDO exists / is valid
                   1: PDO does not exist / is not valid
-            default: $NODEID+0x80000200
+            default: 0x80000200 # + $NODEID
             access: rw
             pdo: false
             get: node.pdo().rpdos[1].commParameter.getData
@@ -467,12 +478,12 @@ profiles:
           This object contains the communication parameters for the PDOs the CANopen
           device is able to receive.
         category: optional
-        subindex:
+        record:
           - name: COB-ID used by RPDO
             datatype: uint32
             category: mandatory
             bitfield:
-              0..28: CAN_ID
+              28..0: CAN_ID
               29:
                 name: frame
                 description:
@@ -483,7 +494,7 @@ profiles:
                 description:
                   0: PDO exists / is valid
                   1: PDO does not exist / is not valid
-            default: $NODEID+0x80000200
+            default: 0x80000200 # + $NODEID
             access: rw
             pdo: false
             get: node.pdo().rpdos[2].commParameter.getData
@@ -498,12 +509,12 @@ profiles:
           This object contains the communication parameters for the PDOs the CANopen
           device is able to receive.
         category: optional
-        subindex:
+        record:
           - name: COB-ID used by RPDO
             datatype: uint32
             category: mandatory
             bitfield:
-              0..28: CAN_ID
+              28..0: CAN_ID
               29:
                 name: frame
                 description:
@@ -514,7 +525,7 @@ profiles:
                 description:
                   0: PDO exists / is valid
                   1: PDO does not exist / is not valid
-            default: $NODEID+0x80000200
+            default: 0x80000200 # + $NODEID
             access: rw
             pdo: false
             get: node.pdo().rpdos[3].commParameter.getData
@@ -531,9 +542,9 @@ profiles:
         datatype: uint32
         length: 8
         bitfield:
-          0..7: Length
-          8..15: Subindex
-          16..31: Index
+          7..0: Length
+          15..8: Subindex
+          31..16: Index
 
       0x1601:
         name: Receive PDO 2 mapping parameter
@@ -543,9 +554,9 @@ profiles:
         datatype: uint32
         length: 8
         bitfield:
-          0..7: Length
-          8..15: Subindex
-          16..31: Index
+          7..0: Length
+          15..8: Subindex
+          31..16: Index
       0x1602:
         name: Receive PDO 3 mapping parameter
         category: optional
@@ -554,9 +565,9 @@ profiles:
         datatype: uint32
         length: 8
         bitfield:
-          0..7: Length
-          8..15: Subindex
-          16..31: Index
+          7..0: Length
+          15..8: Subindex
+          31..16: Index
       0x1603:
         name: Receive PDO 4 mapping parameter
         category: optional
@@ -565,9 +576,9 @@ profiles:
         datatype: uint32
         length: 8
         bitfield:
-          0..7: Length
-          8..15: Subindex
-          16..31: Index
+          7..0: Length
+          15..8: Subindex
+          31..16: Index
       0x1800:
         name: Transmit PDO 1 communication parameter
         description: |
@@ -596,7 +607,7 @@ profiles:
             datatype: uint32
             access: rw
             bitfield:
-              0..28: CAN_ID
+              28..0: CAN_ID
               29:
                 name: frame
                 description:
@@ -612,7 +623,7 @@ profiles:
                 description:
                   0: PDO exists / is valid
                   1: PDO does not exist / is not valid
-            default: $NODEID+0x80000180
+            default: 0x80000180 # + $NODEID
           - datatype: uint8
             name: Transmission type
             description: |
@@ -656,7 +667,8 @@ profiles:
               the transmission type is set to FEh and FFh. The value is defined as multiple of 100 μs. The value
               of 0 shall disable the inhibit time. The value shall not be changed while the PDO exists (bit 31 of
               sub-index 01h is set to 0b).
-            unit: 100*us
+            unit: us
+            scale: 100
             access: rw
           - datatype: uint8
             description: |
@@ -688,6 +700,7 @@ profiles:
         get: node.pdo().tpdos[1].commParameter.getData
         set: node.pdo().tpdos[1].commParameter.setData
         inherit: 0x1800
+
       0x1802:
         name: Transmit PDO 3 communication parameter
         get: node.pdo().tpdos[2].commParameter.getData
@@ -708,9 +721,9 @@ profiles:
         set: node.pdo().tpdos[0].mapParameter.setData
         datatype: uint32
         bitfield:
-          0..7: Length
-          8..15: Subindex
-          16..31: Index
+          7..0: Length
+          15..8: Subindex
+          31..16: Index
         length: 8
       0x1A01:
         name: Transmit PDO 2 mapping parameter
