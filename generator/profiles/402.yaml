@@ -1,0 +1,1597 @@
+# Normative description of the CiA 402 profile
+# according to EN 61800-7-201:2016 [IEC 61800-7-201:2015]
+# Adjustable speed electrical power drive systems
+# Part 7-201: Generic interface and use of profiles for power drive systems
+# Profile type 1 specification.
+
+---
+profiles:
+  402:
+    name: Profile for drives and motion control
+    description: |
+      Adjustable speed electrical power drive systems - Part 7-201:
+      Generic interface and use of profiles for power drive systems
+    standards:
+      - EN 61800-7-201:2016
+      - IEC 61800-7-201:2015
+      - CiA 402
+    enumerations:
+      OperationMode:
+        override-ranges:
+          - [-128, -1]
+        data:
+          OPERATION_MODE__NO_MODE_CHANGE: 0
+          OPERATION_MODE__PROFILE_POSITION_MODE: 1
+          OPERATION_MODE__VELOCITY_MODE: 3
+          OPERATION_MODE__TORQUE_PROFILE_MODE: 4
+
+          OPERATION_MODE__HOMING_MODE: 6
+          OPERATION_MODE__INTERPOLATED_POSITION_MODE: 7
+          OPERATION_MODE__CYCLIC_SYNC_POSITION_MODE: 8
+          OPERATION_MODE__CYCLIC_SYNC_VELOCITY_MODE: 9
+          OPERATION_MODE__CYCLIC_SYNC_TORQUE_MODE: 10
+          OPERATION_MODE__CYCLIC_SYNC_TORQUE_WITH_COMMUTATION_ANGLE: 11
+    objects:
+      0x6007:
+        name: Abort connection option code
+        description: |
+          This object shall indicate what action shall be performed when one of the following events occurres:
+          bus-off, heartbeat, life guarding, NMT stopped state entered, reset application, and reset
+          communication. Table 35 specifies the value definition, Table 36 specifies the object description,
+          and Table 37 specifies the entry description.
+        category: optional
+        datatype: int16
+        access: rw
+        default: 1
+        enum:
+          class: AbortConnectionOptionCode
+          data:
+            ABORT_CONNECTION_OPTION_CODE__NO_ACTION: 0
+            ABORT_CONNECTION_OPTION_CODE__FAULT_SIGNAL: 1
+            ABORT_CONNECTION_OPTION_CODE__DISABLE_VOLTAGE_COMMAND: 2
+            ABORT_CONNECTION_OPTION_CODE__QUICK_STOP_COMMAND: 3
+          override-ranges:
+            - [-32768, -1]
+      0x603f:
+        name: Error code
+        description: |
+          This object shall provide the error code of the last error which occurred in the drive device. Table 24
+          specifies the value definition, Table 33 specifies the object description, and Table 34 specifies the
+          entry description.
+        category: optional
+        datatype: uint16
+        access: r
+      0x6040:
+        name: Controlword
+        category: mandatory
+        datatype: uint16
+        access: rw
+        pdo: true
+        default: 0
+        bitfield:
+          0: Switch On
+          1: Enable Voltage
+          2: Quick Stop
+          3: Enable Operation
+          4..6: Operation Mode Specific
+          7: Fault Reset
+          8: Halt
+          9: Operation Manufacturer Specific
+          11..15: Manufacturer Specific
+      0x6041:
+        name: Statusword
+          This object shall provide the status of the PDS FSA.
+          The bits 10, 9, and 6 to 0 shall be supported.
+          The oms bits shall be supported if the mode of operation is supported.
+
+          If the related functionality of the oms bits is not available, the
+          corresponding bit shall be 0b. The manufacturer-specific (ms) bits may be supported. The bit
+          combinations defined in Table 30 shall code the PDS FSA states. All implemented bits of the status
+          word are valid independent of the PDS FSA state.
+        category: mandatory
+        datatype: uint16
+        access: r
+        pdo: true
+        default: 0
+        bitfield:
+          0: Ready to Switch On
+          1: Switched On
+          2: Operation Enabled
+          3: Fault
+          4: Voltage Enabled
+          5: Quick Stop Active
+          6: Warning
+          7: Remote
+          8: Manufacturer Specific
+          9: Target Reached
+          10: Internal Limit Active
+          12..13: Operation Mode Specific
+          14..15: Manufacturer Specific
+      0x6042:
+        name: vl target velocity
+        description: |
+          This object shall indicate the required velocity of the system. It shall be multiplied by the vl
+          dimension factor and the vl set-point factor, if these are implemented. The value shall be given in
+          user-defined velocity units or in revolutions per minute (r/min), if the vl dimension factor and the vl
+          set-point factor are not implemented or have the value 1. Positive values shall indicate forward
+          direction and negative values shall indicate reverse direction. Table 260 specifies the object
+          description, and Table 261 specifies the entry description.
+        datatype: int16
+        access: rw
+        pdo: true
+      0x6043:
+        name: vl velocity demand
+        description: |
+          This object shall provide the instantaneous velocity generated by the ramp function. It is an internal
+          object of the drive device. The value shall be given in the very same unit as the vl target velocity.
+          Positive values shall indicate forward direction and negative values shall indicate reverse direction.
+        datatype: int16
+        access: r
+        pdo: true
+      0x6044:
+        name: vl velocity actual value
+        description: |
+          This object shall provide the velocity at the motor spindle or load. Depending on the implementation
+          (simple drive device, without sensor, with sensor, etc.), the drive shall provide the appropriate image
+          of the actual velocity derived for example from velocity demand or a sensor signal.
+          The value shall be given in the very same unit as the vl target velocity. Positive values shall indicate
+          forward direction and negative values shall indicate reverse direction. Table 264 specifies the object
+          description, and Table 265 specifies the entry description.
+        datatype: int16
+        access: r
+        pdo: true
+      0x6046:
+        name: vl velocity min max amount
+        description: |
+          This object shall indicate the configured minimum and maximum amount of velocity. The vl velocity
+          max amount sub-object shall be mapped internally to the vl velocity max pos and vl velocity max neg
+          values. The vl velocity min amount sub-object shall be mapped internally to the vl velocity min pos
+          and vl velocity min neg values.
+        datatype: uint32
+        access: rw
+        data:
+          - name: vl velocity min amount
+          - name: vl velocity max amount
+      0x6048:
+        name: vl velocity acceleration
+        description: |
+          This object shall indicate the configured delta speed and delta time of the slope of the
+          acceleration ramp.
+        datatype: uint32
+        access: rw
+        data:
+          - name: Delta speed
+          - name: Delta time
+            unit: s
+      0x6049:
+        name: vl velocity deceleration
+        description: |
+          This object shall indicate the configured delta speed and delta time of the slope of the
+          deceleration ramp.
+        datatype: uint32
+        access: rw
+        data:
+          - name: Delta speed
+          - name: Delta time
+            unit: s
+      0x604A:
+        name: vl velocity quick stop
+        description: |
+          This object shall indicate the configured delta speed and delta time of the slope of
+          the deceleration ramp for quick stop
+        record:
+          - name: Delta speed
+            datatype: uint32
+            access: rw
+          - datatype: uint16
+            name: Delta time
+            unit: s
+            access: rw
+      0x604B:
+        name: vl set-point factor
+          This object shall indicate the configured numerator and denominator of the vl set-point factor. The vl
+          set-point factor serves to modify the resolution or directing range of the specified set-point. It is aso
+          included in calculation of the vl velocity demand, and vl velocity actual value. It does not influence
+          the velocity limit function and the ramp function. The value shall be dimensionless and shall be
+          given in the range from -32 768 to +32 767, but the value of 0 shall not be used.
+        length: 3
+        datatype: int16
+        data:
+          - name: vl set-point factor numerator
+            access: rw
+            default: 1
+          - name: vl set-point factor denominator
+            access: rw
+            default: 1
+      0x604C:
+        name: vl dimension factor
+        description: |
+          This object shall indicate the configured numerator and denominator of the vl dimension factor. The
+          vl dimension factor serves to include gearing in calculation or serves to scale the frequencies or
+          specific units of the user. It influences the vl target velocity, vl velocity demand, vl velocity actual
+          value as well as the velocity limit function and the ramp function.
+        datatype: int32
+        access: rw
+        data:
+          - name: vl dimension factor numerator
+            default: 1
+          - name: vl dimension factor denominator
+            default: 1
+      0x605A:
+        name: Quick stop option code
+        description: |
+          This object shall indicate what action is performed when the quick stop function is executed. The
+          slow down ramp is the deceleration value of the used mode of operations.
+        category: optional
+        datatype: int16
+        access: rw
+        default: 2
+        enum:
+          class: QuickStopOptionCode
+          override-ranges:
+            - [-32 768, -1]
+          data:
+            QUICK_STOP_OPTION_CODE__DISABLE_DRIVE_THEN_DISABLE: 0
+            QUICK_STOP_OPTION_CODE__SLOW_DOWN_RAMP_THEN_DISABLE: 1
+            QUICK_STOP_OPTION_CODE__QUICK_STOP_RAMP_THEN_DISABLE: 2
+            QUICK_STOP_OPTION_CODE__CURRENT_LIMIT_THEN_DISABLE: 3
+            QUICK_STOP_OPTION_CODE__VOLTAGE_LIMIT_THEN_DISABLE: 4
+            QUICK_STOP_OPTION_CODE__SLOW_DOWN_RAMP_THEN_QUICK_STOP_ACTIVE: 5
+            QUICK_STOP_OPTION_CODE__QUICK_STOP_RAMP_THEN_QUICK_STOP_ACTIVE: 6
+            QUICK_STOP_OPTION_CODE__CURRENT_LIMIT_THEN_QUICK_STOP_ACTIVE: 7
+            QUICK_STOP_OPTION_CODE__VOLTAGE_LIMIT_THEN_QUICK_STOP_ACTIVE: 8
+      0x605B:
+        name: Shutdown option code
+        category: optional
+        datatype: int16
+        access: rw
+        default: 0
+        enum:
+          class: ShutdownOptionCode
+          override-ranges:
+            - [-32 768, -1]
+          data:
+            SHUTDOWN_OPTION_CODE__DISABLE_DRIVE: 0
+            SHUTDOWN_OPTION_CODE__SLOW_DOWN: 1
+      0x605C:
+        name: Disable operation option code
+        description: |
+          This object shall indicate what action is performed if there is a transition from operation enabled
+          state to switched on state. The slow down ramp is the deceleration value of the used mode of
+          operations.
+        category: optional
+        datatype: int16
+        access: rw
+        default: 1
+        enum:
+          class: DisableOperationOptionCode
+          override-ranges:
+            - [-32 768, -1]
+          data:
+            DISABLE_OPERATION_OPTION_CODE__DISABLE_DRIVE: 0
+            DISABLE_OPERATION_OPTION_CODE__SLOW_DOWN: 1
+      0x605D:
+        name: Halt option code
+        description: |
+          This object shall indicate what action is performed when the halt function is executed. The slow
+          down ramp is the deceleration value of the used mode of operations.
+        category: optional
+        datatype: int16
+        access: rw
+        default: 1
+        enum:
+          class: HaltOptionCode
+          override-ranges:
+            - [-32 768, -1]
+          data:
+            HALT_OPTION_CODE__DISABLE_DRIVE: 0
+            HALT_OPTION_CODE__SLOW_DOWN: 1
+            HALT_OPTION_CODE__QUICK_STOP: 2
+            HALT_OPTION_CODE__CURRENT_LIMIT: 3
+            HALT_OPTION_CODE__VOLTAGE_LIMIT: 4
+      0x605E:
+        name: Fault reaction option code
+        description: |
+          This object shall indicate what action is performed when fault is detected in the PDS. The slow down
+          ramp is the deceleration value of the used mode of operations.
+        category: optional
+        datatype: int16
+        access: rw
+        default: 2
+        enum:
+          class: FaultReactionOptionCode
+          override-ranges:
+            - [-32 768, -1]
+          data:
+            FAULT_REACTION_OPTION_CODE__DISABLE_DRIVE: 0
+            FAULT_REACTION_OPTION_CODE__SLOW_DOWN: 1
+            FAULT_REACTION_OPTION_CODE__QUICK_STOP: 2
+            FAULT_REACTION_OPTION_CODE__CURRENT_LIMIT: 3
+            FAULT_REACTION_OPTION_CODE__VOLTAGE_LIMIT: 4
+      0x6060:
+        name: Modes of operation
+        description: |
+          This object shall indicate the requested operation mode.
+        category: mandatory # if more than one mode supported
+        datatype: int16
+        access: rw
+        pdo: true
+        enum: OperationMode
+      0x6061:
+        name: Modes of operation display
+        description: |
+          This object shall provide the actual operation mode.
+        category: mandatory # if more than one mode supported
+        datatype: int16
+        access: r
+        pdo: true
+        enum: OperationMode
+      0x6062:
+        name: Position demand value
+        description: |
+          This object shall provide the demanded position value. The value shall be given in user-defined
+          position units.
+        data:
+        datatype: int32
+        access: r
+        pdo: true
+      0x6063:
+        name: Position actual value
+        description: |
+          This object shall provide the actual value of the position measurement device, which shall be one of
+          the two input values of the closed-loop position control. If necessary, the data unit may be
+          transformed from user-defined units to increments. The value shall be given in internal units.
+        category: optional
+        datatype: int32
+        access: r
+        pdo: true
+      0x6064:
+        name: Position actual value
+        data:
+          - datatype: int32
+            access: r
+            pdo: true
+      0x6065:
+        name: Following error window
+        description: |
+          This object shall indicate the configured range of tolerated position values symmetrically to the
+          position demand value. If the position actual value is out of the following error window, a following
+          error occurs. A following error may occur when a drive is blocked, unreachable profile velocity
+          occurs, or at wrong closed-loop coefficients. The value shall be given in user-defined position units.
+          If the value of the following error window is FFFF FFFFh, the following control shall be switched off.
+        category: optional
+        datatype: uint32
+        access: rw
+      0x6066:
+        name: Following Error Time Out
+        description: |
+          This object shall indicate the configured time for a following error condition, after that the bit 13 of
+          the statusword shall be set to 1. The reaction of the drive when a following error occurs is
+          manufacturer-specific. The value shall be given in ms.
+        unit: ms
+        category: optional
+        datatype: uint16
+        access: rw
+      0x6067:
+        name: Position window
+        description: |
+          This object shall indicate the configured symmetrical range of accepted positions relative to the
+          target position. If the actual value of the position encoder is within the position window, this target
+          position shall be regarded as having been reached. As the user mostly prefers to specify the
+          position window in his application in user-defined units, the value is transformed into increments.
+          The target position shall be handled in the same manner as in the trajectory generator concerning
+          limiting functions and transformation into internal machine units before it may be used with this
+          function. The value shall be given in user-defined position units. If the value of the position window
+          is FFFF FFFFh, the position window control shall be switched off.
+        category: optional
+        datatype: uint32
+        access: rw
+      0x6068:
+        name: Position window time
+        description: |
+          This object shall indicate the configured time, during which the actual position within the position
+          window is measured. The value shall be given in ms.
+        unit: ms
+        category: optional
+        datatype: uint16
+        access: rw
+      0x6069:
+        name: Velocity sensor actual
+        description: |
+          This object shall provide the value read from a velocity sensor. The value shall be given in
+          increments per second.
+        unit: inc/s
+        category: optional
+        datatype: int32
+        access: r
+        pdo: true
+      0x606A:
+        name: Sensor selection code
+        description: |
+          This object shall provide the source of the velocity sensor actual value. It determines whether a
+          differentiated position signal or the signal from a separate velocity sensor is evaluated.
+        datatype: int16
+        access: rw
+        enum:
+          class: SensorSelectionCode
+          override-ranges:
+            - [0x8000, 0xFFFF]
+          data:
+            SENSOR_SELECTION_CODE__FROM_POSITION_ENCODER: 0
+            SENSOR_SELECTION_CODE__FROM_VELOCITY_ENCODER: 1
+      0x606B:
+        name: Velocity demand value
+        description: |
+          This object shall provide the output value of the trajectory generator. The value shall be given in the
+          user-defined velocity units.
+        datatype: int32
+        access: r
+        pdo: true
+      0x606C:
+        name: Velocity actual value
+        description: |
+          This object shall provide the actual velocity value derived either from the velocity sensor or the
+          position sensor. The value shall be given in user-defined velocity units.
+        unit: udv
+        mandatory-if:
+          - pv
+          - csv
+        datatype: int32
+        access: r
+        pdo: true
+      0x606D:
+        name: Velocity window
+        description: |
+          This object shall indicate the configured velocity window. The value shall be given in user-defined
+          velocity units.
+        unit: udv
+        data:
+          - datatype: uint16
+            access: rw
+      0x606E:
+        name: Velocity window time
+        description: |
+          This object shall indicate the configured velocity window time. The value shall be given in
+          milliseconds.
+        unit: ms
+        datatype: uint16
+        access: rw
+      0x606F:
+        name: Velocity threshold
+        description: |
+          This object shall indicate the configured velocity threshold. The value shall be given in user-defined
+          velocity units.
+        unit: udv
+        datatype: uint16
+        access: rw
+      0x6070:
+        name: Velocity threshold time
+        description: |
+          This object shall indicate the configured velocity threshold time. The value shall be given in
+          milliseconds.
+        unit: ms
+        datatype: uint16
+        access: rw
+      0x6071:
+        name: Target torque
+        description: |
+          This object shall indicate the configured input value for the torque controller in profile torque mode.
+          The value shall be given per thousand of rated torque.
+        unit: permille * ratedTorque
+        datatype: int16
+        access: rw
+        pdo: true
+      0x6072:
+        name: Max torque
+        description: |
+          This object shall indicate the configured maximum permissible torque in the motor. The value shall
+          be given per thousand of rated torque.
+        unit: permille * ratedTorque
+        datatype: uint16
+        access: rw
+      0x6073:
+        name: Max current
+        description: |
+          This object shall indicate the configured maximum permissible torque creating current in the motor.
+          The value shall be given per thousand of rated current.
+        unit: permille * ratedTorque
+        datatype: uint16
+        access: rw
+      0x6074:
+        name: Torque demand
+        description: |
+          This object shall provide the output value of the trajectory generator. The value shall be given per
+          thousand of rated torque.
+        datatype: int16
+        access: r
+        pdo: true
+      0x6075:
+        name: motor rated current
+        description: |
+          This object shall indicate the configured motor rated current. It is taken from the motor's name-plate.
+          Depending on the motor and drive technology, this current is DC, peak or r.m.s. (root-mean-square)
+          current. All relative current data refers to this value. The value shall be given in mA.
+        datatype: uint32
+        access: rw
+      0x6076:
+        name: motor rated torque
+        description: |
+          This object shall indicate the configured motor rated torque. It is taken from the motor's name-plate.
+          All relative torque data shall refer to this value. For linear motors, the object name is not changed,
+        unit: mNm
+        datatype: uint32
+        access: rw
+      0x6077:
+        name: Torque actual value
+        description: |
+          This object shall provide the actual value of the torque. It shall correspond to the instantaneous
+          torque in the motor. The value shall be given per thousand of rated torque.
+        unit: permille * ratedTorque
+        datatype: int16
+        access: r
+        pdo: true
+      0x6078:
+        name: Current actual value
+        description: |
+          This object shall provide the actual value of the current. It shall correspond to the current in the
+          motor. The value shall be given per thousand of rated current.
+        datatype: int16
+        access: r
+        pdo: true
+      0x6079:
+        name: DC link voltage
+        description: |
+          This object shall provide the instantaneous DC link current voltage at the drive device. The value
+          shall be given in mV.
+        unit: mV
+        datatype: uint32
+        access: r
+      0x6087:
+        name: Torque slope
+        description: |
+          This object shall indicate the configured rate of change of torque. The value shall be given in units of
+          per thousand of rated torque per second.
+        unit: permille * ratedTorque/s
+        datatype: uint32
+        access: rw
+      0x6088:
+        name: Torque profile type
+        description: |
+          This object shall indicate the configured type of profile used to perform a torque change.
+        datatype: int16
+        access: rw
+        enum:
+          class: TorqueProfileType
+          override-ranges:
+            - [0x8000, 0xFFFF]
+          data:
+            TORQUE_PROFILE_TYPE__LINEAR_RAMP: 0
+            TORQUE_PROFILE_TYPE__SIN2_RAMP: 1
+      0x607A:
+        name: Target position
+        description: |
+          This object shall indicate the commanded position that the drive should move to in position profile
+          mode using the current settings of motion control parameters such as velocity, acceleration,
+          deceleration, motion profile type etc. The value of this object shall be interpreted as absolute or
+          relative depending on the abs/rel flag in the controlword. It shall be given in user-defined position
+          units and shall be converted to position increments.
+        unit: udp
+        datatype: int32
+        access: rw
+        pdo: true
+      0x607B:
+        name: Position range limit
+        description: |
+          This object shall indicate the configured maximal and minimal position range limits. It shall limit the
+          numerical range of the input value. On reaching or exceeding these limits, the input value shall wrap
+          automatically to the other end of the range. Wrap-around of the input value may be prevented by
+          setting software position limits as defined in software position limit object (607Dh). To disable the
+          position range limits the min position range limit (sub-index 01h) and max position range limit (subindex
+          02h) shall be set to 0. The values shall be given in user-defined position units.
+        unit: udp
+        datatype: int32
+        access: rw
+        data:
+          - name: Min position range limit
+          - name: Max position range limit
+      0x607D:
+        name: Software position limit
+        description: |
+          This object shall indicate the configured maximal and minimal software position limits. These
+          parameters shall define the absolute position limits for the position demand value and the position
+          actual value.
+        datatype: int32
+        access: rw
+        data:
+          - name: Min position limit
+          - name: Max position limit
+      0x607E:
+        name: Polarity
+        description: |
+          This object shall indicate if the position demand value shall be multiplied by 1 of by -1. The polarity
+          flag shall have no influence on the homing mode. The position polarity bit shall be used only for
+          profile position (pp) mode and cyclic sync position mode (csp). The velocity polarity bit shall be used
+          only for profile velocity (pv) mode and cyclic sync velocity mode (csv).
+        datatype: uint16
+        access: rw
+        default: 0
+        bitfield:
+          6:
+            name: Velocity polarity
+            values:
+              0: Positive
+              1: Negative
+          7:
+            name: Position polarity
+            values:
+              0: Positive
+              1: Negative
+      0x607F:
+        name: Max profile velocity
+        description: |
+          This object shall indicate the configured maximal allowed velocity in either direction during a
+          profiled motion.
+
+          The value shall be given in the very same physical unit as the profile velocity object (6081h).
+        unit: udv
+        datatype: uint32
+        access: rw
+      0x6080:
+        name: Max motor speed
+        description: |
+          This object shall indicate the configured maximal allowed speed for the motor in either direction. It is
+          used to protect the motor and is taken from the motor data sheet. The value shall be given in
+          rotations per minute (r/min) or user-defined velocity units.
+        datatype: uint32
+        access: rw
+      0x6081:
+        name: Profile velocity
+        description: |
+          This object shall indicate the configured velocity normally attained at the end of the acceleration
+          ramp during a profiled motion and shall be valid for both directions of motion. The value shall be
+          given in user-defined velocity units. The velocity units can depend on the user-defined position units
+          (position units per second).
+        unit: udp / s
+        category: mandatory
+        datatype: uint32
+        access: rw
+      0x6082:
+        name: End velocity
+        description: |
+          This object shall indicate the configured velocity, which the drive shall have on reaching the target
+          position. Normally, the drive stops at the target position, i.e. the end velocity is 0. The value shall be
+          given in the same physical units as the profile velocity object (6081h).
+        unit: udv
+        datatype: uint32
+        access: rw
+      0x6083:
+        name: Profile acceleration
+        description: |
+          This object shall indicate the configured acceleration. The value shall be given in user-defined
+          acceleration units.
+        unit: uda
+        category: mandatory
+        datatype: uint32
+        access: rw
+      0x6084:
+        name: Profile deceleration
+        description: |
+          This object shall indicate the configured deceleration. If this parameter is not supported, then the
+          profile acceleration object (6083h) value shall be used for deceleration, too. The value shall be given
+          in the same physical units as profile acceleration object (6083h).
+        unit: uda
+        datatype: uint32
+        access: rw
+      0x6085:
+        name: Quick stop deceleration
+        description: |
+          This object shall indicate the configured deceleration used to stop the motor when the quick stop
+          function is activated and the quick stop code object (605Ah) is set to 2 or 6. The quick stop
+          deceleration is also used if the fault reaction code object (605Eh) is 2 and the halt option code object
+          (605Dh) is 2. The value shall be given in the same physical unit as profile acceleration object
+          (6083h).
+        unit: uda
+        datatype: uint32
+        access: rw
+      0x6086:
+        name: Motion profile type
+        description: |
+          This object shall indicate the configured type of motion profile used to perform a profiled motion.
+        datatype: int16
+        access: rw
+        default: 0
+        enum:
+          class: MotionProfileType
+          override-ranges:
+            - [-32768, -1]
+          data:
+            MOTION_PROFILE_TYPE__LINEAR_RAMP: 0
+            MOTION_PROFILE_TYPE__SIN2_RAMP: 1
+            MOTION_PROFILE_TYPE__JERK_FREE_RAMP: 2
+            MOTION_PROFILE_TYPE__JERK_LIMITED_RAMP: 3
+      0x608F:
+        name: Position encoder resolution
+        description: |
+          This object shall indicate the configured encoder increments and the number of motor revolutions.
+          The position encoder resolution shall be calculated by the following formula:
+
+          $$ positionEncoderResolution = \frac{encoderIncrements}{motorRevolutions} $$
+        access: rw
+        default: 1
+        data:
+          - name: Encoder increments
+          - name: motor revolutions
+      0x6090:
+        name: Velocity sensor resolution
+        description: |
+          This object shall indicate the configured encoder increments per second and the motor revolutions
+          per second. The velocity encoder resolution shall be calculated by the following formula:
+
+          $$ velocityEncoderResulution = \frac{encoder\frac{increments}{second}}{motor\frac{revolutions}{second}} $$
+        datatype: uint32
+        access: rw
+        default: 1
+        data:
+          - name: Sensor increments
+          - name: motor revolutions
+      0x6091:
+        name: Gear ratio
+        description: |
+          This object shall indicate the configured number of motor shaft revolutions and the number of driving
+          shaft revolutions. The gear ratio shall be calculated by the following formula:
+        access: rw
+        default: 1
+        datatype: uint32
+        data:
+          - name: Motor shaft revolutions
+          - name: Driving shaft revolutions
+      0x6092:
+        name: Feed constant
+        description: |
+          This object shall indicate the configured feed constant, which is the measurement distance per one
+          revolution of the output shaft of the gearbox. The feed constant shall be calculated by the following
+          formula:
+
+          $$ feedConstant = \frac{feed}{drivingShaftRevolutions} $$
+        datatype: uint32
+        access: rw
+        default: 1
+        data:
+          - name: Feed
+          - name: Shaft revolutions
+      0x6096:
+        name: Velocity factor
+        description: |
+          This object can be used to match the velocity units to the user-defined velocity units.
+        unit: udv
+        datatype: uint32
+        access: rw
+        default: 1
+        data:
+          - name: Numerator
+          - name: Denominator
+      0x6097:
+        name: Acceleration factor
+        description: |
+          This object can be used to match the acceleration units to the user-defined acceleration units.
+        datatype: uint32
+        access: rw
+        default: 1
+        data:
+          - name: Numerator
+          - name: Denominator
+      0x6098:
+        name: Homing method
+        description: |
+          This object shall indicate the configured homing method that shall be used.
+        datatype: int16
+        access: rw
+        enum:
+          class: HomingMethod
+          override-ranges:
+            - [-128, -1]
+      0x6099:
+        name: Homing speed
+        description: |
+          This object shall indicate the configured speeds used during homing procedure. The values shall be
+          given in user-defined velocity units.
+        datatype: uint32
+        access: rw
+        data:
+          - name: Speed during search for switch
+          - name: Speed during search for zero
+      0x609A:
+        name: Homing acceleration
+        description: |
+          This object shall indicate the configured acceleration and deceleration to be used during homing
+          operation. The value shall be given in user-defined acceleration units.
+        unit: uda
+        datatype: uint32
+        access: rw
+      0x60A2:
+        name: Jerk factor
+        description: |
+          This object can be used to match the jerk units to the user-defined jerk units.
+        datatype: uint32
+        access: rw
+        default: 1
+        data:
+          - name: Numerator
+          - name: Denominator
+      0x60A3:
+        name: Profile jerk use
+        description: |
+          This object shall indicate the configured number of sub-indices used in the profile jerk object
+          (60A4h) for the jerk profile movement. If this object is not implemented, the profile jerk object shall
+          be used as it is implemented. The value shall be dimensionless, the value of FFh shall indicate that
+          the profile jerk use is not configured.
+        datatype: uint8
+        access: rw
+        default: 1
+      0x60A4:
+        name: Profile jerk
+        description: |
+          This object shall indicate the configured set of jerk parameters that shall be used during the profile
+          movement. Figure 25 shows the defined jerks (A, B, C, D, E, and F). The values shall be given in
+          user-defined jerk units. Table 113 specifies the value assignment to jerks depending of the value of
+          profile jerk use object (60A3h). If object 60A3h is not implemented, the sub-index 00h shall be used
+          to assign the values given in the other sub-indices to the jerks.
+        datatype: uint32
+        access: rw
+        length: 6
+        data:
+          - name: Profile jerk 1
+            category: mandatory
+          - name: Profile jerk 2
+            category: optional
+          - name: Profile jerk 3
+            category: optional
+          - name: Profile jerk 4
+            category: optional
+          - name: Profile jerk 5
+            category: optional
+          - name: Profile jerk 6
+            category: optional
+      0x60A8:
+        name: SI unit Position
+        description: |
+          This object shall indicate the user-defined position units. The object structure is defined in Figure 1
+          in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2.
+        datatype: uint32
+        access: rw
+        default: 0xFD010000
+      0x60A9:
+        name: SI unit Velocity
+        description: |
+          This object shall indicate the user-defined velocity units. If this object is not implemented, the userdefined
+          velocity unit shall be the user-defined position unit/s. The object structure is defined in
+          Figure 1 in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2.
+          The representation of the additional profile-specific units is defined in Table 76. The profile-specific
+          field (bit 0 to bit 7) of this object is reserved (00h).
+          This object is taken as a definition for the user-defined velocity units, if the object 6090h (velocity
+          encoder resolution) is implemented. If the object 6090h is not implemented, a calculation based on
+          the position-related values has to be done. Table 79 specifies the object description, and Table 80
+          specifies the entry description.
+        datatype: uint32
+        access: rw
+        default: 0xFD010300
+      0x60AA:
+        name: SI unit Acceleration
+        description: |
+          This object shall indicate the user-defined acceleration units. If this object is not implemented, the
+          user-defined acceleration unit shall be the user-defined velocity unit/s.The object structure is defined
+          in Figure 1 in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2.
+          The representation of the additional profile-specific units is defined in Table 76. The profile-specific
+          field (bit 0 to bit 7) of this object is reserved (00h).
+          To match the acceleration value to the user-defined units, a calculation based on the velocity value
+          has to be done. Table 81 specifies the object description, and Table 82 specifies the entry
+          description.
+        datatype: uint32
+        access: rw
+        default: 0xFD015700
+      0x60AB:
+        name: SI unit Jerk
+        description: |
+          This object shall indicate the user-defined jerk units. If this object is not implemented, the userdefined
+          jerk unit shall be the user-defined velocity unit/s2.The object structure is defined in Figure 1
+          in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2. The
+          representation of the additional profile-specific units is defined in Table 76. The profile-specific field
+          (bit 0 to bit 7) of this object is reserved (00h).
+        datatype: uint32
+        access: rw
+        default: 0xFD01A000
+      0x60B0:
+        name: Position offset
+        description: |
+          This object shall provide the offset of the target position. The offset shall be given in user-defined
+          position units.
+        unit: udp
+        datatype: int32
+        access: rw
+      0x60B1:
+        name: Velocity offset
+        description: |
+          This object shall provide the offset for the velocity value. The offset shall be given in user-defined
+          velocity units. In cyclic synchronous position mode, this object contains the input value for velocity
+          feed forward. In cyclic synchronous velocity mode (see Clause 19), it contains the commanded
+          offset of the drive device.
+        unit: udv
+        datatype: int32
+        access: rw
+      0x60B2:
+        name: Torque offset
+        description: |
+          This object shall provide the offset for the torque value. The offset shall be given in per thousand
+          rated torque. In cyclic synchronous position mode and cyclic synchronous velocity mode (see
+          Clause 20), this object contains the input value for torque feed forward. In cyclic synchronous torque
+          mode (see Clause 20) it contains the commanded additive torque of the drive, which is added to the
+          target torque value.
+        unit: permille * ratedTorque
+        datatype: int16
+        access: rw
+      0x60B8:
+        name: Touch probe function
+        description: |
+          This object shall indicate the configured function of the touch probe.
+        datatype: uint16
+        access: rw
+        bitfield:
+          0:
+            name: Enable touch probe 1
+            values:
+              0: Switch off touch probe 1
+              1: Enable touch probe 1
+          1:
+            name: Trigger mode 1
+            values:
+              0: Trigger first event
+              1: continuous
+          3..2:
+            name: Trigger source 1
+            values:
+              0: Trigger with touch probe 1 input
+              1: Trigger with zero impulse signal or position encoder
+              2: Touch probe source as defined in object 60D0h sub-index 01h
+          4:
+            name: Enable Positive Sampling 1
+            values:
+              0: Switch off sampling at positive edge of touche probe 1
+              1: Enable sampling at positive edge of touch probe 1
+          5:
+            name: Enable Negative Sampling 1
+            values:
+              0: Switch off sampling at negative edge of touche probe 1
+              1: Enable sampling at negative edge of touch probe 1
+          7..6:
+            name: User defined (for testing)
+          8:
+            name: Enable touch probe 2
+            values:
+              0: Switch off touch probe 2
+              1: Enable touch probe 2
+          9:
+            name: Trigger mode 2
+            values:
+              0: Trigger first event
+              1: continuous
+          11..10:
+            name: Trigger source 2
+            values:
+              0: Trigger with touch probe 2 input
+              1: Trigger with zero impulse signal or position encoder
+              2: Touch probe source as defined in object 60D0h sub-index 01h
+          12:
+            name: Enable Positive Sampling 2
+            values:
+              0: Switch off sampling at positive edge of touche probe 2
+              1: Enable sampling at positive edge of touch probe 2
+          13:
+            name: Enable Negative Sampling 2
+            values:
+              0: Switch off sampling at negative edge of touche probe 2
+              1: Enable sampling at negative edge of touch probe 2
+          15..14:
+            name: User defined (for testing)
+      0x60B9:
+        name: Touch probe status
+        datatype: uint16
+        access: r
+        bitfield:
+          0:
+            name: Touch probe 1 enabled
+            values:
+              0: Touch probe 1 disabled
+              1: Touch probe 1 enabled
+          1:
+            name: Touch probe 1 positive edge stored
+            values:
+              0: Touch probe 1 no positive edge value stored
+              1: Touch probe 1 positive edge value stored
+          2:
+            name: Touche probe 1 negative edge stored
+            values:
+              0: Touch probe 1 no negative edge value stored
+              1: Touch probe 1 negative edge value stored
+          8:
+            name: Touch probe 2 enabled
+            values:
+              0: Touch probe 2 disabled
+              1: Touch probe 2 enabled
+          9:
+            name: Touch probe 2 positive edge stored
+            values:
+              0: Touch probe 2 no positive edge value stored
+              1: Touch probe 2 positive edge value stored
+          10:
+            name: Touche probe 2 negative edge stored
+            values:
+              0: Touch probe 2 no negative edge value stored
+              1: Touch probe 2 negative edge value stored
+      0x60BA:
+        name: Touch probe 1 positive edge
+        description: |
+          This object shall provide the position value of the touch probe 1 at positive edge. The value shall be
+          given in user-defined position units.
+        unit: udp
+        datatype: int32
+        access: r
+      0x60BB:
+        name: Touch probe 1 negative edge
+        description: |
+          This object shall provide the position value of the touch probe 1 at negative edge. The value shall be
+          given in user-defined position units.
+        unit: udp
+        datatype: int32
+        access: r
+      0x60BC:
+        name: Touch probe 2 positive edge
+        description: |
+          This object shall provide the position value of the touch probe 2 at positive edge. The value shall be
+          given in user-defined position units.
+        unit: udp
+        datatype: int32
+        access: r
+      0x60BD:
+        name: Touch probe 2 negative edge
+        description: |
+          This object shall provide the position value of the touch probe 2 at negative edge. The value shall be
+          given in user-defined position units.
+        unit: udp
+        datatype: int32
+        access: r
+      0x60C0:
+        name: Interpolation sub mode select
+        data:
+          - datatype: int16
+            access: rw
+      0x60C1:
+        name: Interpolation data record
+        description: |
+          This object shall indicate data words, which are necessary to perform the interpolation algorithm.
+          The number N of data words in the record is defined by interpolation data configuration. The
+          interpretation of the data words in interpolation data record may vary with the different possible
+          interpolation modes as set by the interpolation sub mode select.
+          For the linear interpolation mode, each interpolation data record simply is regarded as a new
+          position set-point. To describe a cubic spline interpolation, four or more data words are needed for
+          the spline coefficients, and further interpolation parameters.
+          After the last item of an interpolation data record is written to the drive device’s input buffer, the
+          pointer of the buffer shall be automatically incremented to the next buffer position.
+        datatype: int32
+        access: rw
+      0x60C2:
+        name: Interpolation time period
+        description: |
+          This object shall indicate the configured interpolation cycle time. The interpolation time period (subindex
+          01h) value shall be given in 10(interpolation time index) s(econd). The interpolation time index
+          (sub-index 02h) shall be dimensionless.
+        record:
+          - name: Interpolation time period
+            datatype: uint8
+            access: rw
+            default: 1
+          - name: Interpolation time index
+            datatype: int16
+            access: rw
+            default: -3
+            limits:
+              min: -128
+              max: 63
+      0x60C4:
+        name: Interpolation data configuration
+        description: |
+          This object shall provide the maximum buffer size, shall indicate the configured buffer organization
+          of interpolation data, and shall provide objects to define the size of the data record and to clear the
+          buffers. This object is used to enable the drive device to receive the needed data in advance. It also
+          is used to store the positions and further data sent by the control device.
+        data:
+          - name: Maximum buffer size
+            datatype: uint32
+            access: r
+          - name: Acutal buffe size
+            datatype: uint32
+            access: rw
+            default: 0
+          - name: Buffer organisation
+            datatype: uint8
+            access: rw
+            default: 0
+          - name: Buffer position
+            datatype: uint16
+            access: rw
+            default: 0
+          - name: Size of data record
+            datatype: uint8
+            access: wo
+            default: 1
+          - name: Buffer clear
+            datatype: uint8
+            access: wo
+            default: 0
+      0x60C5:
+        name: Max acceleration
+        description: |
+          This object shall indicate the configured maximal acceleration. It is used to limit the acceleration to
+          an acceptable value in order to prevent the motor and the moved mechanics from being destroyed.
+          The value shall be given in user-defined acceleration physical units.
+        unit: uda
+        datatype: uint32
+        access: rw
+      0x60C6:
+        name: Max deceleration
+        description: |
+          This object shall indicate the configured maximal deceleration. It is used to limit the acceleration to
+          an acceptable value in order to prevent the motor and the moved mechanics from being destroyed.
+          The value shall be given in the same physical unit as the max acceleration object (60C5h).
+        unit: uda
+        datatype: uint32
+        access: rw
+      0x607C:
+        name: Home offset
+        data:
+          - datatype: int32
+            access: rw
+      0x60D0:
+        name: Touch probe source
+        datatype: int16
+        type: array
+        access: r
+        enum:
+          class: TouchProbeSource
+          override-ranges:
+            - [-32768, -1]
+          data:
+            TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_1: 1
+            TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_2: 2
+            TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_3: 3
+            TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_4: 4
+            TOUCH_PROBE_SOURCE__HARDWARE_ZERO_IMPULSE: 5
+            TOUCH_PROBE_SOURCE__SOFTWARE_ZERO_IMPULSE: 6
+      0x60D1:
+        name: Touch probe time stamp 1 positive value
+        description: |
+          This object shall provide the time stamp value of the touch probe 1 at positive edge. The value shall
+          be given in nanoseconds.
+        unit: ns
+        datatype: uint32
+        access: r
+      0x60D2:
+        name: Touch probe time stamp 1 negative value
+        description: |
+          This object shall provide the time stamp value of the touch probe 1 at negative edge. The value shall
+          be given in nanoseconds.
+        unit: ns
+        datatype: uint32
+        access: r
+      0x60D3:
+        name: Touch probe time stamp 2 positive value
+        description: |
+          This object shall provide the time stamp value of the touch probe 2 at positive edge. The value shall
+          be given in nanoseconds.
+        unit: ns
+        datatype: uint32
+        access: r
+      0x60D4:
+        name: Touch probe time stamp 2 negative value
+        description: |
+          This object shall provide the time stamp value of the touch probe 2 at negative edge. The value shall
+          be given in nanoseconds.
+        unit: ns
+        datatype: uint32
+        access: r
+      0x60D5:
+        name: Touch probe 1 positive edge counter
+        description: |
+          This object shall provide a continuous counter that is incremented with each positive edge at touch
+          probe 1. The counter is only valid if the touch probe input is enabled (60B8h, bit 0 = 1b). For single
+          event measuring only the value of bit 0 shall be evaluated. For continuous measuring the value is an
+          unsigned 16-bit value with overflow.
+        datatype: uint16
+        access: r
+      0x60D6:
+        name: Touch probe 1 negative edge counter
+        description: |
+          This object shall provide a continuous counter that is incremented with each negative edge at touch
+          probe 1. The counter is only valid if the touch probe input is enabled (60B8h, bit 0 = 1b). For single
+          event measuring only the value of bit 0 shall be evaluated. For continuous measuring the value is an
+          unsigned 16-bit value with overflow.
+        datatype: uint16
+        access: r
+      0x60D7:
+        name: Touch probe 2 positive edge counter
+        description: |
+          This object shall provide a continuous counter that is incremented with each positive edge at touch
+          probe 2. The counter is only valid if the touch probe input is enabled (60B8h, bit 8 = 1b). For single
+          event measuring only the value of bit 0 shall be evaluated. For continuous measuring the value is an
+          unsigned 16-bit value with overflow.
+        datatype: uint16
+        access: r
+      0x60D8:
+        name: Touch probe 2 negative edge counter
+        description: |
+          This object shall provide a continuous counter that is incremented with each negative edge at touch
+          probe 2. The counter is only valid if the touch probe input is enabled (60B8h, bit 8 = 1b). For single
+          event measuring only the value of bit 0 shall be evaluated. For continuous measuring the value is an
+          unsigned 16-bit value with overflow.
+        datatype: uint16
+        access: r
+      0x60E0:
+        name: Positive torque limit value
+        description: |
+          This object shall indicate the configured maximum positive torque in the motor. The value shall be
+          given per thousand of rated torque. Positive torque takes effect in the case of motive operation is
+          positive velocity or regenerative operation is negative velocity.
+        datatype: uint16
+        access: rw
+      0x60E1:
+        name: Negative torque limit value
+        description: |
+          This object shall indicate the configured maximum negative torque in the motor. The value shall be
+          given per thousand of rated torque. Negative torque takes effect in the case of motive operation is
+          negative velocity or regenerative operation is positive velocity.
+        datatype: uint16
+        access: rw
+      0x60E3:
+        name: Supported homing methods
+        description:
+          This object shall provide the supported homing methods of the drive.
+        type: array
+        access: r
+      0x60E4:
+        name: Additional position actual value
+        description: |
+          This object provides the additional position actual values. The value shall be given in user-defined
+          position units.
+        type: array
+        datatype: int32
+        access: r
+        pdo: true
+      0x60E5:
+        name: Additional velocity actual value
+        description: |
+          This object provides the additional velocity actual values. The value shall be given in user-defined
+          velocity units.
+        type: array
+        datatype: int32
+        access: r
+        pdo: true
+      0x60E6:
+        name: Additional position encoder resolution - encoder increments
+        description: |
+          This object provides the encoder increments for the additional position encoder resolution. This
+          object shall be used with the corresponding sub-index of the object 60EBh (motor revolutions for the
+          additional position encoder resolution). The additional position encoder resolution value is
+          calculated by the formula as given in the object 608Fh.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60E7:
+        name: Additional velocity encoder resolution - encoder increments per second
+        description: |
+          This object provides the motor revolutions for the additional position encoder resolution. This object
+          shall be used with the corresponding sub-index of the object 60E6h (encoder increments for the
+          additional position encoder resolution). The additional position encoder resolution value is
+          calculated by the formula as given in the object 608Fh.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60E8:
+        name: Additional gear ratio - motor shaft revolutions
+        description: |
+          This object provides the motor shaft revolutions for the additional gear ratio calculation. This object
+          shall be used with the corresponding sub-index of the object 60EDh (driving shaft revolutions for the
+          additional gear ratio calculation). The additional gear ratio value is calculated by the formula as
+          given in the object 6091h.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60E9:
+        name: Additional feed constant - feed
+        description: |
+          This object provides the feed for the additional feed constant calculation. This object shall be used
+          with the corresponding sub-index of the object 60EEh (driving shaft revolutions for the additional
+        type: array
+        datatype: uint32
+        access: rw
+      0x60EA:
+        name: Commutation angle
+        description: |
+          This object shall indicate the electrical commutation angle for the space vector modulation. The
+          value shall be given in multiples of $360°/2^{16}$, whereby the electrical angle is used.
+        unit: degree * 360 / 65536
+        datatype: uint16
+        access: rw
+      0x60EB:
+        name: Additional position encoder resolution - motor revolutions
+        description: |
+          This object provides the encoder increments for the additional position encoder resolution. This
+          object shall be used with the corresponding sub-index of the object 60EBh (motor revolutions for the
+          additional position encoder resolution). The additional position encoder resolution value is
+          calculated by the formula as given in the object 608Fh. Table 294 specifies the object description,
+          and Table 295 specifies the entry description.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60EC:
+        name: Additional velocity encoder resolution - motor revolutions per second
+        description: |
+          This object provides the motor revolutions per second for the additional velocity encoder resolution.
+          This object shall be used with the corresponding sub-index of the object 60E7h (encoder increments
+          per second for the additional velocity encoder resolution). The additional velocity encoder resolution
+          value is calculated by the formula as given in the object 6090h. Table 300 specifies the object
+          description, and Table 301 specifies the entry description.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60ED:
+        name: Additional gear ratio - driving shaft revolutions
+        description: |
+          This object provides the driving shaft revolutions for the additional gear ratio calculation. This object
+          shall be used with the corresponding sub-index of the object 60E8h (motor shaft revolutions for the
+          additional gear ratio calculation). The additional gear ratio value is calculated by the formula as
+          given in the object 6091h.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60EE:
+        name: Additional feed constant - driving shaft revolutions
+        description: |
+          This object provides the driving shaft revolutions for the additional feed constant calculation. This
+          object shall be used with the corresponding sub-index of the object 60E9h (feed for the additional
+          feed constant calculation). The additional feed constant value is calculated by the formula as given
+          in the object 6092h.
+        type: array
+        datatype: uint32
+        access: rw
+      0x60F2:
+        name: Positioning option code
+        description: |
+          This object shall indicate the configured positioning behavior as described by the profile positioning
+          mode or the interpolated positioning mode.
+        datatype: uint16
+        access: rw
+        bitfield:
+          1..0:
+            name: Relative Option
+            values:
+              0: |
+                Positioning moves shall be performed relative to the preceding (internal absolute) target
+                position (rsp. relative to 0 if there is no preceding target position) as described in 10.2
+              1: |
+                Positioning moves shall be performed relative to the actual position demand value (object
+                60FCh) - output of the trajectory generator
+              2: |
+                Positioning moves shall be performed relative to the position actual value (object 6064h)
+          3..2:
+            name: Change Immediately Option (cio)
+            values:
+              0: |
+                The drive device shall readapt the actual motion to the new target position (considering
+                potentially changed profile velocity and accelerations etc.) immediately as described in 10.2
+              1: |
+                The actually performed positioning task shall be continued (without attempting to stop on
+                target position) and blended to the newly commanded task (considering potentially changed
+                profile velocity and accelerations etc.) when target position is touched
+          5..4:
+            name: Request-Response Option (rro)
+            values:
+              0: |
+                The handshake as described in 10.2 shall be performed
+              1: |
+                The drive device shall release autonomously the new set-point bit as soon as target is reached.
+              2: |
+                The drive shall release autonomously the new set-point bit as soon as able to accept new
+                setpoint data
+          7..6:
+            name: Rotary Axis Direction Option (rado)
+            values:
+              0: |
+                Normal positioning similar to linear axis; If reaching or exceeding the position range limits
+                (607Bh) the input value shall wrap automatically to the other end of the range. Positioning can
+                be relative or absolute.
+                Only with this bit combination, the movement greater than a modulo value is possible.
+              1: |
+                Positioning only in negative direction; if target position is higher than actual position, axis
+                moves over the min position limit (607Dh, sub-index 01h) to the target position.
+              2: |
+                Positioning only in positive direction; if target position is lower than actual position, axis moves
+                over the max position limit (607Bh, sub-index 02h) to the target position.
+              3: |
+                Positioning with the shortest way to the target position.
+                NOTE If the difference between actual value and target position in a 360° system is 180°, the
+                axis moves in positive direction.
+          11..8:
+            name: IP option
+          15:
+            name: Manufacturer specific option
+            override: true
+      0x60F4:
+        name: Following error actual value
+        description: |
+          This object shall provide the actual value of the following error. The value shall be given in userdefined
+          position units.
+        unit: udp
+        datatype: int32
+        access: r
+      0x60F8:
+        name: Max slippage
+        description: |
+          This object shall indicate the configured maximal slippage of an asynchronous motor. When the max
+          slippage has been reached, the corresponding bit 13 max slippage error in the statusword shall be
+          set to 1. The reaction of the drive device, when the max slippage error occurs, is manufacturerspecific.
+          This value shall be given in user-defined units.
+        unit: uda
+        datatype: int32
+        access: rw
+      0x60FA:
+        name: Control effort
+        description: |
+          This object shall provide the control effort as the output of the position control loop. It is particular to
+          the position control function that the notation of the control effort is mode-dependent and therefore
+          not specified. The value shall be given in user-defefined velocity units.
+        unit: udv
+        datatype: int32
+        access: r
+      0x60FC:
+        name: Position demand internal value
+        description: |
+          This object shall provide the output of the trajectory generator in profile position mode. This value
+          shall be given in increments of the position encoder.
+        unit: incp
+        datatype: int32
+        access: r
+      0x60FD:
+        name: Digital inputs
+        description: |
+          This object shall provide digital inputs. Figure 86 specifies the object structure. This object
+          represents the physical input levels.
+        datatype: uint32
+        access: r
+        pdo: true
+        bitfield:
+          0: Negative limit switch
+          1: Positive limit switch
+          2: Home switch
+          3: Interlock
+          31..16:
+            name: Manufacturer specific
+            override: true
+      0x60FE:
+        name: Digital outputs
+        description: |
+          This object shall command simple digital outputs. This object represents the physical output levels.
+        bitfield:
+          0: Set Brake
+          31..16:
+            name: Manufacturer specific
+            override: true
+        datatype: uint32
+        access: rw
+        pdo: true
+        data:
+          - name: Pyhsical outputs
+          - name: Bit mask mask
+      0x60FF:
+        name: target velocity
+        description: |
+          This object shall indicate the configured target velocity and shall be used as input for the trajectory
+          generator.
+        unit: udv
+        datatype: int32
+        access: rw
+      0x6402:
+        name: Motor type
+        description: |
+          This object shall indicate the type of motor attached to and driven by the drive device.
+        datatype: uint16
+        access: rw
+        enum:
+          class: MotorType
+          data:
+            MOTOR_TYPE__NON_STANDARD: 0
+            MOTOR_TYPE__PHASE_MODULATED_DC_MOTOR: 1
+            MOTOR_TYPE__FREQ_CONTROLLED_DC_MOTOR: 2
+            MOTOR_TYPE__PM_SYNCHRONOUS_MOTOR: 3
+            MOTOR_TYPE__FC_SYNCHRONOUS_MOTOR: 4
+            MOTOR_TYPE__SWITCHED_RELUCTANCE_MOTOR: 5
+            MOTOR_TYPE__WOUND_ROTOR_INDUCTION_MOTOR: 6
+            MOTOR_TYPE__SQUIRREL_CAGE_INDUCTION_MOTOR: 7
+            MOTOR_TYPE__STEPPER_MOTOR: 8
+            MOTOR_TYPE__MICRO_STEP_STEPPER_MOTOR: 9
+            MOTOR_TYPE__BLDC_MOTOR: 10
+            MOTOR_TYPE__BLAC_MOTOR: 11
+            MOTOR_TYPE__AC_SYNCHRONOUS_RELUCTANCE_SYNC: 12
+            MOTOR_TYPE__DC_COMMUTATOR_PM: 13
+            MOTOR_TYPE__DC_COMMUTATOR_WOUND_FIELD_SERIES: 14
+            MOTOR_TYPE__DC_COMMUTATOR_WOUND_FIELD_SHUNT: 15
+            MOTOR_TYPE__DC_COMMUTATOR_WOUND_FIELD_COMPOUND: 16
+          override-ranges:
+            - [0x8000, 0xFFFF]
+      0x6403:
+        name: Motor catalogue number
+        description: |
+          This object shall indicate the motor catalogue number (nameplate number) provided by the motor
+          manufacturer. If the number is not assigned yet, this object shall indicate this by /0 (empty string).
+        datatype: string
+        access: rw
+      0x6404:
+        name: Motor manufacturer
+        description: |
+          This object shall indicate the name of the motor manufacturer. If the name is not assigned yet, this
+          object shall indicate this by /0 (empty string).
+        datatype: string
+        access: rw
+      0x6405:
+        name: http motor catalogue address
+        description: |
+          This object shall indicate the assigned web-address of the motor catalogue. If the address is not
+          assigned yet, this object shall indicate this by /0 (empty string).
+        datatype: string
+        access: rw
+      0x6406:
+        name: Motor calibration date
+        description: |
+          This object shall indicate the assigned date of the last motor inspection. If the date is not assigned
+          yet, this object shall indicate this by a value of 0.
+        datatype: uint64 #time of date
+        access: rw
+      0x6407:
+        name: Motor service periode
+        description: |
+          This object shall indicate the assigned motor service period. If the period is not assigned yet, this
+          object shall indicate this by 0000 0000h.
+        datatype: uint32
+        access: rw
+      0x6502:
+        name: Supported drive modes
+        description: |
+          This object shall indicate the assigned manufacturer's drive catalogue number (nameplate number).
+        category: mandatory
+        datatype: uint32
+        access: r
+      0x6503:
+        name: Drive calatogue number
+        description: |
+          This object shall indicate the assigned manufacturer's drive catalogue number (nameplate number).
+        datatype: string
+        access: rw
+      0x6505:
+        name: http drive catalogue address
+        description: |
+          This object shall indicate the assigned web address of the drive manufacturer. If the address is not
+          assigned yet, this object shall indicate this by /0 (empty string).
+        datatype: string
+        access: rw
+      0x67FE:
+        name: Version number
+        description: |
+          This object shall provide the version number of the CiA 402 profile which is used to build up the
+          device. Object 67FEh shall be applied as well for single and multi axis devices. The version number
+          consists out of three figures. For this international standard the number 3.1.0 shall be used.
+        category: mandatory
+        datatype: uint32
+        access: r
+        default: 0x30100
+        bitfield:
+          7..0: Subversion number
+          15..8: Minor version number
+          23..16: Major version number

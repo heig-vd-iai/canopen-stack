@@ -1,0 +1,144 @@
+
+
+device:
+  baudrate:
+    ? 125
+    ? 250
+    ? 500
+    ? 1000
+# Supported profiles for this device
+# This will ensure conformity with the CiA profiles
+# If the object does not conform to the profile it will be rejected
+# Missing fields will be populated with the profile values
+profiles:
+  - 301
+  - 402
+objects:
+  # 0x1000:
+  #   profile: 301 # CiA Profile number
+  #   description: "This is the first object."
+  0x2100:
+    name: Current Loop Settings
+    description: "This is the second object."
+    path: axis.currentLoop
+    remote: cpu1
+    record:
+    - name: Kp
+      path: kp
+      description: Proportional gain
+      datatype: float32
+      unit: V/A
+      default: 0.0
+      limits:
+        min: 0.0
+        max: 1000.0
+      get: sys.axes[0].currentController.getKp()
+      set: sys.axes[0].currentController.setKp(@)
+    - name: Ki
+      path: ki
+      description: Integral gain
+      datatype: float32
+      unit: V/(A*s)
+      default: 0.0
+      limits:
+        min: 0.0
+        max: 10000.0
+      get: sys.axes[0].currentController.getKi()
+      set: sys.axes[0].currentController.setKi(@)
+    - name: Integral Limit
+      path: integralLimit
+      datatype: float32
+      default: 0.7
+      limits:
+        min: 0.0
+        max: 1.0
+      get: sys.axes[0].currentController.config.get_integral_limit()
+      set: sys.axes[0].currentController.config.set_integral_limit(@)
+  0x2101:
+    name: DC-Link Voltage
+    remote: cpu1
+    pdo: true # Can be mapped in PDO
+    datatype: uint32
+    access: rw
+    get: sys.axes[0].config.getDcLinkVoltage
+    set: sys.axes[0].config.setDcLinkVoltage
+  0x2700: # Record (struct)
+    name: Low Level Control Switches
+    description: Route the control signals to the desired module.
+    path: internals.controlSwitches
+    remote: cpu1
+    record:
+    - name: Position switch
+      path: position
+      datatype: int8
+      enum:
+        class: PositionSwitch
+        data:
+          ZERO: -1
+          PROFILE_POSITION: 0
+          FUNCTION_GENERATOR: 1
+      get: sys.axes[0].getPositionSwitch()
+      set: sys.axes[0].setPositionSwitch(@)
+    - name: Velocity switch
+      path: velocity
+      datatype: int8
+      get: sys.axes[0].getVelocitySwitch()
+      set: sys.axes[0].setVelocitySwitch(@)
+    - name: Current switch
+      path: current
+      datatype: int8
+      get: sys.axes[0].getCurrentSwitch()
+      set: sys.axes[0].setCurrentSwitch(@)
+    - name: Voltage switch
+      path: voltage
+      datatype: int8
+      get: sys.axes[0].getVoltageSwitch()
+      set: sys.axes[0].setVoltageSwitch(@)
+    - name: Voltage switch
+      path: voltage
+      datatype: int8
+      get: sys.axes[0].getPhaseSwitch()
+      set: sys.axes[0].setPhaseSwitch(@)
+  0x2851: # Scalar value
+    name: Trigger mode
+    path: acquisition
+    remote: cpu1
+    datatype: uint8
+    set: sys.monitoring.setTriggerMode()
+    get: sys.monitoring.getTriggerMode(@)
+  0x603f:
+    name: Error Code (Fault)
+    path: error
+    datatype: uint16
+    remote: cpu1
+    # if type is missing, but declared in the profile it is used otherwise: error
+    get: sys.axes[?#].getLastError() # ?# is axis number for multi axis system
+
+  0x3000:
+    name: Led mode
+    remote: cpu1
+    datatype: uint16
+    get: BSP::led.getMode()
+    set: BSP::led.setMode(@)
+
+  0x9999:
+    name: Value with Conversion
+    unit: A
+    datatype: float32
+    get: sys.axes[0].attribute # Getter is juste a public attribute
+
+  0x9998:
+    name: Value with Conversion
+    unit: A
+    datatype: float32
+    set: sys.axes[0].attribute # If no () then assignment
+    limits:
+      min: 0.0
+      max: 100.0
+
+  0x9997:
+    name: An array
+    datatype: uint16
+    length: 10
+    get: sys.axes[0].array[#]
+    set: sys.axes[0].array[#] = @

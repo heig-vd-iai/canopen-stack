@@ -1,0 +1,731 @@
+# List of objects in official CiA profiles as implemented in this
+# CANopen stack.
+profiles:
+  301:
+    name: Application layer and communication profile
+    objects:
+      0x1000:
+        name: Device type
+        description: |
+          This object shall provide information about the device type. The object describes the type of the logical
+          device and its functionality. It shall be composed of a 16-bit field that describes the device profile or
+          the application profile that is used and a second 16-bit field, which gives additional information about
+          optional functionality of the logical device. The additional information parameter is device profile
+          specific and application profile specific. Its specification does not fall within the scope of this
+          specification; it is defined in the appropriate device profile and application profile.
+        category: mandatory
+        datatype: uint32
+        access: r
+        pdo: false
+      0x1001:
+        name: Error register
+        description: |
+          This object shall provide error information. The CANopen device maps internal errors into this object. It
+          is a part of an emergency object.
+        category: mandatory
+        get: node.emcy().errorRegister.getData
+        datatype: uint8
+        enum:
+          class: ErrorRegister
+          data:
+            ERROR_REGISTER__GENERIC_ERROR: 0
+            ERROR_REGISTER__CURRENT_ERROR: 1
+            ERROR_REGISTER__VOLTAGE_ERROR: 2
+            ERROR_REGISTER__TEMPERATURE_ERROR: 3
+            ERROR_REGISTER__COMMUNICATION_ERROR: 4
+            ERROR_REGISTER__DEVICE_PROFILE_ERROR: 5
+            ERROR_REGISTER__MANUFACTURER_SPECIFIC: 7
+      0x1002:
+        name: Manufacturer status register
+        category: optional
+        datatype: uint32
+        access: r
+      0x1003:
+        name: Pre-defined error field
+        category: optional
+        get: node.emcy().preDefinedErrorField.getData
+        datatype: uint32
+        access: r
+        length: 8
+        pdo: false
+      0x1005:
+        name: COB_ID SYNC message
+        category: optional
+        get: node.emcy().preDefinedErrorField.getData
+        datatype: uint32
+        access: r
+        pdo: false
+        default: 0x80
+        bitfield:
+          0..28: CAN_ID
+          29:
+            name: frame
+            description:
+              0: 11-bit CAN-ID valid (CAN base frame)
+              1: 29-bit CAN-ID valid (CAN extended frame)
+          30:
+            name: gen
+            description:
+              0: CANopen device does not geneerate SYNC message
+              1: CANopen device generates SYNC message
+      0x1006:
+        name: Communication cycle period
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+        pdo: false
+      0x1007:
+        name: Synchronous window length
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+      0x1008:
+        name: Manufacturer device name
+        category: optional
+        datatype: string
+        access: const
+      0x1009:
+        name: Manufacturer hardware version
+        category: optional
+        datatype: string
+        access: const
+      0x100A:
+        name: Manufacturer software version
+        category: optional
+        datatype: string
+        access: const
+      0x100C:
+        name: Guard time
+        category: optional
+        unit: ms
+        datatype: uint16
+        access: rw
+      0x100D:
+        name: Life time factor
+        category: optional
+        datatype: uint8
+        access: rw
+      0x1010:
+        name: Store parameters
+        category: optional
+        get: node.od().getSave
+        set: node.od().saveData
+        length: 3
+        datatype: uint32
+        pdo: false
+        bitfield:
+          0:
+            name: cmd
+            description:
+              0: CANopen device does not save parameters on command
+              1: CANopen device saves parameters on command
+          1:
+            name: auto
+            description:
+              0: CANopen device does not save parameters autonomously
+              1: CANopen device saves parameters autonomously
+        data:
+          - name: Save all parameters
+          - name: Save communication parameters
+          - name: Save application parameters
+      0x1011:
+        name: Restore default parameters
+        category: optional
+        get: node.od().getRestore
+        set: node.od().restoreData
+        length: 3
+        pdo: false
+        datatype: uint32
+        bitfield:
+          0:
+            name: cmd
+            description:
+              0: CANopen device does not save parameters on command
+              1: CANopen device saves parameters on command
+        data:
+          - name: Restore all parameters
+          - name: Restore communication parameters
+          - name: Restore application parameters
+      0x1012:
+        name: COB-ID time stamp message
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0x100
+        bitfield:
+          0..28: CAN_ID
+          29:
+            name: frame
+            description:
+              0: 11-bit CAN-ID valid (CAN base frame)
+              1: 29-bit CAN-ID valid (CAN extended frame)
+          30:
+            name: produce
+            description:
+              0: CANopen device does not produce TIME message
+              1: CANopen device produces TIME message
+          31:
+            name: consume
+            description:
+              0: CANopen device does not consume TIME message
+              1: CANopen device consumes TIME message
+      0x1013:
+        name:  High resolution timestamp
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+        bitfield:
+          0..28: CAN_ID
+          29:
+            name: frame
+            description:
+              0: 11-bit CAN-ID valid (CAN base frame)
+              1: 29-bit CAN-ID valid (CAN extended frame)
+          31:
+            name: valid
+            description:
+              0: EMCY exists / is valid
+              1: EMCY does not exist / is not valid
+      0x1014:
+        name:  COB-ID emergency message
+        description: |
+          This object shall indicate the configured COB-ID for the EMCY write service.
+
+          CANopen devices supporting the CAN base frame type only shall respond with the SDO abort
+          transfer service (abort code: 0609 0030h) in the case of an attempt to set bit 29 (frame)
+          to 1b. The bits 0 to 29 shall not be changed, while the object exists and is valid
+          (bit 31 = 0b).
+        category: optional
+        datatype: uint32
+        access: rw
+        default: 0
+      0x1015:
+        name: Inhibit time EMCY
+        description: |
+          This object shall indicate the configured inhibit time for the EMCY message
+
+          The value shall be given in multiples of 100 μs. The value 0 shall disable the inhibit time.
+        unit: 100*us
+        category: optional
+        datatype: uint16
+        access: rw
+        default: 0
+      0x1016:
+        name: Consumer heartbeat time
+        description: |
+          The consumer heartbeat time object shall indicate the expected heartbeat cycle times.
+          Monitoring of the heartbeat producer shall start after the reception of the first heartbeat.
+
+          NOTE: The consumer heartbeat time should be higher than the corresponding producer heartbeat
+          time.
+
+          NOTE: Before the reception of the first heartbeat the status of the heartbeat producer is
+          unknown.
+        bitfield:
+          0..15:
+            name: Heartbeat time
+            unit: ms
+          16..23:
+            name: Node-ID
+        category: optional
+        datatype: uint16
+        access: const
+        pdo: false
+        default: 0
+        data:
+          - name: Consumer heartbeat time
+      0x1017:
+        name: Producer hearbeat time
+        description: |
+          The producer heartbeat time shall indicate the configured cycle time of the heartbeat.
+          The value 0 shall disable the producer heartbeat.
+        unit: ms
+        category: mandatory
+        get: node.hb().getData
+        set: node.hb().setData
+        datatype: uint16
+        access: rw
+      0x1018:
+        name: Identity object
+        description: |
+          This object shall provide general identification information of the CANopen device.
+
+          The value of 0000 0000h shall be reserved.
+        category: mandatory
+        subindex:
+          - name: Vendor-ID
+            description: |
+              Sub-index 01h shall contain the unique value1 that is allocated uniquely to
+              each vendor of a CANopen device. The value 0000 0000h shall indicate an
+              invalid vendor-ID.
+            datatype: uint32
+            category: mandatory
+            access: ro
+            pdo: false
+            bitfield:
+              0..15: Minor revision number
+              16..31: Major revision number
+          - name: Product code
+            description: |
+              Sub-index 02h shall contain the unique value that identifies a specific
+              type of CANopen devices.
+            datatype: uint32
+            category: mandatory
+            access: ro
+            pdo: false
+            bitfield:
+              0..15: Minor revision number
+              16..31: Major revision number
+          - name: Revision number
+            description: |
+              Sub-index 03h shall contain the major revision number and the minor revision
+              number of the revision of the CANopen device (see Figure 63). The major revision
+              number shall identify a specific CANopen behavior. That means if the CANopen
+              functionality is different, the major revision number shall be incremented.
+              The minor revision number shall identify different versions of CANopen device
+              with the same CANopen behavior. The value of 0000 0000h shall be reserved.
+            datatype: uint32
+            category: mandatory
+            access: ro
+            pdo: false
+            bitfield:
+              0..15: Minor revision number
+              16..31: Major revision number
+          - name: Serial number
+            description: |
+              Sub-index 04h shall contain the serial number that identifies uniquely a
+              CANopen device within a product group and a specific revision.
+              The value of 0000 0000h shall be reserved.
+            datatype: uint32
+            category: mandatory
+            access: ro
+            pdo: false
+            bitfield:
+              0..15: Minor revision number
+              16..31: Major revision number
+      0x1019:
+        name: Synchronous counter overflow value
+        description: |
+          This object shall indicate the configured highest value the synchronous counter
+          supports. This object shall be implemented by the producer and the consumer,
+          if the synchronous counter is supported by the CANopen device. If the value
+          is greater than 1, the SYNC message shall have a data length of 1 byte.
+
+          The SYNC consumer shall ignore the value itself.
+          An EMCY message (error code: 8240h - unexpected SYNC data length) may be
+          transmitted by a SYNC consumer in the case the configured data length of
+          the SYNC message does not meet the data length of a received SYNC message.
+
+          | Value  | Description |
+          |--------|-------------|
+          | 0      | The SYNC message shall be transmitted as a CAN message of data length 0. |
+          | 1      | Reserved |
+          | 2..240 | The SYNC message shall be transmitted as a CAN message of data length 1. The first data byte contains the counter. |
+          | 241..255 | Reserved |
+        category: optional
+        get: node.sync().getData
+        set: node.sync().setData
+        datatype: uint8
+        pdo: false
+        access: rw
+      0x1020:
+        name: Verify configuration
+        description: |
+          This object shall indicate the downloaded configuration date and time. If a CANopen device supports
+          the saving of parameters in non-volatile memory, a network configuration tool or a CANopen manager
+          uses this object to verify the configuration after a CANopen device reset and to check if a
+          reconfiguration is necessary. The configuration tool stores the date and time in that object and stores
+          the same values in the DCF. Now the configuration tool lets the CANopen device save its
+          configuration by writing to index 1010h sub-index 01h the signature "save". After a reset the CANopen
+          device shall restore the last configuration and the signature automatically or by request. If any other
+          command changes boot-up configuration values, the CANopen device shall reset the object Verify
+          Configuration to 0.
+
+          The Configuration Manager compares signature and configuration with the value from the DCF and
+          decides if a reconfiguration is necessary or not.
+
+          !!! note
+
+              The usage of this object allows a significant speed-up of the boot-up process. If it is used, the
+              system integrator considers that an user changes a configuration value and afterwards activate
+              the command store configuration 1010h without changing the value of 1020h. So the system
+              integrator ensures a 100% consequent usage of this feature.
+
+        category: mandatory
+        datatype: uint32
+        access: const
+        data:
+          - name: Configuration date
+            description: |
+              Sub-index 01h (configuration date) shall contain the number of days since January 1, 1984.
+            unit: day
+          - name: Configuration time
+            description: |
+              Sub-index 02h (configuration time) shall be the number of ms after midnight.
+            unit: ms
+
+      0x1029:
+        name: Error behavior
+        description: |
+          If a serious CANopen device failure is detected in NMT state Operational, the CANopen device shall
+          enter by default autonomously the NMT state Pre-operational. If the object is implemented, the
+          CANopen device is configurable to enter alternatively the NMT state Stopped or remain in the current
+          NMT state. CANopen device failures shall include the following communication errors:
+
+          - Bus-off conditions of the CAN interface
+          - Life guarding event with the state `occurred` and the reason 'time out'
+          - Heartbeat event with state `occurred` and the reason 'time out"
+
+          Severe CANopen device errors also may be caused by CANopen device internal failures.
+        category: optional
+        get: node.emcy().errorBehavior.getData
+        set: node.emcy().errorBehavior.setData
+        datatype: uint8
+        pdo: false
+        enum:
+          class: ErrorBehavior
+          data:
+            ERROR_BEHAVIOR__CHANGE_TO_NMT_PREOP: 0
+            ERROR_BEHAVIOR__NO_CHANGES: 1
+            ERROR_BEHAVIOR__CHANGE_TO_NMT_STOP: 2
+          override-ranges:
+            - [0x80, 0xff]
+        data:
+          - name: Communication Error
+            category: mandatory
+            default: 2
+            access: ro
+
+      0x1400:
+        name: Receive PDO 1 communication parameter (CAN-ID 200h + Node-ID)
+        description: |
+          This object contains the communication parameters for the PDOs the CANopen
+          device is able to receive.
+        category: optional
+        subindex:
+          - name: COB-ID used by RPDO
+            datatype: uint32
+            category: mandatory
+            bitfield:
+              0..28: CAN_ID
+              29:
+                name: frame
+                description:
+                  0: 11-bit CAN-ID valid (CAN base frame)
+                  1: 29-bit CAN-ID valid (CAN extended frame)
+              31:
+                name: valid
+                description:
+                  0: PDO exists / is valid
+                  1: PDO does not exist / is not valid
+            default: $NODEID+0x80000200
+            access: rw
+            pdo: false
+            get: node.pdo().rpdos[0].commParameter.getData
+            set: node.pdo().rpdos[0].commParameter.setData
+          - datatype: uint32
+            category: mandatory
+            name: Transmission type
+            access: rw
+      0x1401:
+        name: Receive PDO 2 communication parameter (CAN-ID 300h + Node-ID)
+        description: |
+          This object contains the communication parameters for the PDOs the CANopen
+          device is able to receive.
+        category: optional
+        subindex:
+          - name: COB-ID used by RPDO
+            datatype: uint32
+            category: mandatory
+            bitfield:
+              0..28: CAN_ID
+              29:
+                name: frame
+                description:
+                  0: 11-bit CAN-ID valid (CAN base frame)
+                  1: 29-bit CAN-ID valid (CAN extended frame)
+              31:
+                name: valid
+                description:
+                  0: PDO exists / is valid
+                  1: PDO does not exist / is not valid
+            default: $NODEID+0x80000200
+            access: rw
+            pdo: false
+            get: node.pdo().rpdos[1].commParameter.getData
+            set: node.pdo().rpdos[1].commParameter.setData
+          - datatype: uint32
+            category: mandatory
+            name: Transmission type
+            access: rw
+      0x1402:
+        name: Receive PDO 3 communication parameter (CAN-ID 200h + Node-ID)
+        description: |
+          This object contains the communication parameters for the PDOs the CANopen
+          device is able to receive.
+        category: optional
+        subindex:
+          - name: COB-ID used by RPDO
+            datatype: uint32
+            category: mandatory
+            bitfield:
+              0..28: CAN_ID
+              29:
+                name: frame
+                description:
+                  0: 11-bit CAN-ID valid (CAN base frame)
+                  1: 29-bit CAN-ID valid (CAN extended frame)
+              31:
+                name: valid
+                description:
+                  0: PDO exists / is valid
+                  1: PDO does not exist / is not valid
+            default: $NODEID+0x80000200
+            access: rw
+            pdo: false
+            get: node.pdo().rpdos[2].commParameter.getData
+            set: node.pdo().rpdos[2].commParameter.setData
+          - datatype: uint32
+            category: mandatory
+            name: Transmission type
+            access: rw
+      0x1403:
+        name: Receive PDO 4 communication parameter (CAN-ID 400h + Node-ID)
+        description: |
+          This object contains the communication parameters for the PDOs the CANopen
+          device is able to receive.
+        category: optional
+        subindex:
+          - name: COB-ID used by RPDO
+            datatype: uint32
+            category: mandatory
+            bitfield:
+              0..28: CAN_ID
+              29:
+                name: frame
+                description:
+                  0: 11-bit CAN-ID valid (CAN base frame)
+                  1: 29-bit CAN-ID valid (CAN extended frame)
+              31:
+                name: valid
+                description:
+                  0: PDO exists / is valid
+                  1: PDO does not exist / is not valid
+            default: $NODEID+0x80000200
+            access: rw
+            pdo: false
+            get: node.pdo().rpdos[3].commParameter.getData
+            set: node.pdo().rpdos[3].commParameter.setData
+          - datatype: uint32
+            category: mandatory
+            name: Transmission type
+            access: rw
+      0x1600:
+        name: Receive PDO 1 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[0].mapParameter.getData
+        set: node.pdo().rpdos[0].mapParameter.setData
+        datatype: uint32
+        length: 8
+        bitfield:
+          0..7: Length
+          8..15: Subindex
+          16..31: Index
+
+      0x1601:
+        name: Receive PDO 2 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[1].mapParameter.getData
+        set: node.pdo().rpdos[1].mapParameter.setData
+        datatype: uint32
+        length: 8
+        bitfield:
+          0..7: Length
+          8..15: Subindex
+          16..31: Index
+      0x1602:
+        name: Receive PDO 3 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[2].mapParameter.getData
+        set: node.pdo().rpdos[2].mapParameter.setData
+        datatype: uint32
+        length: 8
+        bitfield:
+          0..7: Length
+          8..15: Subindex
+          16..31: Index
+      0x1603:
+        name: Receive PDO 4 mapping parameter
+        category: optional
+        get: node.pdo().rpdos[3].mapParameter.getData
+        set: node.pdo().rpdos[3].mapParameter.setData
+        datatype: uint32
+        length: 8
+        bitfield:
+          0..7: Length
+          8..15: Subindex
+          16..31: Index
+      0x1800:
+        name: Transmit PDO 1 communication parameter
+        description: |
+          This object contains the communication parameters for the PDOs the CANopen device
+          is able to transmit.
+        category: optional
+        get: node.pdo().tpdos[0].commParameter.getData
+        set: node.pdo().tpdos[0].commParameter.setData
+        record:
+          - name: COB-ID
+            description: |
+              Sub-index 01h contains the COB-ID of the TPDO.
+
+              The bit valid (bit 31) allows selecting which TPDOs are used in the NMT state Operational.
+              There may be PDOs fully configured (e.g. by default) but not used, and therefore set to "not
+              valid" (deleted). The feature is necessary for CANopen devices supporting more than
+              4 TPDOs, because each CANopen device has only default CAN-IDs for the first four TPDOs
+              in the generic pre-defined connection set. CANopen devices supporting the CAN base frame
+              type only or do not support RTRs, an attempt to set bit 29 (frame) to 1b or bit 30 (RTR) to 0b
+              is responded with the SDO abort transfer service (abort code: 0609 0030h). It is not allowed
+              to change bit from 0 to 29 while the PDO exists and is valid (bit 31 = 0b). CANopen devices
+              supporting the enabling (bit 31 = 0b) and disabling (bit 31 = 1b) of a TPDO only shall respond
+              with the SDO abort transfer service (abort code: 0609 0030h or 0800 000h) on an attempt to
+              change the values from bit 0 to bit 30.
+
+            datatype: uint32
+            access: rw
+            bitfield:
+              0..28: CAN_ID
+              29:
+                name: frame
+                description:
+                  0: 11-bit CAN-ID valid (CAN base frame)
+                  1: 29-bit CAN-ID valid (CAN extended frame)
+              30:
+                name: RTR
+                description:
+                  0: RTR allowed on this PDO
+                  1: RTR not allowed on this PDO
+              31:
+                name: valid
+                description:
+                  0: PDO exists / is valid
+                  1: PDO does not exist / is not valid
+            default: $NODEID+0x80000180
+          - datatype: uint8
+            name: Transmission type
+            description: |
+              Synchronous means that the PDO is transmitted after the SYNC. The CANopen device
+              will start sampling of the data with the reception of the SYNC. In case it
+              is acyclic the CANopen device internal event is given and with the next SYNC the
+              sampling is started and the PDO is transmitted afterwards. In case it is cyclic the
+              sampling is started with the reception of every SYNC, every 2nd SYNC, every 3rd SYNC,
+              and s.o. depending on the given value and the PDO is transmitted afterwards.
+
+              RTR-only means that the PDO is not transmitted normally it shall be requested via RTR.
+              In case it is synchronous the CANopen device will start sampling with the reception of
+              every SYNC and then will buffer the PDO. In case it is event-driven the
+              CANopen device will start sampling with the reception of the RTR and will transmit the
+              PDO immediately.
+
+              Event-driven means that the PDO may be transmitted at any time based on the
+              occurrence of a CANopen device internal event. The definition of the event does not fall
+              into the scope of this specification and may be specified in device profiles and
+              application profiles..
+            access: rw
+            enum:
+              class: PDOTransmissionType
+              data:
+                PDO_TRANSMISSION_TYPE__ACYCLIC: 0
+                PDO_TRANSMISSION_TYPE__EVERY_SYNC: 1
+                PDO_TRANSMISSION_TYPE__EVERY_2ND_SYNC: 2
+                PDO_TRANSMISSION_TYPE__EVERY_3ND_SYNC: 3
+                PDO_TRANSMISSION_TYPE__EVERY_4TH_SYNC: 4
+                PDO_TRANSMISSION_TYPE__EVERY_5TH_SYNC: 5
+                PDO_TRANSMISSION_TYPE__EVERY_6TH_SYNC: 6
+                PDO_TRANSMISSION_TYPE__EVERY_7TH_SYNC: 7
+                PDO_TRANSMISSION_TYPE__EVERY_8TH_SYNC: 8
+                # Continues to 0xf0
+                PDO_TRANSMISSION_TYPE__RTR_ONLY_SYNC: 0xfc
+                PDO_TRANSMISSION_TYPE__RTR_ONLY_EVENT: 0xfd
+          - datatype: uint16
+            name: Inhibit time
+            description: |
+              The time is the minimum interval for PDO transmission if
+              the transmission type is set to FEh and FFh. The value is defined as multiple of 100 μs. The value
+              of 0 shall disable the inhibit time. The value shall not be changed while the PDO exists (bit 31 of
+              sub-index 01h is set to 0b).
+            unit: 100*us
+            access: rw
+          - datatype: uint8
+            description: |
+              Sub-index 04h is reserved. It does shall not be implemented; in this case read or write access
+              leads to the SDO abort transfer service (abort code: 0609 0011h).
+            name: Compatibility entry
+            access: rw
+          - name: Event timer
+            description: |
+              The time is the maximum interval for PDO transmission if
+              the transmission type is set to FEh and FFh. The value is defined as multiple of 1 ms. The value of
+              0 shall disable the event-timer.
+            datatype: uint16
+            unit: ms
+            access: rw
+          - name: Sync start value
+            description: |
+              Sub-index 06h contains the SYNC start value. The SYNC start value of 0 shall indicate that the
+              counter of the SYNC message shall not be processed for this PDO. The SYNC start value 1 to
+              240 shall indicate that the counter of the SYNC message shall be processed for this PDO. In
+              case the counter of the SYNC message is not enabled (see 7.5.2.22) sub-index 06h shall be
+              ignored. The SYNC message of which the counter value equals the SYNC start value shall be
+              regarded as the first received SYNC message. The value shall not be changed while the PDO
+              exists (bit 31 of sub-index 01h is set to 0b).
+            datatype: uint8
+            access: rw
+      0x1801:
+        name: Transmit PDO 2 communication parameter
+        get: node.pdo().tpdos[1].commParameter.getData
+        set: node.pdo().tpdos[1].commParameter.setData
+        inherit: 0x1800
+      0x1802:
+        name: Transmit PDO 3 communication parameter
+        get: node.pdo().tpdos[2].commParameter.getData
+        set: node.pdo().tpdos[2].commParameter.setData
+        inherit: 0x1800
+      0x1803:
+        name: Transmit PDO 4 communication parameter
+        category: optional
+        get: node.pdo().tpdos[3].commParameter.getData
+        set: node.pdo().tpdos[3].commParameter.setData
+        inherit: 0x1800
+      0x1A00:
+        name: Transmit PDO 1 mapping parameter
+        description: |
+          This object contains the mapping for the PDOs the device is able to transmit.
+        category: optional
+        get: node.pdo().tpdos[0].mapParameter.getData
+        set: node.pdo().tpdos[0].mapParameter.setData
+        datatype: uint32
+        bitfield:
+          0..7: Length
+          8..15: Subindex
+          16..31: Index
+        length: 8
+      0x1A01:
+        name: Transmit PDO 2 mapping parameter
+        get: node.pdo().tpdos[1].mapParameter.getData
+        set: node.pdo().tpdos[1].mapParameter.setData
+        inherit: 0x1A00
+      0x1A02:
+        name: Transmit PDO 3 mapping parameter
+        category: optional
+        get: node.pdo().tpdos[2].mapParameter.getData
+        set: node.pdo().tpdos[2].mapParameter.setData
+        inherit: 0x1A00
+      0x1A03:
+        name: Transmit PDO 4 mapping parameter
+        category: optional
+        get: node.pdo().tpdos[3].mapParameter.getData
+        set: node.pdo().tpdos[3].mapParameter.setData
+        inherit: 0x1A00

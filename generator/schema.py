@@ -18,23 +18,36 @@ Setter:
   - instance.attribute[#] = @
 """
 
+from pint import UnitRegistry, UndefinedUnitError
 from voluptuous import (
     All,
     Any,
-    Match,
+    Coerce,
     Invalid,
     Invalid,
-    Range,
     Length,
+    Match,
     Optional,
+    Range,
     Required,
     Schema,
-    Coerce,
 )
-from pint import UnitRegistry, UndefinedUnitError
 from .types import datatypes
 
 ureg = UnitRegistry()
+
+# User Defined Speed
+ureg.define("uds = [speed]")
+# User Defined Position
+ureg.define("udp = [position]")
+
+
+def validate_object(value):
+    if not isinstance(value, int):
+        raise Invalid(f"Invalid object: {value}. Must be an integer.")
+    if value < 0x1000 or value > 0x9FFF:
+        raise Invalid(f"Invalid object: {value}. Must be between 0x1000 and 0x9FFF.")
+    return value
 
 
 def validate_profile(value):
@@ -57,7 +70,9 @@ def validate_baudrates(value):
 
 def validate_type(value):
     if value not in datatypes:
-        raise Invalid(f"Invalid type: {value}. valid types: {', '.join(datatypes.keys())}")
+        raise Invalid(
+            f"Invalid type: {value}. valid types: {', '.join(datatypes.keys())}"
+        )
     return datatypes[value]
 
 
@@ -81,8 +96,11 @@ def validate_subindices_length(value):
     if not isinstance(value, dict):
         raise Invalid(f"Invalid subindex: {value}. Subindex must be a dictionary.")
     if len(value) > 255:
-        raise Invalid(f"Invalid subindex: {value}. Subindex length must be less than 256.")
+        raise Invalid(
+            f"Invalid subindex: {value}. Subindex length must be less than 256."
+        )
     return value
+
 
 def validate_enum_data(value):
     if not isinstance(value, dict):
@@ -91,12 +109,14 @@ def validate_enum_data(value):
         raise Invalid(f"Invalid enum data: {value}. Enum values must be unique.")
     return value
 
+
 def update_access(value):
-    if 'get' in value and value['get'] is not None:
-        value['access'] = ''.join(set(value['access']) | {'r'})
-    if 'set' in value and value['set'] is not None:
-        value['access'] = ''.join(set(value['access']) | {'w'})
+    if "get" in value and value["get"] is not None:
+        value["access"] = "".join(set(value["access"]) | {"r"})
+    if "set" in value and value["set"] is not None:
+        value["access"] = "".join(set(value["access"]) | {"w"})
     return value
+
 
 def post_validate_od(value):
     return value
@@ -105,9 +125,9 @@ def post_validate_od(value):
 header_common = {
     "name": str,
     Optional("remote", default="local"): All(str, Length(min=1)),
-    Optional("path", default=""): Any('', Match(
-        r"^([a-zA-Z][a-zA-Z0-9]*)(?:\.[a-zA-Z][a-zA-Z0-9]*)*$"
-    )),
+    Optional("path", default=""): Any(
+        "", Match(r"^([a-zA-Z][a-zA-Z0-9]*)(?:\.[a-zA-Z][a-zA-Z0-9]*)*$")
+    ),
     Optional("description", default=""): str,
 }
 
@@ -119,46 +139,71 @@ var_common = {
         Optional("max", None): Any(None, int, float),
     },
     Optional("pdo", default=False): bool,
-    Optional("unit", default=''): All(str, validate_unit_string),
+    Optional("unit", default=""): All(str, validate_unit_string),
     "enum": {
         "class": str,
         "data": All({All(str, validate_enum_name): int}, validate_enum_data),
     },
     # Default value; type must match the type of the object
     Optional("default", default=0): Any(int, float),
-    Optional("access", default=''): All(str, Match(r"^r?w?$")),
+    Optional("access", default=""): All(str, Match(r"^r?w?$")),
     Optional("get", default=None): Any(None, str),
     Optional("set", default=None): Any(None, str),
 }
 
-var = All({
-    **header_common,
-    "profile": int,
-    Optional("type", default="var"): "var",
-    **var_common,
-}, update_access)
+def bitfield_range(value):
+    if not isinstance(value, str):
+        raise Invalid(f"Invalid bitfield range: {value}. Must be a string.")
+    if not Match(r"^\d+\.\.\d+$")(value):
+        raise Invalid(f"Invalid bitfield range: {value}. Must be in the form 'x..y'.")
+    start, end = map(int, value.split(".."))
+    if start < 0 or end < 0 or start > end:
+        raise Invalid(f"Invalid bitfield range: {value}. Must be in the form 'x..y'.")
+    return (start, end)
 
-array = All({
-    **header_common,
-    "profile": int,
-    Optional("type", default="array"): "array",
-    Required("length"): All(int, Range(min=1, max=255)),
-    **var_common,
-}, update_access)
+bitfield = {
+    Any(int, All(str, bitfield_range)): {
+        Any(All(str, Coerce(lambda x: { 'name': x })), { 'name': str, 'description': str, 'values': { int: str } }),
+    },
+}
 
-record = All({
-    **header_common,
-    "profile": int,
-    Optional("type", default="record"): "record",
-    Required("subindex"): [
-        All(
-            {
-                **var_common,
-            },
-            validate_subindices_length,
-        )
-    ],
-}, update_access)
+var = All(
+    {
+        **header_common,
+        "profile": int,
+        Optional("type", default="var"): "var",
+        **var_common,
+    },
+    update_access,
+)
+
+array = All(
+    {
+        **header_common,
+        "profile": int,
+        Optional("type", default="array"): "array",
+        Required("length"): All(int, Range(min=1, max=255)),
+        **var_common,
+    },
+    update_access,
+)
+
+record = All(
+    {
+        **header_common,
+        "profile": int,
+        Optional("type", default="record"): "record",
+        Required("subindex"): [
+            All(
+                {
+                    **var_common,
+                },
+                validate_subindices_length,
+            )
+        ],
+    },
+    update_access,
+)
 
 domain = {
     **header_common,
@@ -179,8 +224,14 @@ od = All(
 SchemaConfig = Schema(
     {
         "device": {
-            Optional("vendor", default={'name': 'Unknown', 'number': 0x12345678}): {"name": str, "number": int},
-            Optional("product", default={'name': 'Unknown', 'number': 0x12345678}): {"name": str, "number": int},
+            Optional("vendor", default={"name": "Unknown", "number": 0x12345678}): {
+                "name": str,
+                "number": int,
+            },
+            Optional("product", default={"name": "Unknown", "number": 0x12345678}): {
+                "name": str,
+                "number": int,
+            },
             Optional("revision", default=1): int,
             "baudrate": Coerce(set),
             Optional("node_id", default=1): All(int, Range(min=1, max=127)),
