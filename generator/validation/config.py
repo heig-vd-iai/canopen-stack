@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from typing import (
     Annotated,
     Any,
+    ClassVar,
     Dict,
     Generic,
     List,
@@ -14,7 +15,6 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
-    ClassVar,
 )
 
 import mistune
@@ -29,6 +29,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
+
 
 from .helpers import validate_identifier, validate_unit_string
 
@@ -285,6 +286,7 @@ class UnitMixin(BaseModel):
     """Mixin for unit validation."""
 
     unit: Optional[str] = Field(default="", validate_default=True)
+    scale: Optional[float] = None
 
     @field_validator("unit")
     @classmethod
@@ -370,24 +372,36 @@ class InferArrayLengthMixin:
 
 class VarCommon(AccessorMixin, UnitMixin, BaseModel):
     """Common attributes for variable objects."""
+
     datatype: str
     limits: Limits = Limits()
     pdo: bool = False
-    scale: Optional[float] = None
     enum: Optional[EnumData] = None
     default: Union[int, float] = 0
     bitfield: Optional[Bitfield] = None
 
+class RecordEntry(VarCommon, HeaderCommon):
+    """Record entry object for storing subindex data."""
 
-class Var(HeaderCommon, VarCommon):
-    """Variable object for storing subindex data."""
-    type: Literal["var"] = "var"
     class Config:
         extra = "forbid"
 
 
+
+
+class Var(HeaderCommon, VarCommon):
+    """Variable object for storing subindex data."""
+
+    type: Literal["var"] = "var"
+
+    class Config:
+        extra = "forbid"
+
+
+
 class ArrayEntry(AccessorMixin, UnitMixin, BaseModel):
     """Array entry object for storing subindex data."""
+
     limits: Limits = Limits()
     enum: Optional[EnumData] = None
     default: Union[int, float] = 0
@@ -395,23 +409,19 @@ class ArrayEntry(AccessorMixin, UnitMixin, BaseModel):
 
 class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
     """Base class for array objects."""
+
     type: Literal["array"] = "array"
     length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
 
 
 class Array(BaseArray):
     """Array object for storing subindex data."""
+
     data: List[ArrayEntry] = []
-
-
-class RecordEntry(VarCommon, HeaderCommon):
-    """Record entry object for storing subindex data."""
-    class Config:
-        extra = "forbid"
-
 
 class Record(HeaderCommon):
     """Record object for storing subindex data."""
+
     type: Literal["record"] = "record"
     record: List[RecordEntry]
 
@@ -617,7 +627,7 @@ class Objects(MappingRootMixin[ObjectType], RootModel[Dict[int, ObjectType]]):
         return v
 
 
-class SchemaConfig(BaseModel):
+class Config(BaseModel):
     """Configuration schema for the generator."""
 
     device: Device
