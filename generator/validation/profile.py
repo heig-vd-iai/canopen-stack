@@ -16,17 +16,10 @@ from pydantic import (
     model_validator,
 )
 
-from .config import (
-    ArrayEntry,
-    BaseArray,
-    Enum,
-    MappingRootMixin,
-    Markdown,
-    Record,
-    RecordEntry,
-    Var,
-)
-from .helpers import validate_identifier
+from .mixins import MappingRootMixin
+from .objects import ArrayEntry, BaseArray, Record, RecordEntry, Var
+from .types import Enum, Markdown
+from .validators import validate_identifier
 
 PROFILE_DIR = Path(__file__).parent.parent / "profiles"
 

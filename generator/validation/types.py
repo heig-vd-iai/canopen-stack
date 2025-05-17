@@ -28,6 +28,8 @@ from .validators import validate_identifier
 
 
 class ObjectId(int):
+    """Object identifier for CANopen objects."""
+
     def __new__(cls, index, subindex):
         return super().__new__(cls, (index << 8) | subindex)
 
@@ -269,14 +271,17 @@ class Datatype(BaseModel):
 
     @classmethod
     def from_name(cls, name: str) -> "Datatype":
+        """Create a Datatype instance from a name."""
         try:
             dt = DATATYPES[name]
-        except KeyError:
-            raise ValueError(f"Invalid CiA datatype: {name}")
+        except KeyError as e:
+            raise ValueError(f"Invalid CiA datatype: {name}") from e
         return cls(name=dt.name, code=dt.code, ctype=dt.ctype, field=dt.field)
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source_type, handler):
+    def __get_pydantic_core_schema__(
+        cls, source_type, handler
+    ):  # pylint: disable=arguments-differ
         """Get the Pydantic core schema for Datatype."""
         schema = handler(source_type)
 
@@ -359,7 +364,7 @@ class Bitfield(Dict[Tuple[int, int], BitfieldEntry]):
                     )
 
                 # Inject width dynamically to perform value checks
-                entry._width = width  # not public, internal use
+                entry._width = width  # pylint: disable=protected-access, attribute-defined-outside-init
                 entry = BitfieldEntry.model_validate(entry.model_dump())  # re-validate
                 result[(start, end)] = entry
             return cls(result)

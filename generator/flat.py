@@ -1,4 +1,4 @@
-from .types import ObjectId, TypeValue
+from .validation.types import ObjectId, TypeValue
 
 from typing import List, Optional
 from .validation.config import Config, Var, Array, Record, RecordEntry
