@@ -19,7 +19,7 @@ from pydantic import (
 from .config import (
     ArrayEntry,
     BaseArray,
-    EnumData,
+    Enum,
     MappingRootMixin,
     Markdown,
     Record,
@@ -30,7 +30,7 @@ from .helpers import validate_identifier
 
 PROFILE_DIR = Path(__file__).parent.parent / "profiles"
 
-class EnumDataProfile(EnumData):
+class EnumProfile(Enum):
     """Enum data with additional profile information."""
 
     override_ranges: List[Tuple[int, int]] = Field(default_factory=list)
@@ -48,13 +48,13 @@ class ProfileExtra(BaseModel):
 class VarProfile(ProfileExtra, Var):
     """Variable profile with additional information."""
 
-    enum: Optional[EnumDataProfile] = None
+    enum: Optional[EnumProfile] = None
 
 
 class ArrayEntryProfile(ArrayEntry):
     """Array entry profile with additional information."""
 
-    enum: Optional[EnumDataProfile] = None
+    enum: Optional[EnumProfile] = None
 
 
 class ArrayProfile(BaseArray):
@@ -66,7 +66,7 @@ class ArrayProfile(BaseArray):
 class RecordEntryProfile(ProfileExtra, RecordEntry):
     """Record entry profile with additional information."""
 
-    enum: Optional[EnumDataProfile] = None
+    enum: Optional[EnumProfile] = None
 
 
 class RecordProfile(ProfileExtra, Record):

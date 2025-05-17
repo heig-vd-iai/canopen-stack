@@ -7,10 +7,8 @@ from enum import Enum
 
 import yaml
 
-from .template import render_template
+from .templates import Template
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
-from .types import ObjectCode, datatypes, object_types
-from .validation.config import SchemaConfig
 
 
 def flatten_od(od):

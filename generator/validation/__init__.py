@@ -1,4 +1,6 @@
 """Schema validation for configuration files."""
+from .config import Config
+
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -7,10 +9,10 @@ from typing import Dict
 import yaml
 
 from .git import GitInfo
-from .profile import Profile, SchemaProfile
+from .profile import Profile
 
 
-def read_config(filename: str) -> dict:
+def read_config_file(filename: str) -> dict:
     """Read a configuration file and return its content as a dictionary."""
     filepath = Path(filename)
 
@@ -26,7 +28,7 @@ def read_config(filename: str) -> dict:
 
     # created_by
     if "created_by" not in info:
-        author = git_info.author or "unknown"
+        author = git_info.author() or "unknown"
         info["created_by"] = author
         warnings.warn(
             f"'/info/created_by' not specified. Using Git author or fallback: {author}",
@@ -34,8 +36,8 @@ def read_config(filename: str) -> dict:
         )
 
     if "created_at" not in info:
-        if git_info.date is not None:
-            info["created_at"] = git_info.date
+        if git_info.date() is not None:
+            info["created_at"] = git_info.date()
         else:
             fallback = datetime.now().isoformat()
             info["created_at"] = fallback
@@ -54,7 +56,7 @@ def read_config(filename: str) -> dict:
         info["filename"] = str(filepath.name)
 
     if "revision" not in info:
-        rev = git_info.version or "0.1.0"
+        rev = git_info.version() or "0.1.0"
         info["revision"] = rev
         warnings.warn(
             f"'/info/revision' not specified. Using Git tag or fallback: {rev}",
@@ -78,14 +80,14 @@ def read_profile(profile: int) -> dict:
     return data
 
 
-def merge_profiles(*schemas: SchemaProfile) -> SchemaProfile:
-    """Merge multiple SchemaProfile instances into one."""
-    merged_profiles: Dict[int, Profile] = {}
+# def merge_profiles(*schemas: SchemaProfile) -> SchemaProfile:
+#     """Merge multiple SchemaProfile instances into one."""
+#     merged_profiles: Dict[int, Profile] = {}
 
-    for schema in schemas:
-        for pid, profile in schema.profiles.items():
-            if pid in merged_profiles:
-                raise ValueError(f"Duplicate profile {pid} encountered during merge.")
-            merged_profiles[pid] = profile
+#     for schema in schemas:
+#         for pid, profile in schema.profiles.items():
+#             if pid in merged_profiles:
+#                 raise ValueError(f"Duplicate profile {pid} encountered during merge.")
+#             merged_profiles[pid] = profile
 
-    return SchemaProfile(profiles=merged_profiles)
+#     return SchemaProfile(profiles=merged_profiles)

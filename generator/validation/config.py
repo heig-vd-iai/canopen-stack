@@ -1,28 +1,20 @@
 """Validation schema for the config.yaml file."""
 
-import re
 import warnings
-from collections.abc import Mapping
 from typing import (
     Annotated,
     Any,
     ClassVar,
     Dict,
-    Generic,
     List,
     Literal,
     Optional,
-    Tuple,
-    TypeVar,
     Union,
 )
 
-import mistune
-import semver
 from pydantic import (
     BaseModel,
     Field,
-    PrivateAttr,
     RootModel,
     StringConstraints,
     field_validator,
@@ -30,209 +22,10 @@ from pydantic import (
 )
 from pydantic_core import core_schema
 
-
-from .helpers import validate_identifier, validate_unit_string
+from .mixins import AccessorMixin, InferArrayLengthMixin, MappingRootMixin, UnitMixin
+from .types import Baudrate, Bitfield, Datatype, Enum, Limits, Markdown, Revision
 
 STRICT_VALIDATION = False
-
-
-T = TypeVar("T")
-
-
-class MappingRootMixin(Mapping, Generic[T]):
-    """Mixin for mapping-like behavior in Pydantic models."""
-
-    def __getitem__(self, key):
-        return self.root[key]
-
-    def __iter__(self):
-        return iter(self.root)
-
-    def __len__(self):
-        return len(self.root)
-
-    def keys(self):
-        return self.root.keys()
-
-    def values(self):
-        return self.root.values()
-
-    def items(self):
-        return self.root.items()
-
-
-class Markdown(str):
-    """String subclass representing Markdown with validation and conversion."""
-
-    def to_html(self) -> str:
-        """Convert Markdown to HTML using mistune."""
-        return mistune.create_markdown()(self)
-
-    def __repr__(self):
-        preview = str(self).replace("\n", " ")[:40]
-        return f"Markdown({preview!r}...)"
-
-    @classmethod
-    def validate(cls, value):
-        """Validate and parse the input value as Markdown."""
-        if not isinstance(value, str):
-            raise TypeError("Markdown must be a string.")
-        try:
-            mistune.create_markdown()(value)  # parsing attempt
-        except Exception as e:
-            raise ValueError(f"Invalid Markdown: {e}") from e
-        return cls(value)
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls.validate,
-            core_schema.str_schema(),
-            serialization=core_schema.plain_serializer_function_ser_schema(str),
-        )
-
-
-class Access:
-    """Object access rights."""
-
-    def __init__(self, read=False, write=False):
-        self.read = bool(read)
-        self.write = bool(write)
-
-    def __str__(self):
-        if self.read and self.write:
-            return "rw"
-        if self.read:
-            return "r"
-        if self.write:
-            return "w"
-        return ""
-
-    def __repr__(self):
-        if self.read and self.write:
-            return "Access(Read Write)"
-        if self.read:
-            return "Access(Read Only)"
-        if self.write:
-            return "Access(Write Only)"
-        return "Access(None)"
-
-    def to_dict(self):
-        """Convert Access object to a dictionary."""
-        return {"read": self.read, "write": self.write}
-
-    def to_eds(self):
-        """EDS representation is a bit weird:
-
-        r -> ro
-        w -> wo
-        rw -> rw
-        """
-        if self.read and self.write:
-            return "rw"
-        if self.read:
-            return "ro"
-        if self.write:
-            return "wo"
-        return ""
-
-    @classmethod
-    def parse(cls, value):
-        """Parse various formats into an Access object."""
-        if isinstance(value, Access):
-            return value
-        if isinstance(value, str):
-            return cls(read="r" in value, write="w" in value)
-        if isinstance(value, dict):
-            return cls(read=value.get("read", False), write=value.get("write", False))
-        raise TypeError(f"Invalid access value: {value}")
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls.parse,
-            core_schema.str_schema(),
-            serialization=core_schema.plain_serializer_function_ser_schema(str),
-        )
-
-
-class BitfieldEntry(BaseModel):
-    """Bitfield entry for storing bit ranges and their names."""
-
-    name: str
-    values: Dict[int, str] = {}
-
-    @field_validator("values")
-    @classmethod
-    def check_values_fit_width(cls, values: Dict[int, str], info) -> Dict[int, str]:
-        """Check if values fit within the specified width."""
-        # We will inject the field width externally since this depends on the key
-        width = getattr(info.data, "_width", None)
-        if width is not None:
-            max_val = (1 << width) - 1
-            for k in values:
-                if k > max_val:
-                    raise ValueError(
-                        f"Value {k} exceeds width limit {width} (max={max_val})"
-                    )
-        return values
-
-
-class Bitfield(Dict[Tuple[int, int], BitfieldEntry]):
-    """Bitfield representation for storing bit ranges and their names."""
-
-    _width: Optional[int] = PrivateAttr(default=None)
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        def validate(v: Any) -> "Bitfield":
-            if not isinstance(v, dict):
-                raise TypeError("Bitfield must be a dict")
-            result = {}
-            for key, val in v.items():
-                # Normalize key
-                if isinstance(key, int):
-                    start, end = key, key
-                elif isinstance(key, str) and re.match(r"^\d+\.\.\d+$", key):
-                    start, end = map(int, key.split(".."))
-                    if start < end:
-                        raise ValueError(
-                            f"Invalid bit range '{key}': start must be >= end"
-                        )
-                else:
-                    raise ValueError(f"Invalid bitfield key: {key}")
-
-                width = start - end + 1
-
-                # Normalize value
-                if isinstance(val, str):
-                    entry = BitfieldEntry(name=val, values={})
-                elif isinstance(val, dict):
-                    entry = BitfieldEntry(**val)
-                else:
-                    raise TypeError(
-                        f"Invalid bitfield entry value for key {key}: {val}"
-                    )
-
-                # Inject width dynamically to perform value checks
-                entry._width = width  # not public, internal use
-                entry = BitfieldEntry.model_validate(entry.model_dump())  # re-validate
-                result[(start, end)] = entry
-            return cls(result)
-
-        return core_schema.no_info_after_validator_function(
-            validate,
-            core_schema.dict_schema(
-                keys_schema=core_schema.any_schema(),
-                values_schema=core_schema.any_schema(),
-            ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda v: {
-                    f"{k[0] if k[0] == k[1] else f'{k[0]}..{k[1]}'}": e.model_dump()
-                    for k, e in v.items()
-                }
-            ),
-        )
 
 
 class HeaderCommon(BaseModel):
@@ -250,143 +43,22 @@ class HeaderCommon(BaseModel):
     inherit: Optional[int] = None
 
 
-class Limits(BaseModel):
-    """Limits for variable types."""
-
-    min: Optional[Union[int, float]] = None
-    max: Optional[Union[int, float]] = None
-
-
-class EnumData(BaseModel):
-    """Enum data for variable types."""
-
-    class_: str = Field(..., alias="class")
-    data: Dict[str, int]
-
-    @model_validator(mode="before")
-    @classmethod
-    def validate_enum_data(cls, values):
-        """Validate enum data."""
-        if "data" not in values:
-            raise ValueError("Enum field data is required.")
-        if not isinstance(values.get("data"), dict):
-            raise ValueError("Enum data must be a dictionary.")
-        if len(set(values["data"].values())) != len(values["data"]):
-            raise ValueError("Enum values must be unique.")
-        return values
-
-    @field_validator("data", mode="before")
-    @classmethod
-    def validate_enum_keys(cls, v):
-        """Validate that all keys in the enum data dictionary are valid identifiers."""
-        return {validate_identifier(k): val for k, val in v.items()}
-
-
-class UnitMixin(BaseModel):
-    """Mixin for unit validation."""
-
-    unit: Optional[str] = Field(default="", validate_default=True)
-    scale: Optional[float] = None
-
-    @field_validator("unit")
-    @classmethod
-    def validate_unit(cls, v):
-        """Validate the unit string."""
-        return validate_unit_string(v)
-
-
-class AccessorMixin(BaseModel):
-    """Mixin for accessor validation."""
-
-    access: Access = Field(default_factory=Access)
-    get: Optional[str] = None
-    set: Optional[str] = None
-
-    @model_validator(mode="after")
-    def update_access(self):
-        """Update access rights based on the presence of get/set methods."""
-        inferred = False
-
-        if not self.access.read and not self.access.write:
-            read = self.get is not None
-            write = self.set is not None
-            self.access = Access(read=read, write=write)
-            inferred = True
-
-        if not inferred:
-            if self.get is not None and not self.access.read:
-                raise ValueError(
-                    "Access mismatch: 'get' defined but 'read' not allowed in 'access'."
-                )
-            if self.set is not None and not self.access.write:
-                raise ValueError(
-                    "Access mismatch: 'set' defined but 'write' not allowed in 'access'."
-                )
-
-        return self
-
-
-class InferArrayLengthMixin:
-    """Mixin to infer array length from data."""
-
-    length: Optional[int]
-    data: list
-
-    ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
-
-    @model_validator(mode="after")
-    def _infer_length_from_data(self) -> Any:
-        entry_count = len(self.data)
-        if self.length is None:
-            self.length = entry_count
-        elif self.length < entry_count:
-            raise ValueError(
-                f"Inconsistent array length: length={self.length} but data has {entry_count} entries."
-            )
-
-        if entry_count == 0 or not self._has_subindex_0():
-            entry = self._make_subindex_0(self.length)
-            self.data.insert(0, entry)
-
-        return self
-
-    def _has_subindex_0(self) -> bool:
-        """Heuristic: entry 0 must be the special descriptor."""
-        if not self.data:
-            return False
-        maybe = self.data[0]
-        return (
-            isinstance(maybe, dict) and maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
-        ) or (hasattr(maybe, "name") and maybe.name == self.ARRAY_SIZE_ENTRY_NAME)
-
-    def _make_subindex_0(self, value: int) -> Any:
-        """Create the subindex 0 structure (as dict or model depending on context)."""
-        return {
-            "name": self.ARRAY_SIZE_ENTRY_NAME,
-            "datatype": "uint8",
-            "type": "var",
-            "access": "r",
-            "default": value,
-        }
-
-
 class VarCommon(AccessorMixin, UnitMixin, BaseModel):
     """Common attributes for variable objects."""
 
-    datatype: str
+    datatype: Datatype
     limits: Limits = Limits()
     pdo: bool = False
-    enum: Optional[EnumData] = None
+    enum: Optional[Enum] = None
     default: Union[int, float] = 0
     bitfield: Optional[Bitfield] = None
+
 
 class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
 
     class Config:
         extra = "forbid"
-
-
 
 
 class Var(HeaderCommon, VarCommon):
@@ -398,12 +70,11 @@ class Var(HeaderCommon, VarCommon):
         extra = "forbid"
 
 
-
 class ArrayEntry(AccessorMixin, UnitMixin, BaseModel):
     """Array entry object for storing subindex data."""
 
     limits: Limits = Limits()
-    enum: Optional[EnumData] = None
+    enum: Optional[Enum] = None
     default: Union[int, float] = 0
 
 
@@ -418,6 +89,7 @@ class Array(BaseArray):
     """Array object for storing subindex data."""
 
     data: List[ArrayEntry] = []
+
 
 class Record(HeaderCommon):
     """Record object for storing subindex data."""
@@ -493,51 +165,6 @@ class Baudrate(set):
 
     def __repr__(self):
         return f"Baudrate({', '.join(map(str, sorted(self)))})"
-
-
-class Revision(BaseModel):
-    """Revision number of the device."""
-
-    major: Annotated[int, Field(ge=0, le=255)]
-    minor: Annotated[int, Field(ge=0, le=255)]
-    patch: Annotated[int, Field(ge=0, le=255)] = 0
-
-    @model_validator(mode="before")
-    @classmethod
-    def parse_revision(cls, v: Any) -> dict:
-        """Parse the revision number from various formats."""
-        if isinstance(v, str):
-            try:
-                ver = semver.VersionInfo.parse(v)
-            except ValueError as e:
-                raise ValueError(f"Invalid version string: {v}. {str(e)}") from e
-            return {"major": ver.major, "minor": ver.minor, "patch": ver.patch}
-
-        elif isinstance(v, (list, tuple)):
-            if len(v) == 2:
-                major, minor = v
-                return {"major": major, "minor": minor, "patch": 0}
-            elif len(v) == 3:
-                major, minor, patch = v
-                return {"major": major, "minor": minor, "patch": patch}
-            else:
-                raise ValueError(
-                    "List/tuple must be [major, minor] or [major, minor, patch]."
-                )
-
-        elif isinstance(v, dict):
-            if "major" in v and "minor" in v:
-                return {
-                    "major": v["major"],
-                    "minor": v["minor"],
-                    "patch": v.get("patch", 0),
-                }
-            raise ValueError("Dict must have at least 'major' and 'minor'.")
-
-        elif isinstance(v, semver.VersionInfo):
-            return {"major": v.major, "minor": v.minor, "patch": v.patch}
-
-        raise TypeError(f"Invalid input for Revision: {v} (type: {type(v)})")
 
 
 class VendorProduct(BaseModel):
@@ -627,9 +254,13 @@ class Objects(MappingRootMixin[ObjectType], RootModel[Dict[int, ObjectType]]):
         return v
 
 
-class Config(BaseModel):
+class SchemaConfig(BaseModel):
     """Configuration schema for the generator."""
 
     device: Device
     profiles: List[Annotated[int, Field(ge=300, le=500)]]
     objects: Objects
+
+
+def Config(config_file):
+    return SchemaConfig.model_validate(config_file)
