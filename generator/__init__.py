@@ -15,69 +15,50 @@ from .validation.config import SchemaConfig
 
 def flatten_od(od):
     """
-    Flattens the object dictionary. Hierarchical objects in the YAML file
-    are only a convenience for the user. The actual object dictionary is flat.
-    This function takes the hierarchical object dictionary and flattens it
+    Flattens the obj dictionary. Hierarchical objects in the YAML file
+    are only a convenience for the user. The actual obj dictionary is flat.
+    This function takes the hierarchical obj dictionary and flattens it
     into a flat dictionary.
 
     It also adds additional information such as c/c++ type.
 
     """
     flat_od = {}
-    for index, object in od.items():
-        match object["type"]:
+    for index, obj in od.items():
+        match obj.type:
             case "var":
-                """VAR type are stored with the subindex 0"""
-                flat_od[ObjectCode(index, 0)] = object
+                flat_od[ObjectCode(index, 0)] = obj
             case "array":
-                flat_od[ObjectCode(index, 0)] = {
-                    "datatype": datatypes["uint8"],
-                    "type": "var",
-                    "name": "Number of array entries",
-                    "access": "r",
-                    "limits": {"min": None, "max": None},
-                    "default": object["length"],
-                    "parent_type": object["type"],
-                }
-                for subindex in range(object["length"]):
+                for subindex in range(obj.length):
                     flat_od[ObjectCode(index, subindex + 1)] = {
-                        **object,
-                        "datatype": object["datatype"],
+                        **obj,
+                        "datatype": obj.datatype,
                         "type": "var",
-                        "name": f'{object["name"]} {subindex + 1}',
-                        "access": object["access"],
-                        "get": object["get"].replace("#", str(subindex + 1)),
-                        "set": object["set"].replace("#", str(subindex + 1)),
+                        "name": f'{obj.name} {subindex + 1}',
+                        "access": obj.access,
+                        "get": obj.get.replace("#", str(subindex + 1)),
+                        "set": obj.set.replace("#", str(subindex + 1)),
                     }
             case "record":
-                flat_od[ObjectCode(index, 0)] = {
-                    "datatype": datatypes["uint8"],
-                    "type": "var",
-                    "name": "Number of records",
-                    "access": "r",
-                    "limits": {"min": None, "max": None},
-                    "default": len(object["subindex"]),
-                    "parent_type": object["type"],
-                }
-                for subindex, subobject in enumerate(object["subindex"]):
+                for subindex, subobject in enumerate(obj.subindex):
                     flat_od[ObjectCode(index, subindex + 1)] = {
                         **subobject,
                         "type": "var",
                     }
             case _:
-                raise ValueError(f"Unknown type: {object['type']}")
+                raise ValueError(f"Unknown type: {obj['type']}")
 
-    # Add additional information to the flat object dictionary
+    # Add additional information to the flat obj dictionary
     # used by the Jinja templates
-    for code, object in flat_od.items():
-        object["id"] = code
+    for code, obj in flat_od.items():
+        obj.id = code
 
     # Set the default index value.
     # Default values are grouped by types.
     index_counter = defaultdict(int)
-    for object in flat_od.values():
-        if object["default"] is not None:
-            index_counter[object["datatype"]] += 1
+    for obj in flat_od.values():
+        if obj["default"] is not None:
+            index_counter[obj["datatype"]] += 1
 
     return flat_od
 
@@ -88,11 +69,11 @@ def get_objects_per_type(od_flat):
     The keys are the datatype.
     """
     objects_per_type = {}
-    for object in od_flat.values():
-        if object["default"] is not None:
-            if object["datatype"] not in objects_per_type:
-                objects_per_type[object["datatype"]] = None
-            objects_per_type[object["datatype"]] = object["default"]
+    for obj in od_flat.values():
+        if obj["default"] is not None:
+            if obj["datatype"] not in objects_per_type:
+                objects_per_type[obj["datatype"]] = None
+            objects_per_type[obj["datatype"]] = obj["default"]
     return objects_per_type
 
 

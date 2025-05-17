@@ -14,6 +14,7 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    ClassVar,
 )
 
 import mistune
@@ -32,6 +33,7 @@ from pydantic_core import core_schema
 from .helpers import validate_identifier, validate_unit_string
 
 STRICT_VALIDATION = False
+
 
 T = TypeVar("T")
 
@@ -322,9 +324,52 @@ class AccessorMixin(BaseModel):
         return self
 
 
+class InferArrayLengthMixin:
+    """Mixin to infer array length from data."""
+
+    length: Optional[int]
+    data: list
+
+    ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
+
+    @model_validator(mode="after")
+    def _infer_length_from_data(self) -> Any:
+        entry_count = len(self.data)
+        if self.length is None:
+            self.length = entry_count
+        elif self.length < entry_count:
+            raise ValueError(
+                f"Inconsistent array length: length={self.length} but data has {entry_count} entries."
+            )
+
+        if entry_count == 0 or not self._has_subindex_0():
+            entry = self._make_subindex_0(self.length)
+            self.data.insert(0, entry)
+
+        return self
+
+    def _has_subindex_0(self) -> bool:
+        """Heuristic: entry 0 must be the special descriptor."""
+        if not self.data:
+            return False
+        maybe = self.data[0]
+        return (
+            isinstance(maybe, dict) and maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
+        ) or (hasattr(maybe, "name") and maybe.name == self.ARRAY_SIZE_ENTRY_NAME)
+
+    def _make_subindex_0(self, value: int) -> Any:
+        """Create the subindex 0 structure (as dict or model depending on context)."""
+        return {
+            "name": self.ARRAY_SIZE_ENTRY_NAME,
+            "datatype": "uint8",
+            "type": "var",
+            "access": "r",
+            "default": value,
+        }
+
+
 class VarCommon(AccessorMixin, UnitMixin, BaseModel):
     """Common attributes for variable objects."""
-
     datatype: str
     limits: Limits = Limits()
     pdo: bool = False
@@ -336,80 +381,63 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
 
 class Var(HeaderCommon, VarCommon):
     """Variable object for storing subindex data."""
-
     type: Literal["var"] = "var"
-
     class Config:
         extra = "forbid"
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, BaseModel):
     """Array entry object for storing subindex data."""
-
     limits: Limits = Limits()
     enum: Optional[EnumData] = None
     default: Union[int, float] = 0
 
 
-class InferArrayLengthMixin:
-    """Mixin to infer array length from data."""
-
-    length: Optional[int]
-    data: list
-
-    @model_validator(mode="after")
-    def _infer_length_from_data(self) -> Any:
-        if self.length is None:
-            self.length = len(self.data)
-        elif self.length < len(self.data):
-            raise ValueError(
-                f"Inconsistent array length: length={self.length} but data has {len(self.data)} entries."
-            )
-        return self
-
-
 class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
+    """Base class for array objects."""
     type: Literal["array"] = "array"
     length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
 
 
 class Array(BaseArray):
     """Array object for storing subindex data."""
-
-    type: Literal["array"] = "array"
-    length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
     data: List[ArrayEntry] = []
 
 
-class RecordEntry(UnitMixin, HeaderCommon):
+class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
-
-    datatype: str
-    limits: Limits = Limits()
-    pdo: bool = False
-    scale: Optional[float] = None
-    enum: Optional[EnumData] = None
-    default: Union[int, float] = 0
-    bitfield: Optional[Bitfield] = None
-    access: Annotated[Optional[str], StringConstraints(pattern=r"^r?w?$")] = ""
-    get: Optional[str] = None
-    set: Optional[str] = None
-
     class Config:
         extra = "forbid"
 
 
 class Record(HeaderCommon):
     """Record object for storing subindex data."""
-
     type: Literal["record"] = "record"
     record: List[RecordEntry]
 
+    SIZE_ENTRY_NAME: ClassVar[str] = "Number of records"
+
     @model_validator(mode="after")
-    def validate_subindex_length(self):
-        """Validate the length of the record."""
+    def validate_and_inject_size_entry(self):
+        """Validate the length of the record and inject subindex 0 if needed."""
+
         if len(self.record) > 255:
             raise ValueError("Subindex length must be less than 256.")
+
+        # Check if subindex 0 is present
+        if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
+            size_entry = RecordEntry(
+                name=self.SIZE_ENTRY_NAME,
+                datatype="uint8",
+                access="r",
+                default=len(self.record),
+            )
+            self.record.insert(0, size_entry)
+
+        else:
+            # Update default if already present
+            self.record[0].default = len(self.record)
+
         return self
 
 
