@@ -1,6 +1,5 @@
 """Validation schema for the config.yaml file."""
 
-import warnings
 from typing import (
     Annotated,
     Any,
@@ -20,10 +19,18 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic_core import core_schema
 
 from .mixins import AccessorMixin, InferArrayLengthMixin, MappingRootMixin, UnitMixin
-from .types import Baudrate, Bitfield, Datatype, Enum, Limits, Markdown, Revision
+from .types import (
+    Baudrate,
+    Bitfield,
+    Datatype,
+    Enum,
+    Limits,
+    Markdown,
+    Revision,
+    VendorProduct,
+)
 
 STRICT_VALIDATION = False
 

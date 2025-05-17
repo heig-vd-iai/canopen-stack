@@ -1,7 +1,6 @@
 """Types definitions according to the CiA 301 specification."""
 
 import re
-from warnings import warn
 from typing import (
     Annotated,
     Any,
@@ -11,6 +10,7 @@ from typing import (
     Tuple,
     Union,
 )
+from warnings import warn
 
 import mistune
 import semver
@@ -23,6 +23,7 @@ from pydantic import (
 )
 from pydantic_core import core_schema
 
+from .registry import DATATYPES
 from .validators import validate_identifier
 
 
@@ -259,7 +260,8 @@ class Revision(BaseModel):
 
 
 class Datatype(BaseModel):
-    """ CiA 301 data types. """
+    """CiA 301 data types."""
+
     name: str
     code: int
     ctype: str
@@ -267,15 +269,11 @@ class Datatype(BaseModel):
 
     @classmethod
     def from_name(cls, name: str) -> "Datatype":
-        """Create a Datatype instance from a name."""
-        if name not in cls.DATATYPES:
-            raise ValueError(f"Invalid type name: {name}")
-        return cls(
-            name=name,
-            code=cls.DATATYPES[name][1],
-            ctype=cls.DATATYPES[name][2],
-            field=cls.DATATYPES[name][3],
-        )
+        try:
+            dt = DATATYPES[name]
+        except KeyError:
+            raise ValueError(f"Invalid CiA datatype: {name}")
+        return cls(name=dt.name, code=dt.code, ctype=dt.ctype, field=dt.field)
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type, handler):
@@ -300,22 +298,6 @@ class Datatype(BaseModel):
     @classmethod
     def _serialize(cls, value: "Datatype") -> str:
         return value.name
-
-    DATATYPES: ClassVar[Dict[str, Tuple[str, int, str, str]]] = {
-        "bool": ("bool", 0x01, "bool", "b"),
-        "int8": ("int8", 0x02, "int8_t", "i8"),
-        "int16": ("int16", 0x03, "int16_t", "i16"),
-        "int32": ("int32", 0x04, "int32_t", "i32"),
-        "uint8": ("uint8", 0x05, "uint8_t", "u8"),
-        "uint16": ("uint16", 0x06, "uint16_t", "u16"),
-        "uint32": ("uint32", 0x07, "uint32_t", "u32"),
-        "float32": ("float32", 0x08, "float", "f32"),
-        "string": ("string", 0x09, "string", "str"),
-        "domain": ("domain", 0x0F, "domain", "domain"),
-        "float64": ("float64", 0x11, "double", "f64"),
-        "int64": ("int64", 0x15, "int64_t", "i64"),
-        "uint64": ("uint64", 0x1B, "uint64_t", "u64"),
-    }
 
 
 class BitfieldEntry(BaseModel):
