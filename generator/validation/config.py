@@ -130,66 +130,6 @@ class Domain(HeaderCommon):
     domain: Dict[str, Annotated[int, Field(ge=1)]]
 
 
-class Baudrate(set):
-    """Set of supported baudrates."""
-
-    valid_baudrates = {10, 20, 50, 125, 250, 500, 800, 1000}
-
-    def __init__(self, iterable=()):
-        if not all(item in self.valid_baudrates for item in iterable):
-            raise ValueError(
-                f"Invalid Baudrate: {iterable}. Valid values are: {self.valid_baudrates}"
-            )
-        super().__init__(item for item in iterable if item in self.valid_baudrates)
-
-    def to_dict(self) -> dict[int, bool]:
-        """Convert the Baudrate set to a dictionary."""
-        return {b: (b in self) for b in self.valid_baudrates}
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.list_schema(items_schema=core_schema.int_schema()),
-            serialization=core_schema.plain_serializer_function_ser_schema(list),
-        )
-
-    @classmethod
-    def _validate(cls, v):
-        if isinstance(v, dict):
-            # e.g. {125: True, 250: None, 300: False}
-            v = [k for k, val in v.items() if val is not False]
-        elif not isinstance(v, (list, set, tuple)):
-            raise TypeError(f"Invalid Baudrate input: {v}")
-        return cls(v)
-
-    def __repr__(self):
-        return f"Baudrate({', '.join(map(str, sorted(self)))})"
-
-
-class VendorProduct(BaseModel):
-    """Vendor and product information."""
-
-    name: str = Field(default="Unknown", min_length=1)
-    number: int = Field(0x12345678, ge=0, le=0xFFFFFFFF)
-
-    @model_validator(mode="after")
-    def check_default_values(self):
-        """Check if default values are set and warn the user."""
-        if self.name == "Unknown":
-            warnings.warn(
-                "Vendor name is set to default value 'Unknown'. Please set a valid name.",
-                UserWarning,
-                stacklevel=2,
-            )
-        if self.number == 0x12345678:
-            warnings.warn(
-                "Vendor number is set to default value 0x12345678. Please set a valid number.",
-                UserWarning,
-                stacklevel=2,
-            )
-        return self
-
 
 class Device(BaseModel):
     """Device information."""
