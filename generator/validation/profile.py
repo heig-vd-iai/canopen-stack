@@ -167,8 +167,8 @@ class ProfileLoader:
             match = yaml_pattern.match(file.name)
             if not match:
                 continue
-
             profile_id = int(match.group(1))
+            print(profile_id, file.name)
 
             try:
                 with file.open("r", encoding="utf-8") as f:
