@@ -9,7 +9,6 @@
 
 namespace CANopen {
 
-#pragma pack(push, 1)
 struct Metadata {
     Access access;
     DataType dataType;
@@ -378,7 +377,6 @@ struct Metadata_domain : public Metadata {
         this->dataType = DataType::DOMAIN;
     }
 };
-#pragma pack(pop)
 
 class IObjectDictionnary {
    public:
