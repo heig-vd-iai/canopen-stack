@@ -1,0 +1,29 @@
+//NOTICE: Auto-generated from the device's yaml file, do not edit manually!
+#pragma once
+#include "od_enum.hpp"
+
+{% for header in headers %}
+#include "modes/{{header}}"
+{% endfor %}
+
+struct Modes {
+    {% for mode in modes %}
+    {{mode[0]}} {{mode[1]}};
+    {% endfor %}
+
+    Modes(OperationStateMachine &sm) :
+        {% for mode in modes %}
+        {{mode[1]}}(sm){{ "," if not loop.last else "{}"}}
+        {% endfor %}
+
+    OperationMode *getMode(OperationModes mode) {
+        switch (mode) {
+            {% for mode in modes %}
+            case {{mode[2]}}:
+                return &{{mode[1]}};
+            {% endfor %}
+            default:
+                return &none;
+        }
+    }
+};

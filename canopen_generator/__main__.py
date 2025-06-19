@@ -94,6 +94,15 @@ def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
     with open(enum_file, "w") as file:
         file.write(od.to_enum())
 
+def generate_modes(od: ObjectDictionary, outdir: Path, force: bool):
+    modes_file = outdir / "od_modes.hpp"
+    if not force and modes_file.exists():
+        raise FileExistsError(f"File {modes_file} already exists, won't overwrite it")
+
+    outdir.mkdir(parents=True, exist_ok=True)
+    with open(modes_file, "w") as file:
+        file.write(od.to_modes())
+
 @click.command()
 @click.argument("config", type=click.Path(exists=True))
 @click.option(
@@ -152,6 +161,7 @@ def cli(config, profile, force, eds, code, doc):
         generate_local(od, code, force)
         generate_remote(od, code, force)
         generate_enum(od, code, force)
+        generate_modes(od, code, force)
         gen += 1
 
     if not gen:

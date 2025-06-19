@@ -622,6 +622,25 @@ class ObjectDictionary:
                     ) + "\n\n"
         return content
 
+    def to_modes(self):
+        template = self.env.get_template('modes.j2')
+        for object in self.objects:
+            if object.name == "Modes of operation":
+                headers = []
+                modes = []
+                items=object.prout["enum"]["data"]
+                for item in items:
+                    _, right = item.split("__", 1)
+                    first, *rest = right.split("_")
+                    suffix = first.lower() + "".join(word.capitalize() for word in rest)
+                    mode_suffix =  "".join(word.capitalize() for word in right.split("_"))
+                    headers.append(f"mode_{suffix}.hpp")
+                    modes.append((f"Mode{mode_suffix}", suffix, item))
+                return template.render(
+                    headers=headers,
+                    modes=modes
+                )
+
     def to_cpp(self):
         template = self.env.get_template("cpp.j2")
         return template.render(
