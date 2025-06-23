@@ -432,8 +432,7 @@ struct Metadata* ObjectDictionnary::getMetadata(uint16_t index,
                                                uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id < 0) {
-        Metadata metadata;
-        return &metadata;
+        return nullptr;
     }
     return (Metadata*)objectMetadataTable[id];
 }
@@ -442,6 +441,7 @@ struct Metadata* ObjectDictionnary::getMetadata(int32_t id) {
     return (Metadata*)objectMetadataTable[id];
 }
 
+#if 0 // These methods are never used, what's the purpose of them?
 Data *ObjectDictionnary::getData(uint16_t index, uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id == -1) {
@@ -457,7 +457,6 @@ Data *ObjectDictionnary::getData(int32_t id) {
     return &data;
 }
 
-#if 0 // These methods are never used, what's the purpose of them?
 void ObjectDictionnary::setData(const Data &data, uint16_t index,
                                 uint8_t subindex) {
     int32_t id = findObject(index, subindex);

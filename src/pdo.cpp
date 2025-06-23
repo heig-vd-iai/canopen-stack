@@ -48,7 +48,7 @@ int8_t MapParameter::getData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
         data.u32 = mappedObjects[id - odID - 1];
         return 0;
     } else {
-        data.u32 = -1;
+        data.u32 = 0;
         abortCode = SDOAbortCodes::SDOAbortCode_SubindexNonExistent;
         return -1;
     }
@@ -80,7 +80,7 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         entry.value = data.u32;
         if (!node.od().isSubValid(entry.bits.index, entry.bits.subindex)) {
             abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
-            entry.value = -1;
+            entry.value = 0;
         }else{
             Metadata meta =
                 *node.od().getMetadata(entry.bits.index, entry.bits.subindex);

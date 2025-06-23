@@ -404,11 +404,11 @@ public:
 
     Metadata* getMetadata(int32_t id);
 
+    #if 0 // TODO: Not used?
     Data* getData(uint16_t index, uint8_t subindex);
 
     Data* getData(int32_t id);
 
-    #if 0 // TODO: Not used?
     void setData(const Data &data, uint16_t index, uint8_t subindex);
 
     void setData(const Data &data, int32_t id);
