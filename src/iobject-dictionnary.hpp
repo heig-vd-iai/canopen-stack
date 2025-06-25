@@ -29,7 +29,7 @@ struct Metadata_bool : public Metadata {
         data.b = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint8_t : public Metadata {
     uint8_t defaultValue;
@@ -44,7 +44,7 @@ struct Metadata_uint8_t : public Metadata {
         data.u8 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint8_t_limited : public Metadata_uint8_t {
     uint8_t min;
@@ -62,7 +62,7 @@ struct Metadata_uint8_t_limited : public Metadata_uint8_t {
         data.u8 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint16_t : public Metadata {
     uint16_t defaultValue;
@@ -77,7 +77,7 @@ struct Metadata_uint16_t : public Metadata {
         data.u16 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint16_t_limited : public Metadata_uint16_t {
     uint16_t min;
@@ -95,7 +95,7 @@ struct Metadata_uint16_t_limited : public Metadata_uint16_t {
         data.u16 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint32_t : public Metadata {
     uint32_t defaultValue;
@@ -110,7 +110,7 @@ struct Metadata_uint32_t : public Metadata {
         data.u32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint32_t_limited : public Metadata_uint32_t {
     uint32_t min;
@@ -128,7 +128,7 @@ struct Metadata_uint32_t_limited : public Metadata_uint32_t {
         data.u32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint64_t : public Metadata {
    uint64_t defaultValue;
@@ -143,7 +143,7 @@ struct Metadata_uint64_t : public Metadata {
        data.u64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_uint64_t_limited : public Metadata_uint64_t {
    uint64_t min;
@@ -161,7 +161,7 @@ struct Metadata_uint64_t_limited : public Metadata_uint64_t {
        data.u64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int8_t : public Metadata {
     int8_t defaultValue;
@@ -176,7 +176,7 @@ struct Metadata_int8_t : public Metadata {
         data.i8 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int8_t_limited : public Metadata_int8_t {
     int8_t min;
@@ -194,7 +194,7 @@ struct Metadata_int8_t_limited : public Metadata_int8_t {
         data.i8 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int16_t : public Metadata {
     int16_t defaultValue;
@@ -209,7 +209,7 @@ struct Metadata_int16_t : public Metadata {
         data.i16 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int16_t_limited : public Metadata_int16_t {
     int16_t min;
@@ -227,7 +227,7 @@ struct Metadata_int16_t_limited : public Metadata_int16_t {
         data.i16 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int32_t : public Metadata {
     int32_t defaultValue;
@@ -242,7 +242,7 @@ struct Metadata_int32_t : public Metadata {
         data.i32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int32_t_limited : public Metadata_int32_t {
     int32_t min;
@@ -260,7 +260,7 @@ struct Metadata_int32_t_limited : public Metadata_int32_t {
         data.i32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int64_t : public Metadata {
    int64_t defaultValue;
@@ -275,7 +275,7 @@ struct Metadata_int64_t : public Metadata {
        data.i64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_int64_t_limited : public Metadata_int64_t {
    int64_t min;
@@ -293,7 +293,7 @@ struct Metadata_int64_t_limited : public Metadata_int64_t {
        data.i64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_float : public Metadata {
     float defaultValue;
@@ -308,7 +308,7 @@ struct Metadata_float : public Metadata {
         data.f32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_float_limited : public Metadata_float {
     float min;
@@ -326,7 +326,7 @@ struct Metadata_float_limited : public Metadata_float {
         data.f32 = defaultValue;
         return data;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_double : public Metadata {
    double defaultValue;
@@ -341,7 +341,7 @@ struct Metadata_double : public Metadata {
        data.f64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_double_limited : public Metadata_double {
    double min;
@@ -359,7 +359,7 @@ struct Metadata_double_limited : public Metadata_double {
        data.f64 = defaultValue;
        return data;
    }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_string : public Metadata {
     std::string defaultValue;
@@ -369,14 +369,14 @@ struct Metadata_string : public Metadata {
         this->access.value = access;
         this->dataType = DataType::VISIBLE_STRING;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 struct Metadata_domain : public Metadata {
     Metadata_domain(uint8_t access) {
         this->access.value = access;
         this->dataType = DataType::DOMAIN;
     }
-};
+}__attribute__((packed, aligned(4)));
 
 class IObjectDictionnary {
    public:
