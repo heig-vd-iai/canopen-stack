@@ -14,23 +14,24 @@ and convert it to an array representation.
 'fifteen'
 """
 
+from dataclasses import dataclass
+from typing import List, Optional, Tuple
 
+
+@dataclass
 class TreeNode:
-    """Node of a binary search tree."""
-
-    def __init__(self, key: int, value: str):
-        self.key = key
-        self.value = value
-        self.left = None
-        self.right = None
+    key: int
+    value: str
+    left: Optional["TreeNode"] = None
+    right: Optional["TreeNode"] = None
 
 
-def build_balanced_bst(data) -> TreeNode:
+def build_balanced_bst(data: List[Tuple[int, str]]) -> Optional[TreeNode]:
     """Create a balanced BST from a list of key-value pairs."""
     return _build_balanced_bst(sorted(data))
 
 
-def _build_balanced_bst(pairs) -> TreeNode:
+def _build_balanced_bst(pairs: List[Tuple[int, str]]) -> Optional[TreeNode]:
     if not pairs:
         return None
     mid = len(pairs) // 2
@@ -41,11 +42,13 @@ def _build_balanced_bst(pairs) -> TreeNode:
     return root
 
 
-def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
+def bst_to_array_zero_indexed(
+    root: Optional[TreeNode],
+) -> List[Optional[Tuple[int, str]]]:
     """Convert a balanced BST to an array representation."""
-    result = []
+    result: List[Optional[Tuple[int, str]]] = []
 
-    def insert(node: TreeNode, index: int):
+    def insert(node: Optional[TreeNode], index: int):
         if node is None:
             return
         while len(result) <= index:
@@ -58,13 +61,13 @@ def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
     return result
 
 
-def search_bst_array(tree: list[tuple[int, str] | None], key: int) -> str | None:
+def search_bst_array(tree: List[Optional[Tuple[int, str]]], key: int) -> Optional[str]:
     """Search for a key in a BST represented as an array."""
     index = 0
     while index < len(tree):
         node = tree[index]
         if node is None:
-            return None  # trou dans l'arbre : clé non trouvée
+            return None
         node_key, node_value = node
         if key == node_key:
             return node_value
@@ -72,4 +75,4 @@ def search_bst_array(tree: list[tuple[int, str] | None], key: int) -> str | None
             index = 2 * index + 1
         else:
             index = 2 * index + 2
-    return None  # hors limites : clé non trouvée
+    return None

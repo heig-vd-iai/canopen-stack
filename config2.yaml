@@ -24,7 +24,7 @@ objects:
     remote: cpu1
     record:
     - name: Kp
-      path: kp
+      path: axis.currentControl.kp
       description: Proportional gain
       datatype: float32
       unit: V/A

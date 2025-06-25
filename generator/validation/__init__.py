@@ -1,6 +1,4 @@
 """Schema validation for configuration files."""
-from .config import Config
-
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -8,6 +6,7 @@ from typing import Dict
 
 import yaml
 
+from .config import Config
 from .git import GitInfo
 from .profile import Profile
 

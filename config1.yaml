@@ -1,0 +1,1446 @@
+info:
+  description: SW-Motion EDS file
+  fileVersion: 1
+  fileRevision: 1
+  creationTime: "09:50"
+  creationDate: "2024-03-06"
+  createdBy: Adrien Cardinale
+  modifiedBy: Adrien Cardinale
+  device:
+    vendorName: HEIG-VD
+    productName: Servopresse
+    vendorNumber: 0x00
+    productNumber: 0x00
+    revisionNumber: 0x00
+    orderCode: 0x00
+    nodeID: 1
+
+factoryParameters:
+  pwmFrequency: 100000
+  pwmDeadBand: 50
+  adcSampwin: 64
+  absoluteMaxVoltage: 60000
+  absoluteMaxCurrent: 8000
+  velocityPrescale: 4
+
+logicalDevices:
+  0: 402
+
+objectDictionary:
+  0x1000:
+    module: cia301
+    alias: deviceType
+    profile: 301
+  0x1001:
+    module: cia301
+    alias: errorRegister
+    profile: 301
+  0x1002:
+    module: cia301
+    alias: manufacturerStatusRegister
+    profile: 301
+  0x1003:
+    module: cia301
+    alias: preDefinedErrorField
+    profile: 301
+  0x1010:
+    module: cia301
+    alias: storeParameters
+    profile: 301
+  0x1011:
+    module: cia301
+    alias: restoreParameters
+    profile: 301
+  0x1017:
+    module: cia301
+    alias: producerHeartbeatTime
+    profile: 301
+  0x1018:
+    module: cia301
+    alias: identity
+    profile: 301
+  0x1019:
+    module: cia301
+    alias: syncCounterOverflowValue
+    profile: 301
+  0x1029:
+    module: cia301
+    alias: errorBehavior
+    profile: 301
+  0x1400:
+    module: cia301
+    alias: rpdoCommunicationParameter1
+    profile: 301
+  0x1401:
+    module: cia301
+    alias: rpdoCommunicationParameter2
+    profile: 301
+  0x1402:
+    module: cia301
+    alias: rpdoCommunicationParameter3
+    profile: 301
+  0x1403:
+    module: cia301
+    alias: rpdoCommunicationParameter4
+    profile: 301
+  0x1600:
+    module: cia301
+    alias: rpdoMappingParameter1
+    profile: 301
+  0x1601:
+    module: cia301
+    alias: rpdoMappingParameter2
+    profile: 301
+  0x1602:
+    module: cia301
+    alias: rpdoMappingParameter3
+    profile: 301
+  0x1603:
+    module: cia301
+    alias: rpdoMappingParameter4
+    profile: 301
+  0x1800:
+    module: cia301
+    alias: tpdoCommunicationParameter1
+    profile: 301
+  0x1801:
+    module: cia301
+    alias: tpdoCommunicationParameter2
+    profile: 301
+  0x1802:
+    module: cia301
+    alias: tpdoCommunicationParameter3
+    profile: 301
+  0x1803:
+    module: cia301
+    alias: tpdoCommunicationParameter4
+    profile: 301
+  0x1A00:
+    module: cia301
+    alias: tpdoMappingParameter1
+    profile: 301
+  0x1A01:
+    module: cia301
+    alias: tpdoMappingParameter2
+    profile: 301
+  0x1A02:
+    module: cia301
+    alias: tpdoMappingParameter3
+    profile: 301
+  0x1A03:
+    module: cia301
+    alias: tpdoMappingParameter4
+    profile: 301
+  0x2100:
+    alias: currentControl
+    module: current-loop
+    name: Current Control
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: Kp
+      access: rw
+      get: sys.axis[0].currentController.getKp
+      set: sys.axis[0].currentController.setKp
+    - type: float32
+      name: Ki
+      access: rw
+      get: sys.axis[0].currentController.getKi
+      set: sys.axis[0].currentController.setKi
+    - type: float32
+      name: Max sum
+      access: rw
+      get: sys.axis[0].currentController.config.get_integral_limit
+      set: sys.axis[0].currentController.config.set_integral_limit
+  0x2101:
+    alias: dcLinkVoltage
+    module: current-loop
+    name: dc-link voltage
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].config.getDcLinkVoltage
+      set: sys.axis[0].config.setDcLinkVoltage
+  0x2102:
+    alias: dcLinkMinMaxVoltage
+    module: current-loop
+    name: dc-link min-max voltage
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 2
+    - type: uint32
+      name: Min voltage
+      access: rw
+      get: sys.axis[0].config.getDcLinkMinVoltage
+      set: sys.axis[0].config.setDcLinkMinVoltage
+    - type: uint32
+      name: Max voltage
+      access: rw
+      get: sys.axis[0].config.getDcLinkMaxVoltage
+      set: sys.axis[0].config.setDcLinkMaxVoltage
+  0x2103:
+    alias: thetaInvert
+    module: current-loop
+    name: theta invert
+    remote: true
+    data:
+    - type: bool
+      access: rw
+      get: sys.axis[0].config.getThetaInvert
+      set: sys.axis[0].config.setThetaInvert
+  0x2104:
+    alias: thetaSource
+    module: current-loop
+    name: Theta source
+    remote: true
+    description: "
+    - 0 : Theta Estimator (need pahsing)\n
+    - 1 : Hall sensor\n"
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getThetaSource
+      set: sys.axis[0].config.setThetaSource
+  0x2105:
+    alias: currentDemand
+    name: Current demand
+    module: current-loop
+    remote: true
+    data:
+    - type: int32
+      access: ro
+      get: sys.axis[0].getCurrentDemand
+      pdo_mapping: true
+  0x2200:
+    alias: velocityControl
+    module: velocity-loop
+    name: Velocity Control
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: Kp
+      access: rw
+      get: sys.axis[0].velocityController.getKp
+      set: sys.axis[0].velocityController.setKp
+    - type: float32
+      name: Ki
+      access: rw
+      get: sys.axis[0].velocityController.getKi
+      set: sys.axis[0].velocityController.setKi
+    - type: float32
+      name: Max sum
+      access: rw
+      get: sys.axis[0].velocityController.config.get_integral_limit
+      set: sys.axis[0].velocityController.config.set_integral_limit
+  0x2201:
+    alias: velocityLoopPrescaler
+    module: velocity-loop
+    name: velocity-loop prescaler
+    remote: true
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getVelocityLoopPrescaler
+      set: sys.axis[0].config.setVelocityLoopPrescaler
+  0x2202:
+    alias: velocityEncoderInverted
+    module: velocity-loop
+    name: Velocity encoder inverted
+    remote: true
+    data:
+    - type: bool
+      access: rw
+      get: sys.axis[0].config.getVelocityEncoderInverted
+      set: sys.axis[0].config.setVelocityEncoderInverted
+  0x2203:
+    alias: velocityErrorWindow
+    name: Following velocity window
+    module: velocity-loop
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].velocityController.getVelocityErrorWindow
+      set: sys.axis[0].velocityController.setVelocityErrorWindow
+  0x2204:
+    alias: velocityErrorTimeOut
+    name: Following velocity time out
+    module: velocity-loop
+    remote: true
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].velocityController.getVelocityErrorTimeOut
+      set: sys.axis[0].velocityController.setVelocityErrorTimeOut
+  0x2205:
+    alias: velocityError
+    name: Velocity error
+    module: velocity-loop
+    remote: true
+    data:
+    - type: int32
+      access: ro
+      get: sys.axis[0].velocityController.getVelocityError
+      pdo_mapping: true
+  0x2300:
+    alias: positionControl
+    module: position-loop
+    name: Position Control
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 1
+    - type: float32
+      name: Kp
+      access: rw
+      get: sys.axis[0].positionController.getKp
+      set: sys.axis[0].positionController.setKp
+  0x2301:
+    alias: positionEncoderInverted
+    name: Position encoder inverted
+    module: position-loop
+    remote: true
+    data:
+    - type: bool
+      access: rw
+      get: sys.axis[0].config.getPositionEncoderInverted
+      set: sys.axis[0].config.setPositionEncoderInverted
+  0x2302:
+    alias: followingFaultWindow
+    name: Following fault window
+    module: position-loop
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].positionController.getFollowingFaultWindow
+      set: sys.axis[0].positionController.setFollowingFaultWindow
+  0x2303:
+    alias: followingFaultTimeOut
+    name: Following fault time out
+    module: position-loop
+    remote: true
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].positionController.getFollowingFaultTimeOut
+      set: sys.axis[0].positionController.setFollowingFaultTimeOut
+  0x2304:
+    alias: positionError
+    name: Position error
+    module: position-loop
+    remote: true
+    data:
+    - type: int32
+      access: ro
+      get: sys.axis[0].positionController.getPositionError
+      pdo_mapping: true
+  0x2310:
+    alias: positionFeedForwardConstant
+    name: Position feed forward constant
+    module: position-loop
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 4
+    - type: float32
+      name: A
+      access: rw
+      get: sys.axis[0].get_position_ff_A
+      set: sys.axis[0].set_position_ff_A
+    - type: float32
+      name: B
+      access: rw
+      get: sys.axis[0].get_position_ff_B
+      set: sys.axis[0].set_position_ff_B
+    - type: float32
+      name: C
+      access: rw
+      get: sys.axis[0].get_position_ff_C
+      set: sys.axis[0].set_position_ff_C
+    - type: float32
+      name: D
+      access: rw
+      get: sys.axis[0].get_position_ff_D
+      set: sys.axis[0].set_position_ff_D
+  0x2320:
+    alias: positionEncoderType
+    name: Position encoder type
+    module: position-loop
+    remote: true
+    description: "
+    - 0 : None\n
+    - 1 : Incremental\n
+    - 2 : sinCos\n
+    "
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getPositionEncoderType
+      set: sys.axis[0].config.setPositionEncoderType
+  0x2350:
+    alias: trajectoryFilterPow
+    module: profile-position
+    name: trajectory filter pow
+    remote: true
+    data:
+    - type: uint8
+      access: rw
+      get: sys.axis[0].config.getTrajectoryFilterPow
+      set: sys.axis[0].config.setTrajectoryFilterPow
+  0x2400:
+    alias: hardLimit
+    name: Hard limit
+    module: limits
+    unit: user defined position unit
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 2
+    - type: int32
+      name: Min position
+      access: rw
+      get: sys.axis[0].limits.getHardLimitMin
+      set: sys.axis[0].limits.setHardLimitMin
+    - type: int32
+      name: Max position
+      access: rw
+      get: sys.axis[0].limits.getHardLimitMax
+      set: sys.axis[0].limits.setHardLimitMax
+  0x2401:
+    alias: velocityLimit
+    name: Velocity limit
+    module: limits
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].limits.getVelocityLimit
+      set: sys.axis[0].limits.setVelocityLimit
+  0x2402:
+    alias: maxVelocityWithoutHomingDone
+    name: Max velocity without homing done
+    module: limits
+    remote: true
+    unit: user defined velocity unit
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].limits.getMaxVelocityWithoutHomingDone
+      set: sys.axis[0].limits.setMaxVelocityWithoutHomingDone
+  0x2403:
+    alias: maxAccelerationWithoutHomingDone
+    name: Max acceleration without homing done
+    module: limits
+    remote: true
+    unit: user defined acceleration unit
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].limits.getMaxAccelerationWithoutHomingDone
+      set: sys.axis[0].limits.setMaxAccelerationWithoutHomingDone
+  0x2404:
+    alias: maxDecelerationWithoutHomingDone
+    name: Max deceleration without homing done
+    module: limits
+    remote: true
+    unit: user defined acceleration unit
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].limits.getMaxDecelerationWithoutHomingDone
+      set: sys.axis[0].limits.setMaxDecelerationWithoutHomingDone
+  0x2500:
+    alias: homingCurrentThreshold
+    name: Homing current threshold
+    module: homing
+    remote: true
+    unit: mA
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].operationSM.mode_Homing.getHomingCurrentThreshold
+      set: sys.axis[0].operationSM.mode_Homing.setHomingCurrentThreshold
+  0x2501:
+    alias: homingMoveAwayDistance
+    name: Homing move away distance
+    module: homing
+    remote: true
+    unit: mRev
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].operationSM.mode_Homing.getMoveAwayDistance
+      set: sys.axis[0].operationSM.mode_Homing.setMoveAwayDistance
+  0x2600:
+    alias: motorPolePairs
+    name: Motor Pole Pairs
+    module: motor
+    remote: true
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getMotorPolePairs
+      set: sys.axis[0].config.setMotorPolePairs
+  0x2601:
+    alias: motorResistance
+    module: motor
+    name: Motor resistance
+    remote: true
+    data:
+    - type: float32
+      access: rw
+      get: sys.axis[0].config.getMotorResistance
+      set: sys.axis[0].config.setMotorResistance
+  0x2602:
+    alias: motorInductance
+    module: motor
+    name: Motor inductance
+    remote: true
+    data:
+    - type: float32
+      access: rw
+      get: sys.axis[0].config.getMotorInductance
+      set: sys.axis[0].config.setMotorInductance
+  0x2603:
+    alias: motorPeakCurrent
+    module: motor
+    name: Motor peak current
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].config.getMotorPeakCurrent
+      set: sys.axis[0].config.setMotorPeakCurrent
+  0x2604:
+    alias: motorBackEmfConstant
+    name: Motor back emf constant
+    module: motor
+    remote: true
+    data:
+    - type: float32
+      access: rw
+      get: sys.axis[0].config.getMotorBackEmfConstant
+      set: sys.axis[0].config.setMotorBackEmfConstant
+  0x2605:
+    alias: i2tLimit
+    name: I2t limit
+    module: motor
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 2
+    - type: uint32
+      name: I2t rms current limit
+      access: rw
+      get: sys.axis[0].config.getI2tRmsCurrentLimit
+      set: sys.axis[0].config.setI2tRmsCurrentLimit
+    - type: uint32
+      name: I2t time limit
+      access: rw
+      get: sys.axis[0].config.getI2tTimeLimit
+      set: sys.axis[0].config.setI2tTimeLimit
+  0x2606:
+    alias: torqueConstant
+    name: Torque constant
+    module: motor
+    unit: mNm/A
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].config.getTorqueConstant
+      set: sys.axis[0].config.setTorqueConstant
+  0x2610:
+    alias: phasingMethod
+    name: Phasing method
+    module: motor
+    remote: true
+    description: "
+    - 0 : None\n
+    - 1 : Naive\n
+    "
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getPhasingMethod
+      set: sys.axis[0].config.setPhasingMethod
+  0x2620:
+    alias: controlType
+    name: Control type
+    module: motor
+    remote: true
+    description: "
+    - 0 : None (Parameter error)\n
+    - 1 : two phase motor\n
+    - 2 : three phase motor\n
+    "
+    data:
+    - type: uint16
+      access: rw
+      get: sys.axis[0].config.getControlType
+      set: sys.axis[0].config.setControlType
+      default: 0
+  0x2700:
+    alias: regulationSwitch
+    name: Regulation switch
+    module: control
+    remote: true
+    description: "
+    ### Position Switch\n
+    - -1 : None\n
+    -  0 : profile-position\n
+    -  1 : Function Generator\n\n
+
+    ### Velocity Switch\n
+    - -1 : None\n
+    -  0 : profile-velocity\n
+    -  1 : Position Controller\n
+    -  2 : Function Generator\n\n
+
+    ### Current Switch\n
+    - -1 : None\n
+    -  0 : Current Target\n
+    -  1 : profile-torque
+    -  2 : Velocity Controller\n
+    -  3 : Function Generator\n\n"
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: int8
+      name: Position switch
+      access: rw
+      get: sys.axis[0].getPositionSwitch
+      set: sys.axis[0].setPositionSwitch
+    - type: int8
+      name: Velocity switch
+      access: rw
+      get: sys.axis[0].getVelocitySwitch
+      set: sys.axis[0].setVelocitySwitch
+    - type: int8
+      name: Current switch
+      access: rw
+      get: sys.axis[0].getCurrentSwitch
+      set: sys.axis[0].setCurrentSwitch
+  0x2701:
+    alias: functionGeneratorParameter
+    name: Function generator parameter
+    module: control
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 6
+    - type: uint8
+      name: Waveform
+      access: rw
+      get: sys.axis[0].generator.getWaveform
+      set: sys.axis[0].generator.setWaveform
+    - type: float32
+      name: Amplitude
+      access: rw
+      get: sys.axis[0].generator.getAmplitude
+      set: sys.axis[0].generator.setAmplitude
+    - type: float32
+      name: Frequency
+      access: rw
+      get: sys.axis[0].generator.getFrequency
+      set: sys.axis[0].generator.setFrequency
+    - type: float32
+      name: Offset
+      access: rw
+      get: sys.axis[0].generator.getOffset
+      set: sys.axis[0].generator.setOffset
+    - type: float32
+      name: Chirp start frequency
+      access: rw
+      get: sys.axis[0].generator.getChirpStartFrequency
+      set: sys.axis[0].generator.setChirpStartFrequency
+    - type: float32
+      name: Chirp end frequency
+      access: rw
+      get: sys.axis[0].generator.getChirpEndFrequency
+      set: sys.axis[0].generator.setChirpEndFrequency
+  0x2702:
+    alias: digitalInput
+    name: Digital input
+    module: control
+    remote: true
+    data:
+    - type: uint32
+      access: ro
+      get: sys.axis[0].digitalInputOutput.getDigitalInput
+  0x2703:
+    alias: digitalOutput
+    name: Digital output
+    module: control
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      get: sys.axis[0].digitalInputOutput.getDigitalOutput
+      set: sys.axis[0].digitalInputOutput.setDigitalOutput
+  0x2800:
+    alias: positionEncoderSignals
+    name: Position encoder signals
+    module: monitoring
+    remote: true
+    data:
+    - type: float32
+      name: signal a
+      access: ro
+      get: sys.axis[0].positionEncoder->getASignal
+      pdo_mapping: true
+  0x2801:
+    alias: positionEncoderCosSignal
+    name: Position encoder cos signal
+    module: monitoring
+    remote: true
+    data:
+    - type: float32
+      name: signal b
+      access: ro
+      get: sys.axis[0].positionEncoder->getBSignal
+      pdo_mapping: true
+  0x2808:
+    alias: cycleTime
+    name: Cycle time
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: cycle time
+      access: ro
+      get: sys.monitoring.getCycleTime
+    - type: float32
+      name: cycle time min
+      access: ro
+      get: sys.monitoring.getCycleTimeMin
+    - type: float32
+      name: cycle time max
+      access: ro
+      get: sys.monitoring.getCycleTimeMax
+  0x2809:
+    alias: cycleTimeInnerLoop
+    name: Cycle time inner loop
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: cycle time
+      access: ro
+      get: sys.monitoring.getCycleTimeInnerLoop
+    - type: float32
+      name: cycle time min
+      access: ro
+      get: sys.monitoring.getCycleTimeMinInnerLoop
+    - type: float32
+      name: cycle time max
+      access: ro
+      get: sys.monitoring.getCycleTimeMaxInnerLoop
+  0x2810:
+    alias: cycleTimeOuterLoop
+    name: Cycle time outer loop
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: cycle time
+      access: ro
+      get: sys.monitoring.getCycleTimeOuterLoop
+    - type: float32
+      name: cycle time min
+      access: ro
+      get: sys.monitoring.getCycleTimeMinOuterLoop
+    - type: float32
+      name: cycle time max
+      access: ro
+      get: sys.monitoring.getCycleTimeMaxOuterLoop
+  0x2811:
+    alias: cycleTimePdo
+    name: Cycle time pdo
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 3
+    - type: float32
+      name: cycle time
+      access: ro
+      get: sys.monitoring.getCycleTimePdo
+    - type: float32
+      name: cycle time min
+      access: ro
+      get: sys.monitoring.getCycleTimeMinPdo
+    - type: float32
+      name: cycle time max
+      access: ro
+      get: sys.monitoring.getCycleTimeMaxPdo
+  0x2812:
+    alias: i2tCurrentValue
+    name: I2t current value
+    module: monitoring
+    remote: true
+    data:
+    - type: float32
+      access: ro
+      get: sys.axis[0].motorController->getI2tCurrentValue
+      pdo_mapping: true
+  0x2850:
+    alias: traceSignal
+    name: Trace signal
+    module: monitoring
+    description: "
+    - 0 : None\n
+    - 1 : Position demand\n
+    - 2 : Position actual\n
+    - 3 : Velocity demand\n
+    - 4 : Velocity actual\n
+    - 5 : Torque demand\n
+    - 6 : Torque actual\n
+    - 7 : Current demand\n
+    - 8 : Current actual\n"
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 2
+    - type: uint8
+      name: Trace 0 signal
+      access: rw
+      set: sys.monitoring.setTraceASignal
+      get: sys.monitoring.getTraceASignal
+    - type: uint8
+      name: Trace 1 signal
+      access: rw
+      set: sys.monitoring.setTraceBSignal
+      get: sys.monitoring.getTraceBSignal
+  0x2851:
+    alias: triggerMode
+    name: Trigger mode
+    module: monitoring
+    description: "
+    - 0 : Immediate\n
+    - 1 : Beginning of movement\n
+    - 2 : End of movement\n
+    - 3 : Trace Value\n"
+    remote: true
+    data:
+    - type: uint8
+      access: rw
+      set: sys.monitoring.setTriggerMode
+      get: sys.monitoring.getTriggerMode
+  0x2852:
+    alias: startAcquisition
+    name: Manual trigger
+    module: monitoring
+    remote: true
+    data:
+    - type: bool
+      access: wo
+      set: sys.monitoring.startAcquisition
+  0x2853:
+    alias: triggerValue
+    name: Trigger value
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: highest sub-index supported
+      access: ro
+      default: 2
+    - type: float32
+      name: Trace value
+      access: rw
+      set: sys.monitoring.setTriggerValue
+      get: sys.monitoring.getTriggerValue
+    - type: uint8
+      name: Trace index
+      access: rw
+      set: sys.monitoring.setTriggerIndex
+      get: sys.monitoring.getTriggerIndex
+  0x2854:
+    alias: triggerDelay
+    name: Trigger delay ms
+    module: monitoring
+    remote: true
+    data:
+    - type: uint32
+      access: rw
+      set: sys.monitoring.setTriggerDelay
+      get: sys.monitoring.getTriggerDelay
+  0x2855:
+    alias: traceRemainingLength
+    name: Trace remaining length
+    module: monitoring
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 4
+    - type: int16
+      name: trace 0 remaining length
+      access: ro
+      get: sys.monitoring.getTraceARemainingLength
+    - type: int16
+      name: trace 1 remaining length
+      access: ro
+      get: sys.monitoring.getTraceBRemainingLength
+    - type: int16
+      name: trace 2 remaining length
+      access: ro
+      # get:
+    - type: int16
+      name: trace 3 remaining length
+      access: ro
+      # get:
+  0x2856:
+    alias: traceDivider
+    name: Trace divider
+    module: monitoring
+    remote: true
+    data:
+    - type: uint16
+      access: rw
+      set: sys.monitoring.setTraceDivider
+      get: sys.monitoring.getTraceDivider
+  0x3500:
+    alias: playMusic
+    name: Play music
+    module: music
+    remote: true
+    data:
+    - type: bool
+      access: wo
+      set: sys.axis[0].playMusic
+  0x5000:
+    alias: traceA
+    name: Trace a
+    module: monitoring
+    remote: true
+    data:
+    - type: domain
+      access: ro
+      get: sys.monitoring.getTraceA
+  0x5001:
+    alias: traceB
+    name: Trace b
+    module: monitoring
+    remote: true
+    data:
+    - type: domain
+      access: ro
+      get: sys.monitoring.getTraceB
+  0x5010:
+    alias: positionFeedForwardTable
+    module: position-loop
+    name: Position feed forward table
+    remote: true
+    data:
+      - type: domain
+        access: ro
+        get: sys.axis[0].operationSM.mode_PositionFeedForwardCompute.getPosition
+  0x603f:
+    alias: errorCode
+    module: state-machine
+    profile: 402
+    remote: true
+    get: sys.axis[0].getLastError
+  0x6040:
+    alias: controlword
+    module: state-machine
+    profile: 402
+    remote: true
+    logicalDevices: [0]
+    get: sys.axis[0].getControlword
+    set: sys.axis[0].setControlword
+  0x6041:
+    alias: statusword
+    module: state-machine
+    profile: 402
+    logicalDevices: [0]
+    get: sys.axis[?#].getStatusword
+    remote: true
+  0x605A:
+    alias: quickStopOptionCode
+    module: state-machine
+    profile: 402
+    remote: true
+    get: sys.axis[0].powerSM.state_QuickStopActive.getQuickStopOptionCode
+    set: sys.axis[0].powerSM.state_QuickStopActive.setQuickStopOptionCode
+  0x605d:
+    alias: haltOptionCode
+    module: profile-position
+    profile: 402
+    remote: true
+    get: sys.axis[0].profile.getHaltOptionCode
+    set: sys.axis[0].profile.setHaltOptionCode
+  0x6060:
+    alias: modesOfOperation
+    module: state-machine
+    description: "
+    -  0 : None\n
+    -  1 : Profile Position Mode\n
+    -  2 : Velocity Mode\n
+    -  3 : Profile Velocity Mode\n
+    -  4 : Profile Torque Mode\n
+    -  6 : Homing Mode\n
+    "
+    profile: 402
+    get: sys.axis[0].getOperationMode
+    set: sys.axis[0].setOperationMode
+    remote: true
+  0x6061:
+    alias: modesOfOperationDisplay
+    module: state-machine
+    profile: 402
+    get: sys.axis[0].getOperationModeDisplay
+    remote: true
+  0x6062:
+    alias: positionDemandValue
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].getDemandPosition
+    remote: true
+  0x6064:
+    alias: positionActualValue
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].getActualPosition
+    remote: true
+  0x6065:
+    alias: followingErrorWindow
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].positionController.getFollowingErrorWindow
+    set: sys.axis[0].positionController.setFollowingErrorWindow
+    remote: true
+  0x6066:
+    alias: followingErrorTimeOut
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].positionController.getFollowingErrorTimeOut
+    set: sys.axis[0].positionController.setFollowingErrorTimeOut
+    remote: true
+  0x6067:
+    alias: positionWindow
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].positionController.getPositionWindow
+    set: sys.axis[0].positionController.setPositionWindow
+    remote: true
+  0x6068:
+    alias: positionWindowTime
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].positionController.getPositionWindowTime
+    set: sys.axis[0].positionController.setPositionWindowTime
+    remote: true
+  0x606B:
+    alias: velocityDemandValue
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].getDemandVelocity
+    remote: true
+  0x606C:
+    alias: velocityActualValue
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].getActualVelocity
+    remote: true
+  0x606D:
+    alias: velocityWindow
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].velocityController.getVelocityWindow
+    set: sys.axis[0].velocityController.setVelocityWindow
+    remote: true
+  0x606E:
+    alias: velocityWindowTime
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].velocityController.getVelocityWindowTime
+    set: sys.axis[0].velocityController.setVelocityWindowTime
+    remote: true
+  0x606F:
+    alias: velocityThreshold
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].velocityController.getVelocityThreshold
+    set: sys.axis[0].velocityController.setVelocityThreshold
+    remote: true
+  0x6070:
+    alias: velocityThresholdTime
+    module: velocity-loop
+    profile: 402
+    get: sys.axis[0].velocityController.getVelocityThresholdTime
+    set: sys.axis[0].velocityController.setVelocityThresholdTime
+    remote: true
+  0x6071:
+    alias: targetTorque
+    module: profile-torque
+    profile: 402
+    get: sys.axis[0].profile.getTargetTorque
+    set: sys.axis[0].profile.setTargetTorque
+    remote: true
+  0x6072:
+    alias: maxTorque
+    module: limits
+    profile: 402
+    get: sys.axis[0].limits.getMaxTorque
+    set: sys.axis[0].limits.setMaxTorque
+    remote: true
+  0x6073:
+    alias: maxCurrent
+    module: limits
+    profile: 402
+    get: sys.axis[0].config.getMaxCurrent
+    set: sys.axis[0].config.setMaxCurrent
+    remote: true
+  0x6074:
+    alias: torqueDemand
+    module: current-loop
+    profile: 402
+    get: sys.axis[0].getTorqueDemand
+    remote: true
+  0x6075:
+    alias: motorRatedCurrent
+    module: motor
+    profile: 402
+    get: sys.axis[0].config.getMotorRatedCurrent
+    set: sys.axis[0].config.setMotorRatedCurrent
+    remote: true
+  0x6076:
+    alias: motorRatedTorque
+    module: motor
+    profile: 402
+    get: sys.axis[0].config.getMotorRatedTorque
+    set: sys.axis[0].config.setMotorRatedTorque
+    remote: true
+  0x6077:
+    alias: torqueActualValue
+    module: torque-loop
+    profile: 402
+    get: sys.axis[0].getActualTorque
+    remote: true
+  0x6078:
+    alias: currentActualValue
+    module: torque-loop
+    profile: 402
+    get: sys.axis[0].getActualCurrent
+    remote: true
+  0x6079:
+    alias: dcLinkVoltage
+    unit: mV
+    module: current-loop
+    profile: 402
+    get: sys.axis[0].motorController->getDcLinkVoltage
+    remote: true
+  0x6087:
+    alias: torqueSlope
+    unit: mNm/s
+    module: profile-torque
+    profile: 402
+    get: sys.axis[0].profile.getTorqueSlope
+    set: sys.axis[0].profile.setTorqueSlope
+    remote: true
+  0x607A:
+    alias: targetPosition
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].profile.getTargetPosition
+    set: sys.axis[0].profile.setTargetPosition
+    remote: true
+  0x607C:
+    alias: homeOffset
+    module: position-loop
+    profile: 402
+    get: sys.axis[0].operationSM.mode_Homing.getHomeOffset
+    set: sys.axis[0].operationSM.mode_Homing.setHomeOffset
+    remote: true
+  0x607D:
+    alias: softwarePositionLimit
+    module: limits
+    profile: 402
+    remote: true
+    data:
+    - type: uint8
+      name: Highest sub-index supported
+      access: ro
+      default: 2
+    - type: int32
+      name: Min position
+      access: rw
+      get: sys.axis[0].limits.getSoftLimitMin
+      set: sys.axis[0].limits.setSoftLimitMin
+    - type: int32
+      name: Max position
+      access: rw
+      get: sys.axis[0].limits.getSoftLimitMax
+      set: sys.axis[0].limits.setSoftLimitMax
+  0x607E:
+    alias: polarity
+    module: profile-position
+    profile: 402
+    remote: true
+    get: sys.axis[0].profile.getPolarity
+    set: sys.axis[0].profile.setPolarity
+  0x607F:
+    alias: maxProfileVelocity
+    module: limits
+    profile: 402
+    remote: true
+    get: sys.axis[0].limits.getMaxProfileVelocity
+    set: sys.axis[0].limits.setMaxProfileVelocity
+  0x6080:
+    alias: maxMotorSpeed
+    module: motor
+    unit: rpm
+    profile: 402
+    get: sys.axis[0].limits.getMaxMotorSpeed
+    set: sys.axis[0].limits.setMaxMotorSpeed
+    remote: true
+  0x6081:
+    alias: profileVelocity
+    module: profile-position
+    profile: 402
+    get: sys.axis[0].profile.getProfileVelocity
+    set: sys.axis[0].profile.setProfileVelocity
+    remote: true
+  0x6083:
+    alias: profileAcceleration
+    module: profile-position
+    profile: 402
+    get: sys.axis[0].profile.getProfileAcceleration
+    set: sys.axis[0].profile.setProfileAcceleration
+    remote: true
+  0x6084:
+    alias: profileDeceleration
+    module: profile-position
+    profile: 402
+    get: sys.axis[0].profile.getProfileDeceleration
+    set: sys.axis[0].profile.setProfileDeceleration
+    remote: true
+  0x6085:
+    alias: quickStopDeceleration
+    module: state-machine
+    profile: 402
+    remote: true
+    get: sys.axis[0].config.getQuickStopDeceleration
+    set: sys.axis[0].config.setQuickStopDeceleration
+  0x608F:
+    alias: positionEncoderResolution
+    module: position-loop
+    profile: 402
+    remote: true
+    logicalDevices: [0]
+    data:
+      - get: none
+        set: none
+      - get: sys.axis[0].config.getPositionEncoderIncrements
+        set: sys.axis[0].config.setPositionEncoderIncrements
+      - get: sys.axis[0].config.getPositionEncoderMotorRevolutions
+        set: sys.axis[0].config.setPositionEncoderMotorRevolutions
+  0x6090:
+    alias: velocityEncoderResolution
+    module: velocity-loop
+    profile: 402
+    remote: true
+    logicalDevices: [0]
+    data:
+      - get: none
+        set: none
+      - get: sys.axis[0].config.getVelocityEncoderIncrements
+        set: sys.axis[0].config.setVelocityEncoderIncrements
+      - get: sys.axis[0].config.getVelocityEncoderMotorRevolutions
+        set: sys.axis[0].config.setVelocityEncoderMotorRevolutions
+  0x6091:
+    alias: gearRatio
+    module: units
+    profile: 402
+    remote: true
+    data:
+    - get: none
+      set: none
+    - get: sys.axis[0].units.getMotorShaftRevolutions
+      set: sys.axis[0].units.setMotorShaftRevolutions
+    - get: sys.axis[0].units.getDrivingShaftRevolutions
+      set: sys.axis[0].units.setDrivingShaftRevolutions
+  0x6092:
+    alias: feedConstant
+    module: units
+    profile: 402
+    remote: true
+    data:
+    - get: none
+      set: none
+    - get: sys.axis[0].units.getFeedConstantFeed
+      set: sys.axis[0].units.setFeedConstantFeed
+    - get: sys.axis[0].units.getFeedConstantShaftRevolutions
+      set: sys.axis[0].units.setFeedConstantShaftRevolutions
+  0x6098:
+    alias: homingMethod
+    description: "
+    - -2 : Mechanical end stop negative\n
+    - -1 : Mechanical end stop positive\n
+    -  0 : No homing method\n
+    - 37 : Homing on current position\n"
+    module: homing
+    profile: 402
+    remote: true
+    get: sys.axis[0].operationSM.mode_Homing.getHomingMethod
+    set: sys.axis[0].operationSM.mode_Homing.setHomingMethod
+  0x6099:
+    alias: homingSpeed
+    module: homing
+    profile: 402
+    unit: mRev/s
+    remote: true
+    data:
+      - get: none
+        set: none
+      - get: sys.axis[0].operationSM.mode_Homing.getHomingToSwitchSpeed
+        set: sys.axis[0].operationSM.mode_Homing.setHomingToSwitchSpeed
+      - get: sys.axis[0].operationSM.mode_Homing.getHomingToZeroSpeed
+        set: sys.axis[0].operationSM.mode_Homing.setHomingToZeroSpeed
+  0x609A:
+    alias: homingAcceleration
+    module: homing
+    profile: 402
+    remote: true
+    get: sys.axis[0].operationSM.mode_Homing.getHomingAcceleration
+    set: sys.axis[0].operationSM.mode_Homing.setHomingAcceleration
+  0x60A8:
+    alias: SIUnitPosition
+    module: units
+    profile: 402
+    remote: true
+    get: sys.axis[0].units.getSIUnitPosition
+    set: sys.axis[0].units.setSIUnitPosition
+  0x60A9:
+    alias: SIUnitVelocity
+    module: units
+    profile: 402
+    remote: true
+    get: sys.axis[0].units.getSIUnitVelocity
+    set: sys.axis[0].units.setSIUnitVelocity
+  0x60AA:
+    alias: SIUnitAcceleration
+    module: units
+    profile: 402
+    remote: true
+    get: sys.axis[0].units.getSIUnitAcceleration
+    set: sys.axis[0].units.setSIUnitAcceleration
+  0x60AB:
+    alias: SIUnitJerk
+    module: units
+    profile: 402
+    remote: true
+    get: sys.axis[0].units.getSIUnitJerk
+    set: sys.axis[0].units.setSIUnitJerk
+  0x60C5:
+    alias: maxAcceleration
+    module: limits
+    profile: 402
+    remote: true
+    get: sys.axis[0].limits.getMaxProfileAcceleration
+    set: sys.axis[0].limits.setMaxProfileAcceleration
+  0x60C6:
+    alias: maxDeceleration
+    module: limits
+    profile: 402
+    remote: true
+    get: sys.axis[0].limits.getMaxProfileDeceleration
+    set: sys.axis[0].limits.setMaxProfileDeceleration
+  0x60E3:
+    alias: supportedHomingMethods
+    description: "
+    - -2 : Mechanical end stop negative\n
+    - -1 : Mechanical end stop positive\n
+    -  0 : No homing method\n
+    - 37 : Homing on current position\n"
+    module: homing
+    profile: 402
+    data:
+      - default: 2
+      - default: 37 ## TODO: implement
+      - default: -1
+      - default: -2
+  0x60F2:
+    alias: positioningOptionCode
+    module: profile-position
+    profile: 402
+    remote: true
+    get: sys.axis[0].profile.getPositioningOptionCode
+    set: sys.axis[0].profile.setPositioningOptionCode
+  0x60F8:
+    alias: maxSlippage
+    module: velocity-loop
+    profile: 402
+    remote: true
+    get: sys.axis[0].velocityController.getMaxSlippage
+    set: sys.axis[0].velocityController.setMaxSlippage
+  0x60FF:
+    alias: targetVelocity
+    module: velocity-loop
+    profile: 402
+    remote: true
+    get: sys.axis[0].profile.getTargetVelocity
+    set: sys.axis[0].profile.setTargetVelocity
+  0x6502:
+    alias: supportedDriveModes
+    module: state-machine
+    profile: 402
+    remote: true
+    get: sys.axis[0].getSupportedDriveModes
+  0x67FE:
+    alias: profileVersionNumber
+    module: general
+    profile: 402
+
+modules_description:
+  position-loop:
+    description: "no description"
+  velocity-loop:
+    description: "no description"
+  current-loop:
+    description: "no description"
