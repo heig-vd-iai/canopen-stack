@@ -21,11 +21,9 @@ SI_UNITS: Dict[str, SIUnitInfo] = {
     "K": SIUnitInfo("kelvin", "K", 0x05),
     "mol": SIUnitInfo("mole", "mol", 0x06),
     "cd": SIUnitInfo("candela", "cd", 0x07),
-
     # Supplementary SI units (CiA DR-303-2 Table 4.2)
     "rad": SIUnitInfo("radian", "rad", 0x10),
     "sr": SIUnitInfo("steradian", "sr", 0x11),
-
     # Derived SI units (CiA DR-303-2 Table 4.3)
     "Hz": SIUnitInfo("hertz", "Hz", 0x20),
     "N": SIUnitInfo("newton", "N", 0x21),
@@ -46,7 +44,6 @@ SI_UNITS: Dict[str, SIUnitInfo] = {
     "Bq": SIUnitInfo("becquerel", "Bq", 0x30),
     "Gy": SIUnitInfo("gray", "Gy", 0x31),
     "Sv": SIUnitInfo("sievert", "Sv", 0x32),
-
     # Other units from ISO 1000 (CiA DR-303-2 Table 4.4)
     "grade": SIUnitInfo("grade", "grad", 0x40),
     "deg": SIUnitInfo("degree", "°", 0x41),
@@ -72,7 +69,7 @@ SI_UNITS: Dict[str, SIUnitInfo] = {
     "Nm": SIUnitInfo("newton meter", "Nm", 0x56),
     "s2": SIUnitInfo("second squared", "s²", 0x57),
     "m2": SIUnitInfo("square meter", "m²", 0x58),
-    "m3": SIUnitInfo("cubic meter", "m³", 0x59)
+    "m3": SIUnitInfo("cubic meter", "m³", 0x59),
 }
 
 CIA_UNITS: Dict[int, str] = {value.value: value.unit for value in SI_UNITS.values()}

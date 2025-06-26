@@ -1,6 +1,5 @@
-from pathlib import Path
-
 import click
+
 
 @click.command()
 @click.argument("config_file", type=click.Path(exists=True))
@@ -10,6 +9,7 @@ import click
 def cli(config_file):
     """Generate files from the given configuration file."""
     ...
+
 
 if __name__ == "__main__":
     cli()

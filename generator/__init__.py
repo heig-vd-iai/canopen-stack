@@ -2,61 +2,61 @@ import configparser
 import datetime
 import io
 import os
-from collections import defaultdict
+#from collections import defaultdict
 
 import yaml
 
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
 
 
-def flatten_od(od):
-    """
-    Flattens the obj dictionary. Hierarchical objects in the YAML file
-    are only a convenience for the user. The actual obj dictionary is flat.
-    This function takes the hierarchical obj dictionary and flattens it
-    into a flat dictionary.
+# def flatten_od(od):
+#     """
+#     Flattens the obj dictionary. Hierarchical objects in the YAML file
+#     are only a convenience for the user. The actual obj dictionary is flat.
+#     This function takes the hierarchical obj dictionary and flattens it
+#     into a flat dictionary.
 
-    It also adds additional information such as c/c++ type.
+#     It also adds additional information such as c/c++ type.
 
-    """
-    flat_od = {}
-    for index, obj in od.items():
-        match obj.type:
-            case "var":
-                flat_od[ObjectCode(index, 0)] = obj
-            case "array":
-                for subindex in range(obj.length):
-                    flat_od[ObjectCode(index, subindex + 1)] = {
-                        **obj,
-                        "datatype": obj.datatype,
-                        "type": "var",
-                        "name": f'{obj.name} {subindex + 1}',
-                        "access": obj.access,
-                        "get": obj.get.replace("#", str(subindex + 1)),
-                        "set": obj.set.replace("#", str(subindex + 1)),
-                    }
-            case "record":
-                for subindex, subobject in enumerate(obj.subindex):
-                    flat_od[ObjectCode(index, subindex + 1)] = {
-                        **subobject,
-                        "type": "var",
-                    }
-            case _:
-                raise ValueError(f"Unknown type: {obj['type']}")
+#     """
+#     flat_od = {}
+#     for index, obj in od.items():
+#         match obj.type:
+#             case "var":
+#                 flat_od[ObjectCode(index, 0)] = obj
+#             case "array":
+#                 for subindex in range(obj.length):
+#                     flat_od[ObjectCode(index, subindex + 1)] = {
+#                         **obj,
+#                         "datatype": obj.datatype,
+#                         "type": "var",
+#                         "name": f"{obj.name} {subindex + 1}",
+#                         "access": obj.access,
+#                         "get": obj.get.replace("#", str(subindex + 1)),
+#                         "set": obj.set.replace("#", str(subindex + 1)),
+#                     }
+#             case "record":
+#                 for subindex, subobject in enumerate(obj.subindex):
+#                     flat_od[ObjectCode(index, subindex + 1)] = {
+#                         **subobject,
+#                         "type": "var",
+#                     }
+#             case _:
+#                 raise ValueError(f"Unknown type: {obj['type']}")
 
-    # Add additional information to the flat obj dictionary
-    # used by the Jinja templates
-    for code, obj in flat_od.items():
-        obj.id = code
+#     # Add additional information to the flat obj dictionary
+#     # used by the Jinja templates
+#     for code, obj in flat_od.items():
+#         obj.id = code
 
-    # Set the default index value.
-    # Default values are grouped by types.
-    index_counter = defaultdict(int)
-    for obj in flat_od.values():
-        if obj["default"] is not None:
-            index_counter[obj["datatype"]] += 1
+#     # Set the default index value.
+#     # Default values are grouped by types.
+#     index_counter = defaultdict(int)
+#     for obj in flat_od.values():
+#         if obj["default"] is not None:
+#             index_counter[obj["datatype"]] += 1
 
-    return flat_od
+#     return flat_od
 
 
 def get_objects_per_type(od_flat):

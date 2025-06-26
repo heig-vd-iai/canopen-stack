@@ -18,6 +18,7 @@ ModifiedBy=Zaphod Beeblebrox               Max 244 chars.
 
 The FileInfo class encapsulates all the fields in a structured way.
 """
+
 from datetime import datetime
 
 from pydantic import BaseModel, Field

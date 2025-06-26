@@ -94,6 +94,7 @@ class VendorProduct(BaseModel):
             )
         return self
 
+
 class Revision(BaseModel):
     """Revision number of the device."""
 

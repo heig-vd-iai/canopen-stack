@@ -92,6 +92,7 @@ class InferArrayLengthMixin:
 
 class MappingRootMixin(Mapping, Generic[T]):
     """Mixin for mapping-like behavior in Pydantic models."""
+
     root: dict[Any, T]
 
     def __getitem__(self, key):

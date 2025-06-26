@@ -23,6 +23,7 @@ from .validators import validate_identifier
 
 PROFILE_DIR = Path(__file__).parent.parent / "profiles"
 
+
 class EnumProfile(Enum):
     """Enum data with additional profile information."""
 
@@ -41,13 +42,13 @@ class ProfileExtra(BaseModel):
 class VarProfile(ProfileExtra, Var):
     """Variable profile with additional information."""
 
-    enum: Optional[EnumProfile] = None
+    enum: Optional[Union[Enum, EnumProfile]] = None
 
 
 class ArrayEntryProfile(ArrayEntry):
     """Array entry profile with additional information."""
 
-    enum: Optional[EnumProfile] = None
+    enum: Optional[Union[Enum, EnumProfile]] = None
 
 
 class ArrayProfile(BaseArray):
@@ -59,13 +60,13 @@ class ArrayProfile(BaseArray):
 class RecordEntryProfile(ProfileExtra, RecordEntry):
     """Record entry profile with additional information."""
 
-    enum: Optional[EnumProfile] = None
+    enum: Optional[Union[Enum, EnumProfile]] = None
 
 
 class RecordProfile(ProfileExtra, Record):
     """Record profile with additional information."""
 
-    record: List[RecordEntryProfile] = []
+    record: List[Union[RecordEntry, RecordEntryProfile]] = []
 
 
 ObjectTypeProfile = Annotated[
@@ -143,7 +144,9 @@ class ProfileLoader:
     and caches the result using pickle if up-to-date.
     """
 
-    def __init__(self, profile_dir: Path = None, cache_path: Optional[Path] = None):
+    def __init__(
+        self, profile_dir: Optional[Path] = None, cache_path: Optional[Path] = None
+    ):
         self.profile_dir = profile_dir or PROFILE_DIR
         self.cache_path = cache_path or self.profile_dir / ".cache_profiles.pkl"
 

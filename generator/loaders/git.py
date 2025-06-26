@@ -1,4 +1,5 @@
 """Extracts Git information for a given file."""
+
 import re
 import warnings
 from collections import Counter
@@ -12,9 +13,11 @@ from semver import VersionInfo
 
 SEMVER_REGEX = re.compile(r"v?(\d+\.\d+\.\d+)(?:-(\d+)-g([0-9a-f]+))?")
 
+
 @dataclass(frozen=True, slots=True)
 class GitInfo:
     """Extracts and provides Git information for a given file."""
+
     filepath: Path
     authors: List[str] = field(init=False)
     author_creation: Optional[str] = field(init=False)
@@ -25,16 +28,18 @@ class GitInfo:
     repo: Repo = field(init=False, repr=False)
 
     def __post_init__(self):
-        object.__setattr__(self, 'repo', Repo(self.filepath, search_parent_directories=True))
+        object.__setattr__(
+            self, "repo", Repo(self.filepath, search_parent_directories=True)
+        )
         if self.repo.bare:
             raise ValueError(f"Not a Git repo: {self.filepath}")
         last = self._last_commit()
-        object.__setattr__(self, 'digest', last.hexsha if last else "")
-        object.__setattr__(self, 'authors', self._authors_by_contribution())
-        object.__setattr__(self, 'date_creation', self._date_created())
-        object.__setattr__(self, 'date_modification', self._date_modified())
-        object.__setattr__(self, 'version', self._version())
-        object.__setattr__(self, 'author_creation', self._author_creation())
+        object.__setattr__(self, "digest", last.hexsha if last else "")
+        object.__setattr__(self, "authors", self._authors_by_contribution())
+        object.__setattr__(self, "date_creation", self._date_created())
+        object.__setattr__(self, "date_modification", self._date_modified())
+        object.__setattr__(self, "version", self._version())
+        object.__setattr__(self, "author_creation", self._author_creation())
 
     def _last_commit(self) -> Optional[Commit]:
         try:
@@ -44,7 +49,11 @@ class GitInfo:
 
     def _first_commit(self) -> Optional[Commit]:
         try:
-            return next(self.repo.iter_commits(paths=str(self.filepath), max_count=1, reverse=True))
+            return next(
+                self.repo.iter_commits(
+                    paths=str(self.filepath), max_count=1, reverse=True
+                )
+            )
         except StopIteration:
             return None
 
@@ -61,7 +70,9 @@ class GitInfo:
     def _authors_by_contribution(self) -> List[str]:
         try:
             commits = self.repo.iter_commits(paths=str(self.filepath))
-            counts = Counter(c.author.name for c in commits if c.author and c.author.name)
+            counts = Counter(
+                c.author.name for c in commits if c.author and c.author.name
+            )
             return [name for name, _ in counts.most_common()]
         except GitCommandError:
             return []
@@ -79,7 +90,6 @@ class GitInfo:
         try:
             raw = self.repo.git.describe(tags=True, match="v[0-9]*.[0-9]*.[0-9]*")
         except GitCommandError:
-            warnings.warn("No SemVer tag", stacklevel=2)
             return fallback
 
         m = SEMVER_REGEX.match(raw)

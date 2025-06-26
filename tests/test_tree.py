@@ -1,7 +1,6 @@
 import pytest
 
 from generator.tree import (
-    TreeNode,
     bst_to_array_zero_indexed,
     build_balanced_bst,
     search_bst_array,
@@ -11,12 +10,12 @@ from generator.tree import (
 @pytest.fixture
 def sample_data():
     return [
-        (4, 'four'),
-        (8, 'eight'),
-        (15, 'fifteen'),
-        (16, 'sixteen'),
-        (23, 'twenty-three'),
-        (42, 'fourty-two'),
+        (4, "four"),
+        (8, "eight"),
+        (15, "fifteen"),
+        (16, "sixteen"),
+        (23, "twenty-three"),
+        (42, "fourty-two"),
     ]
 
 
@@ -42,30 +41,32 @@ def test_build_balanced_bst_structure(sample_data):
     assert bst.right.left.key == 23
 
 
-
 def test_bst_to_array_representation(sample_data):
     bst = build_balanced_bst(sample_data)
     array = bst_to_array_zero_indexed(bst)
     expected = [
-        (16, 'sixteen'),
-        (8, 'eight'),
-        (42, 'fourty-two'),
-        (4, 'four'),
-        (15, 'fifteen'),
-        (23, 'twenty-three'),
+        (16, "sixteen"),
+        (8, "eight"),
+        (42, "fourty-two"),
+        (4, "four"),
+        (15, "fifteen"),
+        (23, "twenty-three"),
         None,
     ]
     assert array == expected
 
 
-@pytest.mark.parametrize("key, expected", [
-    (16, 'sixteen'),
-    (8, 'eight'),
-    (15, 'fifteen'),
-    (42, 'fourty-two'),
-    (23, 'twenty-three'),
-    (4, 'four'),
-])
+@pytest.mark.parametrize(
+    "key, expected",
+    [
+        (16, "sixteen"),
+        (8, "eight"),
+        (15, "fifteen"),
+        (42, "fourty-two"),
+        (23, "twenty-three"),
+        (4, "four"),
+    ],
+)
 def test_search_existing_keys(sample_data, key, expected):
     bst = build_balanced_bst(sample_data)
     array = bst_to_array_zero_indexed(bst)

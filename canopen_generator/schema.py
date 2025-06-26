@@ -1,4 +1,4 @@
-from voluptuous import All, Any, Invalid, Length, Optional, Required, Schema, Coerce
+from voluptuous import All, Any, Coerce, Invalid, Length, Optional, Required, Schema
 
 from .type import Access
 
@@ -52,14 +52,13 @@ def coerce_int_to_enum(value):
 
     raise ValueError
 
+
 def coerce_to_enum_items(value):
     if isinstance(value, dict):
-        return {
-            'class': None,
-            'data': value
-        }
+        return {"class": None, "data": value}
 
     raise ValueError
+
 
 enum_items = {
     str: All(
@@ -69,51 +68,58 @@ enum_items = {
 }
 
 config_enum = Any(
-    {
-        Required("class"): str,
-        Required("data"): enum_items
-    },
-    All(enum_items, Coerce(coerce_to_enum_items))
+    {Required("class"): str, Required("data"): enum_items},
+    All(enum_items, Coerce(coerce_to_enum_items)),
 )
 
+
 def mutually_exclusive_accessor(obj):
-    if ('get' in obj and obj['get'] != 'none' or 'set' in obj and obj['set'] != 'none') and 'attribute' in obj:
-        print("PROUT", obj['get'], obj['set'], obj['attribute'])
+    if (
+        "get" in obj and obj["get"] != "none" or "set" in obj and obj["set"] != "none"
+    ) and "attribute" in obj:
+        print("PROUT", obj["get"], obj["set"], obj["attribute"])
         raise Invalid("Cannot define 'get'/'set' together with 'attribute'")
 
     return obj
 
+
 data_schema = [
-    All({
-        Required("type"): str,
-        Optional("name"): str,
-        Optional("length", default=1): int,
-        Required("access"): All(str, validate_access),
-        Optional("pdo_mapping", default=False): bool,
-        Optional("default", default=0): Any(int, float, bool, str),
-        Optional("lowLimit", default="none"): Any(str, int, float),
-        Optional("highLimit", default="none"): Any(str, int, float),
-        Optional("get", default="none"): str,
-        Optional("set", default="none"): str,
-        Optional("attribute"): str,
-        Optional("enum"): config_enum,
-        Optional("documentation", default=""): str,
-    }, mutually_exclusive_accessor)
+    All(
+        {
+            Required("type"): str,
+            Optional("name"): str,
+            Optional("length", default=1): int,
+            Required("access"): All(str, validate_access),
+            Optional("pdo_mapping", default=False): bool,
+            Optional("default", default=0): Any(int, float, bool, str),
+            Optional("lowLimit", default="none"): Any(str, int, float),
+            Optional("highLimit", default="none"): Any(str, int, float),
+            Optional("get", default="none"): str,
+            Optional("set", default="none"): str,
+            Optional("attribute"): str,
+            Optional("enum"): config_enum,
+            Optional("documentation", default=""): str,
+        },
+        mutually_exclusive_accessor,
+    )
 ]
 
 data_object_schema = [
-    All({
-        Optional("length", default=1): int,
-        Optional("pdo_mapping"): bool,
-        Optional("default"): Any(int, float, bool, str),
-        Optional("lowLimit"): Any(str, int, float),
-        Optional("highLimit"): Any(str, int, float),
-        Optional("get"): str,
-        Optional("set"): str,
-        Optional("attribute"): str,
-        Optional("enum"): config_enum,
-        Optional("documentation", default=""): str,
-    }, mutually_exclusive_accessor)
+    All(
+        {
+            Optional("length", default=1): int,
+            Optional("pdo_mapping"): bool,
+            Optional("default"): Any(int, float, bool, str),
+            Optional("lowLimit"): Any(str, int, float),
+            Optional("highLimit"): Any(str, int, float),
+            Optional("get"): str,
+            Optional("set"): str,
+            Optional("attribute"): str,
+            Optional("enum"): config_enum,
+            Optional("documentation", default=""): str,
+        },
+        mutually_exclusive_accessor,
+    )
 ]
 
 profile_schema = Schema(

@@ -1,10 +1,9 @@
-
-
 def resolve_inheritance(objects: dict) -> dict:
     """Resolve inheritance for objects.
     This function merges objects that inherit from each other, ensuring
     that the final object contains all properties from its base objects.
     """
+
     def resolve(idx: int, visited: set[int]) -> dict:
         obj = objects[idx]
         inherit_id = obj.get("inherit")

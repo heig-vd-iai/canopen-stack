@@ -85,6 +85,7 @@ def generate_remote(od: ObjectDictionary, outdir: Path, force: bool):
     with open(header, "w") as file:
         file.write(od.to_remote())
 
+
 def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
     enum_file = outdir / "od_enum.hpp"
     if not force and enum_file.exists():
@@ -93,6 +94,7 @@ def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
     outdir.mkdir(parents=True, exist_ok=True)
     with open(enum_file, "w") as file:
         file.write(od.to_enum())
+
 
 @click.command()
 @click.argument("config", type=click.Path(exists=True))

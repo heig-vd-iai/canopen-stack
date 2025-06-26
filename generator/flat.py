@@ -1,7 +1,7 @@
-from .validation.types import ObjectId, TypeValue
-
 from typing import List, Optional
-from .validation.config import Config, Var, Array, Record, RecordEntry
+
+from .validation.config import Array, Config, Record, RecordEntry, Var
+from .validation.types import ObjectId, TypeValue
 
 
 class FlattenedObject(RecordEntry):

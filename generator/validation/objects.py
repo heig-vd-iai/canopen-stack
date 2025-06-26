@@ -17,6 +17,7 @@ from pydantic import (
 
 from .mixins import AccessorMixin, InferArrayLengthMixin, UnitMixin
 from .types import (
+    Access,
     Bitfield,
     Datatype,
     Enum,
@@ -107,8 +108,8 @@ class Record(HeaderCommon):
         if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
             size_entry = RecordEntry(
                 name=self.SIZE_ENTRY_NAME,
-                datatype="uint8",
-                access="r",
+                datatype=Datatype.from_name("UNSIGNED8"),
+                access=Access(read=True, write=False),
                 default=len(self.record),
             )
             self.record.insert(0, size_entry)
