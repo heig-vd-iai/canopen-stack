@@ -9,7 +9,7 @@ from pydantic import (
 )
 
 from .types import Access
-from .validators import validate_unit_string
+from .units import validate_unit_string
 
 T = TypeVar("T")
 
@@ -70,13 +70,14 @@ class InferArrayLengthMixin:
         return self
 
     def _has_subindex_0(self) -> bool:
-        """Heuristic: entry 0 must be the special descriptor."""
         if not self.data:
             return False
         maybe = self.data[0]
-        return (
-            isinstance(maybe, dict) and maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
-        ) or (hasattr(maybe, "name") and maybe.name == self.ARRAY_SIZE_ENTRY_NAME)
+        if isinstance(maybe, dict):
+            return maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
+        elif hasattr(maybe, "name"):
+            return maybe.name == self.ARRAY_SIZE_ENTRY_NAME
+        return False
 
     def _make_subindex_0(self, value: int) -> Any:
         """Create the subindex 0 structure (as dict or model depending on context)."""
@@ -91,6 +92,7 @@ class InferArrayLengthMixin:
 
 class MappingRootMixin(Mapping, Generic[T]):
     """Mixin for mapping-like behavior in Pydantic models."""
+    root: dict[Any, T]
 
     def __getitem__(self, key):
         return self.root[key]

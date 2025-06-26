@@ -12,39 +12,12 @@ from pydantic import (
     BaseModel,
     Field,
     RootModel,
-    field_validator,
     model_validator,
 )
 
+from .device_info import Device
 from .mixins import MappingRootMixin
 from .objects import Array, Record, Var
-from .types import (
-    Baudrate,
-    Revision,
-    VendorProduct,
-)
-
-
-class Device(BaseModel):
-    """Device information."""
-
-    vendor: VendorProduct = Field(default_factory=VendorProduct)
-    product: VendorProduct = Field(default_factory=VendorProduct)
-    revision: Revision = Field(default_factory=lambda: Revision.model_validate("1.0.0"))
-    baudrate: Baudrate
-    node_id: int = Field(1, ge=1, le=127)
-
-    @field_validator("baudrate", mode="before")
-    @classmethod
-    def convert_baudrate(cls, v: Any) -> Baudrate:
-        """Convert various formats to Baudrate."""
-        if isinstance(v, dict):
-            # {125: True, 250: None, 300: False}
-            return Baudrate(k for k, val in v.items() if val is not False)
-        elif isinstance(v, (list, set)):
-            return Baudrate(v)
-        raise TypeError("Invalid baudrate format: expected dict, list, or set.")
-
 
 ObjectType = Annotated[Union[Var, Array, Record], Field(discriminator="type")]
 

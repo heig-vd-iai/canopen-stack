@@ -13,6 +13,7 @@ class SIUnitInfo(NamedTuple):
 
 # CiA DR‑303‑2 / CiA‑303‑2 (used by CiA 890)
 SI_UNITS: Dict[str, SIUnitInfo] = {
+    # Base SI units (CiA DR-303-2 Table 4.1)
     "m": SIUnitInfo("meter", "m", 0x01),
     "kg": SIUnitInfo("kilogram", "kg", 0x02),
     "s": SIUnitInfo("second", "s", 0x03),
@@ -20,7 +21,12 @@ SI_UNITS: Dict[str, SIUnitInfo] = {
     "K": SIUnitInfo("kelvin", "K", 0x05),
     "mol": SIUnitInfo("mole", "mol", 0x06),
     "cd": SIUnitInfo("candela", "cd", 0x07),
+
+    # Supplementary SI units (CiA DR-303-2 Table 4.2)
     "rad": SIUnitInfo("radian", "rad", 0x10),
+    "sr": SIUnitInfo("steradian", "sr", 0x11),
+
+    # Derived SI units (CiA DR-303-2 Table 4.3)
     "Hz": SIUnitInfo("hertz", "Hz", 0x20),
     "N": SIUnitInfo("newton", "N", 0x21),
     "Pa": SIUnitInfo("pascal", "Pa", 0x22),
@@ -40,40 +46,40 @@ SI_UNITS: Dict[str, SIUnitInfo] = {
     "Bq": SIUnitInfo("becquerel", "Bq", 0x30),
     "Gy": SIUnitInfo("gray", "Gy", 0x31),
     "Sv": SIUnitInfo("sievert", "Sv", 0x32),
+
+    # Other units from ISO 1000 (CiA DR-303-2 Table 4.4)
+    "grade": SIUnitInfo("grade", "grad", 0x40),
+    "deg": SIUnitInfo("degree", "°", 0x41),
+    "arcmin": SIUnitInfo("arcminute", "'", 0x42),
+    "arcsec": SIUnitInfo("arcsecond", '"', 0x43),
+    "l": SIUnitInfo("liter", "l", 0x44),
+    "a": SIUnitInfo("are", "a", 0x45),
+    "ha": SIUnitInfo("hectare", "ha", 0x46),
+    "min": SIUnitInfo("minute", "min", 0x47),
+    "h": SIUnitInfo("hour", "h", 0x48),
+    "d": SIUnitInfo("day", "d", 0x49),
+    "y": SIUnitInfo("year", "y", 0x4A),
+    "g": SIUnitInfo("gram", "g", 0x4B),
+    "t": SIUnitInfo("tonne", "t", 0x4C),
+    "bar": SIUnitInfo("bar", "bar", 0x4E),
+    "P": SIUnitInfo("poise", "P", 0x4F),
+    "St": SIUnitInfo("stokes", "St", 0x50),
+    "eV": SIUnitInfo("electronvolt", "eV", 0x51),
+    "u": SIUnitInfo("atomic mass unit", "u", 0x52),
+    "AU": SIUnitInfo("astronomical unit", "AU", 0x53),
+    "pc": SIUnitInfo("parsec", "pc", 0x54),
+    "m/s2": SIUnitInfo("meter per second squared", "m/s²", 0x55),
+    "Nm": SIUnitInfo("newton meter", "Nm", 0x56),
+    "s2": SIUnitInfo("second squared", "s²", 0x57),
+    "m2": SIUnitInfo("square meter", "m²", 0x58),
+    "m3": SIUnitInfo("cubic meter", "m³", 0x59)
 }
 
-# Table des indices des unités CiA 303-2 (extrait pour démo)
-CIA_UNITS: Dict[int, str] = {
-    0x01: "meter",
-    0x02: "kilogram",
-    0x03: "second",
-    0x04: "ampere",
-    0x10: "radian",
-    0x20: "hertz",
-    0x21: "newton",
-    0x22: "pascal",
-    0x23: "joule",
-    0x24: "watt",
-    0x25: "coulomb",
-    0x26: "volt",
-    0x27: "farad",
-    0x28: "ohm",
-    0x29: "siemens",
-    0x2A: "weber",
-    0x2B: "tesla",
-    0x2C: "henry",
-    0x2D: "degC",
-    0x2E: "lumen",
-    0x2F: "lux",
-    0x30: "becquerel",
-    0x31: "gray",
-    0x32: "sievert",
-    0xB5: "inc",  # Unité interne spécifique CANopen
-}
+CIA_UNITS: Dict[int, str] = {value.value: value.unit for value in SI_UNITS.values()}
 
-# Table des préfixes SI selon CiA 303-2
+# CiA 303-2
 CIA_PREFIXES: Dict[int, float] = {
-    0x00: 1.0,  # pas de préfixe
+    0x00: 1.0,
     0xFD: 1e-3,  # milli
     0xFC: 1e-6,  # micro
     0xFB: 1e-9,  # nano

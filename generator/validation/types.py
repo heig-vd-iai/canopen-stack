@@ -2,18 +2,16 @@
 
 import re
 from typing import (
-    Annotated,
     Any,
     ClassVar,
     Dict,
     Optional,
     Tuple,
     Union,
+    cast,
 )
-from warnings import warn
 
 import mistune
-import semver
 from pydantic import (
     BaseModel,
     Field,
@@ -53,73 +51,14 @@ class ObjectId(int):
             raise KeyError(f"Invalid key: {item}")
 
 
-class Baudrate(set):
-    """Set of supported baudrates."""
-
-    valid_baudrates = {10, 20, 50, 125, 250, 500, 800, 1000}
-
-    def __init__(self, iterable=()):
-        if not all(item in self.valid_baudrates for item in iterable):
-            raise ValueError(
-                f"Invalid Baudrate: {iterable}. Valid values are: {self.valid_baudrates}"
-            )
-        super().__init__(item for item in iterable if item in self.valid_baudrates)
-
-    def to_dict(self) -> dict[int, bool]:
-        """Convert the Baudrate set to a dictionary."""
-        return {b: (b in self) for b in self.valid_baudrates}
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.list_schema(items_schema=core_schema.int_schema()),
-            serialization=core_schema.plain_serializer_function_ser_schema(list),
-        )
-
-    @classmethod
-    def _validate(cls, v):
-        if isinstance(v, dict):
-            # e.g. {125: True, 250: None, 300: False}
-            v = [k for k, val in v.items() if val is not False]
-        elif not isinstance(v, (list, set, tuple)):
-            raise TypeError(f"Invalid Baudrate input: {v}")
-        return cls(v)
-
-    def __repr__(self):
-        return f"Baudrate({', '.join(map(str, sorted(self)))})"
-
-
-class VendorProduct(BaseModel):
-    """Vendor and product information."""
-
-    name: str = Field(default="Unknown", min_length=1)
-    number: int = Field(0x12345678, ge=0, le=0xFFFFFFFF)
-
-    @model_validator(mode="after")
-    def check_default_values(self):
-        """Check if default values are set and warn the user."""
-        if self.name == "Unknown":
-            warn(
-                "Vendor name is set to default value 'Unknown'. Please set a valid name.",
-                UserWarning,
-                stacklevel=2,
-            )
-        if self.number == 0x12345678:
-            warn(
-                "Vendor number is set to default value 0x12345678. Please set a valid number.",
-                UserWarning,
-                stacklevel=2,
-            )
-        return self
-
-
 class Markdown(str):
     """String subclass representing Markdown with validation and conversion."""
 
     def to_html(self) -> str:
         """Convert Markdown to HTML using mistune."""
-        return mistune.create_markdown()(self)
+        renderer = mistune.HTMLRenderer()
+        parser = mistune.create_markdown(renderer=renderer)
+        return cast(str, parser(self))
 
     def __repr__(self):
         preview = str(self).replace("\n", " ")[:40]
@@ -216,51 +155,6 @@ class Limits(BaseModel):
     max: Optional[Union[int, float]] = None
 
 
-class Revision(BaseModel):
-    """Revision number of the device."""
-
-    major: Annotated[int, Field(ge=0, le=255)]
-    minor: Annotated[int, Field(ge=0, le=255)]
-    patch: Annotated[int, Field(ge=0, le=255)] = 0
-
-    @model_validator(mode="before")
-    @classmethod
-    def parse_revision(cls, v: Any) -> dict:
-        """Parse the revision number from various formats."""
-        if isinstance(v, str):
-            try:
-                ver = semver.VersionInfo.parse(v)
-            except ValueError as e:
-                raise ValueError(f"Invalid version string: {v}. {str(e)}") from e
-            return {"major": ver.major, "minor": ver.minor, "patch": ver.patch}
-
-        elif isinstance(v, (list, tuple)):
-            if len(v) == 2:
-                major, minor = v
-                return {"major": major, "minor": minor, "patch": 0}
-            elif len(v) == 3:
-                major, minor, patch = v
-                return {"major": major, "minor": minor, "patch": patch}
-            else:
-                raise ValueError(
-                    "List/tuple must be [major, minor] or [major, minor, patch]."
-                )
-
-        elif isinstance(v, dict):
-            if "major" in v and "minor" in v:
-                return {
-                    "major": v["major"],
-                    "minor": v["minor"],
-                    "patch": v.get("patch", 0),
-                }
-            raise ValueError("Dict must have at least 'major' and 'minor'.")
-
-        elif isinstance(v, semver.VersionInfo):
-            return {"major": v.major, "minor": v.minor, "patch": v.patch}
-
-        raise TypeError(f"Invalid input for Revision: {v} (type: {type(v)})")
-
-
 class Datatype(BaseModel):
     """CiA 301 data types."""
 
@@ -310,6 +204,7 @@ class BitfieldEntry(BaseModel):
 
     name: str
     values: Dict[int, str] = {}
+    _width: Optional[int] = PrivateAttr(default=None)
 
     @field_validator("values")
     @classmethod
@@ -364,7 +259,7 @@ class Bitfield(Dict[Tuple[int, int], BitfieldEntry]):
                     )
 
                 # Inject width dynamically to perform value checks
-                entry._width = width  # pylint: disable=protected-access, attribute-defined-outside-init
+                entry._width = width
                 entry = BitfieldEntry.model_validate(entry.model_dump())  # re-validate
                 result[(start, end)] = entry
             return cls(result)
@@ -449,36 +344,3 @@ objects_ranges = {
     (0xB000, 0xBFFF): "Standardized system variable area",
     # Reserved range
 }
-
-units = {
-    "m": 0x1,
-    "kg": 0x2,
-    "s": 0x3,
-    "A": 0x4,
-    "K": 0x5,
-    "mol": 0x6,
-    "cd": 0x7,
-    "rad": 0x10,
-    "sr": 0x11,
-    "Hz": 0x20,
-    "N": 0x21,
-    "Pa": 0x22,
-    "J": 0x23,
-    "W": 0x24,
-    "C": 0x25,
-    "V": 0x26,
-    "F": 0x27,
-    "Ohm": 0x28,
-    "S": 0x29,
-    "Wb": 0x2A,
-    "T": 0x2B,
-    "H": 0x2C,
-    "°C": 0x2D,
-    "lm": 0x2E,
-    "lx": 0x2F,
-    "Bq": 0x30,
-    "Gy": 0x31,
-    "Sv": 0x32,
-}
-
-# prefix = 10**(int8)prefix

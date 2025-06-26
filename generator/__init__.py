@@ -2,12 +2,10 @@ import configparser
 import datetime
 import io
 import os
-from collections import defaultdict, namedtuple
-from enum import Enum
+from collections import defaultdict
 
 import yaml
 
-from .templates import Template
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
 
 
