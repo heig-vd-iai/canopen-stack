@@ -63,3 +63,4 @@ src/od.cpp
 dist/
 
 .coverage
+*.pkl

@@ -84,69 +84,42 @@ class Markdown(str):
         )
 
 
-class Access:
-    """Object access rights."""
+class Access(BaseModel):
+    """Object access rights (CANopen-style: r/w/rw)."""
 
-    def __init__(self, read=False, write=False):
-        self.read = bool(read)
-        self.write = bool(write)
+    read: bool = False
+    write: bool = False
 
     def __str__(self):
-        if self.read and self.write:
-            return "rw"
-        if self.read:
-            return "r"
-        if self.write:
-            return "w"
-        return ""
-
-    def __repr__(self):
-        if self.read and self.write:
-            return "Access(Read Write)"
-        if self.read:
-            return "Access(Read Only)"
-        if self.write:
-            return "Access(Write Only)"
-        return "Access(None)"
-
-    def to_dict(self):
-        """Convert Access object to a dictionary."""
-        return {"read": self.read, "write": self.write}
-
-    def to_eds(self):
-        """EDS representation is a bit weird:
-
-        r -> ro
-        w -> wo
-        rw -> rw
-        """
-        if self.read and self.write:
-            return "rw"
-        if self.read:
-            return "ro"
-        if self.write:
-            return "wo"
-        return ""
-
-    @classmethod
-    def parse(cls, value):
-        """Parse various formats into an Access object."""
-        if isinstance(value, Access):
-            return value
-        if isinstance(value, str):
-            return cls(read="r" in value, write="w" in value)
-        if isinstance(value, dict):
-            return cls(read=value.get("read", False), write=value.get("write", False))
-        raise TypeError(f"Invalid access value: {value}")
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls.parse,
-            core_schema.str_schema(),
-            serialization=core_schema.plain_serializer_function_ser_schema(str),
+        return (
+            "rw"
+            if self.read and self.write
+            else "r" if self.read else "w" if self.write else ""
         )
 
+    def __repr__(self):
+        return f"Access(read={self.read}, write={self.write})"
+
+    def to_eds(self) -> str:
+        return (
+            "rw"
+            if self.read and self.write
+            else "ro" if self.read else "wo" if self.write else ""
+        )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce(cls, v: Any) -> Any:
+        if isinstance(v, cls):
+            return v
+        if isinstance(v, str):
+            return {"read": "r" in v, "write": "w" in v}
+        if isinstance(v, dict):
+            return {
+                "read": bool(v.get("read", False)),
+                "write": bool(v.get("write", False)),
+            }
+        raise TypeError(f"Cannot parse Access from {v!r}")
 
 class Limits(BaseModel):
     """Limits for variable types."""

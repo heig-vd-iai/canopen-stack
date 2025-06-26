@@ -22,28 +22,17 @@ class AccessorMixin(BaseModel):
     set: Optional[str] = None
 
     @model_validator(mode="after")
-    def update_access(self):
-        """Update access rights based on the presence of get/set methods."""
-        inferred = False
-
+    def _auto_infer_access(self) -> "AccessorMixin":
+        """
+        If 'access' is not explicitly set (rw/ro/wo),
+        infer from presence of get/set.
+        """
+        # Do not override explicit access
         if not self.access.read and not self.access.write:
-            read = self.get is not None
-            write = self.set is not None
-            self.access = Access(read=read, write=write)
-            inferred = True
-
-        if not inferred:
-            if self.get is not None and not self.access.read:
-                raise ValueError(
-                    "Access mismatch: 'get' defined but 'read' not allowed in 'access'."
-                )
-            if self.set is not None and not self.access.write:
-                raise ValueError(
-                    "Access mismatch: 'set' defined but 'write' not allowed in 'access'."
-                )
+            object.__setattr__(self.access, "read", self.get is not None)
+            object.__setattr__(self.access, "write", self.set is not None)
 
         return self
-
 
 class InferArrayLengthMixin:
     """Mixin to infer array length from data."""

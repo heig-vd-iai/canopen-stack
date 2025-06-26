@@ -44,7 +44,15 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "--cov=lexic --cov-report term-missing --doctest-modules"
+addopts = """
+--cov=validation \
+--cov-report=term-missing \
+--doctest-modules
+"""
+testpaths = [
+    "generator",
+    "tests"
+]
 
 [tool.black]
 line-length = 88

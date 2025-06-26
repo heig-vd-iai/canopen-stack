@@ -108,8 +108,8 @@ class Record(HeaderCommon):
         if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
             size_entry = RecordEntry(
                 name=self.SIZE_ENTRY_NAME,
-                datatype=Datatype.from_name("UNSIGNED8"),
-                access=Access(read=True, write=False),
+                datatype=Datatype.from_name("uint8"),
+                access=Access.model_validate('r'),
                 default=len(self.record),
             )
             self.record.insert(0, size_entry)

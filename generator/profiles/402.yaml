@@ -809,8 +809,9 @@ profiles:
           override-ranges:
             - [-128, -1]
           data:
-            - HOMING_METHOD__IMMEDIATE: 0
-            - name: Homing on negative limit switch and index pulse
+            HOMING_METHOD__IMMEDIATE: 0
+            HOMING_METHOD__NEGATIVE_SWITCH_INDEX:
+              name: Homing on negative limit switch and index pulse
               description: |
                 Using this method as shown the figure below, the initial direction of movement shall be leftward if the
                 negative limit switch is inactive (here: low). The home position shall be at the first index pulse to the

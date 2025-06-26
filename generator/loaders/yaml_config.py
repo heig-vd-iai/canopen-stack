@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import cast
+from typing import Union, cast
 
 import yaml
 
@@ -31,7 +31,7 @@ def get_file_info_from_scm(filename: str) -> FileInfo:
     )
 
 
-def read_yaml_file(filename: str) -> dict:
+def read_yaml_file(filename: Union[str, Path]) -> dict:
     """Read a YAML file and return its content as a dictionary.
     Raises a structured error if parsing fails.
     """
@@ -56,7 +56,7 @@ def read_yaml_file(filename: str) -> dict:
         raise ValueError(msg) from e
 
 
-def read_config_file(filename: str) -> dict:
+def read_config_file(filename: Union[str, Path]) -> dict:
     """Read a configuration file and return its content as a dictionary."""
     data = read_yaml_file(filename)
     info = get_file_info_from_scm(filename)
