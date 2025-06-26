@@ -1,85 +1,67 @@
-"""Types definitions according to the CiA 301 specification."""
-
-import re
-from typing import Any, Dict, Optional, Tuple
-
-from pydantic import BaseModel, PrivateAttr, model_validator
-from pydantic_core import core_schema
+from typing import Any, Dict, Optional, Tuple, Union
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class BitfieldEntry(BaseModel):
     """Bitfield entry for storing bit ranges and their names."""
-
     name: str
     values: Dict[int, str] = {}
-    _width: Optional[int] = PrivateAttr(default=None)
+    _width: Optional[int] = None
 
-    @model_validator(mode="before")
-    @classmethod
-    def check_values_fit_width(cls, data):
-        width = data.get("_width")
-        if width is not None and "values" in data:
-            max_val = (1 << width) - 1
-            for k in data["values"]:
+    @model_validator(mode="after")
+    def validate_value_width(self) -> "BitfieldEntry":
+        if self._width is not None:
+            max_val = (1 << self._width) - 1
+            for k in self.values:
                 if k > max_val:
                     raise ValueError(
-                        f"Value {k} exceeds width limit {width} (max={max_val})"
+                        f"Value {k} exceeds width limit {self._width} (max={max_val})"
                     )
-        return data
+        return self
 
 
-class Bitfield(Dict[Tuple[int, int], BitfieldEntry]):
-    """Bitfield representation for storing bit ranges and their names."""
+class Bitfield(BaseModel):
+    """Bitfield wrapper mapping ranges to entries."""
+    entries: Dict[Tuple[int, int], BitfieldEntry]
 
-    _width: Optional[int] = PrivateAttr(default=None)
-
+    @field_validator("entries", mode="before")
     @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        def validate(v: Any) -> "Bitfield":
-            if not isinstance(v, dict):
-                raise TypeError("Bitfield must be a dict")
-            result = {}
-            for key, val in v.items():
-                # Normalize key
-                if isinstance(key, int):
-                    start, end = key, key
-                elif isinstance(key, str) and re.match(r"^\d+\.\.\d+$", key):
-                    start, end = map(int, key.split(".."))
+    def parse_keys_and_entries(cls, v: Dict[Union[str, int], Any]) -> Dict[Tuple[int, int], BitfieldEntry]:
+        result = {}
+        for raw_key, val in v.items():
+            if isinstance(raw_key, int):
+                start = end = raw_key
+            elif isinstance(raw_key, str):
+                if ".." in raw_key:
+                    parts = raw_key.split("..")
+                    if len(parts) != 2 or not all(p.isdigit() for p in parts):
+                        raise ValueError(f"Invalid bit range format: '{raw_key}'")
+                    start, end = map(int, parts)
                     if start < end:
-                        raise ValueError(
-                            f"Invalid bit range '{key}': start must be >= end"
-                        )
+                        raise ValueError(f"Invalid bit range '{raw_key}': start must be >= end")
+                elif raw_key.isdigit():
+                    start = end = int(raw_key)
                 else:
-                    raise ValueError(f"Invalid bitfield key: {key}")
+                    raise ValueError(f"Invalid bitfield key: {raw_key}")
+            else:
+                raise ValueError(f"Unsupported key type: {raw_key}")
 
-                width = start - end + 1
+            width = start - end + 1
+            if isinstance(val, str):
+                entry = BitfieldEntry(name=val)
+            elif isinstance(val, dict):
+                entry = BitfieldEntry(**val)
+            else:
+                raise ValueError(f"Invalid bitfield value for key {raw_key}")
 
-                # Normalize value
-                if isinstance(val, str):
-                    entry = BitfieldEntry(name=val, values={})
-                elif isinstance(val, dict):
-                    entry = BitfieldEntry(**val)
-                else:
-                    raise TypeError(
-                        f"Invalid bitfield entry value for key {key}: {val}"
-                    )
+            entry._width = width
+            result[(start, end)] = entry
+        return result
 
-                # Inject width dynamically to perform value checks
-                entry._width = width
-                entry = BitfieldEntry.model_validate(entry.model_dump())  # re-validate
-                result[(start, end)] = entry
-            return cls(result)
-
-        return core_schema.no_info_after_validator_function(
-            validate,
-            core_schema.dict_schema(
-                keys_schema=core_schema.any_schema(),
-                values_schema=core_schema.any_schema(),
-            ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda v: {
-                    f"{k[0] if k[0] == k[1] else f'{k[0]}..{k[1]}'}": e.model_dump()
-                    for k, e in v.items()
-                }
-            ),
-        )
+    def to_serializable(self) -> Dict[str, Any]:
+        """Serialize keys as strings again for export."""
+        output = {}
+        for (start, end), entry in self.entries.items():
+            key = f"{start}" if start == end else f"{start}..{end}"
+            output[key] = entry.model_dump()
+        return output
