@@ -14,7 +14,6 @@ from typing import (
 import mistune
 from pydantic import (
     BaseModel,
-    Field,
     PrivateAttr,
     field_validator,
     model_validator,
@@ -22,7 +21,6 @@ from pydantic import (
 from pydantic_core import core_schema
 
 from .registry import DATATYPES
-from .validators import validate_identifier
 
 
 class ObjectId(int):
@@ -94,7 +92,11 @@ class Access(BaseModel):
         return (
             "rw"
             if self.read and self.write
-            else "r" if self.read else "w" if self.write else ""
+            else "r"
+            if self.read
+            else "w"
+            if self.write
+            else ""
         )
 
     def __repr__(self):
@@ -104,7 +106,11 @@ class Access(BaseModel):
         return (
             "rw"
             if self.read and self.write
-            else "ro" if self.read else "wo" if self.write else ""
+            else "ro"
+            if self.read
+            else "wo"
+            if self.write
+            else ""
         )
 
     @model_validator(mode="before")
@@ -120,6 +126,7 @@ class Access(BaseModel):
                 "write": bool(v.get("write", False)),
             }
         raise TypeError(f"Cannot parse Access from {v!r}")
+
 
 class Limits(BaseModel):
     """Limits for variable types."""
@@ -146,9 +153,7 @@ class Datatype(BaseModel):
         return cls(name=dt.name, code=dt.code, ctype=dt.ctype, field=dt.field)
 
     @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type, handler
-    ):  # pylint: disable=arguments-differ
+    def __get_pydantic_core_schema__(cls, source_type, handler):  # pylint: disable=arguments-differ
         """Get the Pydantic core schema for Datatype."""
         schema = handler(source_type)
 
@@ -250,31 +255,6 @@ class Bitfield(Dict[Tuple[int, int], BitfieldEntry]):
                 }
             ),
         )
-
-
-class Enum(BaseModel):
-    """Enum data for variable types."""
-
-    class_: str = Field(..., alias="class")
-    data: Dict[str, int]
-
-    @model_validator(mode="before")
-    @classmethod
-    def validate_enum_data(cls, values):
-        """Validate enum data."""
-        if "data" not in values:
-            raise ValueError("Enum field data is required.")
-        if not isinstance(values.get("data"), dict):
-            raise ValueError("Enum data must be a dictionary.")
-        if len(set(values["data"].values())) != len(values["data"]):
-            raise ValueError("Enum values must be unique.")
-        return values
-
-    @field_validator("data", mode="before")
-    @classmethod
-    def validate_enum_keys(cls, v):
-        """Validate that all keys in the enum data dictionary are valid identifiers."""
-        return {validate_identifier(k): val for k, val in v.items()}
 
 
 class ObjectType:

@@ -818,7 +818,6 @@ profiles:
                 right of the position where the negative limit switch becomes inactive.
 
                 ![Homing Method 1](./figures/homing-1-negative-switch-index.drawio)
-              key: HOMING_METHOD__NEGATIVE_SWITCH_INDEX
               value: 1
       0x6099:
         name: Homing speed
