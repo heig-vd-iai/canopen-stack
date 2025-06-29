@@ -8,7 +8,7 @@ from pydantic import (
     model_validator,
 )
 
-from .types import Access
+from . import Access
 from .units import validate_unit_string
 
 T = TypeVar("T")
