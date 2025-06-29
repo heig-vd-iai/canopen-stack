@@ -1,4 +1,5 @@
 """Model for enum types and entries."""
+
 from typing import Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator

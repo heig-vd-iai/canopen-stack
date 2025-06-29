@@ -1,4 +1,5 @@
 """Model for Markdown validation and conversion to HTML."""
+
 from typing import cast
 
 import mistune

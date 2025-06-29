@@ -2,12 +2,11 @@ import configparser
 import datetime
 import io
 import os
-#from collections import defaultdict
 
+# from collections import defaultdict
 import yaml
 
 from .tree import bst_to_array_zero_indexed, build_balanced_bst
-
 
 # def flatten_od(od):
 #     """

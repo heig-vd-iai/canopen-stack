@@ -145,11 +145,11 @@ class Device(BaseModel):
         revision = cast(Revision, self.revision)
 
         return {
-            "VendorName": vendor.name, # pylint: disable=no-member
-            "VendorNumber": vendor.number, # pylint: disable=no-member
-            "ProductName": product.name, # pylint: disable=no-member
-            "ProductNumber": product.number, # pylint: disable=no-member
-            "RevisionNumber": revision.to_int(), # pylint: disable=no-member
+            "VendorName": vendor.name,  # pylint: disable=no-member
+            "VendorNumber": vendor.number,  # pylint: disable=no-member
+            "ProductName": product.name,  # pylint: disable=no-member
+            "ProductNumber": product.number,  # pylint: disable=no-member
+            "RevisionNumber": revision.to_int(),  # pylint: disable=no-member
             "OrderCode": self.order_code,
             "LSS_Supported": int(self.lss_supported),
             **self.baudrate.to_dict_eds(),

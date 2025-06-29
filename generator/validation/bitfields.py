@@ -1,4 +1,5 @@
-""" Bitfield validation and parsing module."""
+"""Bitfield validation and parsing module."""
+
 from typing import Any, Dict, Optional, Tuple, Union
 
 from pydantic import BaseModel, Field, model_validator

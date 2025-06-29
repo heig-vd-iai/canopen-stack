@@ -1,4 +1,5 @@
 """Tests for the units validation module."""
+
 # pylint: disable=missing-function-docstring
 import pytest
 from pint import Quantity
@@ -81,7 +82,9 @@ def test_unit_from_cia_without_denominator():
 
 def test_unit_from_cia_with_denominator():
     # kilo newton / meter
-    value = (0x03 << 24) | (0x21 << 16) | (0x01 << 8)  # numerator=0x21 (N), denominator=0x01
+    value = (
+        (0x03 << 24) | (0x21 << 16) | (0x01 << 8)
+    )  # numerator=0x21 (N), denominator=0x01
     qty = unit_from_cia(value)
     assert isinstance(qty, Quantity)
     # Check that it resolves to kilonewton

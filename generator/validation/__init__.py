@@ -1,4 +1,5 @@
 """Validation models for the generator."""
+
 from .access import Access
 from .bitfields import Bitfield
 from .datatype import DATATYPES, Datatype
@@ -17,5 +18,5 @@ __export__ = [
     Markdown,
     ObjectId,
     Limits,
-    DATATYPES
+    DATATYPES,
 ]

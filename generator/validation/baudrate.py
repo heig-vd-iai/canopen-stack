@@ -9,7 +9,7 @@ class Baudrate(set):
     """Set of supported baudrates."""
 
     def __init__(self, iterable=()):
-        items = list(iterable)   # <<< FORCING evaluation
+        items = list(iterable)  # <<< FORCING evaluation
         if not all(item in CIA_BAUDRATES for item in items):
             raise ValueError(
                 f"Invalid Baudrate: {items}. Valid values are: {CIA_BAUDRATES}"

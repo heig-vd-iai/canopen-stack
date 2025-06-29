@@ -1,4 +1,5 @@
 """Unit tests for Bitfield model validation."""
+
 # pylint: disable=missing-function-docstring
 import pytest
 
@@ -29,7 +30,7 @@ def test_bitfield_invalid_range_string():
 
 def test_bitfield_invalid_key_type():
     with pytest.raises(ValueError, match="Invalid bitfield key"):
-        Bitfield({(1, 2): "InvalidKey"}) # type: ignore[arg-type]
+        Bitfield({(1, 2): "InvalidKey"})  # type: ignore[arg-type]
 
 
 def test_bitfield_value_exceeds_width():

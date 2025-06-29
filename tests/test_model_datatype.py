@@ -1,4 +1,5 @@
-""" Tests for the Datatype model and its methods. """
+"""Tests for the Datatype model and its methods."""
+
 # pylint: disable=missing-function-docstring
 import pytest
 
@@ -55,7 +56,7 @@ def test_model_validate_from_instance():
 def test_serialization_to_str():
     """Check that Datatype serializes to its name."""
     dt = Datatype.from_name("int64")
-    serialized = Datatype._serialize(dt) # pylint: disable=protected-access
+    serialized = Datatype._serialize(dt)  # pylint: disable=protected-access
     assert serialized == "int64"
 
 

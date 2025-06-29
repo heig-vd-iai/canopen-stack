@@ -34,6 +34,7 @@ class AccessorMixin(BaseModel):
 
         return self
 
+
 class InferArrayLengthMixin:
     """Mixin to infer array length from data."""
 

@@ -5,8 +5,8 @@ import warnings
 import pytest
 import semver
 
-from generator.validation.device_info import VendorProduct, Revision, Device
 from generator.validation.baudrate import Baudrate
+from generator.validation.device_info import Device, Revision, VendorProduct
 
 
 def test_vendor_product_defaults_warns():
@@ -143,6 +143,7 @@ def test_device_baudrate_dict_input():
     assert eds["BaudRate_125"] == 1
     assert eds["BaudRate_250"] == 1
     assert eds["BaudRate_500"] == 0
+
 
 def test_device_invalid_baudrate_type():
     """Device should raise on invalid baudrate type."""

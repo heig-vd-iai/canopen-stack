@@ -1,4 +1,5 @@
 """Model for CANopen objects with common attributes and validation."""
+
 from typing import (
     Annotated,
     ClassVar,
@@ -50,7 +51,8 @@ class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
 
     class Config:
-        """ Configuration for RecordEntry model."""
+        """Configuration for RecordEntry model."""
+
         extra = "forbid"
 
 
@@ -60,7 +62,8 @@ class Var(HeaderCommon, VarCommon):
     type: Literal["var"] = "var"
 
     class Config:
-        """ Configuration for Var model."""
+        """Configuration for Var model."""
+
         extra = "forbid"
 
 

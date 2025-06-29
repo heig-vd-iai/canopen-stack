@@ -1,4 +1,5 @@
 """Tests for the Markdown model and its methods."""
+
 # pylint: disable=missing-function-docstring
 import pytest
 

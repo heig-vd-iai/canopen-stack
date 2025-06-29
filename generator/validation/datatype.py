@@ -1,4 +1,5 @@
 """Model for CANopen data types."""
+
 from typing import Any, Dict, NamedTuple
 
 from pydantic import BaseModel
@@ -7,6 +8,7 @@ from pydantic_core import core_schema
 
 class DatatypeInfo(NamedTuple):
     """Information about a CANopen datatype."""
+
     name: str
     code: int
     ctype: str
@@ -48,7 +50,9 @@ class Datatype(BaseModel):
         return cls(name=dt.name, code=dt.code, ctype=dt.ctype, field=dt.field)
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source_type, handler):  # pylint: disable=arguments-differ
+    def __get_pydantic_core_schema__(
+        cls, source_type, handler
+    ):  # pylint: disable=arguments-differ
         """Get the Pydantic core schema for Datatype."""
         schema = handler(source_type)
 

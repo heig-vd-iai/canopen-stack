@@ -4,8 +4,6 @@ import warnings
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from pydantic import ValidationError
-
 from ..validation.profile import Profiles
 from .yaml_config import read_config_file
 
@@ -47,7 +45,7 @@ class ProfileLoader:
             profile_id = int(match.group(1))
             print(profile_id, file.name)
 
-            #try:
+            # try:
             raw = read_config_file(file)
 
             with warnings.catch_warnings(record=True) as w:

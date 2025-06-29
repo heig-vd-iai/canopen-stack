@@ -1,7 +1,9 @@
 """Unit tests for the Baudrate model."""
 
 import pytest
-from generator.validation.baudrate import Baudrate, CIA_BAUDRATES
+
+from generator.validation.baudrate import CIA_BAUDRATES, Baudrate
+
 
 def test_baudrate_creation_with_valid_values():
     """Test creating a Baudrate with valid baudrates."""

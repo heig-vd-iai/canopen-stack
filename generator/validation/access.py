@@ -1,4 +1,5 @@
 """Model for CANopen-style access rights."""
+
 from typing import Any
 
 from pydantic import BaseModel, model_validator
@@ -14,11 +15,7 @@ class Access(BaseModel):
         return (
             "rw"
             if self.read and self.write
-            else "r"
-            if self.read
-            else "w"
-            if self.write
-            else ""
+            else "r" if self.read else "w" if self.write else ""
         )
 
     def __repr__(self):
@@ -29,11 +26,7 @@ class Access(BaseModel):
         return (
             "rw"
             if self.read and self.write
-            else "ro"
-            if self.read
-            else "wo"
-            if self.write
-            else ""
+            else "ro" if self.read else "wo" if self.write else ""
         )
 
     @model_validator(mode="before")
