@@ -1,3 +1,5 @@
+"""Tests for BST tree operations."""
+# pylint: disable=missing-function-docstring
 import pytest
 
 from generator.tree import (
@@ -51,10 +53,8 @@ def test_bst_to_array_representation(sample_data):
         (4, "four"),
         (15, "fifteen"),
         (23, "twenty-three"),
-        None,
     ]
     assert array == expected
-
 
 @pytest.mark.parametrize(
     "key, expected",

@@ -50,6 +50,9 @@ addopts = """
 --cov-report=term-missing \
 --doctest-modules
 """
+filterwarnings = [
+    "ignore:Vendor name is set to default value"
+]
 testpaths = [
     "generator",
     "tests"
