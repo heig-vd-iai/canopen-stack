@@ -1,3 +1,4 @@
+"""Model for CANopen-style access rights."""
 from typing import Any
 
 from pydantic import BaseModel, model_validator

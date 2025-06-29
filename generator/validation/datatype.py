@@ -1,3 +1,4 @@
+"""Model for CANopen data types."""
 from typing import Any, Dict, NamedTuple
 
 from pydantic import BaseModel
@@ -5,6 +6,7 @@ from pydantic_core import core_schema
 
 
 class DatatypeInfo(NamedTuple):
+    """Information about a CANopen datatype."""
     name: str
     code: int
     ctype: str

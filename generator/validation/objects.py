@@ -1,3 +1,4 @@
+"""Model for CANopen objects with common attributes and validation."""
 from typing import (
     Annotated,
     ClassVar,
@@ -15,15 +16,8 @@ from pydantic import (
     model_validator,
 )
 
+from . import Access, Bitfield, Datatype, Enum, Limits, Markdown
 from .mixins import AccessorMixin, InferArrayLengthMixin, UnitMixin
-from .types import (
-    Access,
-    Bitfield,
-    Datatype,
-    Enum,
-    Limits,
-    Markdown,
-)
 
 
 class HeaderCommon(BaseModel):
@@ -56,6 +50,7 @@ class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
 
     class Config:
+        """ Configuration for RecordEntry model."""
         extra = "forbid"
 
 
@@ -65,6 +60,7 @@ class Var(HeaderCommon, VarCommon):
     type: Literal["var"] = "var"
 
     class Config:
+        """ Configuration for Var model."""
         extra = "forbid"
 
 
@@ -109,7 +105,7 @@ class Record(HeaderCommon):
             size_entry = RecordEntry(
                 name=self.SIZE_ENTRY_NAME,
                 datatype=Datatype.from_name("uint8"),
-                access=Access.model_validate('r'),
+                access=Access.model_validate("r"),
                 default=len(self.record),
             )
             self.record.insert(0, size_entry)
