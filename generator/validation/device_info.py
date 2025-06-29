@@ -26,49 +26,13 @@ NrOfTxPdo=2                           Uint 16
 The Device class encapsulates all the fields in a structured way.
 """
 
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 from warnings import warn
 
 import semver
 from pydantic import BaseModel, Field, field_validator, model_validator
-from pydantic_core import core_schema
 
-
-class Baudrate(set):
-    """Set of supported baudrates."""
-
-    valid_baudrates = {10, 20, 50, 125, 250, 500, 800, 1000}
-
-    def __init__(self, iterable=()):
-        if not all(item in self.valid_baudrates for item in iterable):
-            raise ValueError(
-                f"Invalid Baudrate: {iterable}. Valid values are: {self.valid_baudrates}"
-            )
-        super().__init__(item for item in iterable if item in self.valid_baudrates)
-
-    def to_dict(self) -> dict[int, bool]:
-        """Convert the Baudrate set to a dictionary."""
-        return {b: (b in self) for b in self.valid_baudrates}
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.list_schema(items_schema=core_schema.int_schema()),
-            serialization=core_schema.plain_serializer_function_ser_schema(list),
-        )
-
-    @classmethod
-    def _validate(cls, v):
-        if isinstance(v, dict):
-            # e.g. {125: True, 250: None, 300: False}
-            v = [k for k, val in v.items() if val is not False]
-        elif not isinstance(v, (list, set, tuple)):
-            raise TypeError(f"Invalid Baudrate input: {v}")
-        return cls(v)
-
-    def __repr__(self):
-        return f"Baudrate({', '.join(map(str, sorted(self)))})"
+from .baudrate import Baudrate
 
 
 class VendorProduct(BaseModel):
@@ -175,15 +139,20 @@ class Device(BaseModel):
 
     def to_eds_dict(self) -> dict:
         """Convert the device information to a dictionary suitable for EDS."""
+
+        vendor = cast(VendorProduct, self.vendor)
+        product = cast(VendorProduct, self.product)
+        revision = cast(Revision, self.revision)
+
         return {
-            "VendorName": self.vendor.name,
-            "VendorNumber": self.vendor.number,
-            "ProductName": self.product.name,
-            "ProductNumber": self.product.number,
-            "RevisionNumber": self.revision.to_int(),
+            "VendorName": vendor.name, # pylint: disable=no-member
+            "VendorNumber": vendor.number, # pylint: disable=no-member
+            "ProductName": product.name, # pylint: disable=no-member
+            "ProductNumber": product.number, # pylint: disable=no-member
+            "RevisionNumber": revision.to_int(), # pylint: disable=no-member
             "OrderCode": self.order_code,
             "LSS_Supported": int(self.lss_supported),
-            **self.baudrate.to_dict(),
+            **self.baudrate.to_dict_eds(),
             "SimpleBootUpSlave": int(self.simple_bootup_slave),
             "SimpleBootUpMaster": int(self.simple_bootup_master),
             "Granularity": self.granularity,

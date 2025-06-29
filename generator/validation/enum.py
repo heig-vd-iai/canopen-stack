@@ -1,3 +1,4 @@
+"""Model for enum types and entries."""
 from typing import Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -28,7 +29,7 @@ class RangeValidatorMixin:
                 raise ValueError(
                     f"In {field_name}, the first integer must be <= the second. Got: {item}"
                 )
-        return [tuple(item) for item in v]
+        return v
 
 
 class EnumEntry(BaseModel):
@@ -48,12 +49,13 @@ class Enum(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def validate_enum_data(cls, values):
+        """Validate the enum data structure."""
         data = values.get("data")
         if not isinstance(data, dict):
             raise ValueError("Enum data must be a dictionary.")
 
         seen_values = set()
-        for key, entry in data.items():
+        for entry in data.values():
             if isinstance(entry, dict):
                 val = entry.get("value")
             elif isinstance(entry, EnumEntry):
@@ -74,6 +76,7 @@ class Enum(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
+
 class EnumEntryProfile(EnumEntry):
     """Enum entry with additional profile constraints."""
 
@@ -88,4 +91,5 @@ class EnumProfile(Enum, RangeValidatorMixin):
     @field_validator("allow_override", mode="before")
     @classmethod
     def validate_allow_override(cls, v):
+        """Validate the allow_override field."""
         return cls._validate_range_list(v, "allow_override")

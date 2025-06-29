@@ -1,3 +1,5 @@
+"""Unit tests for Bitfield model validation."""
+# pylint: disable=missing-function-docstring
 import pytest
 
 from generator.validation.bitfields import Bitfield
@@ -27,7 +29,7 @@ def test_bitfield_invalid_range_string():
 
 def test_bitfield_invalid_key_type():
     with pytest.raises(ValueError, match="Invalid bitfield key"):
-        Bitfield({(1, 2): "InvalidKey"})
+        Bitfield({(1, 2): "InvalidKey"}) # type: ignore[arg-type]
 
 
 def test_bitfield_value_exceeds_width():
@@ -76,7 +78,8 @@ def test_bitfield_with_invalid_value_type():
 
 
 def test_bitfield_overlapping_ranges():
-    bf1 = Bitfield({"7..5": "FLAG1", "6..4": "FLAG2"})  # chevauchement : bit 6
+    with pytest.raises(ValueError, match="overlapping"):
+        Bitfield({"7..5": "FLAG1", "6..4": "FLAG2"})
 
 
 def test_bitfield_duplicate_names_allowed():

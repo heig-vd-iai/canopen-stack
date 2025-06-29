@@ -85,9 +85,9 @@ class Bitfield(BaseModel):
     entries: Dict[Tuple[int, int], BitfieldEntry]
 
     def __init__(self, data: Dict[Union[str, int], Any]):
-        # parse the raw dict directly
         parsed = self._parse_bitfield(data)
         super().__init__(entries=parsed)
+        self._check_no_overlap()
 
     @staticmethod
     def _parse_bitfield(
@@ -137,3 +137,14 @@ class Bitfield(BaseModel):
             key = f"{start}" if start == end else f"{start}..{end}"
             output[key] = entry.model_dump()
         return output
+
+    def _check_no_overlap(self):
+        """
+        Check that no bit ranges overlap.
+        """
+        occupied_bits = set()
+        for (start, end), entry in self.entries.items():
+            for bit in range(end, start + 1):
+                if bit in occupied_bits:
+                    raise ValueError(f"Bit {bit} is overlapping in multiple ranges.")
+                occupied_bits.add(bit)
