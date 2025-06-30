@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any, ClassVar, Generic, Optional, TypeVar
+from typing import Any, ClassVar, Generic, Optional, TypeVar, Union
 
 from pydantic import (
     BaseModel,
@@ -17,7 +17,7 @@ T = TypeVar("T")
 class AccessorMixin(BaseModel):
     """Mixin for accessor validation."""
 
-    access: Access = Field(default_factory=Access)
+    access: Union[Access, str, dict[str, Any]] = Field(default_factory=Access)
     get: Optional[str] = None
     set: Optional[str] = None
 
@@ -27,6 +27,11 @@ class AccessorMixin(BaseModel):
         If 'access' is not explicitly set (rw/ro/wo),
         infer from presence of get/set.
         """
+        # Force conversion if still str or dict
+        if not isinstance(self.access, Access):
+            self.access = Access.model_validate(self.access)
+
+
         # Do not override explicit access
         if not self.access.read and not self.access.write:
             object.__setattr__(self.access, "read", self.get is not None)

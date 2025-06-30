@@ -7,6 +7,7 @@ from .device_info import Device
 from .enum import Enum, EnumEntry
 from .markdown import Markdown
 from .types import Limits, ObjectId
+from .var import Var
 
 __export__ = [
     Bitfield,
@@ -16,6 +17,7 @@ __export__ = [
     Datatype,
     Device,
     Markdown,
+    Var,
     ObjectId,
     Limits,
     DATATYPES,
