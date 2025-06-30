@@ -6,7 +6,7 @@ from typing import Union, cast
 
 import yaml
 
-from ..validation.file_info import FileInfo
+from ..validation.models.file_info import FileInfo
 from .git import GitInfo
 
 

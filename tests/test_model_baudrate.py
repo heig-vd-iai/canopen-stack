@@ -2,7 +2,7 @@
 
 import pytest
 
-from generator.validation.baudrate import CIA_BAUDRATES, Baudrate
+from generator.validation.models.baudrate import CIA_BAUDRATES, Baudrate
 
 
 def test_baudrate_creation_with_valid_values():

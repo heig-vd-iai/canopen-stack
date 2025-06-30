@@ -10,10 +10,9 @@ from pydantic import (
     model_validator,
 )
 
-from .mixins import MappingRootMixin
-from .objects import ArrayEntry, BaseArray, Record, RecordEntry, Var
-from .types import Enum, Markdown
-from .validators import validate_identifier
+from . import ArrayEntry, BaseArray, Enum, Markdown, Record, RecordEntry, Var
+from .models.mixins import MappingRootMixin
+from .models.validators import validate_identifier
 
 
 class EnumProfile(Enum):

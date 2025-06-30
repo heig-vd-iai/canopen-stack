@@ -1,16 +1,17 @@
 """Validation models for the generator."""
 
-from .access import Access
-from .array import Array, ArrayEntry, BaseArray
-from .bitfields import Bitfield
-from .datatype import DATATYPES, Datatype
-from .device_info import Device
-from .domain import Domain
-from .enum import Enum, EnumEntry
-from .markdown import Markdown
-from .record import Record, RecordEntry
-from .types import Limits, ObjectId
-from .var import Var
+from .models.access import Access
+from .models.array import Array, ArrayEntry, BaseArray
+from .models.bitfields import Bitfield
+from .models.datatype import DATATYPES, Datatype
+from .models.device_info import Device
+from .models.domain import Domain
+from .models.enum import Enum, EnumEntry
+from .models.limits import Limits
+from .models.markdown import Markdown
+from .models.record import Record, RecordEntry
+from .models.types import ObjectId
+from .models.var import Var
 
 __export__ = [
     Access,

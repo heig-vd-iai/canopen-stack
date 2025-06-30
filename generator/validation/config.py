@@ -1,23 +1,11 @@
 """Validation schema for the config.yaml file."""
 
-from typing import (
-    Annotated,
-    Any,
-    Dict,
-    List,
-    Union,
-)
+from typing import Annotated, Any, Dict, List, Union
 
-from pydantic import (
-    BaseModel,
-    Field,
-    RootModel,
-    model_validator,
-)
+from pydantic import BaseModel, Field, RootModel, model_validator
 
-from .device_info import Device
-from .mixins import MappingRootMixin
-from .objects import Array, Record, Var
+from . import Array, Device, Record, Var
+from .models.mixins import MappingRootMixin
 
 ObjectType = Annotated[Union[Var, Array, Record], Field(discriminator="type")]
 

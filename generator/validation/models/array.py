@@ -11,9 +11,9 @@ from typing import (
 from pydantic import BaseModel, Field, field_validator
 
 from .enum import Enum
+from .limits import Limits
 from .mixins import AccessorMixin, InferArrayLengthMixin, UnitMixin
 from .object_common import HeaderCommon, VarCommon
-from .types import Limits
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):

@@ -4,7 +4,7 @@
 import pytest
 from pint import Quantity
 
-from generator.validation.units import (
+from generator.validation.models.units import (
     resolve_quantity,
     unit_from_cia,
     ureg,

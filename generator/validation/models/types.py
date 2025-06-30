@@ -1,8 +1,6 @@
 """Types definitions according to the CiA 301 specification."""
 
-from typing import ClassVar, Dict, Optional, Union
-
-from pydantic import BaseModel
+from typing import ClassVar, Dict
 
 
 class ObjectId(int):
@@ -29,14 +27,6 @@ class ObjectId(int):
             return self.subindex
         else:
             raise KeyError(f"Invalid key: {item}")
-
-
-class Limits(BaseModel):
-    """Limits for variable types."""
-
-    min: Optional[Union[int, float]] = None
-    max: Optional[Union[int, float]] = None
-
 
 class ObjectType:
     """Class to represent object values."""

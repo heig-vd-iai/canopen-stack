@@ -4,7 +4,7 @@
 import pytest
 from pydantic import ValidationError
 
-from generator.validation.enum import Enum, EnumEntry, EnumEntryProfile, EnumProfile
+from generator.validation.models.enum import Enum, EnumEntry, EnumEntryProfile, EnumProfile
 
 
 def test_enum_entry_creation():

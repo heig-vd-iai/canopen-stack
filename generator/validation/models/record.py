@@ -2,7 +2,8 @@ from typing import ClassVar, List, Literal
 
 from pydantic import ConfigDict, model_validator
 
-from . import Access, Datatype
+from .access import Access
+from .datatype import Datatype
 from .object_common import HeaderCommon, VarCommon
 
 

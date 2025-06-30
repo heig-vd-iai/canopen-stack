@@ -3,7 +3,7 @@
 # pylint: disable=missing-function-docstring
 import pytest
 
-from generator.validation.bitfields import Bitfield
+from generator.validation.models.bitfields import Bitfield
 
 
 def test_bitfield_single_bit():

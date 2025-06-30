@@ -13,9 +13,9 @@ from pydantic import (
 from .bitfields import Bitfield
 from .datatype import Datatype
 from .enum import Enum
+from .limits import Limits
 from .markdown import Markdown
 from .mixins import AccessorMixin, UnitMixin
-from .types import Limits
 
 
 class HeaderCommon(BaseModel):

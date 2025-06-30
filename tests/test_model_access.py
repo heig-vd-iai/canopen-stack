@@ -3,7 +3,7 @@
 # pylint: disable=missing-function-docstring
 import pytest
 
-from generator.validation.access import Access
+from generator.validation.models.access import Access
 
 
 def test_access_default_values():

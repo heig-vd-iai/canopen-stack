@@ -5,8 +5,8 @@ import warnings
 import pytest
 import semver
 
-from generator.validation.baudrate import Baudrate
-from generator.validation.device_info import Device, Revision, VendorProduct
+from generator.validation.models.baudrate import Baudrate
+from generator.validation.models.device_info import Device, Revision, VendorProduct
 
 
 def test_vendor_product_defaults_warns():
