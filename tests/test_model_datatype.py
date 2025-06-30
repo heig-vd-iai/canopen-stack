@@ -69,3 +69,33 @@ def test_field_content(name):
     assert dt.code == info.code
     assert dt.ctype == info.ctype
     assert dt.field == info.field
+
+
+def test_preprocess_datatype_instance():
+    dt = Datatype.from_name("int16")
+    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
+    preproc = schema["validator"]
+    result = preproc(dt)
+    assert result is dt
+
+
+def test_preprocess_string_valid():
+    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
+    preproc = schema["validator"]
+    result = preproc("int16")
+    assert isinstance(result, Datatype)
+    assert result.name == "int16"
+
+
+def test_preprocess_dict_passthrough():
+    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
+    preproc = schema["validator"]
+    d = {"foo": "bar"}
+    result = preproc(d)
+    assert result == d
+
+
+def test_serialize_returns_name():
+    dt = Datatype.from_name("float32")
+    s = Datatype._serialize(dt)
+    assert s == "float32"

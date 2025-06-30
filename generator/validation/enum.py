@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Tuple
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .validators import validate_identifier
 
@@ -47,33 +47,35 @@ class Enum(BaseModel):
     class_: str = Field(..., alias="class")
     data: Dict[str, EnumEntry]
 
-    @model_validator(mode="before")
-    @classmethod
-    def validate_enum_data(cls, values):
-        """Validate the enum data structure."""
-        data = values.get("data")
-        if not isinstance(data, dict):
-            raise ValueError("Enum data must be a dictionary.")
-
-        seen_values = set()
-        for entry in data.values():
-            if isinstance(entry, dict):
-                val = entry.get("value")
-            elif isinstance(entry, EnumEntry):
-                val = entry.value
-            else:
-                raise ValueError(f"Invalid enum entry: {entry}")
-            if val in seen_values:
-                raise ValueError("Enum values must be unique.")
-            seen_values.add(val)
-
-        return values
-
     @field_validator("data", mode="before")
     @classmethod
     def validate_enum_keys(cls, v):
-        """Ensure all dictionary keys are valid identifiers."""
-        return {validate_identifier(k): val for k, val in v.items()}
+        if not isinstance(v, dict):
+            raise ValueError("Enum data must be a dictionary.")
+
+        new_data = {}
+        seen_values = set()
+
+        for k, val in v.items():
+            key = validate_identifier(k)
+
+            if isinstance(val, int):
+                new_entry = {"name": key, "value": val, "description": None}
+            elif isinstance(val, dict):
+                new_entry = val
+            elif isinstance(val, EnumEntry):
+                new_entry = val.model_dump()
+            else:
+                raise ValueError(f"Invalid enum entry for key {key}: {val}")
+
+            val_value = new_entry["value"]
+            if val_value in seen_values:
+                raise ValueError(f"Duplicate enum value: {val_value}")
+            seen_values.add(val_value)
+
+            new_data[key] = new_entry
+
+        return new_data
 
     model_config = ConfigDict(populate_by_name=True)
 

@@ -10,8 +10,12 @@ from pydantic import (
     StringConstraints,
 )
 
-from . import Bitfield, Datatype, Enum, Limits, Markdown
+from .bitfields import Bitfield
+from .datatype import Datatype
+from .enum import Enum
+from .markdown import Markdown
 from .mixins import AccessorMixin, UnitMixin
+from .types import Limits
 
 
 class HeaderCommon(BaseModel):
@@ -34,6 +38,7 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
 
     datatype: Union[Datatype, str]
     limits: Limits = Limits()
+    unit: Optional[str] = None
     pdo: bool = False
     enum: Optional[Enum] = None
     default: Union[int, float] = 0

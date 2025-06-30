@@ -43,7 +43,7 @@ def test_enum_duplicate_values_should_fail():
                 "ALSO_ONE": EnumEntry(name="ALSO_ONE", value=1),
             },
         )  # type: ignore[call-arg]
-    assert "Enum values must be unique" in str(exc_info.value)
+    assert "Duplicate enum value" in str(exc_info.value)
 
 
 def test_enum_invalid_key_should_fail():
@@ -95,3 +95,28 @@ def test_enum_profile_non_integer_override():
             allow_override=[("a", "b")],
         )  # type: ignore[call-arg]
     assert "must be integers" in str(exc_info.value)
+
+
+def test_enum_from_dict():
+    e = Enum(
+        **{
+            "class": "TestEnum",
+            "data": {
+                "FOO": {"name": "A", "value": 1},
+                "BAR": {"name": "B", "value": 2, "description": "Test description"},
+            },
+        }
+    )
+    assert e.class_ == "TestEnum"
+    assert e.data["FOO"].name == "A"
+    assert e.data["BAR"].name == "B"
+    assert e.data["BAR"].description == "Test description"
+
+
+def test_enum_from_dict_with_string():
+    e = Enum(**{"class": "TestEnum", "data": {"FOO": 1, "BAR": 2}})
+    assert e.class_ == "TestEnum"
+    assert e.data["FOO"].name == "FOO"
+    assert e.data["FOO"].value == 1
+    assert e.data["BAR"].value == 2
+    assert e.data["BAR"].description is None

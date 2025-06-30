@@ -16,10 +16,7 @@ from generator.validation import (
 def test_var_minimal():
     """Test Var creation with minimal fields."""
 
-    var = Var(
-        name="myVar",
-        datatype="uint16"
-    )
+    var = Var(name="myVar", datatype="uint16")
 
     assert var.type == "var"
     assert var.name == "myVar"
@@ -47,28 +44,22 @@ def test_var_minimal():
 def test_var_full():
     """Test Var with all optional fields filled."""
 
-    enum = Enum(**{
-        "class":"TestEnum",
-        "data": {
-            "FIRST": {
-                "name": "FIRST",
-                "value": 1,
-                "description": "First value"
+    enum = Enum(
+        **{
+            "class": "TestEnum",
+            "data": {
+                "FIRST": {"name": "FIRST", "value": 1, "description": "First value"},
+                "SECOND": {"name": "SECOND", "value": 2},
             },
-            "SECOND": {
-                "name": "SECOND",
-                "value": 2
-            },
-        },
-    })
-
-    bitfield = Bitfield({
-        "31..16": "StatusHigh",
-        "15..0": {
-            "name": "StatusLow",
-            "values": {0: "OFF", 1: "ON"}
         }
-    })
+    )
+
+    bitfield = Bitfield(
+        {
+            "31..16": "StatusHigh",
+            "15..0": {"name": "StatusLow", "values": {0: "OFF", 1: "ON"}},
+        }
+    )
 
     var = Var(
         name="FullVar",
@@ -86,7 +77,7 @@ def test_var_full():
         scale=0.001,
         access="r",
         get="read_func",
-        set="write_func"
+        set="write_func",
     )
 
     assert var.name == "FullVar"
@@ -116,11 +107,7 @@ def test_var_invalid_path():
     """Test that invalid path raises validation error."""
 
     with pytest.raises(ValidationError) as exc_info:
-        Var(
-            name="BadPathVar",
-            datatype="uint8",
-            path="invalid path with spaces"
-        )
+        Var(name="BadPathVar", datatype="uint8", path="invalid path with spaces")
     assert "String should match pattern" in str(exc_info.value)
 
 
@@ -128,11 +115,7 @@ def test_var_forbid_extra_fields():
     """Test that extra fields raise a validation error."""
 
     with pytest.raises(ValidationError) as exc_info:
-        Var(
-            name="ExtraFieldVar",
-            datatype="uint8",
-            foo="bar" # type: ignore
-        )
+        Var(name="ExtraFieldVar", datatype="uint8", foo="bar")  # type: ignore
     assert "Extra inputs are not permitted" in str(exc_info.value)
 
 
@@ -154,10 +137,12 @@ def test_var_bitfield_overlap():
     """Test that overlapping bitfields raise error."""
 
     with pytest.raises(ValueError) as exc_info:
-        Bitfield({
-        "31..16": "Field1",
-        "20..10": "Field2",  # overlaps with previous range
-    })
+        Bitfield(
+            {
+                "31..16": "Field1",
+                "20..10": "Field2",  # overlaps with previous range
+            }
+        )
 
     assert "overlapping" in str(exc_info.value)
 

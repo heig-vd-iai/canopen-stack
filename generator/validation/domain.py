@@ -1,4 +1,5 @@
 """Model for CANopen objects with common attributes and validation."""
+
 from typing import Annotated, Dict, Literal
 
 from pydantic import Field

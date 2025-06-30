@@ -13,9 +13,10 @@ from pydantic import (
     Field,
 )
 
-from . import Enum, Limits
+from .enum import Enum
 from .mixins import AccessorMixin, InferArrayLengthMixin, UnitMixin
 from .object_common import HeaderCommon, VarCommon
+from .types import Limits
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, BaseModel):

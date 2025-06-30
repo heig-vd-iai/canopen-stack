@@ -31,7 +31,6 @@ class AccessorMixin(BaseModel):
         if not isinstance(self.access, Access):
             self.access = Access.model_validate(self.access)
 
-
         # Do not override explicit access
         if not self.access.read and not self.access.write:
             object.__setattr__(self.access, "read", self.get is not None)

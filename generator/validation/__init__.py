@@ -1,6 +1,7 @@
 """Validation models for the generator."""
 
 from .access import Access
+from .array import Array, ArrayEntry, BaseArray
 from .bitfields import Bitfield
 from .datatype import DATATYPES, Datatype
 from .device_info import Device
@@ -10,15 +11,18 @@ from .types import Limits, ObjectId
 from .var import Var
 
 __export__ = [
-    Bitfield,
-    Enum,
     Access,
-    EnumEntry,
+    Array,
+    ArrayEntry,
+    BaseArray,
+    Bitfield,
     Datatype,
-    Device,
-    Markdown,
-    Var,
-    ObjectId,
-    Limits,
     DATATYPES,
+    Device,
+    Enum,
+    EnumEntry,
+    Limits,
+    Markdown,
+    ObjectId,
+    Var,
 ]

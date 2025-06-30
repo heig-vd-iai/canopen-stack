@@ -44,7 +44,7 @@ def test_array_minimal():
     array = Array(
         name="MyArray",
         datatype="int8",
-        unit: "m/s",
+        unit= "m/s",
         data=[
             {"name": "Entry1", "get": "foobar", "set": "baz"},
             {"name": "Entry2", "default": 42},
