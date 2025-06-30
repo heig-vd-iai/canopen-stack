@@ -20,37 +20,48 @@ class Markdown(str):
 
     @classmethod
     def validate(cls, value):
-        """Validate the input value as Markdown and run linter."""
+        """Validate the input value as Markdown and run linter, allowing some relaxed rules."""
         if isinstance(value, cls):
             return value
 
         if not isinstance(value, str):
             raise TypeError("Markdown must be a string.")
 
-        # Check that it parses correctly with mistune
+        # Ensure it parses as Markdown
         mistune.create_markdown()(value)
 
-        # Run pymarkdown linter
         api = PyMarkdownApi()
         lint_result = api.scan_string(value)
 
-        if lint_result.pragma_errors:
-            errors = [
-                f"PRAGMA error in {pe.file_path} at line {pe.line_number}: {pe.pragma_error}"
-                for pe in lint_result.pragma_errors
-            ]
-            raise ValueError("Markdown pragma errors detected:\n" + "\n".join(errors))
+        # We will store whether we modified the string
+        modified_value = value
 
-        if lint_result.scan_failures:
+        # Ignore MD041 (first-line-heading) entirely
+        filtered_scan_failures = []
+        for sf in lint_result.scan_failures:
+            if sf.rule_id == "MD041":
+                continue
+            elif sf.rule_id == "MD047":
+                # Automatically fix missing trailing newline
+                if not modified_value.endswith('\n'):
+                    modified_value += '\n'
+            else:
+                filtered_scan_failures.append(sf)
+
+        if filtered_scan_failures:
             errors = [
                 f"{sf.rule_id} {sf.rule_name} "
                 f"(line {sf.line_number}, col {sf.column_number}) in {sf.scan_file}: "
                 f"{sf.extra_error_information or sf.rule_description}"
-                for sf in lint_result.scan_failures
+                for sf in filtered_scan_failures
             ]
             raise ValueError("Markdown lint errors detected:\n" + "\n".join(errors))
 
-        return cls(value)
+        # If we modified the value (e.g. added trailing newline), check that it parses again
+        if modified_value != value:
+            mistune.create_markdown()(modified_value)
+
+        return cls(modified_value)
 
     @classmethod
     def __get_pydantic_core_schema__(cls, *_):

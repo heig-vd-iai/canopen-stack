@@ -1,8 +1,9 @@
 """Validation schema for the config.yaml file."""
 
-from typing import Annotated, Any, Dict, List, Union
+from typing import Annotated, Any, Dict, List, Tuple, Union
 
-from pydantic import BaseModel, Field, RootModel, model_validator
+from pydantic import BaseModel, Field, RootModel, ValidationError, model_validator
+from pydantic_core import ErrorDetails
 
 from . import Array, Device, Record, Var
 from .models.mixins import MappingRootMixin
@@ -57,5 +58,11 @@ class SchemaConfig(BaseModel):
     objects: Objects
 
 
-def Config(config_file):
-    return SchemaConfig.model_validate(config_file)
+def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
+    obj = None
+    errors = []
+    try:
+        obj = SchemaConfig.model_validate(config_data)
+    except ValidationError as e:
+        errors = e.errors()
+    return obj, errors

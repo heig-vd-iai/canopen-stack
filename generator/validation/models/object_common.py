@@ -8,6 +8,7 @@ from pydantic import (
     BaseModel,
     Field,
     StringConstraints,
+    field_validator, model_validator
 )
 
 from .bitfields import Bitfield
@@ -41,5 +42,34 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
     unit: Optional[str] = None
     pdo: bool = False
     enum: Optional[Enum] = None
-    default: Union[int, float] = 0
+    default: Union[int, float, str] = 0
     bitfield: Optional[Bitfield] = None
+
+    @model_validator(mode="after")
+    def check_default_type(self) -> "VarCommon":
+        # Convert Datatype enum to string if necessary
+        dt_str = str(self.datatype).lower()
+
+        if dt_str.startswith(("int", "uint")):
+            if not isinstance(self.default, int):
+                raise ValueError(
+                    f"default should be of type int when datatype is '{self.datatype}', "
+                    f"got {type(self.default).__name__}"
+                )
+        elif "float" in dt_str:
+            if not isinstance(self.default, float):
+                raise ValueError(
+                    f"default should be of type float when datatype is '{self.datatype}', "
+                    f"got {type(self.default).__name__}"
+                )
+        elif "string" in dt_str:
+            if not isinstance(self.default, str):
+                raise ValueError(
+                    f"default should be of type str when datatype is '{self.datatype}', "
+                    f"got {type(self.default).__name__}"
+                )
+        # If datatype doesn't match any of the above, optionally ignore or raise
+        else:
+            pass  # Or raise an error if datatype must be known
+
+        return self

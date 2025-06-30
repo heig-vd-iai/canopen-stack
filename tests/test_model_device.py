@@ -3,7 +3,12 @@ from warnings import catch_warnings, simplefilter
 import pytest
 import semver
 
-from generator.validation.models.device_info import Baudrate, Device, Revision, VendorProduct
+from generator.validation.models.device_info import (
+    Baudrate,
+    Device,
+    Revision,
+    VendorProduct,
+)
 
 
 def test_baudrate_valid():
