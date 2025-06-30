@@ -21,3 +21,12 @@ def resolve_inheritance(objects: dict) -> dict:
         return merged
 
     return {idx: resolve(idx, set()) for idx in objects}
+
+
+def infer_object_type(obj: dict) -> str:
+    if "length" in obj or "data" in obj:
+        return "array"
+    elif "record" in obj:
+        return "record"
+    else:
+        return "var"

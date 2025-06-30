@@ -43,8 +43,8 @@ class Markdown(str):
                 continue
             elif sf.rule_id == "MD047":
                 # Automatically fix missing trailing newline
-                if not modified_value.endswith('\n'):
-                    modified_value += '\n'
+                if not modified_value.endswith("\n"):
+                    modified_value += "\n"
             else:
                 filtered_scan_failures.append(sf)
 

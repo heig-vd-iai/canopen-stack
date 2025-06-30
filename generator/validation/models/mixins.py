@@ -1,5 +1,8 @@
+"""Various mixins for Pydantic models to handle access control,
+mapping behavior, and unit validation."""
+
 from collections.abc import Mapping
-from typing import Any, ClassVar, Generic, Optional, TypeVar, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 from pydantic import (
     BaseModel,
@@ -37,53 +40,6 @@ class AccessorMixin(BaseModel):
             object.__setattr__(self.access, "write", self.set is not None)
 
         return self
-
-
-class InferArrayLengthMixin:
-    """Mixin to infer array length from data."""
-
-    length: Optional[int]
-    data: list
-
-    ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
-
-    @model_validator(mode="after")
-    def _infer_length_from_data(self) -> Any:
-        entry_count = len(self.data)
-        if self.length is None:
-            self.length = entry_count
-        elif self.length < entry_count:
-            raise ValueError(
-                f"Inconsistent array length: length={self.length} but data has {entry_count} entries."
-            )
-
-        if entry_count == 0 or not self._has_subindex_0():
-            entry = self._make_subindex_0(self.length)
-            self.data.insert(0, entry)
-
-        return self
-
-    def _has_subindex_0(self) -> bool:
-        if not self.data:
-            return False
-        maybe = self.data[0]
-        if isinstance(maybe, dict):
-            return maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
-        elif hasattr(maybe, "name"):
-            return maybe.name == self.ARRAY_SIZE_ENTRY_NAME
-        return False
-
-    def _make_subindex_0(self, value: int) -> Any:
-        """Create the subindex 0 structure (as dict or model depending on context)."""
-        from .array import ArrayEntry
-
-        return ArrayEntry(
-            name=self.ARRAY_SIZE_ENTRY_NAME,
-            datatype="uint8",
-            type="var",
-            access="r",
-            default=value,
-        )
 
 
 class MappingRootMixin(Mapping, Generic[T]):

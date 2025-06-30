@@ -1,19 +1,15 @@
-from typing import (
-    Annotated,
-    Optional,
-    Union,
-)
+from typing import Annotated, List, Literal, Optional, Union
 
 from pydantic import (
     BaseModel,
     Field,
     StringConstraints,
-    field_validator, model_validator
+    model_validator,
 )
 
 from .bitfields import Bitfield
 from .datatype import Datatype
-from .enum import Enum
+from .enum import Enum, EnumProfile
 from .limits import Limits
 from .markdown import Markdown
 from .mixins import AccessorMixin, UnitMixin
@@ -47,7 +43,7 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
 
     @model_validator(mode="after")
     def check_default_type(self) -> "VarCommon":
-        # Convert Datatype enum to string if necessary
+        """Validate the type of the default value based on the datatype."""
         dt_str = str(self.datatype).lower()
 
         if dt_str.startswith(("int", "uint")):
@@ -58,10 +54,13 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
                 )
         elif "float" in dt_str:
             if not isinstance(self.default, float):
-                raise ValueError(
-                    f"default should be of type float when datatype is '{self.datatype}', "
-                    f"got {type(self.default).__name__}"
-                )
+                if self.default == 0:
+                    self.default = 0.0
+                else:
+                    raise ValueError(
+                        f"default should be of type float when datatype is '{self.datatype}', "
+                        f"got {type(self.default).__name__}"
+                    )
         elif "string" in dt_str:
             if not isinstance(self.default, str):
                 raise ValueError(
@@ -73,3 +72,17 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
             pass  # Or raise an error if datatype must be known
 
         return self
+
+
+class HeaderCommonProfile(HeaderCommon):
+    pass
+
+
+class VarCommonProfile(VarCommon):
+    """Variable profile with additional information."""
+
+    enum: Optional[EnumProfile] = None
+    category: Literal["conditional", "optional", "mandatory"] = Field(
+        default="optional"
+    )
+    mandatory_conditions: List[str] = Field(default_factory=list)

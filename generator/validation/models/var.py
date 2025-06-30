@@ -1,3 +1,5 @@
+"""CANopen variable object model."""
+
 from typing import Literal
 
 from pydantic import ConfigDict
@@ -11,3 +13,9 @@ class Var(HeaderCommon, VarCommon):
     type: Literal["var"] = "var"
 
     model_config = ConfigDict(extra="forbid")
+
+
+class VarProfile(Var):
+    """Variable profile with additional information."""
+
+    pass

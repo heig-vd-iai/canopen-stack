@@ -2,17 +2,19 @@
 
 from typing import (
     Annotated,
+    Any,
+    ClassVar,
     List,
     Literal,
     Optional,
     Union,
 )
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from .enum import Enum
+from .enum import Enum, EnumProfile
 from .limits import Limits
-from .mixins import AccessorMixin, InferArrayLengthMixin, UnitMixin
+from .mixins import AccessorMixin, UnitMixin
 from .object_common import HeaderCommon, VarCommon
 
 
@@ -22,6 +24,52 @@ class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
     limits: Limits = Limits()
     enum: Optional[Enum] = None
     default: Union[int, float] = 0
+
+
+class InferArrayLengthMixin:
+    """Mixin to infer array length from data."""
+
+    length: Optional[int]
+    data: list
+
+    ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
+
+    @model_validator(mode="after")
+    def _infer_length_from_data(self) -> Any:
+        entry_count = len(self.data)
+        if self.length is None:
+            self.length = entry_count
+        elif self.length < entry_count:
+            raise ValueError(
+                f"Inconsistent array length: length={self.length} but data has {entry_count} entries."
+            )
+
+        if entry_count == 0 or not self._has_subindex_0():
+            entry = self._make_subindex_0(self.length)
+            self.data.insert(0, entry)
+
+        return self
+
+    def _has_subindex_0(self) -> bool:
+        if not self.data:
+            return False
+        maybe = self.data[0]
+        if isinstance(maybe, dict):
+            return maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
+        elif hasattr(maybe, "name"):
+            return maybe.name == self.ARRAY_SIZE_ENTRY_NAME
+        return False
+
+    def _make_subindex_0(self, value: int) -> Any:
+        """Create the subindex 0 structure (as dict or model depending on context)."""
+
+        return ArrayEntry(
+            name=self.ARRAY_SIZE_ENTRY_NAME,
+            datatype="uint8",
+            type="var",
+            access="r",
+            default=value,
+        )
 
 
 class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
@@ -39,6 +87,7 @@ class Array(BaseArray):
     @field_validator("data", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
+        """Ensure that the data is a list of ArrayEntry objects."""
         if v is None:
             return []
         if not isinstance(v, list):
@@ -58,3 +107,15 @@ class Array(BaseArray):
                 result.append(ArrayEntry(**item_data))
 
         return result
+
+
+class ArrayEntryProfile(ArrayEntry):
+    """Array entry profile with additional information."""
+
+    enum: Optional[Union[Enum, EnumProfile]] = None
+
+
+class ArrayProfile(BaseArray):
+    """Array profile with additional information."""
+
+    data: List[ArrayEntryProfile] = []

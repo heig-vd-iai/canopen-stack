@@ -136,7 +136,7 @@ profiles:
             description:
               0: CANopen device does not save parameters autonomously
               1: CANopen device saves parameters autonomously
-        data:
+        array:
           - name: Save all parameters
           - name: Save communication parameters
           - name: Save application parameters
@@ -154,7 +154,7 @@ profiles:
             description:
               0: CANopen device does not save parameters on command
               1: CANopen device saves parameters on command
-        data:
+        array:
           - name: Restore all parameters
           - name: Restore communication parameters
           - name: Restore application parameters

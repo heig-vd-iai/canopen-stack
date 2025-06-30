@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, RootModel, ValidationError, model_validat
 from pydantic_core import ErrorDetails
 
 from . import Array, Device, Record, Var
+from .helpers import infer_object_type
 from .models.mixins import MappingRootMixin
 
 ObjectType = Annotated[Union[Var, Array, Record], Field(discriminator="type")]
@@ -39,13 +40,7 @@ class Objects(MappingRootMixin[ObjectType], RootModel[Dict[int, ObjectType]]):
         v = {idx: resolve(idx, set()) for idx in v}
 
         for obj in v.values():
-            if "type" not in obj:
-                if "length" in obj or "data" in obj:
-                    obj["type"] = "array"
-                elif "record" in obj:
-                    obj["type"] = "record"
-                else:
-                    obj["type"] = "var"
+            obj.setdefault("type", infer_object_type(obj))
 
         return v
 
@@ -59,6 +54,7 @@ class SchemaConfig(BaseModel):
 
 
 def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
+    """Validate the configuration data against the SchemaConfig model."""
     obj = None
     errors = []
     try:

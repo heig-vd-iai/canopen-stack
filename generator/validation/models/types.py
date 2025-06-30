@@ -28,6 +28,7 @@ class ObjectId(int):
         else:
             raise KeyError(f"Invalid key: {item}")
 
+
 class ObjectType:
     """Class to represent object values."""
 

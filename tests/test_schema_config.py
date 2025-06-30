@@ -1,11 +1,12 @@
 """Tests for the Access model and its methods."""
+
 # pylint: disable=missing-function-docstring
 from typing import cast
 
 import pytest
 
 from generator.validation import Datatype, Var
-from generator.validation.config import SchemaConfig, Config
+from generator.validation.config import Config, SchemaConfig
 
 
 @pytest.fixture
@@ -41,9 +42,9 @@ def sample_config_valid():
                     {
                         "default": 0,
                         "limits": {"min": -1000, "max": 1000},
-                        "access": 'rw'
+                        "access": "rw",
                     }
-                ]
+                ],
             },
             0x3000: {
                 "name": "Record",
@@ -53,25 +54,20 @@ def sample_config_valid():
                         "name": "Field1",
                         "datatype": "uint8",
                         "default": 1,
-                        "access": 'r',
-                        "enum": {
-                            "class": "EnumType",
-                            "data": {
-                                "FOO": 0,
-                                "BAR": 1
-                            }
-                        }
+                        "access": "r",
+                        "enum": {"class": "EnumType", "data": {"FOO": 0, "BAR": 1}},
                     },
                     {
                         "name": "Field2",
                         "datatype": "string",
                         "default": "default",
-                        "access": 'w'
-                    }
-                ]
+                        "access": "w",
+                    },
+                ],
             },
         },
     }
+
 
 @pytest.fixture
 def sample_config_invalid():
@@ -106,9 +102,9 @@ def sample_config_invalid():
                     {
                         "default": 0,
                         "limits": {"min": -1000, "max": 1000},
-                        "access": 'rw'
+                        "access": "rw",
                     }
-                ]
+                ],
             },
             0x3000: {
                 "name": "Record",
@@ -118,25 +114,20 @@ def sample_config_invalid():
                         "name": "Field1",
                         "datatype": "uint8",
                         "default": 1.12,
-                        "access": 'r',
-                        "enum": {
-                            "class": "EnumType",
-                            "data": {
-                                "FOO": 1,
-                                "BAR": 1
-                            }
-                        }
+                        "access": "r",
+                        "enum": {"class": "EnumType", "data": {"FOO": 1, "BAR": 1}},
                     },
                     {
                         "name": "Field2",
                         "datatype": "string",
                         "default": "default",
-                        "access": 'w'
-                    }
-                ]
+                        "access": "w",
+                    },
+                ],
             },
         },
     }
+
 
 def test_schema_config_validation(sample_config_valid):
     """Test that the SchemaConfig validates a correct configuration."""
@@ -154,6 +145,7 @@ def test_schema_config_validation(sample_config_valid):
     assert config.objects[0x2000].type == "array"
     assert config.objects[0x3000].type == "record"
 
+
 def test_schema_config_validation_invalid(sample_config_invalid):
     """Test that the SchemaConfig validates a correct configuration."""
     config, errors = Config(sample_config_invalid)
@@ -167,8 +159,15 @@ def test_schema_config_validation_invalid(sample_config_invalid):
                 return error
         return {}
 
-    assert error_on(("device", "vendor", "name"), errors)['type'] == "string_too_long"
-    assert error_on(("device", "revision", "patch"), errors)['type'] == "less_than_equal"
-    assert error_on(("device", "baudrate"), errors)['type'] == "value_error"
-    assert error_on(("profiles", 3), errors)['type'] == "less_than_equal"
-    assert error_on(("objects", 12288, "record", "record", 0, "enum", "data"), errors)['type'] == "value_error"
+    assert error_on(("device", "vendor", "name"), errors)["type"] == "string_too_long"
+    assert (
+        error_on(("device", "revision", "patch"), errors)["type"] == "less_than_equal"
+    )
+    assert error_on(("device", "baudrate"), errors)["type"] == "value_error"
+    assert error_on(("profiles", 3), errors)["type"] == "less_than_equal"
+    assert (
+        error_on(("objects", 12288, "record", "record", 0, "enum", "data"), errors)[
+            "type"
+        ]
+        == "value_error"
+    )

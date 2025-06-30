@@ -1,9 +1,10 @@
-from typing import ClassVar, List, Literal
+from typing import ClassVar, List, Literal, Optional, Union
 
 from pydantic import ConfigDict, model_validator
 
 from .access import Access
 from .datatype import Datatype
+from .enum import Enum, EnumProfile
 from .object_common import HeaderCommon, VarCommon
 
 
@@ -43,3 +44,15 @@ class Record(HeaderCommon):
             self.record[0].default = len(self.record)
 
         return self
+
+
+class RecordEntryProfile(RecordEntry):
+    """Record entry profile with additional information."""
+
+    enum: Optional[Union[Enum, EnumProfile]] = None
+
+
+class RecordProfile(Record):
+    """Record profile with additional information."""
+
+    record: List[Union[RecordEntry, RecordEntryProfile]] = []

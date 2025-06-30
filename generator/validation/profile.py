@@ -1,6 +1,6 @@
 """Validation schema for the CiA profiles definitions."""
 
-from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Annotated, Any, Dict, List, Union
 
 from pydantic import (
     BaseModel,
@@ -10,55 +10,13 @@ from pydantic import (
     model_validator,
 )
 
-from . import ArrayEntry, BaseArray, Enum, Markdown, Record, RecordEntry, Var
+from .helpers import infer_object_type
+from .models.array import ArrayProfile
+from .models.markdown import Markdown
 from .models.mixins import MappingRootMixin
+from .models.record import RecordProfile
 from .models.validators import validate_identifier
-
-
-class EnumProfile(Enum):
-    """Enum data with additional profile information."""
-
-    override_ranges: List[Tuple[int, int]] = Field(default_factory=list)
-
-
-class ProfileExtra(BaseModel):
-    """Base class for profile extra information."""
-
-    category: Literal["conditional", "optional", "mandatory"] = Field(
-        default="optional"
-    )
-    mandatory_conditions: List[str] = Field(default_factory=list)
-
-
-class VarProfile(ProfileExtra, Var):
-    """Variable profile with additional information."""
-
-    enum: Optional[Union[Enum, EnumProfile]] = None
-
-
-class ArrayEntryProfile(ArrayEntry):
-    """Array entry profile with additional information."""
-
-    enum: Optional[Union[Enum, EnumProfile]] = None
-
-
-class ArrayProfile(BaseArray):
-    """Array profile with additional information."""
-
-    data: List[ArrayEntryProfile] = []
-
-
-class RecordEntryProfile(ProfileExtra, RecordEntry):
-    """Record entry profile with additional information."""
-
-    enum: Optional[Union[Enum, EnumProfile]] = None
-
-
-class RecordProfile(ProfileExtra, Record):
-    """Record profile with additional information."""
-
-    record: List[Union[RecordEntry, RecordEntryProfile]] = []
-
+from .models.var import VarProfile
 
 ObjectTypeProfile = Annotated[
     Union[VarProfile, ArrayProfile, RecordProfile], Field(discriminator="type")
@@ -96,13 +54,7 @@ class ObjectsProfile(
         v = {idx: resolve(idx, set()) for idx in v}
 
         for obj in v.values():
-            if "type" not in obj:
-                if "length" in obj or "data" in obj:
-                    obj["type"] = "array"
-                elif "record" in obj:
-                    obj["type"] = "record"
-                else:
-                    obj["type"] = "var"
+            obj.setdefault("type", infer_object_type(obj))
 
         return v
 
