@@ -1,6 +1,6 @@
 from typing import ClassVar, List, Literal
 
-from pydantic import model_validator
+from pydantic import ConfigDict, model_validator
 
 from . import Access, Datatype
 from .object_common import HeaderCommon, VarCommon
@@ -9,10 +9,7 @@ from .object_common import HeaderCommon, VarCommon
 class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
 
-    class Config:
-        """Configuration for RecordEntry model."""
-
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class Record(HeaderCommon):

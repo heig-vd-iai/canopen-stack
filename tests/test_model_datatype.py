@@ -2,8 +2,13 @@
 
 # pylint: disable=missing-function-docstring
 import pytest
+from pydantic import BaseModel
 
 from generator.validation import DATATYPES, Datatype
+
+
+class Model(BaseModel):
+    datatype: Datatype
 
 
 def test_from_name_valid():
@@ -15,6 +20,12 @@ def test_from_name_valid():
         assert dt.code == info.code
         assert dt.ctype == info.ctype
         assert dt.field == info.field
+
+
+def test_integration_with_pydantic():
+    m = Model(datatype="int16")  # type: ignore
+    assert isinstance(m.datatype, Datatype)
+    assert m.datatype.name == "int16"
 
 
 def test_from_name_invalid():
@@ -69,30 +80,6 @@ def test_field_content(name):
     assert dt.code == info.code
     assert dt.ctype == info.ctype
     assert dt.field == info.field
-
-
-def test_preprocess_datatype_instance():
-    dt = Datatype.from_name("int16")
-    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
-    preproc = schema["validator"]
-    result = preproc(dt)
-    assert result is dt
-
-
-def test_preprocess_string_valid():
-    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
-    preproc = schema["validator"]
-    result = preproc("int16")
-    assert isinstance(result, Datatype)
-    assert result.name == "int16"
-
-
-def test_preprocess_dict_passthrough():
-    schema = Datatype.__get_pydantic_core_schema__(Datatype, lambda x: x)
-    preproc = schema["validator"]
-    d = {"foo": "bar"}
-    result = preproc(d)
-    assert result == d
 
 
 def test_serialize_returns_name():

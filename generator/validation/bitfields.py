@@ -144,7 +144,7 @@ class Bitfield(BaseModel):
         Check that no bit ranges overlap.
         """
         occupied_bits = set()
-        for (start, end), entry in self.entries.items():
+        for (start, end), _entry in self.entries.items():
             for bit in range(end, start + 1):
                 if bit in occupied_bits:
                     raise ValueError(f"Bit {bit} is overlapping in multiple ranges.")

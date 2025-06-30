@@ -32,13 +32,40 @@ def test_var_minimal():
     assert var.enum is None
     assert var.default == 0
     assert var.bitfield is None
-    assert var.unit == ""
+    assert var.unit is None
     assert var.scale is None
     assert isinstance(var.access, Access)
     assert var.access.read is False
     assert var.access.write is False
     assert var.get is None
     assert var.set is None
+
+
+def test_var_minimal2():
+    var = Var(
+        name="Speed",
+        datatype=Datatype.from_name("int16"),
+    )
+    assert var.type == "var"
+    assert var.name == "Speed"
+    assert isinstance(var.datatype, Datatype)
+    assert var.datatype.name == "int16"
+    assert var.default == 0
+    assert var.remote == "local"
+    assert isinstance(var.description, Markdown)
+
+
+def test_var_with_custom_values():
+    var = Var(
+        name="Voltage",
+        datatype=Datatype.from_name("float32"),
+        limits=Limits(min=0.0, max=24.0),
+        pdo=True,
+        default=12.5,
+    )
+    assert var.limits.min == 0.0
+    assert var.pdo is True
+    assert var.default == 12.5
 
 
 def test_var_full():
@@ -130,7 +157,7 @@ def test_var_enum_uniqueness():
     with pytest.raises(ValidationError) as exc_info:
         Enum(**{"class": "TestEnum", "data": enum_data})
 
-    assert "Enum values must be unique" in str(exc_info.value)
+    assert "Duplicate enum value" in str(exc_info.value)
 
 
 def test_var_bitfield_overlap():

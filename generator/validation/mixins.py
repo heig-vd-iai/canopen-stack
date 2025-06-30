@@ -75,13 +75,15 @@ class InferArrayLengthMixin:
 
     def _make_subindex_0(self, value: int) -> Any:
         """Create the subindex 0 structure (as dict or model depending on context)."""
-        return {
-            "name": self.ARRAY_SIZE_ENTRY_NAME,
-            "datatype": "uint8",
-            "type": "var",
-            "access": "r",
-            "default": value,
-        }
+        from .array import ArrayEntry
+
+        return ArrayEntry(
+            name=self.ARRAY_SIZE_ENTRY_NAME,
+            datatype="uint8",
+            type="var",
+            access="r",
+            default=value,
+        )
 
 
 class MappingRootMixin(Mapping, Generic[T]):

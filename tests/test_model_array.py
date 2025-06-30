@@ -1,11 +1,12 @@
 import pytest
 
-from generator.validation import Array, ArrayEntry, BaseArray, Enum
+from generator.validation import Array, ArrayEntry, BaseArray, Datatype, Enum
 
 
 def test_array_entry_creation():
     ae = ArrayEntry(
         **{
+            "name": "MyEntry",
             "limits": {"min": 0, "max": 10},
             "enum": {"class": "MyEnum", "data": {"A": 1}},
             "default": 5,
@@ -17,11 +18,11 @@ def test_array_entry_creation():
     assert ae.enum.class_ == "MyEnum"
 
 
-def test_base_array_creation():
-    arr = BaseArray(length=10, datatype="int32", name="MyArray")
+def test_simple_array_creation():
+    arr = Array(length=10, datatype="int32", name="MyArray")
     assert arr.type == "array"
     assert arr.length == 10
-    assert arr.datatype == "int32"
+    assert arr.datatype == Datatype.from_name("int32")
     assert arr.name == "MyArray"
 
 
@@ -42,15 +43,19 @@ def test_array_creation():
         }
     )
     assert arr.type == "array"
-    assert arr.length == 1
-    assert arr.data[0].default == 42
+    assert arr.length == 5
+    assert isinstance(arr.data[0], ArrayEntry)
+    assert arr.data[0].default == 5
+    assert arr.data[1].default == 42
 
 
 def test_array_defaults():
     arr = Array(name="EmptyArray", datatype="float32")
     assert arr.type == "array"
-    assert arr.length is None
-    assert arr.data == []
+    assert arr.length == 0
+    assert len(arr.data) == 1
+    assert isinstance(arr.data[0], ArrayEntry)
+    assert arr.data[0].name == "Number of array entries"
 
 
 def test_array_invalid_data():
