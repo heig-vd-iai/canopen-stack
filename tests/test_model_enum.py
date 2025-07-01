@@ -53,7 +53,10 @@ def test_enum_duplicate_values_should_fail():
 
 def test_enum_invalid_key_should_fail():
     with pytest.raises(ValidationError) as exc_info:
-        Enum(typedef="InvalidKey", values={"123-INVALID": EnumEntry(name="BAD", value=10)})
+        Enum(
+            typedef="InvalidKey",
+            values={"123-INVALID": EnumEntry(name="BAD", value=10)},
+        )
 
     error_message = str(exc_info.value)
     assert "Invalid enum name: 123-INVALID" in error_message
@@ -68,7 +71,7 @@ def test_enum_profile_valid_override():
             "B": EnumEntry(name="B", value=2),
         },
         allow_override=[(0, 5), (10, 20)],
-    )  # type: ignore[call-arg]
+    )
     assert model.allow_override == [(0, 5), (10, 20)]
 
 
@@ -77,8 +80,8 @@ def test_enum_profile_invalid_override_format():
         EnumProfile(
             typedef="BadOverride",
             values={"A": EnumEntry(name="A", value=1)},
-            allow_override=[[1]],  # Invalid: only one value
-        )  # type: ignore[call-arg]
+            allow_override=[[1]],  # type: ignore[arg-type]
+        )
     assert "must be a tuple of two integers" in str(exc_info.value)
 
 
@@ -88,7 +91,7 @@ def test_enum_profile_override_start_greater_than_end():
             typedef="ReversedRange",
             values={"A": EnumEntry(name="A", value=1)},
             allow_override=[(10, 5)],  # Invalid: 10 > 5
-        )  # type: ignore[call-arg]
+        )
     assert "first integer must be <= the second" in str(exc_info.value)
 
 
@@ -97,7 +100,7 @@ def test_enum_profile_non_integer_override():
         EnumProfile(
             typedef="NonIntRange",
             values={"A": EnumEntry(name="A", value=1)},
-            allow_override=[("a", "b")],
+            allow_override=[("a", "b")], # type: ignore[arg-type]
         )  # type: ignore[call-arg]
     assert "must be integers" in str(exc_info.value)
 

@@ -22,7 +22,6 @@ ObjectTypeProfile = Annotated[
     Union[VarProfile, ArrayProfile, RecordProfile], Field(discriminator="type")
 ]
 
-
 class ObjectsProfile(
     MappingRootMixin[ObjectTypeProfile], RootModel[Dict[int, ObjectTypeProfile]]
 ):

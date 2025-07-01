@@ -85,10 +85,24 @@ class Bitfield(BaseModel):
 
     entries: Dict[Tuple[int, int], BitfieldEntry]
 
-    def __init__(self, data: Dict[Union[str, int], Any]):
-        parsed = self._parse_bitfield(data)
-        super().__init__(entries=parsed)
-        self._check_no_overlap()
+    @model_validator(mode="before")
+    @classmethod
+    def parse_input(cls, data: Any):
+        if isinstance(data, dict):
+            if "entries" in data:
+                # Si entries est déjà un dict avec des clés tuple, on ne touche à rien
+                entries = data["entries"]
+                if isinstance(entries, dict):
+                    if all(isinstance(k, tuple) for k in entries.keys()):
+                        return data
+                    # Sinon il faut parser
+                    return {"entries": cls._parse_bitfield(entries)}
+                else:
+                    raise TypeError("entries must be a dict")
+            else:
+                # dict directement donné, à parser
+                return {"entries": cls._parse_bitfield(data)}
+        raise TypeError("Bitfield input must be a dict")
 
     @staticmethod
     def _parse_bitfield(
@@ -117,35 +131,29 @@ class Bitfield(BaseModel):
         return key in self.entries
 
     def items(self):
-        """Returns an iterable of (key, entry) pairs."""
         return self.entries.items()
 
     def keys(self):
-        """Returns an iterable of bit range keys."""
         return self.entries.keys()
 
     def values(self):
-        """Returns an iterable of BitfieldEntry values."""
         return self.entries.values()
 
     def to_serializable(self) -> Dict[str, Any]:
-        """
-        Serialize the entries to a dictionary
-        with human-readable string keys.
-        """
         output = {}
         for (start, end), entry in self.entries.items():
             key = f"{start}" if start == end else f"{start}..{end}"
             output[key] = entry.model_dump()
         return output
 
-    def _check_no_overlap(self):
-        """
-        Check that no bit ranges overlap.
-        """
+    @model_validator(mode="after")
+    def check_no_overlap(self):
         occupied_bits = set()
         for start, end in self.entries.keys():
             for bit in range(end, start + 1):
                 if bit in occupied_bits:
-                    raise ValueError(f"Bit {bit} is overlapping in multiple ranges.")
+                    raise ValueError(
+                        f"Bit {bit} is overlapping in multiple ranges."
+                    )
                 occupied_bits.add(bit)
+        return self

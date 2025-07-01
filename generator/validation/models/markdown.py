@@ -40,7 +40,9 @@ class Markdown(str):
         filtered_scan_failures = []
         for sf in lint_result.scan_failures:
             if sf.rule_id == "MD041":
-                continue
+                continue # Ignore first-line-heading issues
+            elif sf.rule_id == "MD013":
+                continue # Ignore line length issues
             elif sf.rule_id == "MD047":
                 # Automatically fix missing trailing newline
                 if not modified_value.endswith("\n"):

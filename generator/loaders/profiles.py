@@ -2,7 +2,10 @@ import pickle
 import re
 import warnings
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
+
+from pydantic import ValidationError
+from pydantic_core import ErrorDetails
 
 from ..validation.profile import Profiles
 from .yaml_config import read_config_file
@@ -24,12 +27,12 @@ class ProfileLoader:
 
         self.profiles: Dict[int, "Profiles"] = {}
         self.warnings: Dict[int, List[str]] = {}
-        self.errors: Dict[int, str] = {}
+        self.errors: Dict[int, Union[List[ErrorDetails], str]] = {}
 
-    def load_all(self, use_cache: bool = True) -> None:
+    def load_all(self, use_cache: bool = True) -> Dict[int, Union[List[ErrorDetails], str]]:
         """Load and validate all profiles. Use cache if possible."""
         if use_cache and self._load_from_cache():
-            return
+            return {}
 
         yaml_pattern = re.compile(r"^(\d+)\.yaml$")
         self.profiles.clear()
@@ -45,22 +48,24 @@ class ProfileLoader:
             profile_id = int(match.group(1))
             print(profile_id, file.name)
 
-            # try:
             raw = read_config_file(file)
 
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always")
-                profile = Profiles.model_validate(raw)
+            try:
+                with warnings.catch_warnings(record=True) as w:
+                    warnings.simplefilter("always")
+                    profile = Profiles.model_validate(raw)
 
-            self.profiles[profile_id] = profile
-            self.warnings[profile_id] = [str(warn.message) for warn in w]
+                self.profiles[profile_id] = profile
+                self.warnings[profile_id] = [str(warn.message) for warn in w]
 
-            # except ValidationError as e:
-            #     self.errors[profile_id] = f"Validation error: {e}"
-            # except Exception as e:
-            #     self.errors[profile_id] = f"Exception while loading: {e}"
+            except ValidationError as e:
+                self.errors[profile_id] = e.errors()
+
+        if self.errors:
+            return self.errors
 
         self._save_to_cache()
+        return {}
 
     def _load_from_cache(self) -> bool:
         """Try to load from cache if up-to-date."""

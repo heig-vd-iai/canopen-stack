@@ -65,8 +65,7 @@ class InferArrayLengthMixin:
 
         return ArrayEntry(
             name=self.ARRAY_SIZE_ENTRY_NAME,
-            datatype="uint8",
-            type="var",
+            #datatype="uint8",
             access="r",
             default=value,
         )
@@ -87,6 +86,10 @@ class Array(BaseArray):
     @field_validator("array", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
+        return cls._ensure_array_entry(v, info, model_cls=ArrayEntry)
+
+    @classmethod
+    def _ensure_array_entry(cls, v, info, model_cls):
         """Ensure that the array is a list of ArrayEntry objects."""
         if v is None:
             return []
@@ -97,14 +100,14 @@ class Array(BaseArray):
         array_name = info.data.get("name", "Array")
 
         for i, item in enumerate(v, start=1):
-            if isinstance(item, ArrayEntry):
+            if isinstance(item, model_cls):
                 result.append(item)
             else:
                 # Si item est un dict, vérifier si 'name' est présent
                 item_data = dict(item)  # safe copy
                 if "name" not in item_data:
                     item_data["name"] = f"{array_name}_{i}"
-                result.append(ArrayEntry(**item_data))
+                result.append(model_cls(**item_data))
 
         return result
 
@@ -114,8 +117,12 @@ class ArrayEntryProfile(ArrayEntry):
 
     enum: Optional[Union[Enum, EnumProfile]] = None
 
-
-class ArrayProfile(BaseArray):
+class ArrayProfile(Array):
     """Array profile with additional information."""
 
     array: List[ArrayEntryProfile] = []
+
+    @field_validator("array", mode="before")
+    @classmethod
+    def ensure_array_entry(cls, v, info):
+        return cls._ensure_array_entry(v, info, model_cls=ArrayEntryProfile)

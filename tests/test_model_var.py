@@ -81,7 +81,7 @@ def test_var_full():
         }
     )
 
-    bitfield = Bitfield(
+    bitfield = Bitfield(entries=
         {
             "31..16": "StatusHigh",
             "15..0": {"name": "StatusLow", "values": {0: "OFF", 1: "ON"}},

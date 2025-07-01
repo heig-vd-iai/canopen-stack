@@ -81,7 +81,7 @@ class HeaderCommonProfile(HeaderCommon):
 class VarCommonProfile(VarCommon):
     """Variable profile with additional information."""
 
-    enum: Optional[EnumProfile] = None
+    enum: Optional[Union[Enum, EnumProfile]] = None
     category: Literal["conditional", "optional", "mandatory"] = Field(
         default="optional"
     )

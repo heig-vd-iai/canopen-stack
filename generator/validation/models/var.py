@@ -4,7 +4,12 @@ from typing import Literal
 
 from pydantic import ConfigDict
 
-from .object_common import HeaderCommon, VarCommon
+from .object_common import (
+    HeaderCommon,
+    HeaderCommonProfile,
+    VarCommon,
+    VarCommonProfile,
+)
 
 
 class Var(HeaderCommon, VarCommon):
@@ -15,7 +20,9 @@ class Var(HeaderCommon, VarCommon):
     model_config = ConfigDict(extra="forbid")
 
 
-class VarProfile(Var):
-    """Variable profile with additional information."""
+class VarProfile(HeaderCommonProfile, VarCommonProfile):
+    """Variable object for storing subindex data."""
 
-    pass
+    type: Literal["var"] = "var"
+
+    model_config = ConfigDict(extra="forbid")
