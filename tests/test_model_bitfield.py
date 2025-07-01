@@ -80,16 +80,16 @@ def test_bitfield_values_with_non_integer_keys():
 
 def test_bitfield_with_invalid_value_type():
     with pytest.raises(ValueError):
-        Bitfield(entries={"7": 123}) # type: ignore[arg-type]
+        Bitfield(entries={"7": 123})  # type: ignore[arg-type]
 
 
 def test_bitfield_overlapping_ranges():
     with pytest.raises(ValueError, match="overlapping"):
-        Bitfield(entries={"7..5": "FLAG1", "6..4": "FLAG2"}) # type: ignore[arg-type]
+        Bitfield(entries={"7..5": "FLAG1", "6..4": "FLAG2"})  # type: ignore[arg-type]
 
 
 def test_bitfield_duplicate_names_allowed():
-    bf = Bitfield(entries={"7": "FLAG_X", "6": "FLAG_X"}) # type: ignore[arg-type]
+    bf = Bitfield(entries={"7": "FLAG_X", "6": "FLAG_X"})  # type: ignore[arg-type]
     assert bf[(7, 7)].name == "FLAG_X"
     assert bf[(6, 6)].name == "FLAG_X"
 

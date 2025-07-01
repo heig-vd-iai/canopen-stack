@@ -26,6 +26,12 @@ class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
     default: Union[int, float] = 0
 
 
+class ArrayEntryProfile(ArrayEntry):
+    """Array entry profile with additional information."""
+
+    enum: Optional[Union[Enum, EnumProfile]] = None
+
+
 class InferArrayLengthMixin:
     """Mixin to infer array length from data."""
 
@@ -65,7 +71,7 @@ class InferArrayLengthMixin:
 
         return ArrayEntry(
             name=self.ARRAY_SIZE_ENTRY_NAME,
-            #datatype="uint8",
+            # datatype="uint8",
             access="r",
             default=value,
         )
@@ -111,11 +117,6 @@ class Array(BaseArray):
 
         return result
 
-
-class ArrayEntryProfile(ArrayEntry):
-    """Array entry profile with additional information."""
-
-    enum: Optional[Union[Enum, EnumProfile]] = None
 
 class ArrayProfile(Array):
     """Array profile with additional information."""

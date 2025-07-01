@@ -29,7 +29,9 @@ class ProfileLoader:
         self.warnings: Dict[int, List[str]] = {}
         self.errors: Dict[int, Union[List[ErrorDetails], str]] = {}
 
-    def load_all(self, use_cache: bool = True) -> Dict[int, Union[List[ErrorDetails], str]]:
+    def load_all(
+        self, use_cache: bool = True
+    ) -> Dict[int, Union[List[ErrorDetails], str]]:
         """Load and validate all profiles. Use cache if possible."""
         if use_cache and self._load_from_cache():
             return {}

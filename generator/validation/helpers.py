@@ -24,9 +24,12 @@ def resolve_inheritance(objects: dict) -> dict:
 
 
 def infer_object_type(obj: dict) -> str:
-    if "length" in obj or "data" in obj:
+    """Infer the type of an object based on its properties."""
+    if "length" in obj or "array" in obj:
+        # An array can be undefined, so only its length is defined
+        # or, it can be fully defined, then the length is optional
         return "array"
-    elif "record" in obj:
+    if "record" in obj:
         return "record"
-    else:
-        return "var"
+
+    return "var"

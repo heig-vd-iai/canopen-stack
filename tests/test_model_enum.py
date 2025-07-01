@@ -100,7 +100,7 @@ def test_enum_profile_non_integer_override():
         EnumProfile(
             typedef="NonIntRange",
             values={"A": EnumEntry(name="A", value=1)},
-            allow_override=[("a", "b")], # type: ignore[arg-type]
+            allow_override=[("a", "b")],  # type: ignore[arg-type]
         )  # type: ignore[call-arg]
     assert "must be integers" in str(exc_info.value)
 

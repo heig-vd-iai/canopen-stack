@@ -30,6 +30,12 @@ class HeaderCommon(BaseModel):
     inherit: Optional[int] = None
 
 
+class HeaderCommonProfile(HeaderCommon):
+    """Common attributes for header objects with profile information."""
+
+    category: Optional[Literal["conditional", "optional", "mandatory"]] = None
+
+
 class VarCommon(AccessorMixin, UnitMixin, BaseModel):
     """Common attributes for variable objects."""
 
@@ -63,10 +69,13 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
                     )
         elif "string" in dt_str:
             if not isinstance(self.default, str):
-                raise ValueError(
-                    f"default should be of type str when datatype is '{self.datatype}', "
-                    f"got {type(self.default).__name__}"
-                )
+                if self.default == 0:
+                    self.default = ""
+                else:
+                    raise ValueError(
+                        f"default should be of type str when datatype is '{self.datatype}', "
+                        f"got {type(self.default).__name__}"
+                    )
         # If datatype doesn't match any of the above, optionally ignore or raise
         else:
             pass  # Or raise an error if datatype must be known
@@ -74,15 +83,8 @@ class VarCommon(AccessorMixin, UnitMixin, BaseModel):
         return self
 
 
-class HeaderCommonProfile(HeaderCommon):
-    pass
-
-
 class VarCommonProfile(VarCommon):
     """Variable profile with additional information."""
 
     enum: Optional[Union[Enum, EnumProfile]] = None
-    category: Literal["conditional", "optional", "mandatory"] = Field(
-        default="optional"
-    )
     mandatory_conditions: List[str] = Field(default_factory=list)

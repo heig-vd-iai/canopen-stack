@@ -2,42 +2,57 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
-console = Console()
 
-for profile, erro in errors.items():
+def pretty_print_errors(errors, debug=False):
+    """
+    Affiche les erreurs de validation des profils dans un format lisible.
 
-    # Créer un tableau Rich
-    table = Table(
-        title=f"Liste des erreurs pour le profil {profile}",
-        show_lines=True,
-        box=box.SQUARE,  # Bordure fine et élégante
-        border_style="grey50",  # Gris clair
-    )
+    :param errors: Dictionnaire contenant les erreurs de validation des profils.
+    """
+    if not errors:
+        print("Aucune erreur trouvée.")
+        return
 
-    table.add_column("Location", style="cyan", overflow="fold", no_wrap=False)
-    table.add_column("Type", style="magenta", overflow="fold", no_wrap=False)
-    table.add_column("Description", style="white", overflow="fold", no_wrap=False)
+    console = Console()
 
-    for err in erro:
-        loc = list(err["loc"])
-        try:
-            idx = loc.index("objects")
-            if isinstance(loc[idx + 1], int):
-                loc[idx + 1] = f"0x{loc[idx+1]:X}"
-        except (ValueError, IndexError):
-            pass
+    for profile, erro in errors.items():
 
-        if loc and loc[0] == "profiles":
-            loc = loc[2:]
+        # Créer un tableau Rich
+        table = Table(
+            title=f"Liste des erreurs pour le profil {profile}",
+            show_lines=True,
+            box=box.SQUARE,  # Bordure fine et élégante
+            border_style="grey50",  # Gris clair
+        )
 
-        loc_path = "/".join(str(item) for item in loc)
-        error_type = err.get("type", "")
+        table.add_column("Location", style="cyan", overflow="fold", no_wrap=False)
+        table.add_column("Type", style="magenta", overflow="fold", no_wrap=False)
+        table.add_column("Description", style="white", overflow="fold", no_wrap=False)
 
-        ctx_error = err.get("ctx", {}).get("error", "")
-        if not ctx_error:
-            ctx_error = err.get("msg", "")
-        error_text = str(ctx_error)
+        for err in erro:
+            loc = list(err["loc"])
+            try:
+                idx = loc.index("objects")
+                if isinstance(loc[idx + 1], int):
+                    loc[idx + 1] = f"0x{loc[idx+1]:X}"
+            except (ValueError, IndexError):
+                pass
 
-        table.add_row(loc_path, error_type, error_text)
+            if loc and loc[0] == "profiles":
+                loc = loc[2:]
 
-    console.print(table)
+            loc_path = "/".join(
+                str(item)
+                for item in loc
+                if debug or not str(item).startswith("function-after")
+            )
+            error_type = err.get("type", "")
+
+            ctx_error = err.get("ctx", {}).get("error", "")
+            if not ctx_error:
+                ctx_error = err.get("msg", "")
+            error_text = str(ctx_error)
+
+            table.add_row(loc_path, error_type, error_text)
+
+        console.print(table)

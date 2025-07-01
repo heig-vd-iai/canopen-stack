@@ -1,7 +1,6 @@
 """Tests for the Access model and its methods."""
 
 # pylint: disable=missing-function-docstring
-from typing import cast
 
 import pytest
 
@@ -27,7 +26,7 @@ def sample_config_valid():
                             2: "Quick Stop",
                             3: "Enable Operation",
                             "6..4": "Operation Mode Specific",
-                            7: "Fault Reset"
+                            7: "Fault Reset",
                         },
                         "limits": {"min": 0, "max": 100},
                     },
@@ -93,7 +92,7 @@ def full_profile():
                     "csv": "Cyclic Synchronous Velocity Mode",
                 },
                 "objects": {
-                    24583: {
+                    1: {
                         "name": "Abort connection option code",
                         "description": "This object shall indicate what action shall be performed\nwhen one of the following events occurres:bus-off, heartbeat,\nlife guarding, NMT stopped state entered, reset application, and reset\ncommunication. Table 35 specifies the value definition,\nTable 36 specifies the object description,\nand Table 37 specifies the entry description.\n",
                         "datatype": "int16",
@@ -110,7 +109,7 @@ def full_profile():
                             "override-ranges": [[-32768, -1]],
                         },
                     },
-                    24640: {
+                    2: {
                         "name": "Controlword",
                         "category": "mandatory",
                         "datatype": "uint16",
@@ -129,6 +128,23 @@ def full_profile():
                             "15..11": "Manufacturer Specific",
                         },
                     },
+                    3: {
+                        "name": "An array",
+                        "description": "An array of integers",
+                        "datatype": "int32",
+                        "array": [
+                            {
+                                "name": "Array Entry",
+                                "default": 42,
+                                "limits": {"min": -1000, "max": 1000},
+                            },
+                            {
+                                "name": "Another Entry",
+                                "default": 100,
+                                "limits": {"min": 0, "max": 200},
+                            },
+                        ],
+                    },
                 },
             }
         }
@@ -138,6 +154,7 @@ def full_profile():
 def test_schema_config_validation(sample_config_valid):
     """Test that the SchemaConfig validates a correct configuration."""
     config = Profiles.model_validate(sample_config_valid)
+
 
 def test_schema_config_validation2(full_profile):
     """Test that the SchemaConfig validates a correct configuration."""

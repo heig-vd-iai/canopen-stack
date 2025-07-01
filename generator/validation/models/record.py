@@ -5,12 +5,24 @@ from pydantic import ConfigDict, model_validator
 from .access import Access
 from .datatype import Datatype
 from .enum import Enum, EnumProfile
-from .object_common import HeaderCommon, VarCommon
+from .object_common import (
+    HeaderCommon,
+    HeaderCommonProfile,
+    VarCommon,
+    VarCommonProfile,
+)
 
 
 class RecordEntry(VarCommon, HeaderCommon):
     """Record entry object for storing subindex data."""
 
+    model_config = ConfigDict(extra="forbid")
+
+
+class RecordEntryProfile(VarCommonProfile, HeaderCommonProfile):
+    """Record entry profile with additional information."""
+
+    enum: Optional[Union[Enum, EnumProfile]] = None
     model_config = ConfigDict(extra="forbid")
 
 
@@ -46,13 +58,33 @@ class Record(HeaderCommon):
         return self
 
 
-class RecordEntryProfile(RecordEntry):
-    """Record entry profile with additional information."""
+class RecordProfile(HeaderCommonProfile):
+    """Record object for storing subindex data."""
 
-    enum: Optional[Union[Enum, EnumProfile]] = None
+    type: Literal["record"] = "record"
+    record: List[RecordEntryProfile] = []
 
+    SIZE_ENTRY_NAME: ClassVar[str] = "Number of records"
 
-class RecordProfile(Record):
-    """Record profile with additional information."""
+    @model_validator(mode="after")
+    def validate_and_inject_size_entry(self):
+        """Validate the length of the record and inject subindex 0 if needed."""
 
-    record: List[Union[RecordEntry, RecordEntryProfile]] = []
+        if len(self.record) > 255:
+            raise ValueError("Subindex length must be less than 256.")
+
+        # Check if subindex 0 is present
+        if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
+            size_entry = RecordEntry(
+                name=self.SIZE_ENTRY_NAME,
+                datatype=Datatype.from_name("uint8"),
+                access=Access.model_validate("r"),
+                default=len(self.record),
+            )
+            self.record.insert(0, size_entry)
+
+        else:
+            # Update default if already present
+            self.record[0].default = len(self.record)
+
+        return self

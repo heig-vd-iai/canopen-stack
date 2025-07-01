@@ -882,7 +882,7 @@ profiles:
         description: |
           This object shall indicate the user-defined position units. The object structure is defined in Figure 1
           in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2.
-        type: uint32
+        datatype: uint32
         access: rw
         default: 0xFD010000
       0x60A9:

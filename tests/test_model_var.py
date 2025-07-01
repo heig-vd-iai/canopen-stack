@@ -81,8 +81,8 @@ def test_var_full():
         }
     )
 
-    bitfield = Bitfield(entries=
-        {
+    bitfield = Bitfield(
+        entries={
             "31..16": "StatusHigh",
             "15..0": {"name": "StatusLow", "values": {0: "OFF", 1: "ON"}},
         }
@@ -165,7 +165,7 @@ def test_var_bitfield_overlap():
 
     with pytest.raises(ValueError) as exc_info:
         Bitfield(
-            {
+            entries={
                 "31..16": "Field1",
                 "20..10": "Field2",  # overlaps with previous range
             }

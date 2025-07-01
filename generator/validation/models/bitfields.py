@@ -152,8 +152,6 @@ class Bitfield(BaseModel):
         for start, end in self.entries.keys():
             for bit in range(end, start + 1):
                 if bit in occupied_bits:
-                    raise ValueError(
-                        f"Bit {bit} is overlapping in multiple ranges."
-                    )
+                    raise ValueError(f"Bit {bit} is overlapping in multiple ranges.")
                 occupied_bits.add(bit)
         return self
