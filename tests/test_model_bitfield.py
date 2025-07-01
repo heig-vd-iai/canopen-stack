@@ -4,7 +4,7 @@
 import pytest
 from pydantic import ValidationError
 
-from generator.validation.models.bitfields import Bitfield
+from generator.validation.models.bitfields import Bitfield, BitRange
 
 
 def test_bitfield_single_bit():
@@ -107,3 +107,60 @@ def test_bitfield_single_bit_with_values():
 def test_bitfield_invalid_string_key():
     with pytest.raises(ValueError):
         Bitfield(entries={"foo": "INVALID"})
+
+
+def test_bitrange_invalid_format():
+    with pytest.raises(ValueError, match="Invalid bit range format"):
+        BitRange("12..foo")
+
+
+def test_bitrange_invalid_type():
+    with pytest.raises(ValueError, match="Invalid bitfield key"):
+        BitRange(3.14)
+
+
+def test_bitrange_invalid_str_key():
+    with pytest.raises(ValueError, match="Invalid bitfield key"):
+        BitRange("hello")
+
+
+def test_bitfield_entries_not_dict():
+    with pytest.raises(TypeError, match="entries must be a dict"):
+        Bitfield.model_validate({"entries": ["not", "a", "dict"]})
+
+
+def test_bitfield_input_not_dict():
+    with pytest.raises(TypeError, match="Bitfield input must be a dict"):
+        Bitfield.model_validate("hello world")
+
+
+def test_bitfield_invalid_value_type_in_parse():
+    from generator.validation.models.bitfields import Bitfield
+
+    with pytest.raises(ValueError, match="Invalid bitfield value for key"):
+        Bitfield.model_validate({"7": 3.14})
+
+
+def test_bitfield_getitem_and_contains():
+    bf = Bitfield(entries={"3": "READY"})
+    assert (3, 3) in bf
+    entry = bf[(3, 3)]
+    assert isinstance(entry.name, str)
+
+
+def test_bitfield_iter_methods():
+    bf = Bitfield(entries={"7": "FLAG"})
+    items = list(bf.items())
+    keys = list(bf.keys())
+    values = list(bf.values())
+
+    assert len(items) == 1
+    assert keys == [(7, 7)]
+    assert values[0].name == "FLAG"
+
+
+def test_bitfield_to_serializable_range_key():
+    bf = Bitfield(entries={"5..3": "FLAG_RANGE"})
+    serial = bf.to_serializable()
+    assert "5..3" in serial
+    assert serial["5..3"]["name"] == "FLAG_RANGE"

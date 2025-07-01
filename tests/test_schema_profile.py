@@ -4,6 +4,10 @@
 
 import pytest
 
+from generator.validation import VarProfile
+from generator.validation.models.access import Access
+from generator.validation.models.bitfields import Bitfield
+from generator.validation.models.datatype import Datatype
 from generator.validation.profile import Profiles
 
 
@@ -159,3 +163,18 @@ def test_schema_config_validation(sample_config_valid):
 def test_schema_config_validation2(full_profile):
     """Test that the SchemaConfig validates a correct configuration."""
     config = Profiles.model_validate(full_profile)
+    assert isinstance(config, Profiles)
+    obj_var = config.profiles[402].objects[2]
+
+    assert isinstance(obj_var, VarProfile)
+    assert obj_var.category == "mandatory"
+
+    assert isinstance(obj_var.datatype, Datatype)
+    assert obj_var.datatype.name == "uint16"
+
+    assert isinstance(obj_var.access, Access)
+    assert obj_var.access.read is True
+    assert obj_var.access.write is True
+
+    assert isinstance(obj_var.bitfield, Bitfield)
+    assert obj_var.bitfield.entries[(1, 1)].name == "Enable Voltage"
