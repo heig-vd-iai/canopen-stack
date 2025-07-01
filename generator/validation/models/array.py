@@ -30,13 +30,13 @@ class InferArrayLengthMixin:
     """Mixin to infer array length from data."""
 
     length: Optional[int]
-    data: list
+    array: list
 
     ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
 
     @model_validator(mode="after")
     def _infer_length_from_data(self) -> Any:
-        entry_count = len(self.data)
+        entry_count = len(self.array)
         if self.length is None:
             self.length = entry_count
         elif self.length < entry_count:
@@ -46,14 +46,14 @@ class InferArrayLengthMixin:
 
         if entry_count == 0 or not self._has_subindex_0():
             entry = self._make_subindex_0(self.length)
-            self.data.insert(0, entry)
+            self.array.insert(0, entry)
 
         return self
 
     def _has_subindex_0(self) -> bool:
-        if not self.data:
+        if not self.array:
             return False
-        maybe = self.data[0]
+        maybe = self.array[0]
         if isinstance(maybe, dict):
             return maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
         elif hasattr(maybe, "name"):
@@ -82,16 +82,16 @@ class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
 class Array(BaseArray):
     """Array object for storing subindex data."""
 
-    data: List[ArrayEntry] = []
+    array: List[ArrayEntry] = []
 
-    @field_validator("data", mode="before")
+    @field_validator("array", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
-        """Ensure that the data is a list of ArrayEntry objects."""
+        """Ensure that the array is a list of ArrayEntry objects."""
         if v is None:
             return []
         if not isinstance(v, list):
-            raise TypeError(f"data must be a list, got {type(v)}")
+            raise TypeError(f"array must be a list, got {type(v)}")
 
         result = []
         array_name = info.data.get("name", "Array")
@@ -118,4 +118,4 @@ class ArrayEntryProfile(ArrayEntry):
 class ArrayProfile(BaseArray):
     """Array profile with additional information."""
 
-    data: List[ArrayEntryProfile] = []
+    array: List[ArrayEntryProfile] = []

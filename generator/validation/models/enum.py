@@ -44,14 +44,14 @@ class EnumEntry(BaseModel):
 class Enum(BaseModel):
     """Enum data for variable types."""
 
-    class_: str = Field(..., alias="class")
-    data: Dict[str, EnumEntry]
+    typedef: str
+    values: Dict[str, EnumEntry]
 
-    @field_validator("data", mode="before")
+    @field_validator("values", mode="before")
     @classmethod
     def validate_enum_keys(cls, v):
         if not isinstance(v, dict):
-            raise ValueError("Enum data must be a dictionary.")
+            raise ValueError("Enum values must be a dictionary.")
 
         new_data = {}
         seen_values = set()

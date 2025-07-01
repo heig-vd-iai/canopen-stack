@@ -36,8 +36,8 @@ profiles:
         get: node.emcy().errorRegister.getData
         datatype: uint8
         enum:
-          class: ErrorRegister
-          data:
+          typedef: ErrorRegister
+          values:
             ERROR_REGISTER__GENERIC_ERROR: 0
             ERROR_REGISTER__CURRENT_ERROR: 1
             ERROR_REGISTER__VOLTAGE_ERROR: 2
@@ -246,7 +246,7 @@ profiles:
         access: const
         pdo: false
         default: 0
-        data:
+        array:
           - name: Consumer heartbeat time
       0x1017:
         name: Producer hearbeat time
@@ -368,7 +368,7 @@ profiles:
         category: mandatory
         datatype: uint32
         access: const
-        data:
+        array:
           - name: Configuration date
             description: |
               Sub-index 01h (configuration date) shall contain the number of days since January 1, 1984.
@@ -397,14 +397,14 @@ profiles:
         datatype: uint8
         pdo: false
         enum:
-          class: ErrorBehavior
-          data:
+          typedef: ErrorBehavior
+          values:
             ERROR_BEHAVIOR__CHANGE_TO_NMT_PREOP: 0
             ERROR_BEHAVIOR__NO_CHANGES: 1
             ERROR_BEHAVIOR__CHANGE_TO_NMT_STOP: 2
           override-ranges:
             - [0x80, 0xff]
-        data:
+        array:
           - name: Communication Error
             category: mandatory
             default: 2
@@ -646,8 +646,8 @@ profiles:
               application profiles..
             access: rw
             enum:
-              class: PDOTransmissionType
-              data:
+              typedef: PDOTransmissionType
+              values:
                 PDO_TRANSMISSION_TYPE__ACYCLIC: 0
                 PDO_TRANSMISSION_TYPE__EVERY_SYNC: 1
                 PDO_TRANSMISSION_TYPE__EVERY_2ND_SYNC: 2

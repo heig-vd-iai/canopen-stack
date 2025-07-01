@@ -43,8 +43,8 @@ profiles:
         access: rw
         default: 1
         enum:
-          class: AbortConnectionOptionCode
-          data:
+          typedef: AbortConnectionOptionCode
+          values:
             ABORT_CONNECTION_OPTION_CODE__NO_ACTION: 0
             ABORT_CONNECTION_OPTION_CODE__FAULT_SIGNAL: 1
             ABORT_CONNECTION_OPTION_CODE__DISABLE_VOLTAGE_COMMAND: 2
@@ -147,7 +147,7 @@ profiles:
           and vl velocity min neg values.
         datatype: uint32
         access: rw
-        data:
+        array:
           - name: vl velocity min amount
           - name: vl velocity max amount
       0x6048:
@@ -157,7 +157,7 @@ profiles:
           acceleration ramp.
         datatype: uint32
         access: rw
-        data:
+        array:
           - name: Delta speed
           - name: Delta time
             unit: s
@@ -168,7 +168,7 @@ profiles:
           deceleration ramp.
         datatype: uint32
         access: rw
-        data:
+        array:
           - name: Delta speed
           - name: Delta time
             unit: s
@@ -194,7 +194,7 @@ profiles:
           given in the range from -32 768 to +32 767, but the value of 0 shall not be used.
         length: 3
         datatype: int16
-        data:
+        array:
           - name: vl set-point factor numerator
             access: rw
             default: 1
@@ -210,7 +210,7 @@ profiles:
           value as well as the velocity limit function and the ramp function.
         datatype: int32
         access: rw
-        data:
+        array:
           - name: vl dimension factor numerator
             default: 1
           - name: vl dimension factor denominator
@@ -224,10 +224,10 @@ profiles:
         access: rw
         default: 2
         enum:
-          class: QuickStopOptionCode
+          typedef: QuickStopOptionCode
           override-ranges:
             - [-32 768, -1]
-          data:
+          values:
             QUICK_STOP_OPTION_CODE__DISABLE_DRIVE_THEN_DISABLE: 0
             QUICK_STOP_OPTION_CODE__SLOW_DOWN_RAMP_THEN_DISABLE: 1
             QUICK_STOP_OPTION_CODE__QUICK_STOP_RAMP_THEN_DISABLE: 2
@@ -243,10 +243,10 @@ profiles:
         access: rw
         default: 0
         enum:
-          class: ShutdownOptionCode
+          typedef: ShutdownOptionCode
           override-ranges:
             - [-32 768, -1]
-          data:
+          values:
             SHUTDOWN_OPTION_CODE__DISABLE_DRIVE: 0
             SHUTDOWN_OPTION_CODE__SLOW_DOWN: 1
       0x605C:
@@ -259,10 +259,10 @@ profiles:
         access: rw
         default: 1
         enum:
-          class: DisableOperationOptionCode
+          typedef: DisableOperationOptionCode
           override-ranges:
             - [-32 768, -1]
-          data:
+          values:
             DISABLE_OPERATION_OPTION_CODE__DISABLE_DRIVE: 0
             DISABLE_OPERATION_OPTION_CODE__SLOW_DOWN: 1
       0x605D:
@@ -274,10 +274,10 @@ profiles:
         access: rw
         default: 1
         enum:
-          class: HaltOptionCode
+          typedef: HaltOptionCode
           override-ranges:
             - [-32 768, -1]
-          data:
+          values:
             HALT_OPTION_CODE__DISABLE_DRIVE: 0
             HALT_OPTION_CODE__SLOW_DOWN: 1
             HALT_OPTION_CODE__QUICK_STOP: 2
@@ -292,10 +292,10 @@ profiles:
         access: rw
         default: 2
         enum:
-          class: FaultReactionOptionCode
+          typedef: FaultReactionOptionCode
           override-ranges:
             - [-32 768, -1]
-          data:
+          values:
             FAULT_REACTION_OPTION_CODE__DISABLE_DRIVE: 0
             FAULT_REACTION_OPTION_CODE__SLOW_DOWN: 1
             FAULT_REACTION_OPTION_CODE__QUICK_STOP: 2
@@ -310,10 +310,10 @@ profiles:
         access: rw
         pdo: true
         enum:
-          class: OperationMode
+          typedef: OperationMode
           override-ranges:
             - [-128, -1]
-          data:
+          values:
             OPERATION_MODE__NO_MODE_CHANGE: 0
             OPERATION_MODE__PROFILE_POSITION_MODE: 1
             OPERATION_MODE__VELOCITY_MODE: 3
@@ -335,10 +335,10 @@ profiles:
         access: r
         pdo: true
         enum:
-          class: OperationMode
+          typedef: OperationMode
           override-ranges:
             - [-128, -1]
-          data:
+          values:
             OPERATION_MODE__NO_MODE_CHANGE: 0
             OPERATION_MODE__PROFILE_POSITION_MODE: 1
             OPERATION_MODE__VELOCITY_MODE: 3
@@ -430,10 +430,10 @@ profiles:
         datatype: int16
         access: rw
         enum:
-          class: SensorSelectionCode
+          typedef: SensorSelectionCode
           override-ranges:
             - [0x8000, 0xFFFF]
-          data:
+          values:
             SENSOR_SELECTION_CODE__FROM_POSITION_ENCODER: 0
             SENSOR_SELECTION_CODE__FROM_VELOCITY_ENCODER: 1
       0x606B:
@@ -578,10 +578,10 @@ profiles:
         datatype: int16
         access: rw
         enum:
-          class: TorqueProfileType
+          typedef: TorqueProfileType
           override-ranges:
             - [0x8000, 0xFFFF]
-          data:
+          values:
             TORQUE_PROFILE_TYPE__LINEAR_RAMP: 0
             TORQUE_PROFILE_TYPE__SIN2_RAMP: 1
       0x607A:
@@ -608,7 +608,7 @@ profiles:
         unit: udp
         datatype: int32
         access: rw
-        data:
+        array:
           - name: Min position range limit
           - name: Max position range limit
       0x607D:
@@ -619,7 +619,7 @@ profiles:
           actual value.
         datatype: int32
         access: rw
-        data:
+        array:
           - name: Min position limit
           - name: Max position limit
       0x607E:
@@ -718,10 +718,10 @@ profiles:
         access: rw
         default: 0
         enum:
-          class: MotionProfileType
+          typedef: MotionProfileType
           override-ranges:
             - [-32768, -1]
-          data:
+          values:
             MOTION_PROFILE_TYPE__LINEAR_RAMP: 0
             MOTION_PROFILE_TYPE__SIN2_RAMP: 1
             MOTION_PROFILE_TYPE__JERK_FREE_RAMP: 2
@@ -736,7 +736,7 @@ profiles:
         access: rw
         datatype: uint32
         default: 1
-        data:
+        array:
           - name: Encoder increments
           - name: motor revolutions
       0x6090:
@@ -749,7 +749,7 @@ profiles:
         datatype: uint32
         access: rw
         default: 1
-        data:
+        array:
           - name: Sensor increments
           - name: motor revolutions
       0x6091:
@@ -760,7 +760,7 @@ profiles:
         access: rw
         default: 1
         datatype: uint32
-        data:
+        array:
           - name: Motor shaft revolutions
           - name: Driving shaft revolutions
       0x6092:
@@ -774,7 +774,7 @@ profiles:
         datatype: uint32
         access: rw
         default: 1
-        data:
+        array:
           - name: Feed
           - name: Shaft revolutions
       0x6096:
@@ -785,7 +785,7 @@ profiles:
         datatype: uint32
         access: rw
         default: 1
-        data:
+        array:
           - name: Numerator
           - name: Denominator
       0x6097:
@@ -795,7 +795,7 @@ profiles:
         datatype: uint32
         access: rw
         default: 1
-        data:
+        array:
           - name: Numerator
           - name: Denominator
       0x6098:
@@ -805,10 +805,10 @@ profiles:
         datatype: int16
         access: rw
         enum:
-          class: HomingMethod
+          typedef: HomingMethod
           override-ranges:
             - [-128, -1]
-          data:
+          values:
             HOMING_METHOD__IMMEDIATE: 0
             HOMING_METHOD__NEGATIVE_SWITCH_INDEX:
               name: Homing on negative limit switch and index pulse
@@ -826,7 +826,7 @@ profiles:
           given in user-defined velocity units.
         datatype: uint32
         access: rw
-        data:
+        array:
           - name: Speed during search for switch
           - name: Speed during search for zero
       0x609A:
@@ -844,7 +844,7 @@ profiles:
         datatype: uint32
         access: rw
         default: 1
-        data:
+        array:
           - name: Numerator
           - name: Denominator
       0x60A3:
@@ -868,17 +868,13 @@ profiles:
         datatype: uint32
         access: rw
         length: 6
-        data:
+        array:
           - name: Profile jerk 1
             category: mandatory
           - name: Profile jerk 2
-
           - name: Profile jerk 3
-
           - name: Profile jerk 4
-
           - name: Profile jerk 5
-
           - name: Profile jerk 6
 
       0x60A8:
@@ -886,7 +882,7 @@ profiles:
         description: |
           This object shall indicate the user-defined position units. The object structure is defined in Figure 1
           in CiA 303-2:2012. The representation of the SI units and prefixes is given in CiA 303-2.
-        datatype: uint32
+        type: uint32
         access: rw
         default: 0xFD010000
       0x60A9:
@@ -1099,10 +1095,10 @@ profiles:
         datatype: int16
         access: rw
         enum:
-          class: InterpolationSubModeSelect
+          typedef: InterpolationSubModeSelect
           override-ranges:
             - [-32768, -1]
-          data:
+          values:
             INTERPOLATION_SUB_MODE_SELECT__LINEAR_INTERPOLATION: 0
       0x60C1:
         name: Interpolation data record
@@ -1195,10 +1191,10 @@ profiles:
         type: array
         access: r
         enum:
-          class: TouchProbeSource
+          typedef: TouchProbeSource
           override-ranges:
             - [-32768, -1]
-          data:
+          values:
             TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_1: 1
             TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_2: 2
             TOUCH_PROBE_SOURCE__FROM_TOUCH_PROBE_3: 3
@@ -1529,7 +1525,7 @@ profiles:
         datatype: uint32
         access: rw
         pdo: true
-        data:
+        array:
           - name: Pyhsical outputs
           - name: Bit mask mask
       0x60FF:
@@ -1547,8 +1543,8 @@ profiles:
         datatype: uint16
         access: rw
         enum:
-          class: MotorType
-          data:
+          typedef: MotorType
+          values:
             MOTOR_TYPE__NON_STANDARD: 0
             MOTOR_TYPE__PHASE_MODULATED_DC_MOTOR: 1
             MOTOR_TYPE__FREQ_CONTROLLED_DC_MOTOR: 2

@@ -73,8 +73,8 @@ def test_var_full():
 
     enum = Enum(
         **{
-            "class": "TestEnum",
-            "data": {
+            "typedef": "TestEnum",
+            "values": {
                 "FIRST": {"name": "FIRST", "value": 1, "description": "First value"},
                 "SECOND": {"name": "SECOND", "value": 2},
             },
@@ -118,7 +118,7 @@ def test_var_full():
     assert var.limits.max == 100
     assert var.pdo is True
     assert isinstance(var.enum, Enum)
-    assert var.enum.data["FIRST"].name == "FIRST"
+    assert var.enum.values["FIRST"].name == "FIRST"
     assert var.default == 5
     assert isinstance(var.bitfield, Bitfield)
     assert var.unit == "V"
@@ -155,7 +155,7 @@ def test_var_enum_uniqueness():
         "SECOND": EnumEntry(name="SECOND", value=1),
     }
     with pytest.raises(ValidationError) as exc_info:
-        Enum(**{"class": "TestEnum", "data": enum_data})
+        Enum(**{"typedef": "TestEnum", "values": enum_data})
 
     assert "Duplicate enum value" in str(exc_info.value)
 

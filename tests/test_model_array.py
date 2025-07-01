@@ -8,14 +8,14 @@ def test_array_entry_creation():
         **{
             "name": "MyEntry",
             "limits": {"min": 0, "max": 10},
-            "enum": {"class": "MyEnum", "data": {"A": 1}},
+            "enum": {"typedef": "MyEnum", "values": {"A": 1}},
             "default": 5,
         }
     )
     assert ae.default == 5
     assert ae.limits.min == 0
     assert isinstance(ae.enum, Enum)
-    assert ae.enum.class_ == "MyEnum"
+    assert ae.enum.typedef == "MyEnum"
 
 
 def test_simple_array_creation():
@@ -39,28 +39,28 @@ def test_array_creation():
             "name": "TestArray",
             "datatype": "int32",
             "length": 5,
-            "data": [{"limits": {"min": 0, "max": 100}, "default": 42}],
+            "array": [{"limits": {"min": 0, "max": 100}, "default": 42}],
         }
     )
     assert arr.type == "array"
     assert arr.length == 5
-    assert isinstance(arr.data[0], ArrayEntry)
-    assert arr.data[0].default == 5
-    assert arr.data[1].default == 42
+    assert isinstance(arr.array[0], ArrayEntry)
+    assert arr.array[0].default == 5
+    assert arr.array[1].default == 42
 
 
 def test_array_defaults():
     arr = Array(name="EmptyArray", datatype="float32")
     assert arr.type == "array"
     assert arr.length == 0
-    assert len(arr.data) == 1
-    assert isinstance(arr.data[0], ArrayEntry)
-    assert arr.data[0].name == "Number of array entries"
+    assert len(arr.array) == 1
+    assert isinstance(arr.array[0], ArrayEntry)
+    assert arr.array[0].name == "Number of array entries"
 
 
 def test_array_invalid_data():
     with pytest.raises(ValueError):
-        Array(data=["not an ArrayEntry"])  # type: ignore
+        Array(array=["not an ArrayEntry"])  # type: ignore
 
 
 def test_array_length_boundaries():

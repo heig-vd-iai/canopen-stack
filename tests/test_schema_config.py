@@ -38,7 +38,7 @@ def sample_config_valid():
                 "description": "An array of integers",
                 "length": 5,
                 "datatype": "int32",
-                "data": [
+                "array": [
                     {
                         "default": 0,
                         "limits": {"min": -1000, "max": 1000},
@@ -55,7 +55,7 @@ def sample_config_valid():
                         "datatype": "uint8",
                         "default": 1,
                         "access": "r",
-                        "enum": {"class": "EnumType", "data": {"FOO": 0, "BAR": 1}},
+                        "enum": {"typedef": "EnumType", "values": {"FOO": 0, "BAR": 1}},
                     },
                     {
                         "name": "Field2",
@@ -98,7 +98,7 @@ def sample_config_invalid():
                 "description": "An array of integers",
                 "length": 5,
                 "datatype": "int32",
-                "data": [
+                "array": [
                     {
                         "default": 0,
                         "limits": {"min": -1000, "max": 1000},
@@ -115,7 +115,7 @@ def sample_config_invalid():
                         "datatype": "uint8",
                         "default": 1.12,
                         "access": "r",
-                        "enum": {"class": "EnumType", "data": {"FOO": 1, "BAR": 1}},
+                        "enum": {"typedef": "EnumType", "values": {"FOO": 1, "BAR": 1}},
                     },
                     {
                         "name": "Field2",
@@ -166,7 +166,7 @@ def test_schema_config_validation_invalid(sample_config_invalid):
     assert error_on(("device", "baudrate"), errors)["type"] == "value_error"
     assert error_on(("profiles", 3), errors)["type"] == "less_than_equal"
     assert (
-        error_on(("objects", 12288, "record", "record", 0, "enum", "data"), errors)[
+        error_on(("objects", 12288, "record", "record", 0, "enum", "values"), errors)[
             "type"
         ]
         == "value_error"
