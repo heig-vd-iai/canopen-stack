@@ -1,54 +1,5 @@
 """Types definitions according to the CiA 301 specification."""
 
-from typing import ClassVar, Dict
-
-
-class ObjectId(int):
-    """Object identifier for CANopen objects."""
-
-    def __new__(cls, index, subindex):
-        return super().__new__(cls, (index << 8) | subindex)
-
-    def __init__(self, index, subindex):
-        self.index = index
-        self.subindex = subindex
-        self.eds_name = f"{index:04x}sub{subindex:x}"
-
-    def __str__(self):
-        return f"0x{self.index:04x}_{self.subindex:02d}"
-
-    def __repr__(self):
-        return f"ObjectCode(index={self.index:04x}, subindex={self.subindex})"
-
-    def __getitem__(self, item):
-        if item == "index":
-            return self.index
-        elif item == "subindex":
-            return self.subindex
-        else:
-            raise KeyError(f"Invalid key: {item}")
-
-
-class ObjectType:
-    """Class to represent object values."""
-
-    OBJECTS_TYPE: ClassVar[Dict[str, int]] = {
-        "null": 0x0,
-        "domain": 0x2,
-        "deftype": 0x5,
-        "defstruct": 0x6,
-        "var": 0x7,
-        "array": 0x8,
-        "record": 0x9,
-    }
-
-    def __init__(self, name):
-        if name not in self.OBJECTS_TYPE:
-            raise ValueError(f"Invalid object type name: {name}")
-        self.name = name
-        self.code = self.OBJECTS_TYPE[name]
-
-
 objects_ranges = {
     (0x0001, 0x001F): "Static data types",
     (0x0020, 0x003F): "Complex data types",

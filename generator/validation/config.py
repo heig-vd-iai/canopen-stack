@@ -8,6 +8,7 @@ from pydantic_core import ErrorDetails
 from . import Array, Device, Record, Var
 from .helpers import infer_object_type
 from .models.mixins import MappingRootMixin
+from ..loaders.profiles import ProfileLoader
 
 ObjectType = Annotated[Union[Var, Array, Record], Field(discriminator="type")]
 
@@ -53,12 +54,31 @@ class SchemaConfig(BaseModel):
     objects: Objects
 
 
+def validate_against_profiles(config: SchemaConfig) -> None:
+    """Validate the configuration against the specified profiles."""
+    if not config.profiles:
+        return
+
+    profiles = ProfileLoader()
+    errors = profiles.load_all(use_cache=True)
+
+    for profile in config.profiles:
+        if profile not in profiles.profiles:
+            raise ValueError(f"Profile {profile} not found in loaded profiles")
+
+
+
 def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
     """Validate the configuration data against the SchemaConfig model."""
-    obj = None
+    config = None
     errors = []
     try:
-        obj = SchemaConfig.model_validate(config_data)
+        config = SchemaConfig.model_validate(config_data)
     except ValidationError as e:
         errors = e.errors()
-    return obj, errors
+        return None, errors
+
+    if len(config.profiles):
+        validate_against_profiles(config)
+
+    return config, errors

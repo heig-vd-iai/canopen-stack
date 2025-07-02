@@ -10,7 +10,6 @@ from .models.enum import Enum, EnumEntry, EnumProfile
 from .models.limits import Limits
 from .models.markdown import Markdown
 from .models.record import Record, RecordEntry, RecordProfile
-from .models.types import ObjectId
 from .models.var import Var, VarProfile
 
 __export__ = [
@@ -27,7 +26,6 @@ __export__ = [
     EnumEntry,
     Limits,
     Markdown,
-    ObjectId,
     Record,
     RecordEntry,
     Var,
