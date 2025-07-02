@@ -9,6 +9,7 @@ from . import Array, Device, Record, Var
 from .helpers import infer_object_type
 from .models.mixins import MappingRootMixin
 from ..loaders.profiles import ProfileLoader
+from .profile import ObjectTypeProfile
 
 ObjectType = Annotated[Union[Var, Array, Record], Field(discriminator="type")]
 
@@ -66,7 +67,50 @@ def validate_against_profiles(config: SchemaConfig) -> None:
         if profile not in profiles.profiles:
             raise ValueError(f"Profile {profile} not found in loaded profiles")
 
+def validate_against_profile_object(config_object: ObjectType, profile_object: ObjectTypeProfile):
+    """Validate a single object against its profile."""
+    errors = []
 
+    # Adds description if missing
+    if not config_object.description:
+        config_object.description = profile_object.description
+
+    # Adds datatype if missing
+    if not config_object.datatype:
+        config_object.datatype = profile_object.datatype
+
+    # Adds default value if missing
+    if not config_object.default:
+        config_object.default = profile_object.default
+
+
+    # Object must be the same type as the profile
+    if config_object.type != profile_object.type:
+        errors.append(
+            f"Type mismatch: {config_object.type} vs {profile_object.type}"
+        )
+
+    # Object must be the same datatype as the profile
+    if config_object.datatype != profile_object.datatype:
+        errors.append(
+            f"Datatype mismatch: {config_object.datatype} vs {profile_object.datatype}"
+        )
+
+    # Object must have the same access as the profile
+    if config_object.access != profile_object.access:
+        errors.append(
+            f"Access mismatch: {config_object.access} vs {profile_object.access}"
+        )
+
+    for field, value in config_object.model_dump().items():
+        if field not in profile_object.model_fields:
+            raise ValueError(f"Field {field} not found in profile object")
+
+        profile_field = profile_object.model_fields[field]
+        if not isinstance(value, profile_field.annotation):
+            raise ValueError(
+                f"Field {field} type mismatch: {type(value)} vs {profile_field.annotation}"
+            )
 
 def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
     """Validate the configuration data against the SchemaConfig model."""
