@@ -10,13 +10,13 @@ from pydantic import (
     model_validator,
 )
 
-from .helpers import infer_object_type
-from .models.array import ArrayProfile
-from .models.markdown import Markdown
-from .models.mixins import MappingRootMixin
-from .models.record import RecordProfile
-from .models.validators import validate_identifier
-from .models.var import VarProfile
+from ..helpers import infer_object_type
+from .array import ArrayProfile
+from .markdown import Markdown
+from .mixins import MappingRootMixin
+from .record import RecordProfile
+from .validators import validate_identifier
+from .var import VarProfile
 
 ObjectTypeProfile = Annotated[
     Union[VarProfile, ArrayProfile, RecordProfile], Field(discriminator="type")
@@ -59,7 +59,7 @@ class ObjectsProfile(
         return v
 
 
-class Profile(BaseModel):
+class SchemaProfile(BaseModel):
     """Profile for a specific CiA profile."""
 
     name: str
@@ -75,7 +75,7 @@ class Profile(BaseModel):
         return {validate_identifier(k): val for k, val in v.items()}
 
 
-class Profiles(BaseModel):
+class SchemaProfiles(BaseModel):
     """Schema for the CiA profiles."""
 
-    profiles: Dict[Annotated[int, Field(ge=300, le=500)], Profile]
+    profiles: Dict[Annotated[int, Field(ge=300, le=500)], SchemaProfile]

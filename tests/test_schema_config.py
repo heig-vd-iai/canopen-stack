@@ -6,7 +6,7 @@ from typing import cast
 import pytest
 
 from generator.validation import Datatype, Var
-from generator.validation.config import Config, SchemaConfig
+from generator.validation.models.config import Config, SchemaConfig
 
 
 @pytest.fixture

@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Union
 from pydantic import ValidationError
 from pydantic_core import ErrorDetails
 
-from ..validation.profile import Profiles
+from ..validation.models.profile import Profiles
 from .yaml_config import read_config_file
 
 PROFILE_DIR = Path(__file__).parent.parent / "profiles"

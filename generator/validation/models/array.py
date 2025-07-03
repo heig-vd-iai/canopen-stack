@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from .enum import Enum, EnumProfile
 from .limits import Limits
 from .mixins import AccessorMixin, UnitMixin
-from .object_common import HeaderCommon, VarCommon
+from .object_common import HeaderCommon, VarCommon, HeaderCommonProfile, VarCommonProfile
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
@@ -83,6 +83,12 @@ class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
     type: Literal["array"] = "array"
     length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
 
+class BaseArrayProfile(HeaderCommonProfile, VarCommonProfile, InferArrayLengthMixin):
+    """Base class for array objects."""
+
+    type: Literal["array"] = "array"
+    length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
+
 
 class Array(BaseArray):
     """Array object for storing subindex data."""
@@ -118,12 +124,36 @@ class Array(BaseArray):
         return result
 
 
-class ArrayProfile(Array):
-    """Array profile with additional information."""
+class ArrayProfile(BaseArrayProfile):
+    """Array object for storing subindex data."""
 
     array: List[ArrayEntryProfile] = []
+    max_length: Annotated[int, Field(ge=0, le=255)] = Field(default=255)
 
     @field_validator("array", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
         return cls._ensure_array_entry(v, info, model_cls=ArrayEntryProfile)
+
+    @classmethod
+    def _ensure_array_entry(cls, v, info, model_cls):
+        """Ensure that the array is a list of ArrayEntry objects."""
+        if v is None:
+            return []
+        if not isinstance(v, list):
+            raise TypeError(f"array must be a list, got {type(v)}")
+
+        result = []
+        array_name = info.data.get("name", "Array")
+
+        for i, item in enumerate(v, start=1):
+            if isinstance(item, model_cls):
+                result.append(item)
+            else:
+                # Si item est un dict, vérifier si 'name' est présent
+                item_data = dict(item)  # safe copy
+                if "name" not in item_data:
+                    item_data["name"] = f"{array_name}_{i}"
+                result.append(model_cls(**item_data))
+
+        return result

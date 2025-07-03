@@ -8,7 +8,7 @@ from generator.validation import VarProfile
 from generator.validation.models.access import Access
 from generator.validation.models.bitfields import Bitfield
 from generator.validation.models.datatype import Datatype
-from generator.validation.profile import Profiles
+from generator.validation.models.profile import Profiles
 
 
 @pytest.fixture

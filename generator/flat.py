@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .validation.config import Array, Config, Record, RecordEntry, Var
+from .validation.models.config import Array, Config, Record, RecordEntry, Var
 from .validation.models.types import ObjectId, TypeValue
 
 
