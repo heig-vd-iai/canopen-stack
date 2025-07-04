@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Union
 from pydantic import ValidationError
 from pydantic_core import ErrorDetails
 
-from ..validation.models.profile import Profiles
+from ..validation.models.profile import SchemaProfiles
 from .yaml_config import read_config_file
 
 PROFILE_DIR = Path(__file__).parent.parent / "profiles"
@@ -25,7 +25,7 @@ class ProfileLoader:
         self.profile_dir = profile_dir or PROFILE_DIR
         self.cache_path = cache_path or self.profile_dir / ".cache_profiles.pkl"
 
-        self.profiles: Dict[int, "Profiles"] = {}
+        self.profiles: Dict[int, "SchemaProfiles"] = {}
         self.warnings: Dict[int, List[str]] = {}
         self.errors: Dict[int, Union[List[ErrorDetails], str]] = {}
 
@@ -55,7 +55,7 @@ class ProfileLoader:
             try:
                 with warnings.catch_warnings(record=True) as w:
                     warnings.simplefilter("always")
-                    profile = Profiles.model_validate(raw)
+                    profile = SchemaProfiles.model_validate(raw)
 
                 self.profiles[profile_id] = profile
                 self.warnings[profile_id] = [str(warn.message) for warn in w]

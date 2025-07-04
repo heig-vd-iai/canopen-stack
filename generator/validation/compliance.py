@@ -7,7 +7,10 @@ from .models.profile import SchemaProfile
 from .models.var import Var, VarProfile
 from .models.array import Array, ArrayProfile
 
-def check_compliance_with_profile(config: SchemaConfig, profile: SchemaProfile) -> List[ValueError]:
+
+def check_compliance_with_profile(
+    config: SchemaConfig, profile: SchemaProfile
+) -> List[ValueError]:
     """Validate the configuration against the specified profiles."""
     if not config.profiles:
         return []
@@ -17,7 +20,9 @@ def check_compliance_with_profile(config: SchemaConfig, profile: SchemaProfile) 
     for index, object_profile in profile.objects.items():
         if object_profile.category == "mandatory":
             if index not in config.objects:
-                errors.append(ValueError(f"Mandatory object {index:04x} not found in config"))
+                errors.append(
+                    ValueError(f"Mandatory object {index:04x} not found in config")
+                )
                 continue
 
         if object_profile.category == "conditional":
@@ -47,15 +52,14 @@ def check_compliance_with_profile(config: SchemaConfig, profile: SchemaProfile) 
 
     return errors
 
+
 def check_var_compliancy(config_var: Var, profile_var: VarProfile):
     """Validate a single variable against its profile."""
     errors = []
 
     # Object must be the same type as the profile
     if config_var.type != profile_var.type:
-        errors.append(
-            f"Type mismatch: {config_var.type} vs {profile_var.type}"
-        )
+        errors.append(f"Type mismatch: {config_var.type} vs {profile_var.type}")
 
     # Object must be the same datatype as the profile
     if config_var.datatype != profile_var.datatype:
@@ -65,11 +69,10 @@ def check_var_compliancy(config_var: Var, profile_var: VarProfile):
 
     # Object must have the same access as the profile
     if config_var.access != profile_var.access:
-        errors.append(
-            f"Access mismatch: {config_var.access} vs {profile_var.access}"
-        )
+        errors.append(f"Access mismatch: {config_var.access} vs {profile_var.access}")
 
     return errors
+
 
 def check_array_compliancy(config_array: Array, profile_array: ArrayProfile):
     """Validate a single array against its profile."""
@@ -77,9 +80,7 @@ def check_array_compliancy(config_array: Array, profile_array: ArrayProfile):
 
     # Object must be the same type as the profile
     if config_array.type != profile_array.type:
-        errors.append(
-            f"Type mismatch: {config_array.type} vs {profile_array.type}"
-        )
+        errors.append(f"Type mismatch: {config_array.type} vs {profile_array.type}")
 
     # Object must be the same datatype as the profile
     if config_array.datatype != profile_array.datatype:
@@ -108,19 +109,19 @@ def check_array_compliancy(config_array: Array, profile_array: ArrayProfile):
 
     return errors
 
-def check_compliance_with_profile_object(config_object: ObjectType, profile_object: ObjectTypeProfile):
+
+def check_compliance_with_profile_object(
+    config_object: ObjectType, profile_object: ObjectTypeProfile
+):
     """Validate a single object against its profile."""
     errors = []
     warnings = []
 
     # Adds description if missing
 
-
     # Object must be the same type as the profile
     if config_object.type != profile_object.type:
-        errors.append(
-            f"Type mismatch: {config_object.type} vs {profile_object.type}"
-        )
+        errors.append(f"Type mismatch: {config_object.type} vs {profile_object.type}")
 
     # Object must be the same datatype as the profile
     if config_object.datatype != profile_object.datatype:
@@ -144,6 +145,7 @@ def check_compliance_with_profile_object(config_object: ObjectType, profile_obje
                 f"Field {field} type mismatch: {type(value)} vs {profile_field.annotation}"
             )
 
+
 def check_compliance_with_enum(config_enum: Enum, profile_enum: EnumProfile):
     """Validate a single enum against its profile."""
     errors = []
@@ -156,7 +158,9 @@ def check_compliance_with_enum(config_enum: Enum, profile_enum: EnumProfile):
 
         config_entry = config_enum.values.get(entry_name)
         if not isinstance(config_entry, EnumEntry):
-            raise TypeError(f"Expected EnumEntry for {entry_name}, got {type(config_entry)}")
+            raise TypeError(
+                f"Expected EnumEntry for {entry_name}, got {type(config_entry)}"
+            )
 
         # Adds description if missing
         if config_entry.description is None:

@@ -64,7 +64,4 @@ def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
         errors = e.errors()
         return None, errors
 
-    if len(config.profiles):
-        validate_against_profiles(config)
-
     return config, errors

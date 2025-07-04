@@ -1,77 +1,40 @@
 import pytest
-from pydantic import ValidationError
 
-from generator.validation.models import ObjectType
-
-
-def test_create_with_name():
-    obj = ObjectType(name="var")
-    assert obj.name == "var"
-    assert obj.cia_id == 0x7
+from generator.validation.models.object_id import ObjectId
 
 
-def test_create_with_cia_id():
-    obj = ObjectType(cia_id=0x9)
-    assert obj.name == "record"
-    assert obj.cia_id == 0x9
+def test_object_id_creation():
+    """Test creation of ObjectId and its attributes."""
+    obj_id = ObjectId(0x1234, 0x56)
+
+    # Check that the integer value is correct
+    expected_value = (0x1234 << 8) | 0x56
+    assert int(obj_id) == expected_value
+
+    # Check attributes
+    assert obj_id.index == 0x1234
+    assert obj_id.subindex == 0x56
+    assert obj_id.eds_name == "1234sub56"
 
 
-@pytest.mark.parametrize(
-    "name, expected_code",
-    [
-        ("null", 0x0),
-        ("domain", 0x2),
-        ("deftype", 0x5),
-        ("defstruct", 0x6),
-        ("var", 0x7),
-        ("array", 0x8),
-        ("record", 0x9),
-    ],
-)
-def test_all_valid_names(name, expected_code):
-    obj = ObjectType(name=name)
-    assert obj.name == name
-    assert obj.cia_id == expected_code
+def test_object_id_str():
+    """Test __str__ representation."""
+    obj_id = ObjectId(0x1AB, 0x2)
+    assert str(obj_id) == "0x01ab_02"
 
 
-@pytest.mark.parametrize(
-    "cia_id, expected_name",
-    [
-        (0x0, "null"),
-        (0x2, "domain"),
-        (0x5, "deftype"),
-        (0x6, "defstruct"),
-        (0x7, "var"),
-        (0x8, "array"),
-        (0x9, "record"),
-    ],
-)
-def test_all_valid_codes(cia_id, expected_name):
-    obj = ObjectType(cia_id=cia_id)
-    assert obj.cia_id == cia_id
-    assert obj.name == expected_name
+def test_object_id_repr():
+    """Test __repr__ representation."""
+    obj_id = ObjectId(0x1234, 0x56)
+    assert repr(obj_id) == "ObjectCode(index=1234, subindex=86)"
 
 
-def test_invalid_name():
-    with pytest.raises(ValidationError) as exc:
-        ObjectType(name="invalid_name")
-    assert "Invalid object type name" in str(exc.value)
+def test_object_id_getitem():
+    """Test __getitem__ for index and subindex."""
+    obj_id = ObjectId(0x55AA, 0x99)
 
+    assert obj_id["index"] == 0x55AA
+    assert obj_id["subindex"] == 0x99
 
-def test_invalid_cia_id():
-    with pytest.raises(ValidationError) as exc:
-        ObjectType(cia_id=0x99)
-    assert "Invalid cia_id" in str(exc.value)
-
-
-def test_missing_fields():
-    with pytest.raises(ValidationError) as exc:
-        ObjectType()
-    assert "Either 'name' or 'cia_id' must be provided." in str(exc.value)
-
-
-def test_frozen_model():
-    obj = ObjectType(name="var")
-    with pytest.raises(ValidationError) as exc:
-        obj.name = "domain"
-    assert "frozen" in str(exc.value)
+    with pytest.raises(KeyError, match="Invalid key: foo"):
+        _ = obj_id["foo"]
