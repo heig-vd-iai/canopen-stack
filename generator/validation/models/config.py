@@ -53,7 +53,6 @@ class SchemaConfig(BaseModel):
     objects: Objects
 
 
-
 def Config(config_data) -> Tuple[Union[SchemaConfig, None], List[ErrorDetails]]:
     """Validate the configuration data against the SchemaConfig model."""
     config = None

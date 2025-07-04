@@ -15,7 +15,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from .enum import Enum, EnumProfile
 from .limits import Limits
 from .mixins import AccessorMixin, UnitMixin
-from .object_common import HeaderCommon, VarCommon, HeaderCommonProfile, VarCommonProfile
+from .object_common import (
+    HeaderCommon,
+    HeaderCommonProfile,
+    VarCommon,
+    VarCommonProfile,
+)
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
@@ -82,6 +87,7 @@ class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
 
     type: Literal["array"] = "array"
     length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
+
 
 class BaseArrayProfile(HeaderCommonProfile, VarCommonProfile, InferArrayLengthMixin):
     """Base class for array objects."""

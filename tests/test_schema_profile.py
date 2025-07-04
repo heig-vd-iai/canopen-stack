@@ -157,7 +157,7 @@ def full_profile():
 
 def test_schema_config_validation(sample_config_valid):
     """Test that the SchemaConfig validates a correct configuration."""
-    config = SchemaProfiles.model_validate(sample_config_valid)
+    SchemaProfiles.model_validate(sample_config_valid)
 
 
 def test_schema_config_validation2(full_profile):

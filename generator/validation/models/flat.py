@@ -1,8 +1,8 @@
 from typing import Optional
 
 from .object_common import HeaderCommon, VarCommon
+from .object_id import ObjectId
 from .object_type import ObjectType
-
 
 
 class FlattenedObject(VarCommon, HeaderCommon):

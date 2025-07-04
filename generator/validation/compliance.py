@@ -1,11 +1,11 @@
 from typing import List
 
+from .models.array import Array, ArrayProfile
 from .models.config import SchemaConfig
 from .models.enum import Enum, EnumEntry, EnumProfile
-from .models.object_type import ObjectType
 from .models.profile import SchemaProfile
+from .models.record import Record, RecordProfile
 from .models.var import Var, VarProfile
-from .models.array import Array, ArrayProfile
 
 
 def check_compliance_with_profile(
@@ -110,41 +110,23 @@ def check_array_compliancy(config_array: Array, profile_array: ArrayProfile):
     return errors
 
 
-def check_compliance_with_profile_object(
-    config_object: ObjectType, profile_object: ObjectTypeProfile
-):
-    """Validate a single object against its profile."""
+def check_record_compliancy(config_record: Record, profile_record: RecordProfile):
+    """Validate a record against its profile."""
     errors = []
-    warnings = []
 
-    # Adds description if missing
+    for subindex, entry in enumerate(profile_record.record):
+        if not isinstance(entry, Var):
+            raise TypeError(f"Expected Var for record entry, got {type(entry)}")
 
-    # Object must be the same type as the profile
-    if config_object.type != profile_object.type:
-        errors.append(f"Type mismatch: {config_object.type} vs {profile_object.type}")
-
-    # Object must be the same datatype as the profile
-    if config_object.datatype != profile_object.datatype:
-        errors.append(
-            f"Datatype mismatch: {config_object.datatype} vs {profile_object.datatype}"
-        )
-
-    # Object must have the same access as the profile
-    if config_object.access != profile_object.access:
-        errors.append(
-            f"Access mismatch: {config_object.access} vs {profile_object.access}"
-        )
-
-    for field, value in config_object.model_dump().items():
-        if field not in profile_object.model_fields:
-            raise ValueError(f"Field {field} not found in profile object")
-
-        profile_field = profile_object.model_fields[field]
-        if not isinstance(value, profile_field.annotation):
-            raise ValueError(
-                f"Field {field} type mismatch: {type(value)} vs {profile_field.annotation}"
+        if subindex >= len(config_record.record):
+            errors.append(
+                f"Subindex {subindex} not found in config record for index {config_record.index:04x}"
             )
+            continue
 
+        errors.extend(check_var_compliancy(config_record.record[subindex], entry))
+
+    return errors
 
 def check_compliance_with_enum(config_enum: Enum, profile_enum: EnumProfile):
     """Validate a single enum against its profile."""
