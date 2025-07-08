@@ -2,6 +2,7 @@
  * Contains the definitions of the EMCY class.
  */
 #include "emergency.hpp"
+
 #include "frame.hpp"
 #include "node.hpp"
 
@@ -9,7 +10,9 @@ using namespace CANopen;
 
 ErrorRegister::ErrorRegister() : value(0) {}
 
-void ErrorRegister::init() { odID = node.od().findObject(ERROR_REGISTER_INDEX); }
+void ErrorRegister::init() {
+    odID = node.od().findObject(ERROR_REGISTER_INDEX);
+}
 
 uint8_t ErrorRegister::getValue() { return value; }
 
@@ -121,14 +124,17 @@ void PreDefinesErrorField::pushError(uint16_t errorCode,
     if (firstError != newError) {
         shiftErrors();
         uint8_t count = errorsNumber;
-        if (count < PREDEFINED_ERROR_FIELD_SIZE) errorsNumber = ++count;
+        if (count < PREDEFINED_ERROR_FIELD_SIZE) {
+            count++;
+            errorsNumber = count;
+        }
         errorsField[0] = newError;
     }
 }
 
 void PreDefinesErrorField::clearErrors() {
-    errorsNumber = 0;
     for (unsigned i = 0; i < errorsNumber; i++) errorsField[i] = 0;
+    errorsNumber = 0;
 }
 
 int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
@@ -138,11 +144,12 @@ int8_t PreDefinesErrorField::getData(Data &data, int32_t odID,
         data.u8 = errorsNumber;
         return 0;
     }
-    if (odID >= this->odID + 1 && odID < this->odID + 1 + PREDEFINED_ERROR_FIELD_SIZE) {
+    if (odID >= this->odID + 1 &&
+        odID < this->odID + 1 + PREDEFINED_ERROR_FIELD_SIZE) {
         data.u32 = errorsField[odID - this->odID - 1];
         return 0;
     }
-    return 0; // TODO: Is this the expected return value?
+    return 0;  // TODO: Is this the expected return value?
     // TODO: This function always return 0?
 }
 
@@ -159,7 +166,7 @@ int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
         abortCode = SDOAbortCode_OK;
         return 0;
     }
-    return 0; // TODO: Is this the expected return value?
+    return 0;  // TODO: Is this the expected return value?
 }
 
 ErrorBehavior::ErrorBehavior() {}
@@ -169,9 +176,9 @@ void ErrorBehavior::init() {
     Data data;
     SDOAbortCodes abortCode;
     numberOfEntries = 2;
-    getLocalData_uint8_t(data, odID+1, abortCode);
+    getLocalData_uint8_t(data, odID + 1, abortCode);
     communicationError = (ErrorBehaviorValue)data.u8;
-    getLocalData_uint8_t(data, odID+2, abortCode);
+    getLocalData_uint8_t(data, odID + 2, abortCode);
     internalDeviceError = (ErrorBehaviorValue)data.u8;
 }
 
@@ -188,8 +195,7 @@ int8_t ErrorBehavior::getData(Data &data, int32_t odID,
     abortCode = SDOAbortCode_OK;
     if (odID == this->odID) {
         data.u8 = numberOfEntries;
-    }
-    else if (odID == this->odID + 1) {
+    } else if (odID == this->odID + 1) {
         data.u8 = (uint8_t)communicationError;
     } else if (odID == this->odID + 2) {
         data.u8 = (uint8_t)internalDeviceError;
@@ -214,10 +220,7 @@ int8_t ErrorBehavior::setData(const Data &data, int32_t odID,
     return 0;
 }
 
-EMCY::EMCY()
-    : errorRegister(),
-      preDefinedErrorField(),
-      errorBehavior() {}
+EMCY::EMCY() : errorRegister(), preDefinedErrorField(), errorBehavior() {}
 
 void EMCY::init() {
     errorRegister.init();
@@ -235,8 +238,7 @@ void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
     node.hardware().sendFrame(frame);
 }
 
-void EMCY::raiseError(uint16_t errorCode,
-                      uint16_t manufacturerCode) {
+void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
     if (!enabled) return;
     switch ((EMCYErrorCodes)errorCode) {
         case EMCYErrorCode_Generic:
@@ -296,7 +298,9 @@ void EMCY::raiseError(uint16_t errorCode,
     preDefinedErrorField.pushError(errorCode, manufacturerCode);
     sendError(errorCode, manufacturerCode);
     NMTServiceCommands command = NMTServiceCommand_None;
-    switch (errorBehavior.getInternalDeviceError()) { //TODO: make difference with communication error
+    switch (
+        errorBehavior.getInternalDeviceError()) {  // TODO: make difference with
+                                                   // communication error
         default:
         case ErrorBehaviorValue_PreOperational:
             if (node._nmt.getState() == NMTState_Operational)
