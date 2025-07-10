@@ -671,7 +671,7 @@ class ObjectDictionary:
             type_count=self.type_count,
             subindex_count=self.subindex_count,
             node_id=self.info["device"]["nodeID"],
-        )
+        ) + "\n"
 
     def to_remote(self):
         template = self.env.get_template("remote.j2")

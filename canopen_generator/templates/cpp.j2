@@ -188,13 +188,12 @@ int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCod
 }
 
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    node.hardware().getRemoteData(data, id, abortCode);
+    return node.hardware().getRemoteData(data, id, abortCode);
 }
 
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    node.hardware().setRemoteData(data, id, abortCode);
+    return node.hardware().setRemoteData(data, id, abortCode);
 }
-
 
 int32_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t lower = 0;
