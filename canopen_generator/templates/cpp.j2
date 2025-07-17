@@ -351,7 +351,6 @@ bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     Data tmp;
-    int16_t size;
     uint16_t minIndex = 0x0000;
     uint16_t maxIndex = 0xFFFF;
     SDOAbortCodes abortCode;
@@ -370,9 +369,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     for (int i = 0; i < length; i++) {
         if (CANopenOD::objectIndexTable[i].first >= minIndex &&
             CANopenOD::objectIndexTable[i].first <= maxIndex) {
-            size = getSize(i);
             tmp = getMetadata(i)->getDefaultValue();
-            int8_t ret;
             count = 0;
             while (writeData(tmp, i, abortCode) == 1) {
                 count++;
