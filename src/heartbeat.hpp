@@ -3,10 +3,10 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include "enums.hpp"
 #include "unions.hpp"
-
-#include <cstdint>
 
 #define HEARTBEAT_DLC 1
 #define HEARTBEAT_STATE_OFFSET 0
@@ -55,7 +55,6 @@ class HB {
      * This method should only be called by the NMT state machine.
      */
     void resetToggleBit();
-
 
    public:
     friend class NMT;

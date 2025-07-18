@@ -1,17 +1,19 @@
-#include "CANopen.hpp"
+#include <linux/can.h>
+#include <net/if.h>
+#include <pthread.h>
+#include <signal.h>
+#include <sys/socket.h>
+
 #include <bitset>
 #include <chrono>
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <linux/can.h>
 #include <mutex>
-#include <net/if.h>
-#include <pthread.h>
 #include <random>
-#include <signal.h>
-#include <sys/socket.h>
 #include <thread>
+
+#include "CANopen.hpp"
 using namespace CANopen;
 using namespace std;
 #define ID_MAX 127
@@ -19,8 +21,7 @@ using namespace std;
 #define FILENAME "od.dat"
 // #define INTERACTIVE // uncomment to enable interactive mode
 
-struct ErrorCodeInfo
-{
+struct ErrorCodeInfo {
     uint16_t code;
     const char *description;
 };
@@ -66,20 +67,16 @@ bool quit = false;
 int sock = -1;
 
 #ifdef INTERACTIVE
-void clear()
-{
+void clear() {
     cin.clear();
     cin.ignore(1024, '\n');
 }
 #endif
 
-void listenFunc(Node &node, mutex &mtx)
-{
-    while (true)
-    {
+void listenFunc(Node &node, mutex &mtx) {
+    while (true) {
         can_frame canFrame;
-        if (recv(sock, &canFrame, sizeof(canFrame), 0))
-        {
+        if (recv(sock, &canFrame, sizeof(canFrame), 0)) {
             mtx.lock();
             Frame CANopenFrame = Frame::fromCobId(canFrame.can_id);
             CANopenFrame.dlc = canFrame.can_dlc;
@@ -91,14 +88,11 @@ void listenFunc(Node &node, mutex &mtx)
     }
 }
 
-void updateFunc(Node &node, mutex &mtx)
-{
+void updateFunc(Node &node, mutex &mtx) {
     default_random_engine engine;
     uniform_real_distribution<double> unif(100.0, 200.0);
-    while (!quit)
-    {
-        if (mtx.try_lock())
-        {
+    while (!quit) {
+        if (mtx.try_lock()) {
             // node.od()[OD_OBJECT_6048]->setValue(1, unif(engine));
             node.update();
             mtx.unlock();
@@ -106,54 +100,50 @@ void updateFunc(Node &node, mutex &mtx)
     }
 }
 
-void onWrite(Object &object, unsigned subindex)
-{
+void onWrite(Object &object, unsigned subindex) {
     printf("Object %X at subindex %d was written to\n", object.index, subindex);
 }
 
-int main(int argc, char *argv[])
-{
-    signal(SIGINT, [](int /*signum*/)
-           { quit = true; });
+int main(int argc, char *argv[]) {
+    signal(SIGINT, [](int /*signum*/) { quit = true; });
     int ifindex;
-    if (argc < 2)
-    {
+    if (argc < 2) {
         cout << "Usage: ./app <CAN interface>" << endl;
         return EXIT_FAILURE;
     }
-    if ((ifindex = if_nametoindex(argv[1])) == 0)
-    {
+    if ((ifindex = if_nametoindex(argv[1])) == 0) {
         cout << "Unknown interface \"" << argv[1] << "\"" << endl;
         return EXIT_FAILURE;
     }
 
-    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
-    {
+    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
         perror("Socket");
         return EXIT_FAILURE;
     }
     sockaddr_can addr;
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifindex;
-    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
-    {
+    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         perror("Bind");
         return EXIT_FAILURE;
     }
 
     Node node;
-    cout << "Starting node with ID " << (int)node.nodeId << " on interface " << argv[1] << endl;
+    cout << "Starting node with ID " << (int)node.nodeId << " on interface "
+         << argv[1] << endl;
 #ifndef INTERACTIVE
-    node.pdo().onTimeout([](unsigned index)
-                         { cout << "Timeout occured on RPDO" << index << endl; });
-    node.pdo().onReceive([](unsigned index)
-                         { cout << "Received RPDO" << index << endl; });
-    for (int i = 0; i < node.od().length; i++)
-        node.od()[i]->onWrite(onWrite);
-    node.od()[OD_OBJECT_6048]->onRequestUpdate([](Object &object, unsigned subindex)
-                                               {
-                                                       cout << "Received update request on object 6048, sub " << subindex << endl;
-                                                       if (subindex == 2) object.setValue(subindex, 3.1425f); });
+    node.pdo().onTimeout([](unsigned index) {
+        cout << "Timeout occured on RPDO" << index << endl;
+    });
+    node.pdo().onReceive(
+        [](unsigned index) { cout << "Received RPDO" << index << endl; });
+    for (int i = 0; i < node.od().length; i++) node.od()[i]->onWrite(onWrite);
+    node.od()[OD_OBJECT_6048]->onRequestUpdate(
+        [](Object &object, unsigned subindex) {
+            cout << "Received update request on object 6048, sub " << subindex
+                 << endl;
+            if (subindex == 2) object.setValue(subindex, 3.1425f);
+        });
 #endif
     node.od().loadData(0);
     node.init();
@@ -163,8 +153,7 @@ int main(int argc, char *argv[])
     thread updateThread(updateFunc, ref(node), ref(mtx));
 #ifdef INTERACTIVE
     int choice = 0, subChoice = 0;
-    do
-    {
+    do {
         cout << "===== CANopen example =====\n";
         cout << "0: Quit\n";
         cout << "1: Save OD\n";
@@ -176,66 +165,63 @@ int main(int argc, char *argv[])
         cout << "7: Transmit PDO\n";
         cout << "> ";
         cin >> choice;
-        switch (choice)
-        {
-        case 1:
-            node.od().saveData(0);
-            break;
-        case 2:
-            node.od().loadData(0);
-            break;
-        case 3:
-            node.od().restoreData(0);
-            break;
-        case 4:
-        {
-            cout << "===== Error codes =====\n";
-            cout << "0: Return\n";
-            for (int i = 0; i < errorInfoLength; i++)
-                cout << i + 1 << ": " << errorInfo[i].description << '\n';
-            cout << "> ";
-            cin >> subChoice;
-            if (1 <= subChoice && subChoice <= errorInfoLength)
-                node.emcy().raiseError(errorInfo[subChoice - 1].code);
-            clear();
-            break;
-        }
-        case 5:
-        {
-            bitset<8> reg{node.emcy().getErrorRegister()};
-            cout << "===== Error register =====\n";
-            cout << "0: Return\n";
-            cout << "1: (" << reg[0] << ") Clear generic error\n";
-            cout << "2: (" << reg[1] << ") Clear current error\n";
-            cout << "3: (" << reg[2] << ") Clear voltage error\n";
-            cout << "4: (" << reg[3] << ") Clear temperature error\n";
-            cout << "5: (" << reg[4] << ") Clear communication error\n";
-            cout << "6: (" << reg[5] << ") Clear device profile specific error\n";
-            cout << "7: Reserved\n";
-            cout << "8: (" << reg[7] << ") Clear manufacturer error\n";
-            cout << "> ";
-            cin >> subChoice;
-            if (1 <= subChoice && subChoice <= 8)
-                node.emcy().clearErrorBit(subChoice - 1);
-            clear();
-            break;
-        }
-        case 6:
-            node.emcy().clearHistory();
-            break;
-        case 7:
-        {
-            cout << "===== TPDOs =====\n";
-            cout << "0: Return\n";
-            for (int i = 0; i < OD_TPDO_COUNT; i++)
-                cout << i + 1 << ": send TPDO" << i + 1 << '\n';
-            cout << "> ";
-            cin >> subChoice;
-            if (1 <= subChoice && subChoice <= OD_TPDO_COUNT)
-                node.pdo().transmitTPDO(subChoice - 1);
-            clear();
-            break;
-        }
+        switch (choice) {
+            case 1:
+                node.od().saveData(0);
+                break;
+            case 2:
+                node.od().loadData(0);
+                break;
+            case 3:
+                node.od().restoreData(0);
+                break;
+            case 4: {
+                cout << "===== Error codes =====\n";
+                cout << "0: Return\n";
+                for (int i = 0; i < errorInfoLength; i++)
+                    cout << i + 1 << ": " << errorInfo[i].description << '\n';
+                cout << "> ";
+                cin >> subChoice;
+                if (1 <= subChoice && subChoice <= errorInfoLength)
+                    node.emcy().raiseError(errorInfo[subChoice - 1].code);
+                clear();
+                break;
+            }
+            case 5: {
+                bitset<8> reg{node.emcy().getErrorRegister()};
+                cout << "===== Error register =====\n";
+                cout << "0: Return\n";
+                cout << "1: (" << reg[0] << ") Clear generic error\n";
+                cout << "2: (" << reg[1] << ") Clear current error\n";
+                cout << "3: (" << reg[2] << ") Clear voltage error\n";
+                cout << "4: (" << reg[3] << ") Clear temperature error\n";
+                cout << "5: (" << reg[4] << ") Clear communication error\n";
+                cout << "6: (" << reg[5]
+                     << ") Clear device profile specific error\n";
+                cout << "7: Reserved\n";
+                cout << "8: (" << reg[7] << ") Clear manufacturer error\n";
+                cout << "> ";
+                cin >> subChoice;
+                if (1 <= subChoice && subChoice <= 8)
+                    node.emcy().clearErrorBit(subChoice - 1);
+                clear();
+                break;
+            }
+            case 6:
+                node.emcy().clearHistory();
+                break;
+            case 7: {
+                cout << "===== TPDOs =====\n";
+                cout << "0: Return\n";
+                for (int i = 0; i < OD_TPDO_COUNT; i++)
+                    cout << i + 1 << ": send TPDO" << i + 1 << '\n';
+                cout << "> ";
+                cin >> subChoice;
+                if (1 <= subChoice && subChoice <= OD_TPDO_COUNT)
+                    node.pdo().transmitTPDO(subChoice - 1);
+                clear();
+                break;
+            }
         }
     } while (choice != 0);
     quit = true;
@@ -244,40 +230,35 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-void Node::sendFrame(Frame &frame)
-{
+void Node::sendFrame(Frame &frame) {
     can_frame canFrame;
     canFrame.can_dlc = frame.dlc;
     canFrame.can_id = frame.getCobID();
     memcpy(canFrame.data, frame.data, frame.dlc);
     int size = sizeof(canFrame);
-    if (send(sock, &canFrame, size, 0) != size)
-    {
+    if (send(sock, &canFrame, size, 0) != size) {
         perror("Write");
         exit(EXIT_FAILURE);
     }
 }
 
-uint32_t Node::getTime_us()
-{
-    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+uint32_t Node::getTime_us() {
+    return (uint32_t)chrono::duration_cast<chrono::microseconds>(
+               chrono::steady_clock::now().time_since_epoch())
+        .count();
 }
 
-bool ObjectDictionnary::saveData(uint8_t /*parameterGroup*/)
-{
+bool ObjectDictionnary::saveData(uint8_t /*parameterGroup*/) {
     ofstream f(FILENAME, ios::out | ios::binary);
-    if (!f)
-        return false;
+    if (!f) return false;
     f.write((char *)&data, sizeof(data));
     f.close();
     return true;
 }
 
-bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/)
-{
+bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/) {
     ifstream f(FILENAME, ios::in | ios::binary);
-    if (!f)
-        return false;
+    if (!f) return false;
     f.read((char *)&data, sizeof(data));
     f.close();
     node.pdo().reloadTPDO();
@@ -285,8 +266,7 @@ bool ObjectDictionnary::loadData(uint8_t /*parameterGroup*/)
     return true;
 }
 
-bool ObjectDictionnary::restoreData(uint8_t /*parameterGroup*/)
-{
+bool ObjectDictionnary::restoreData(uint8_t /*parameterGroup*/) {
     data = ObjectDictionnaryData();
     node.pdo().reloadTPDO();
     node.pdo().reloadRPDO();

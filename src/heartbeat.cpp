@@ -35,12 +35,12 @@ int8_t HB::setData(const Data &data, uint32_t id, SDOAbortCodes &abortCode) {
     if (id == odID) {
         heartbeatTime_ms = data.u16;
     }
-    return 0; // TODO: Is this the expected return value?
+    return 0;  // TODO: Is this the expected return value?
 }
 
 int8_t HB::getData(Data &data, uint32_t id, SDOAbortCodes &abortCode) {
     if (id == odID) {
         data.u16 = heartbeatTime_ms;
     }
-    return 0; // TODO: Is this the expected return value?
+    return 0;  // TODO: Is this the expected return value?
 }

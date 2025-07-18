@@ -2,13 +2,13 @@
  * Contains the definitions of the NMT class.
  */
 #include "nmt.hpp"
+
 #include "frame.hpp"
 #include "node.hpp"
 
 using namespace CANopen;
 
 void NMT::initSM() { updateSM(); }
-
 
 void NMT::updateSM(NMTServiceCommands command) {
     NMTStates nextState = currentState;
@@ -34,7 +34,7 @@ void NMT::updateSM(NMTServiceCommands command) {
             }
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
-            if(pg == ParameterGroup_All){
+            if (pg == ParameterGroup_All) {
                 onReset();
             }
             nextState = NMTState_PreOperational;

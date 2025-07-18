@@ -3,7 +3,7 @@
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
-//#include "objects/object_1019.hpp"
+// #include "objects/object_1019.hpp"
 using namespace CANopen;
 
 SYNC::SYNC() {}

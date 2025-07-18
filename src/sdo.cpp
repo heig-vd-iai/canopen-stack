@@ -5,9 +5,9 @@
 
 #include <cstring>
 
-#include "iobject-dictionnary.hpp"
 #include "enums.hpp"
 #include "frame.hpp"
+#include "iobject-dictionnary.hpp"
 #include "node.hpp"
 #include "unions.hpp"
 using namespace CANopen;
@@ -51,7 +51,7 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         return;
     }
     if (UNLIKELY(metadata.dataType == DataType::DOMAIN)) {
-        transferData.data.domain = (uint16_t*)domainBuffer;
+        transferData.data.domain = (uint16_t *)domainBuffer;
         transferData.isDomain = true;
     } else {
         transferData.isDomain = false;
@@ -93,8 +93,8 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
         sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
         SDOAbortCodes abortCode;
-        memcpy(response.data + SDO_INITIATE_DATA_OFFSET,
-                &transferData.data.u8, size);
+        memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &transferData.data.u8,
+               size);
     }
     sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
     response.setCommandByte(sendCommand.value);
@@ -128,7 +128,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
         SDO_SEGMENT_DATA_LENGTH - payloadSize;
     transferData.sendCommand.bits_segment.c = !transferData.remainingBytes;
     SDOFrame response(node.nodeId, transferData.sendCommand.value);
-    if(transferData.isDomain){
+    if (transferData.isDomain) {
         memcpy(response.data + SDO_SEGMENT_DATA_OFFSET,
                domainBuffer + bytesSent, payloadSize);
     } else {
@@ -295,7 +295,7 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
                 return;
             }
             if (UNLIKELY(metadata.dataType == DataType::DOMAIN)) {
-                transferData.data.domain = (uint16_t*)domainBuffer;
+                transferData.data.domain = (uint16_t *)domainBuffer;
                 transferData.isDomain = true;
             } else {
                 transferData.isDomain = false;
@@ -412,9 +412,9 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
     }
     uint32_t bytesSent = transferData.size - transferData.remainingBytes;
     SDOBlockFrame frame(node.nodeId, cmd.value);
-    if(transferData.isDomain){
-        memcpy(frame.data + SDO_BLOCK_DATA_OFFSET,
-               domainBuffer + bytesSent, payloadSize);
+    if (transferData.isDomain) {
+        memcpy(frame.data + SDO_BLOCK_DATA_OFFSET, domainBuffer + bytesSent,
+               payloadSize);
     } else {
         memcpy(frame.data + SDO_BLOCK_DATA_OFFSET,
                &transferData.data.u8 + bytesSent, payloadSize);
@@ -552,14 +552,13 @@ void SDO::update(uint32_t timestamp_us) {
                   SDOAbortCode_AccessFailedHardwareError);
         serverState = SDOServerState_Ready;
         remoteAccesAttempt = 0;
-
     }
     if (UNLIKELY(abortCode != SDOAbortCode_OK)) {
         sendAbort(transferData.index, transferData.subindex, abortCode);
         abortCode = SDOAbortCode_OK;
     }
     if (UNLIKELY(serverState != SDOServerState_Ready &&
-                             isTimeout(timestamp_us, SDO_TIMEOUT_US)))
+                 isTimeout(timestamp_us, SDO_TIMEOUT_US)))
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_TimedOut);
 }

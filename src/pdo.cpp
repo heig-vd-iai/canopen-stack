@@ -2,11 +2,12 @@
  * Contains the definitions of the PDO class.
  */
 #include "pdo.hpp"
+
+#include <cstring>
+
 #include "enums.hpp"
 #include "frame.hpp"
 #include "node.hpp"
-
-#include <cstring>
 using namespace CANopen;
 
 MapParameter::MapParameter(int16_t index) {
@@ -81,7 +82,7 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         if (!node.od().isSubValid(entry.bits.index, entry.bits.subindex)) {
             abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
             entry.value = 0;
-        }else{
+        } else {
             Metadata meta =
                 *node.od().getMetadata(entry.bits.index, entry.bits.subindex);
             if (!meta.access.bits.mappable || !meta.access.bits.readable) {
@@ -217,15 +218,18 @@ int8_t CommParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         PDOCobidEntry current = {cobId};
         PDOCobidEntry dataEntry = {data.u32};
         // Check if bits 0 to 30 are modified
-//        if (enabled && (current.value ^ dataEntry.value) & ~COBID_VALID_MASK) { //FIXME: don't call at restore or del if not necessary
-//            abortCode =
-//                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
-//            return -1;
-//        }
+        //        if (enabled && (current.value ^ dataEntry.value) &
+        //        ~COBID_VALID_MASK) { //FIXME: don't call at restore or del if
+        //        not necessary
+        //            abortCode =
+        //                SDOAbortCodes::SDOAbortCode_InvalidDownloadParameterValue;
+        //            return -1;
+        //        }
         // If a PDO was enabled
-//        if (current.bits.valid && dataEntry.bits.valid) { //TODO: dont work all time identify why
-            remap = true;
-//        }
+        //        if (current.bits.valid && dataEntry.bits.valid) { //TODO: dont
+        //        work all time identify why
+        remap = true;
+        //        }
         cobId = data.u32;
     } else if (id == odID + INDEX_TRANSMISSION) {
         if (SYNC_MAX < data.u8 && data.u8 < RTR_SYNC) {
@@ -315,7 +319,7 @@ void PDO::remapTPDO(unsigned index) {
         if (sizeSum > PDO_DLC) break;
         tpdo->mappedEntries[i] = id;
         tpdo->size = sizeSum;
-        if(id != -1) tpdo->count++;
+        if (id != -1) tpdo->count++;
     }
     node.hardware().configRemoteTPDO(
         index, tpdo->mappedEntries);  // assuming all TPDOs are remote TODO: add
@@ -334,7 +338,7 @@ void PDO::remapRPDO(unsigned index) {
         if (sizeSum > PDO_DLC) break;
         rpdo->mappedEntries[i] = id;
         rpdo->size = sizeSum;
-        if(id != -1) rpdo->count++;
+        if (id != -1) rpdo->count++;
     }
     node.hardware().configRemoteRPDO(index, rpdo->mappedEntries);
 }
@@ -441,7 +445,8 @@ void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us) {
 void PDO::update(uint32_t timestamp_us) {
     if (!enabled) return;
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) {
-        if(!tpdos[i].commParameter.isEnabled() || tpdos[i].count == 0) continue;
+        if (!tpdos[i].commParameter.isEnabled() || tpdos[i].count == 0)
+            continue;
         TPDO *tpdo = tpdos + i;
         uint8_t transmission = tpdo->commParameter.getTransmissionType();
         if ((transmission != EVENT1 && transmission != EVENT2) ||
@@ -454,7 +459,8 @@ void PDO::update(uint32_t timestamp_us) {
         sendTPDO(i, timestamp_us);
     }
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) {
-        if(!rpdos[i].commParameter.isEnabled() || rpdos[i].count == 0) continue;
+        if (!rpdos[i].commParameter.isEnabled() || rpdos[i].count == 0)
+            continue;
         RPDO *rpdo = rpdos + i;
         if (!rpdo->commParameter.isTimerSupported()) continue;
         uint32_t timer_us = rpdo->commParameter.getEventTimer_us();

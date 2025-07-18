@@ -1,9 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
 #include "enums.hpp"
 #include "unions.hpp"
-
-#include <cstdint>
 
 namespace CANopen {
 class Frame;
@@ -12,7 +12,7 @@ class HardwareInterface {
    public:
     virtual void init() = 0;
     virtual void update() = 0;
-     /**
+    /**
      * Send a CANopen frame to the CAN network.
      * @param frame The CANopen frame to send.
      */

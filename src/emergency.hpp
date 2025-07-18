@@ -3,10 +3,10 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include "enums.hpp"
 #include "unions.hpp"
-
-#include <cstdint>
 
 #define EMCY_DLC 8
 #define EMCY_ERRCODE_OFFSET 0

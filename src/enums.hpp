@@ -3,7 +3,7 @@
  */
 #pragma once
 
-//namespace CANopen {
+// namespace CANopen {
 /**
  * Enumeration representing the CANopen function codes.
  * See CiA301:2011§7.3.3 (p. 81)
@@ -139,9 +139,9 @@ enum SDOAbortCodes {
 };
 
 /*
-* Enumeration representing the physical units of the data types.
-* See CiA890
-*/
+ * Enumeration representing the physical units of the data types.
+ * See CiA890
+ */
 enum PhysUnit {
     PhysUnit_NONE = 0x00,  // dimensionless
     PhysUnit_METER = 0x01,
@@ -273,7 +273,8 @@ enum ErrorBehaviorValue {
  * 255 groups can be implemented, depending on the device profile or
  * manufacturer. See CiA301:2011§7.5.2.13 (p. 101)
  */
-enum ParameterGroups { //TODO: move to od.hpp and metagenerate manufacturer specific groups
+enum ParameterGroups {  // TODO: move to od.hpp and metagenerate manufacturer
+                        // specific groups
     ParameterGroup_All = 1,
     ParameterGroup_Communication = 2,
     ParameterGroup_Application = 3,
@@ -290,7 +291,7 @@ enum AccessType {
 };
 
 enum DataType {
-//    BOOL = 0x01,
+    //    BOOL = 0x01,
     INTEGER8 = 0x02,
     INTEGER16 = 0x03,
     INTEGER32 = 0x04,
@@ -300,8 +301,8 @@ enum DataType {
     UNSIGNED32 = 0x07,
     DOMAIN = 0x0F,
     UNSIGNED64 = 0x1B,
-//    REAL32 = 0x08,
-//    REAL64 = 0x11,
+    //    REAL32 = 0x08,
+    //    REAL64 = 0x11,
     VISIBLE_STRING = 0x09,
 };
 //}  // namespace CANopen

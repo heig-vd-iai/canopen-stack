@@ -89,7 +89,8 @@ class SDO {
     void enable();
 
     /**
-     * Disables SDO functionality, should only be called internally by NMT class.
+     * Disables SDO functionality, should only be called internally by NMT
+     * class.
      */
     void disable();
 

@@ -51,7 +51,7 @@ class NMT {
    public:
     friend class ObjectDictionnary;
     friend class Node;
-   
+
     bool (*onReset)() = &resetCallBack;
 
     /**

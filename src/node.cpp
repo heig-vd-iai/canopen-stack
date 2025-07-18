@@ -2,16 +2,17 @@
  * Contains the definitions of the Node class.
  */
 #include "node.hpp"
+
 #include "frame.hpp"
 #include "hardware-delay.hpp"
 
 namespace CANopen {
-    Node node;
+Node node;
 }  // namespace CANopen
 
 using namespace CANopen;
 
-Node::Node(){}
+Node::Node() {}
 
 ObjectDictionnary &Node::od() { return _od; }
 
@@ -44,12 +45,12 @@ void Node::init(HardwareInterface *hardware) {
 
 void Node::receiveFrame(Frame frame) {
     uint32_t timestamp = node.hardware().getTime_us();
-     switch ((FunctionCodes)frame.functionCode) {
+    switch ((FunctionCodes)frame.functionCode) {
         case FunctionCode_NMT:
-           _nmt.receiveFrame((NMTFrame &)frame);
+            _nmt.receiveFrame((NMTFrame &)frame);
             break;
         case FunctionCode_HEARTBEAT:
-           _hb.receiveFrame(frame);
+            _hb.receiveFrame(frame);
             break;
         case FunctionCode_SYNC:
             _sync.receiveFrame((SYNCFrame &)frame, timestamp);
@@ -67,7 +68,7 @@ void Node::receiveFrame(Frame frame) {
             _pdo.receiveRPDO(frame, timestamp);
             break;
         case FunctionCode_RSDO:
-           _sdo.receiveFrame((SDOFrame &)frame, timestamp);
+            _sdo.receiveFrame((SDOFrame &)frame, timestamp);
             break;
         default:
             break;
@@ -77,9 +78,9 @@ void Node::receiveFrame(Frame frame) {
 void Node::update() {
     hardware().update();
     timestamp_us = node.hardware().getTime_us();
-   _hb.update(timestamp_us);
-   _sdo.update(timestamp_us);
-   _pdo.update(timestamp_us);
+    _hb.update(timestamp_us);
+    _sdo.update(timestamp_us);
+    _pdo.update(timestamp_us);
 }
 
 uint32_t Node::getTime_us() { return timestamp_us; }

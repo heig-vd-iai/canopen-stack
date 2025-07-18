@@ -20,7 +20,6 @@ class Monitoring {
     void setCycleTimeSdo(uint32_t time);
     void setCycleTimePdo(uint32_t time);
 
-
     float getCycleTimeHardware() { return hardware.cycleTime; }
     float getCycleTimeMaxHardware() { return hardware.cycleTimeMax; }
     float getCycleTimeMinHardware() { return hardware.cycleTimeMin; }

@@ -12,9 +12,7 @@ namespace CANopen {
 struct Metadata {
     Access access;
     DataType dataType;
-    virtual Data getDefaultValue(){
-        return (Data){0};
-    }
+    virtual Data getDefaultValue() { return (Data){0}; }
 };
 
 struct Metadata_bool : public Metadata {
@@ -49,8 +47,8 @@ struct Metadata_uint8_t : public Metadata {
 struct Metadata_uint8_t_limited : public Metadata_uint8_t {
     uint8_t min;
     uint8_t max;
-    Metadata_uint8_t_limited(uint8_t access, uint8_t defaultValue,
-                             uint8_t min, uint8_t max) {
+    Metadata_uint8_t_limited(uint8_t access, uint8_t defaultValue, uint8_t min,
+                             uint8_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -131,36 +129,36 @@ struct Metadata_uint32_t_limited : public Metadata_uint32_t {
 };
 
 struct Metadata_uint64_t : public Metadata {
-   uint64_t defaultValue;
-   Metadata_uint64_t() {}
-   Metadata_uint64_t(uint8_t access, uint64_t defaultValue) {
-       this->defaultValue = defaultValue;
-       this->access.value = access;
-       this->dataType = DataType::UNSIGNED64;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.u64 = defaultValue;
-       return data;
-   }
+    uint64_t defaultValue;
+    Metadata_uint64_t() {}
+    Metadata_uint64_t(uint8_t access, uint64_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED64;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.u64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_uint64_t_limited : public Metadata_uint64_t {
-   uint64_t min;
-   uint64_t max;
-   Metadata_uint64_t_limited(uint8_t access, uint64_t defaultValue,
-                             uint64_t min, uint64_t max) {
-       this->defaultValue = defaultValue;
-       this->min = min;
-       this->max = max;
-       this->access.value = access;
-       this->dataType = DataType::UNSIGNED64;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.u64 = defaultValue;
-       return data;
-   }
+    uint64_t min;
+    uint64_t max;
+    Metadata_uint64_t_limited(uint8_t access, uint64_t defaultValue,
+                              uint64_t min, uint64_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::UNSIGNED64;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.u64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int8_t : public Metadata {
@@ -214,8 +212,8 @@ struct Metadata_int16_t : public Metadata {
 struct Metadata_int16_t_limited : public Metadata_int16_t {
     int16_t min;
     int16_t max;
-    Metadata_int16_t_limited(uint8_t access, int16_t defaultValue,
-                             int16_t min, int16_t max) {
+    Metadata_int16_t_limited(uint8_t access, int16_t defaultValue, int16_t min,
+                             int16_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -247,8 +245,8 @@ struct Metadata_int32_t : public Metadata {
 struct Metadata_int32_t_limited : public Metadata_int32_t {
     int32_t min;
     int32_t max;
-    Metadata_int32_t_limited(uint8_t access, int32_t defaultValue,
-                             int32_t min, int32_t max) {
+    Metadata_int32_t_limited(uint8_t access, int32_t defaultValue, int32_t min,
+                             int32_t max) {
         this->defaultValue = defaultValue;
         this->min = min;
         this->max = max;
@@ -263,36 +261,36 @@ struct Metadata_int32_t_limited : public Metadata_int32_t {
 };
 
 struct Metadata_int64_t : public Metadata {
-   int64_t defaultValue;
-   Metadata_int64_t() {}
-   Metadata_int64_t(uint8_t access, int64_t defaultValue) {
-       this->defaultValue = defaultValue;
-       this->access.value = access;
-       this->dataType = DataType::INTEGER64;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.i64 = defaultValue;
-       return data;
-   }
+    int64_t defaultValue;
+    Metadata_int64_t() {}
+    Metadata_int64_t(uint8_t access, int64_t defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER64;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.i64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_int64_t_limited : public Metadata_int64_t {
-   int64_t min;
-   int64_t max;
-   Metadata_int64_t_limited(uint8_t access, int64_t defaultValue,
-                            int64_t min, int64_t max) {
-       this->defaultValue = defaultValue;
-       this->min = min;
-       this->max = max;
-       this->access.value = access;
-       this->dataType = DataType::INTEGER64;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.i64 = defaultValue;
-       return data;
-   }
+    int64_t min;
+    int64_t max;
+    Metadata_int64_t_limited(uint8_t access, int64_t defaultValue, int64_t min,
+                             int64_t max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = DataType::INTEGER64;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.i64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_float : public Metadata {
@@ -329,36 +327,36 @@ struct Metadata_float_limited : public Metadata_float {
 };
 
 struct Metadata_double : public Metadata {
-   double defaultValue;
-   Metadata_double() {}
-   Metadata_double(uint8_t access, double defaultValue) {
-       this->defaultValue = defaultValue;
-       this->access.value = access;
-       this->dataType = (DataType)0x11;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.f64 = defaultValue;
-       return data;
-   }
+    double defaultValue;
+    Metadata_double() {}
+    Metadata_double(uint8_t access, double defaultValue) {
+        this->defaultValue = defaultValue;
+        this->access.value = access;
+        this->dataType = (DataType)0x11;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.f64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_double_limited : public Metadata_double {
-   double min;
-   double max;
-   Metadata_double_limited(uint8_t access, double defaultValue, double min,
-                           double max) {
-       this->defaultValue = defaultValue;
-       this->min = min;
-       this->max = max;
-       this->access.value = access;
-       this->dataType = (DataType)0x11;
-   }
-   Data getDefaultValue() override {
-       Data data;
-       data.f64 = defaultValue;
-       return data;
-   }
+    double min;
+    double max;
+    Metadata_double_limited(uint8_t access, double defaultValue, double min,
+                            double max) {
+        this->defaultValue = defaultValue;
+        this->min = min;
+        this->max = max;
+        this->access.value = access;
+        this->dataType = (DataType)0x11;
+    }
+    Data getDefaultValue() override {
+        Data data;
+        data.f64 = defaultValue;
+        return data;
+    }
 };
 
 struct Metadata_string : public Metadata {
@@ -399,16 +397,16 @@ class IObjectDictionnary {
     virtual bool isSubValid(uint16_t index, uint8_t subindex) = 0;
     virtual int32_t findObject(uint16_t index) = 0;
     virtual int32_t findObject(uint16_t index, uint8_t subindex) = 0;
-    virtual Metadata* getMetadata(uint16_t index, uint8_t subindex) = 0;
-    virtual Metadata* getMetadata(int32_t id) = 0;
-    #if 0 // TODO: Not used?
+    virtual Metadata *getMetadata(uint16_t index, uint8_t subindex) = 0;
+    virtual Metadata *getMetadata(int32_t id) = 0;
+#if 0  // TODO: Not used?
     virtual Data* getData(uint16_t index, uint8_t subindex) = 0;
     virtual Data* getData(int32_t id) = 0;
     virtual void setData(const Data &data, uint16_t index,
                           uint8_t subindex) = 0;
     virtual void setData(const Data &data, int32_t id) = 0;
-    #endif
+#endif
     virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
     virtual uint16_t getSize(int32_t id) = 0;
 };
-} // namespace CANopen
+}  // namespace CANopen
