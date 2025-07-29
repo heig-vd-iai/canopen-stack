@@ -36,7 +36,7 @@ inline void get{{subobject.cpp_instance_name}}(Data &data) {
 {% endfor %}
 {% endfor %}
 
-void (*remoteGetter[{{ subindex_count }}])(Data &data) = {
+void (* const remoteGetter[{{ subindex_count }}])(Data &data) = {
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
     {% if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute or subobject.get) != "none" and object.remote %}
@@ -61,7 +61,7 @@ void (*remoteSetter[{{ subindex_count }}])(const Data &data) = {
 };
 
 // Object is a 24 bit number: (object << 8 | subobject)
-int32_t remoteGetterBSTKeys[] = {
+const int32_t remoteGetterBSTKeys[] = {
     {% for item in tree_array %}
     {% if item %}
     {{item[0]}},
@@ -71,7 +71,7 @@ int32_t remoteGetterBSTKeys[] = {
     {% endfor %}
 };
 
-void (*remoteGetterBSTMap[])(Data &data) = {
+const RemoteGetter remoteGetterBSTMap[] = {
     {% for item in tree_array %}
     {% if item %}
     &get{{item[1][0]}},
@@ -89,7 +89,7 @@ void (*remoteGetterBSTMap[])(Data &data) = {
     'f32': 'REMOTE_TYPE__FLOAT32',
 } %}
 
-void (*remoteTypeBSTMap[])(Data &data) = {
+const RemoteType remoteTypeBSTMap[] = {
     {% for item in tree_array %}
     {% if item %}
     {{ type_map.get(item[1][1], 'REMOTE_TYPE__UNKNOWN') }},
