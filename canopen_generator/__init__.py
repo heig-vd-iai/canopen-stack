@@ -681,7 +681,7 @@ class ObjectDictionary:
         for object in self.objects:
             for subobject in object.get_subobjects:
                 if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.get('attribute', None) or subobject.get) != "none" and object.remote:
-                    prout.append((subobject.index << 8 | subobject.subindex, subobject.cpp_instance_name))
+                    prout.append((subobject.index << 8 | subobject.subindex, (subobject.cpp_instance_name, subobject.type_code)))
 
         sorted_pairs = sorted(prout, key=lambda x: x[0])
         root = tree.build_balanced_bst(sorted_pairs)

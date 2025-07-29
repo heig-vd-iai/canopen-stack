@@ -74,9 +74,27 @@ int32_t remoteGetterBSTKeys[] = {
 void (*remoteGetterBSTMap[])(Data &data) = {
     {% for item in tree_array %}
     {% if item %}
-    &get{{item[1]}},
+    &get{{item[1][0]}},
     {% else %}
     emptyGetter,
+    {% endif %}
+    {% endfor %}
+};
+
+{% set type_map = {
+    'i16': 'REMOTE_TYPE__INT16',
+    'u16': 'REMOTE_TYPE__UINT16',
+    'i32': 'REMOTE_TYPE__INT32',
+    'u32': 'REMOTE_TYPE__UINT32',
+    'f32': 'REMOTE_TYPE__FLOAT32',
+} %}
+
+void (*remoteTypeBSTMap[])(Data &data) = {
+    {% for item in tree_array %}
+    {% if item %}
+    {{ type_map.get(item[1][1], 'REMOTE_TYPE__UNKNOWN') }},
+    {% else %}
+    REMOTE_TYPE__UNKNOWN,
     {% endif %}
     {% endfor %}
 };
