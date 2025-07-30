@@ -1,4 +1,5 @@
-// Object 0x{{"%04x"|format(object) }}:{{subindex}}
+// Objects: {% for obj in objects %}0x{{ "%04x"|format(obj[0]) }}:{{ obj[1] }}{% if not loop.last %}, {% endif %}{% endfor %}
+
 enum {{class_name}} {
     {% for key, value in items.items() %}
     {{key}} = {{value.value}},

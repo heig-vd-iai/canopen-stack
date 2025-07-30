@@ -604,22 +604,36 @@ class ObjectDictionary:
             #pragma once
 
         """)
+        enums = []
+        # Collect all enum
         for object in self.objects:
             if 'enum' in object.prout:
-                content += template.render(
-                    object=object.index,
-                    subindex=0,
-                    class_name=object.prout['enum']['class'],
-                    items=object.prout['enum']['data']
-                ) + "\n\n"
+                enums.append(((object.index, 0), object.prout['enum']['class'], object.prout['enum']['data']))
             for sub in object.get_subobjects:
                 if 'enum' in sub.data.data:
-                    content += template.render(
-                        object=object.index,
-                        subindex=sub.subindex,
-                        class_name=sub.data.data['enum']['class'],
-                        items=sub.data.data['enum']['data']
-                    ) + "\n\n"
+                    enums.append(((sub.index, sub.subindex), sub.data.data['enum']['class'], sub.data.data['enum']['data']))
+
+        # Group enums to have unique enums
+        enum_dict = {}
+        for index, class_name, items in enums:
+            if class_name not in enum_dict:
+                enum_dict[class_name] = {'items': items, 'index': [index]}
+            else:
+                if items.keys() != enum_dict[class_name]['items'].keys():
+                    raise ValueError(
+                        f"Enum {class_name} has different items in different objects: {items} vs {enum_dict[class_name]['items']}"
+                    )
+                enum_dict[class_name]['index'].append(index)
+
+        # Render each enum
+        for class_name, data in enum_dict.items():
+            content += template.render(
+                objects=data['index'],
+                subindex=0,
+                class_name=class_name,
+                items=data['items']
+            ) + "\n\n"
+
         return content
 
     def to_modes(self):
