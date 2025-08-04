@@ -22,7 +22,7 @@ bool SDO::isTimeout(uint32_t timestamp_us, uint32_t timeout_us) {
 
 void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode) {
     SDOCommandByte sendCommand = {0};
-    sendCommand.bits_initiate.ccs = SDOCommandSpecifier_AbortTransfer;
+    sendCommand.bits_initiate.ccs = SDO_CCS_ABORT_TRANSFER;
     SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
@@ -33,7 +33,9 @@ void SDO::sendAbort(uint16_t index, uint8_t subindex, uint32_t abortCode) {
 
 void SDO::sendAbort(uint32_t abortCode) { sendAbort(0, 0, abortCode); }
 
-void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
+void SDO::handleUploadInitiateRequest(SDOFrame &request,
+                                      uint32_t timestamp_us) {
+    // Get object information
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
     int32_t id = node.od().findObject(index, subindex);
@@ -45,6 +47,8 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         sendAbort(index, subindex, SDOAbortCode_SubindexNonExistent);
         return;
     }
+
+    // Fetch metadata
     Metadata metadata = *node.od().getMetadata(id);
     if (!metadata.access.bits.readable) {
         sendAbort(index, subindex, SDOAbortCode_AttemptReadOnWriteOnly);
@@ -56,6 +60,8 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
     } else {
         transferData.isDomain = false;
     }
+
+    // Prepare transfer data
     uint16_t size = node.od().getSize(id);
     transferData.index = index;
     transferData.subindex = subindex;
@@ -72,9 +78,11 @@ void SDO::uploadInitiate(SDOFrame &request, uint32_t timestamp_us) {
         return;
     }
     if (ret == 1) {
+        // Data not received yet, wait for next update
         serverState = SDOServerState_UploadPending;
         transferData.timestamp_us = timestamp_us;
     } else {
+        // Data collected, ready to send
         uploadInitiateSend(timestamp_us);
     }
 }
@@ -95,7 +103,7 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
         memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &transferData.data.u8,
                size);
     }
-    sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerUploadInitiate;
+    sendCommand.bits_initiate.ccs = SDO_CCS_INITIATE_UPLOAD_REQUEST;
     response.setCommandByte(sendCommand.value);
     response.setIndex(transferData.index);
     response.setSubindex(transferData.subindex);
@@ -106,8 +114,11 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
 }
 
 void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
+    // Gather commands
     transferData.sendCommand = {0};
     transferData.recvCommand = {request.getCommandByte()};
+
+    // Toggle bit management
     if (transferData.toggle != transferData.recvCommand.bits_segment.t) {
         sendAbort(transferData.index, transferData.subindex,
                   SDOAbortCode_ToggleBitNotAlternated);
@@ -120,7 +131,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     uint32_t bytesSent =
         node.od().getSize(transferData.odID) - transferData.remainingBytes;
     transferData.sendCommand.bits_segment.ccs =
-        SDOCommandSpecifier_ServerUploadSegment;
+        SDO_CCS_DOWNLOAD_SEGMENT_REQUEST;
     transferData.sendCommand.bits_segment.t =
         transferData.recvCommand.bits_segment.t;
     transferData.sendCommand.bits_segment.n =
@@ -141,7 +152,8 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     transferData.timestamp_us = timestamp_us;
 }
 
-void SDO::downloadInitiate(SDOFrame &request, uint32_t timestamp_us) {
+void SDO::handleDownloadInitiateRequest(SDOFrame &request,
+                                        uint32_t timestamp_us) {
     transferData.sendCommand = {0};
     transferData.recvCommand = {request.getCommandByte()};
     uint16_t index = request.getIndex();
@@ -210,7 +222,7 @@ void SDO::downloadInitiateSend(uint32_t timestamp_us) {
     SDOCommandByte sendCommand = {0}, recvCommand = transferData.recvCommand;
     uint16_t index = transferData.index;
     uint8_t subindex = transferData.subindex;
-    sendCommand.bits_initiate.ccs = SDOCommandSpecifier_ServerDownloadInitiate;
+    sendCommand.bits_initiate.ccs = SDO_CCS_UPLOAD_SEGMENT_REQUEST;
     SDOFrame response(node.nodeId, sendCommand.value);
     response.setIndex(index);
     response.setSubindex(subindex);
@@ -265,7 +277,7 @@ void SDO::downloadSegmentSend(uint32_t timestamp_us) {
     transferData.remainingBytes -=
         SDO_SEGMENT_DATA_LENGTH - transferData.recvCommand.bits_segment.n;
     transferData.sendCommand.bits_segment.ccs =
-        SDOCommandSpecifier_ServerDownloadSegment;
+        SDO_CCS_INITIATE_DOWNLOAD_REQUEST;
     transferData.sendCommand.bits_segment.t =
         transferData.recvCommand.bits_segment.t;
     SDOFrame response(node.nodeId, transferData.sendCommand.value);
@@ -273,7 +285,8 @@ void SDO::downloadSegmentSend(uint32_t timestamp_us) {
     transferData.timestamp_us = timestamp_us;
 }
 
-void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
+void SDO::handleBlockUploadInitiateRequest(SDOBlockFrame &request,
+                                           uint32_t timestamp_us) {
     SDOBlockCommandByte recvCommand = {request.getCommandByte()};
     switch ((SDOSubCommands)recvCommand.bits_upClient.cs) {
         case SDOSubCommand_ClientUploadInitiate: {
@@ -333,8 +346,7 @@ void SDO::blockUploadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
 
 void SDO::blockUploadInitiateSend(uint32_t timestamp_us) {
     SDOBlockCommandByte sendCommand = {0};
-    sendCommand.bits_upServerInitiate.scs =
-        SDOCommandSpecifier_ServerBlockUpload;
+    sendCommand.bits_upServerInitiate.scs = SDO_SCS_BLOCK_DOWNLOAD_RESPONSE;
     sendCommand.bits_upServerInitiate.sc = false;
     sendCommand.bits_upServerInitiate.s = true;
     sendCommand.bits_upServerInitiate.ss = SDOSubCommand_ServerUploadInitiate;
@@ -370,7 +382,7 @@ void SDO::blockUploadReceive(class SDOBlockFrame &request,
                 } else {  // All data was sent, initiate block end
                     SDOBlockCommandByte sendCommand = {0};
                     sendCommand.bits_upServerEnd.scs =
-                        SDOCommandSpecifier_ServerBlockUpload;
+                        SDO_SCS_BLOCK_DOWNLOAD_RESPONSE;
                     sendCommand.bits_upServerEnd.n =
                         SDO_BLOCK_DATA_LENGTH -
                         transferData.lastBlockRemainingBytes %
@@ -423,8 +435,8 @@ void SDO::blockUploadSubBlock(uint32_t timestamp_us) {
     transferData.timestamp_us = timestamp_us;
 }
 
-void SDO::blockDownloadInitiate(SDOBlockFrame &request, uint32_t timestamp_us) {
-}
+void SDO::handleBlockDownloadInitateRequest(SDOBlockFrame &request,
+                                            uint32_t timestamp_us) {}
 
 void SDO::blockDownloadReceive(SDOBlockFrame &request, uint32_t timestamp_us) {}
 
@@ -435,21 +447,26 @@ void SDO::blockDownloadEndSub(uint32_t timestamp_us) {}
 
 void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
     if (!enabled || frame.nodeId != node.nodeId) return;
+
     SDOCommandByte cmd = {frame.getCommandByte()};
+    SDOClientCommandSpecifiers ccs = cmd.bits_initiate.ccs;
+
     switch (serverState) {
         case SDOServerState_Ready:
-            switch ((SDOCommandSpecifiers)cmd.bits_initiate.ccs) {
-                case SDOCommandSpecifier_ClientUploadInitiate:
-                    uploadInitiate(frame, timestamp_us);
+            switch (ccs) {
+                case SDO_CCS_INITIATE_UPLOAD_REQUEST:
+                    handleUploadInitiateRequest(frame, timestamp_us);
                     break;
-                case SDOCommandSpecifier_ClientDownloadInitiate:
-                    downloadInitiate(frame, timestamp_us);
+                case SDO_CCS_INITIATE_DOWNLOAD_REQUEST:
+                    handleDownloadInitiateRequest(frame, timestamp_us);
                     break;
-                case SDOCommandSpecifier_ClientBlockUpload:
-                    blockUploadInitiate((SDOBlockFrame &)frame, timestamp_us);
+                case SDO_CCS_BLOCK_UPLOAD:
+                    handleBlockUploadInitiateRequest((SDOBlockFrame &)frame,
+                                                     timestamp_us);
                     break;
-                case SDOCommandSpecifier_ClientBlockDownload:
-                    blockDownloadInitiate((SDOBlockFrame &)frame, timestamp_us);
+                case SDO_CCS_BLOCK_DOWNLOAD:
+                    handleBlockDownloadInitateRequest((SDOBlockFrame &)frame,
+                                                      timestamp_us);
                     break;
                 default:
                     sendAbort(SDOAbortCode_CommandSpecifierInvalid);
@@ -457,38 +474,59 @@ void SDO::receiveFrame(SDOFrame &frame, uint32_t timestamp_us) {
             }
             break;
         case SDOServerState_Uploading:
-            if (cmd.bits_segment.ccs == SDOCommandSpecifier_ClientUploadSegment)
-                uploadSegment(frame, timestamp_us);
-            else
-                sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            switch (ccs) {
+                case SDO_CCS_UPLOAD_SEGMENT_REQUEST:
+                    uploadSegment(frame, timestamp_us);
+                    break;
+                default:
+                    sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+                    break;
+            }
             break;
         case SDOServerState_Downloading:
-            if (cmd.bits_segment.ccs ==
-                SDOCommandSpecifier_ClientDownloadSegment)
-                downloadSegment(frame, timestamp_us);
-            else
-                sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            switch (ccs) {
+                case SDO_CCS_DOWNLOAD_SEGMENT_REQUEST:
+                    downloadSegment(frame, timestamp_us);
+                    break;
+                default:
+                    sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            }
             break;
         case SDOServerState_BlockUploading:
-            if (cmd.bits_segment.ccs == SDOCommandSpecifier_ClientBlockUpload)
-                blockUploadReceive((SDOBlockFrame &)frame, timestamp_us);
-            else
-                sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            switch (ccs) {
+                case SDO_CCS_BLOCK_UPLOAD:
+                    blockUploadReceive((SDOBlockFrame &)frame, timestamp_us);
+                    break;
+                default:
+                    sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            }
             break;
         case SDOServerState_BlockDownloading:
-            blockDownloadReceive((SDOBlockFrame &)frame, timestamp_us);
+            switch (ccs) {
+                case SDO_CCS_BLOCK_DOWNLOAD:
+                    blockDownloadReceive((SDOBlockFrame &)frame, timestamp_us);
+                    break;
+                default:
+                    sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            }
             break;
         case SDOServerState_BlockDownloadingEnding:
-            if (cmd.bits_segment.ccs == SDOCommandSpecifier_ClientBlockDownload)
-                blockDownloadEnd((SDOBlockFrame &)frame, timestamp_us);
-            else
-                sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            switch (ccs) {
+                case SDO_CCS_BLOCK_DOWNLOAD:
+                    blockDownloadEnd((SDOBlockFrame &)frame, timestamp_us);
+                    break;
+                default:
+                    sendAbort(SDOAbortCode_CommandSpecifierInvalid);
+            }
             break;
         default:
             break;
     }
 }
 
+/**
+ * Only used on server mode for block transfers.
+ */
 void SDO::update(uint32_t timestamp_us) {
     if (UNLIKELY(!enabled)) return;
     SDOAbortCodes abortCode = SDOAbortCode_OK;

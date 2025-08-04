@@ -471,7 +471,7 @@ void ObjectDictionnary::setData(const Data &data, int32_t id) {
 uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id == -1) {
-        return -1;
+        return (int16_t)-1;
     }
     return getSize((uint32_t)id);
 }
