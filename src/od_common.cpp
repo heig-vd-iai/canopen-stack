@@ -1,6 +1,6 @@
-#include "od.hpp"
-#include "node.hpp"
 #include "hardware-delay.hpp"
+#include "node.hpp"
+#include "od.hpp"
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
@@ -8,7 +8,8 @@ int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_bool(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().boolTable[node.od().dataIndexTable[id]] = data.b;
     return 0;
@@ -20,7 +21,8 @@ int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_int8_t(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().i8Table[node.od().dataIndexTable[id]] = data.i8;
     return 0;
@@ -32,7 +34,8 @@ int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_int16_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().i16Table[node.od().dataIndexTable[id]] = data.i16;
     return 0;
@@ -44,22 +47,24 @@ int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_int32_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().i32Table[node.od().dataIndexTable[id]] = data.i32;
     return 0;
 }
 
 int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   data.i64 = node.od().i64Table[node.od().dataIndexTable[id]];
-   return 0;
+    abortCode = SDOAbortCode_OK;
+    data.i64 = node.od().i64Table[node.od().dataIndexTable[id]];
+    return 0;
 }
 
-int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   node.od().i64Table[node.od().dataIndexTable[id]] = data.i64;
-   return 0;
+int8_t setLocalData_int64_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
+    node.od().i64Table[node.od().dataIndexTable[id]] = data.i64;
+    return 0;
 }
 
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
@@ -68,7 +73,8 @@ int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_uint8_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().u8Table[node.od().dataIndexTable[id]] = data.u8;
     return 0;
@@ -80,7 +86,8 @@ int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_uint16_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().u16Table[node.od().dataIndexTable[id]] = data.u16;
     return 0;
@@ -92,22 +99,24 @@ int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_uint32_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().u32Table[node.od().dataIndexTable[id]] = data.u32;
     return 0;
 }
 
 int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   data.u64 = node.od().u64Table[node.od().dataIndexTable[id]];
-   return 0;
+    abortCode = SDOAbortCode_OK;
+    data.u64 = node.od().u64Table[node.od().dataIndexTable[id]];
+    return 0;
 }
 
-int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   node.od().u64Table[node.od().dataIndexTable[id]] = data.u64;
-   return 0;
+int8_t setLocalData_uint64_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
+    node.od().u64Table[node.od().dataIndexTable[id]] = data.u64;
+    return 0;
 }
 
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode) {
@@ -116,38 +125,42 @@ int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return 0;
 }
 
-int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t setLocalData_float(const Data &data, int32_t id,
+                          SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     node.od().f32Table[node.od().dataIndexTable[id]] = data.f32;
     return 0;
 }
 
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   data.f64 = node.od().f64Table[node.od().dataIndexTable[id]];
-   return 0;
+    abortCode = SDOAbortCode_OK;
+    data.f64 = node.od().f64Table[node.od().dataIndexTable[id]];
+    return 0;
 }
 
-int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-   abortCode = SDOAbortCode_OK;
-   node.od().f64Table[node.od().dataIndexTable[id]] = data.f64;
-   return 0;
+int8_t setLocalData_double(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_OK;
+    node.od().f64Table[node.od().dataIndexTable[id]] = data.f64;
+    return 0;
 }
 
 int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return -1; //TODO: implement
+    return -1;  // TODO: implement
 }
 
-int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return -1; //TODO: implement
+int8_t setLocalData_char(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode) {
+    return -1;  // TODO: implement
 }
 
 int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return -1; //TODO: implement
+    return -1;  // TODO: implement
 }
 
-int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return -1; //TODO: implement
+int8_t setLocalData_domain(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode) {
+    return -1;  // TODO: implement
 }
 
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
@@ -163,7 +176,8 @@ int32_t ObjectDictionnary::findObject(uint16_t index) {
     int32_t upper = length - 1;
     while (lower <= upper) {
         int32_t mid = lower + (upper - lower) / 2;
-        if (CANopenOD::objectIndexTable[mid].first == index && CANopenOD::objectIndexTable[mid].second == 0)
+        if (CANopenOD::objectIndexTable[mid].first == index &&
+            CANopenOD::objectIndexTable[mid].second == 0)
             return mid;
         else if (CANopenOD::objectIndexTable[mid].first < index)
             lower = mid + 1;
@@ -194,7 +208,8 @@ int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
     return readData(data, id, abortCode);
 }
 
-int8_t ObjectDictionnary::writeData(const Data &data, uint16_t index, uint8_t subindex,
+int8_t ObjectDictionnary::writeData(const Data &data, uint16_t index,
+                                    uint8_t subindex,
                                     SDOAbortCodes &abortCode) {
     int32_t id = findObject(index, subindex);
     if (id == -1) {
@@ -244,23 +259,25 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 }
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
-    if (parameterGroup == 1){
+    if (parameterGroup == 1) {
         uint64_t signature;
         node.hardware().loadSignatureFromFlash(signature);
-        if (signature != od_signature){
+        if (signature != od_signature) {
             node.hardware().saveSignatureToFlash(od_signature);
         }
         bool result = true;
         result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
-        result &= node.hardware().saveDataToFlash(ParameterGroup_Application); //TODO: meta generate
+        result &= node.hardware().saveDataToFlash(
+            ParameterGroup_Application);  // TODO: meta generate
         result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA);
         return result;
     }
     return node.hardware().saveDataToFlash(parameterGroup);
 }
 
-int8_t ObjectDictionnary::saveData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    if (data.u32 != SAVE_SIGNATURE){
+int8_t ObjectDictionnary::saveData(const Data &data, int32_t id,
+                                   SDOAbortCodes &abortCode) {
+    if (data.u32 != SAVE_SIGNATURE) {
         abortCode = SDOAbortCode_CannotStoreOrTransfer;
         return 0;
     }
@@ -275,14 +292,15 @@ int8_t ObjectDictionnary::saveData(const Data &data, int32_t id, SDOAbortCodes &
     }
     if (saveData(id - odID)) {
         return 0;
-    }else{
+    } else {
         abortCode = SDOAbortCode_AccessFailedHardwareError;
         return -1;
     }
 }
 
-int8_t ObjectDictionnary::getSave(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    data.u32 = 0x01; //bit 1: auto save, bit 0: save at command
+int8_t ObjectDictionnary::getSave(Data &data, int32_t id,
+                                  SDOAbortCodes &abortCode) {
+    data.u32 = 0x01;  // bit 1: auto save, bit 0: save at command
     int32_t odID = findObject(SAVE_INDEX);
     if (id == -1) {
         abortCode = SDOAbortCode_ObjectNonExistent;
@@ -298,19 +316,21 @@ int8_t ObjectDictionnary::getSave(Data &data, int32_t id, SDOAbortCodes &abortCo
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
     uint64_t signature;
     node.hardware().loadSignatureFromFlash(signature);
-    if (signature != od_signature){
+    if (signature != od_signature) {
         return false;
     }
-    if (parameterGroup == 1){
+    if (parameterGroup == 1) {
         node.hardware().loadDataFromFlash(ParameterGroup_Communication);
-        node.hardware().loadDataFromFlash(ParameterGroup_Application); //TODO: meta generate
-        node.hardware().loadDataFromFlash(ParameterGroup_Application); // load 2 time for load first unit TODO: find better way
+        node.hardware().loadDataFromFlash(
+            ParameterGroup_Application);  // TODO: meta generate
+        node.hardware().loadDataFromFlash(
+            ParameterGroup_Application);  // load 2 time for load first unit
+                                          // TODO: find better way
         node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA);
         return true;
     }
     return node.hardware().loadDataFromFlash(parameterGroup);
 }
-
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     Data tmp;
@@ -319,8 +339,9 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
     SDOAbortCodes abortCode;
     int count = 0;
 
-    if (parameterGroup == ParameterGroup_Communication) { //TODO: meta generate
-        minIndex = 0x1000; //TODO: move to define
+    if (parameterGroup == ParameterGroup_Communication) {  // TODO: meta
+                                                           // generate
+        minIndex = 0x1000;  // TODO: move to define
         maxIndex = 0x1FFF;
     } else if (parameterGroup == ParameterGroup_Application) {
         minIndex = 0x6000;
@@ -348,7 +369,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
 
 int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
                                       SDOAbortCodes &abortCode) {
-    if (data.u32 != RESTORE_SIGNATURE){
+    if (data.u32 != RESTORE_SIGNATURE) {
         abortCode = SDOAbortCode_CannotStoreOrTransfer;
         return 0;
     }
@@ -363,14 +384,15 @@ int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
     }
     if (restoreData(id - odID)) {
         return 0;
-    }else{
+    } else {
         abortCode = SDOAbortCode_AccessFailedHardwareError;
         return -1;
     }
 }
 
-int8_t ObjectDictionnary::getRestore(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    data.u32 = 0x01; //bit 0: restore at command
+int8_t ObjectDictionnary::getRestore(Data &data, int32_t id,
+                                     SDOAbortCodes &abortCode) {
+    data.u32 = 0x01;  // bit 0: restore at command
     int32_t odID = findObject(SAVE_INDEX);
     if (id == -1) {
         abortCode = SDOAbortCode_ObjectNonExistent;
@@ -387,17 +409,17 @@ bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
     return findObject(index, subindex) != -1;
 }
 
-struct Metadata* ObjectDictionnary::getMetadata(uint16_t index,
-                                               uint8_t subindex) {
+struct Metadata *ObjectDictionnary::getMetadata(uint16_t index,
+                                                uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id < 0) {
         return nullptr;
     }
-    return (Metadata*)objectMetadataTable[id];
+    return (Metadata *)objectMetadataTable[id];
 }
 
-struct Metadata* ObjectDictionnary::getMetadata(int32_t id) {
-    return (Metadata*)objectMetadataTable[id];
+struct Metadata *ObjectDictionnary::getMetadata(int32_t id) {
+    return (Metadata *)objectMetadataTable[id];
 }
 
 uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
@@ -410,7 +432,8 @@ uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
 
 uint16_t ObjectDictionnary::getSize(int32_t id) {
     switch (objectMetadataTable[id]->dataType) {
-        case 0x01: //TODO: use enume type. now limitation for TI ethercat stack
+        case 0x01:  // TODO: use enume type. now limitation for TI ethercat
+                    // stack
             return sizeof(bool);
         case DataType::INTEGER8:
             return sizeof(int8_t);

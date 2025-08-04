@@ -1,9 +1,9 @@
 #pragma once
 
-#include "unions.hpp"
-#include "enums.hpp"
-
 #include <stdint.h>
+
+#include "enums.hpp"
+#include "unions.hpp"
 
 #define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
@@ -27,30 +27,43 @@
 using namespace CANopen;
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_bool(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode);
 int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int8_t(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode);
 int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int16_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode);
 int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int32_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode);
 int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_int64_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode);
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint8_t(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode);
 int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint16_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode);
 int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint32_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode);
 int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_uint64_t(const Data &data, int32_t id,
+                             SDOAbortCodes &abortCode);
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_float(const Data &data, int32_t id,
+                          SDOAbortCodes &abortCode);
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_double(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode);
 int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_char(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode);
 int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_domain(const Data &data, int32_t id,
+                           SDOAbortCodes &abortCode);
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
