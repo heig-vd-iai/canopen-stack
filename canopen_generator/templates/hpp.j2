@@ -5,32 +5,15 @@
  */
 #pragma once
 
+#include "od_common.hpp"
+#include "iobject-dictionnary.hpp"
+
 #define OD_NODE_ID {{ node_id }}
-#define OD_GRANULARITY 8
-#define OD_PDO_MAPPING_MAX 8
-#define OD_ENTRY_SIZE_MAX 1024
+
 #define OD_OBJECTS_COUNT {{ objects | length }}
 #define OD_TPDO_COUNT {{ nrOfTXPDO }}
 #define OD_RPDO_COUNT {{ nrOfRXPDO }}
-#define OBJECT_INDEX_COUNT 0
-
-#define X1A00_MAP_DISABLED 0
-#define X1A00_SAM_MPDO 0xFE
-#define X1A00_DAM_MPDO 0xFF
-
-#define SAVE_INDEX 0x1010
-#define SAVE_SIGNATURE 0x65766173
-#define RESTORE_INDEX 0x1011
-#define RESTORE_SIGNATURE 0x64616F6C
-
-#define MAX_SUB_INDEX 255
-
-#define MAX_WRITE_TRY 100
-
-#define DOMAIN_MAX_SIZE 800
-
 #define OD_LENGTH {{ subindex_count }}
-
 
 /* These defines map an object to its dictionnary array index */
 {% set counter = namespace(value=0) %}
@@ -41,13 +24,12 @@
 {% endfor %}
 {% endfor %}
 
-#ifndef _OD_DEFINES_ONLY
-#include "iobject-dictionnary.hpp"
+extern const uint64_t od_signature;
 
-namespace CANopenOD{
+namespace CANopenOD {
 // INDEX
 // This table is used to find an object by its index.
-constexpr std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = {
+constexpr std::pair<uint16_t, uint8_t> objectIndexTable[OD_LENGTH] = {
     {% set counter = namespace(value=0) %}
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
@@ -59,114 +41,14 @@ constexpr std::pair<uint16_t, uint8_t> objectIndexTable[{{ subindex_count }}] = 
 
 }
 
-using namespace CANopen;
-
-const uint64_t od_signature = {{ signature }}u;
-
-int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_bool(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_int64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint8_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint16_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint32_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_uint64_t(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_float(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_double(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_char(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_domain(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-{% for object in objects %}
-{% for subobject in object.get_subobjects %}
-{% if subobject.access != "wo" and subobject.get != "none" and not object.remote %}
-int8_t get{{subobject.cpp_instance_name}}(Data &data, int32_t id, SDOAbortCodes &abortCode);
-{% endif %}
-{% if subobject.set != "ro" and ((subobject.low_limit != "none" and subobject.high_limit != "none") or subobject.set != "none" and not object.remote)  %}
-int8_t set{{subobject.cpp_instance_name}}(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-{% endif %}
-{%endfor%}
-{%endfor%}
-
-
 class ObjectDictionnary : IObjectDictionnary{
 
-private:
-    //METADATA
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-    Metadata_{{subobject.ctype_name}}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{{"{"}}{{ subobject.meta_data }}{% if subobject.type == "string" %}, "{{subobject.default}}"{% elif subobject.type != "domain" %}, {{subobject.default}}{% endif %}{% if (subobject.low_limit != "none" ) and (subobject.high_limit != "none" ) %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %}{% if subobject.type == "string" %}, {{subobject.length}}{% endif %}};
-    {% endfor %}
-    {% endfor %}
-    //END METADATA
-
 public:
-    const uint32_t length = {{ subindex_count }};
-    // INDEX
-    // This table is used to find an object by its index.
-
-    const Metadata *objectMetadataTable[{{ subindex_count }}] = {
-    {% set counter = namespace(value=0) %}
-    {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
-        /* {{ "%04d"|format(counter.value) }} */  &{{subobject.cpp_instance_name}}Metadata,
-    {% set counter.value = counter.value + 1 %}
-    {% endfor %}
-    {% endfor %}
-    };
-    // END INDEX
-
-    // GETTER/SETTER
-    // This table contain all the objects getter
-    int8_t (*objectGetterTable[{{ subindex_count }}])(Data &data, int32_t id, SDOAbortCodes &abortCode) = {
-        {% set counter = namespace(value=0) %}
-        {% for object in objects %}
-        {% for subobject in object.get_subobjects %}
-        /* {{ "%04d"|format(counter.value) }} - 0x{{ "%04x"|format(object.index) }} */
-        {%- if (subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute or subobject.get) != "none" and not object.remote %}
-        &get{{subobject.cpp_instance_name}},
-        {% elif object.remote and (subobject.data.data.attribute or subobject.get) != "none" %}
-        &getRemoteData,
-        {% else %}
-        &getLocalData_{{subobject.ctype_name}},
-        {% endif %}
-        {%- set counter.value = counter.value + 1 -%}
-        {% endfor %}
-        {% endfor %}
-    };
-
-
-    // This table contain all the objects setter
-    int8_t (*objectSetterTable[{{ subindex_count }}])(const Data &data, int32_t id, SDOAbortCodes &abortCode) = {
-        {% set counter = namespace(value=0) %}
-        {% for object in objects %}
-        {% for subobject in object.get_subobjects %}
-        {% if (subobject.data.access in ['wo', 'rw'] and (subobject.data.data.attribute or subobject.set != "none") and not object.remote) or (subobject.low_limit != "none" and subobject.high_limit != "none") %}
-        /* {{ "%04d"|format(counter.value) }} */ &set{{subobject.cpp_instance_name}},
-        {% elif object.remote and (subobject.data.data.attribute or subobject.set != "none") %}
-        /* {{ "%04d"|format(counter.value) }} */ &setRemoteData,
-        {% else %}
-        /* {{ "%04d"|format(counter.value) }} */ &setLocalData_{{subobject.ctype_name}},
-        {% endif %}
-        {%- set counter.value = counter.value + 1 -%}
-        {% endfor %}
-        {% endfor %}
-    };
-    // END GETTER/SETTER
+    const uint32_t length = OD_LENGTH;
+    static const Metadata *objectMetadataTable[OD_LENGTH];
+    static int8_t (*objectGetterTable[OD_LENGTH])(Data &data, int32_t id, SDOAbortCodes &abortCode);
+    static int8_t (*objectSetterTable[OD_LENGTH])(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+    static uint8_t dataIndexTable[OD_LENGTH];
 
     {% set datatypes = [
         {'type': 'bool', 'code': '0x01', 'ctype': 'bool'},
@@ -181,103 +63,19 @@ public:
         {'type': 'f32', 'code': '0x08', 'ctype': 'float'},
         {'type': 'f64', 'code': '0x11', 'ctype': 'double'},
     ] %}
-
+    // Default values initialisation tables
     {% for item in datatypes %}
-    // Default values for {{ item.type }}
-    {{ item.ctype }} {{ item.type }}Table[{{ type_count[item.type] }}] = {
-        {% set counter = namespace(value=0) %}
-        {% set counter_id = namespace(value=0) %}
-        {% for object in objects %}
-        {% for subobject in object.get_subobjects %}
-        {% if subobject.type_value == item.code %}
-        /* {{ "%04d"|format(counter_id.value) }} - {{ "%03d"|format(counter.value) }} */ {{ subobject.default }},
-        {% set counter_id.value = counter_id.value + 1 %}
-        {% endif %}
-        {%- set counter.value = counter.value + 1 -%}
-        {% endfor %}
-        {% endfor %}
-    };
-
+    static {{ item.ctype }} {{ item.type }}Table[{{ type_count[item.type] }}];
     {% endfor %}
 
-    // string type data variable
     {% for object in objects %}
     {% for subobject in object.get_subobjects %}
     {% if subobject.type_value == "0x09" %}
-    char {{subobject.cpp_instance_name}}[{{subobject.length}}] ={ {{ subobject.default }} };
+    static char {{subobject.cpp_instance_name}}[{{subobject.length}}];
     {% endif %}
     {% endfor %}
     {% endfor %}
-
-    // string type data table
-    char *stringTable[{{ type_count.str }}] = {
-        {% for object in objects %}
-        {% for subobject in object.get_subobjects %}
-        {% if subobject.type_value == "0x09" %}
-        {{subobject.cpp_instance_name}},
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
-    };
-
-    // index data table
-    {% set counterBool = namespace(value=0) %}
-    {% set counterI8 = namespace(value=0) %}
-    {% set counterI16 = namespace(value=0) %}
-    {% set counterI32 = namespace(value=0) %}
-    {% set counterI64 = namespace(value=0) %}
-    {% set counterU8 = namespace(value=0) %}
-    {% set counterU16 = namespace(value=0) %}
-    {% set counterU32 = namespace(value=0) %}
-    {% set counterU64 = namespace(value=0) %}
-    {% set counterF32 = namespace(value=0) %}
-    {% set counterF64 = namespace(value=0) %}
-    {% set counterString = namespace(value=0) %}
-
-    uint8_t dataIndexTable[{{ subindex_count }}] = {
-        {% for object in objects %}
-        {% for subobject in object.get_subobjects %}
-        {% if subobject.type_value == "0x01" %}
-        {{ counterBool.value }},
-        {% set counterBool.value = counterBool.value + 1 %}
-        {% elif subobject.type_value == "0x02" %}
-        {{ counterI8.value }},
-        {% set counterI8.value = counterI8.value + 1 %}
-        {% elif subobject.type_value == "0x03" %}
-        {{ counterI16.value }},
-        {% set counterI16.value = counterI16.value + 1 %}
-        {% elif subobject.type_value == "0x04" %}
-        {{ counterI32.value }},
-        {% set counterI32.value = counterI32.value + 1 %}
-        {% elif subobject.type_value == "0x15" %}
-        {{ counterI64.value }},
-        {% set counterI64.value = counterI64.value + 1 %}
-        {% elif subobject.type_value == "0x05" %}
-        {{ counterU8.value }},
-        {% set counterU8.value = counterU8.value + 1 %}
-        {% elif subobject.type_value == "0x06" %}
-        {{ counterU16.value }},
-        {% set counterU16.value = counterU16.value + 1 %}
-        {% elif subobject.type_value == "0x07" %}
-        {{ counterU32.value }},
-        {% set counterU32.value = counterU32.value + 1 %}
-        {% elif subobject.type_value == "0x16" %}
-        {{ counterU64.value }},
-        {% set counterU64.value = counterU64.value + 1 %}
-        {% elif subobject.type_value == "0x08" %}
-        {{ counterF32.value }},
-        {% set counterF32.value = counterF32.value + 1 %}
-        {% elif subobject.type_value == "0x09" %}
-        {{ counterF64.value }},
-        {% set counterF64.value = counterF64.value + 1 %}
-        {% elif subobject.type_value == "0x0A" %}
-        {{ counterString.value }},
-        {% set counterString.value = counterString.value + 1 %}
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
-    };
-    //END DATA
+    static char *stringTable[{{ type_count.str }}];
 
     /**
      * Find an object in the dictionary.
@@ -369,11 +167,8 @@ public:
     */
     int8_t readData(Data &data, uint16_t index, uint8_t subIndex,
                     SDOAbortCodes &abortCode);
-
     int8_t readData(Data &data, int32_t id, SDOAbortCodes &abortCode);
-
     int8_t readData(Data &data, uint16_t index, uint8_t subIndex);
-
     int8_t readData(Data &data, int32_t id);
 
     /**
@@ -387,11 +182,8 @@ public:
      */
     int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex,
                      SDOAbortCodes &abortCode);
-
     int8_t writeData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
-
     int8_t writeData(const Data &data, uint16_t index, uint8_t subIndex);
-
     int8_t writeData(const Data &data, int32_t id);
 
     /**
@@ -401,20 +193,7 @@ public:
      * @return The metadata of the object.
      */
     Metadata* getMetadata(uint16_t index, uint8_t subindex);
-
     Metadata* getMetadata(int32_t id);
-
-    #if 0 // TODO: Not used?
-    Data* getData(uint16_t index, uint8_t subindex);
-
-    Data* getData(int32_t id);
-
-    void setData(const Data &data, uint16_t index, uint8_t subindex);
-
-    void setData(const Data &data, int32_t id);
-    #endif
     uint16_t getSize(uint16_t index, uint8_t subindex);
-
     uint16_t getSize(int32_t id);
 };
-#endif // _OD_DEFINES_ONLY

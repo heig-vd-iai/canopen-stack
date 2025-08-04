@@ -641,37 +641,30 @@ class ObjectDictionary:
                     modes=modes
                 )
 
+    def _get_render_context(self):
+        return {
+            "objects": self.objects,
+            "info": self.info,
+            "fonctionalities": self.fonctionalities,
+            "time": datetime.now().strftime("%H:%M"),
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "signature": datetime.now().strftime("%Y%m%d%H%M"),
+            "nrOfRXPDO": self.nrOfRXPDO,
+            "nrOfTXPDO": self.nrOfTXPDO,
+            "mandatoryObjects": self.mandatoryObjects,
+            "optionalObjects": self.optionalObjects,
+            "type_count": self.type_count,
+            "subindex_count": self.subindex_count,
+            "node_id": self.info["device"]["nodeID"],
+        }
+
     def to_cpp(self):
         template = self.env.get_template("cpp.j2")
-        return template.render(
-            objects=self.objects,
-            info=self.info,
-            fonctionalities=self.fonctionalities,
-            time=datetime.now().strftime("%H:%M"),
-            date=datetime.now().strftime("%Y-%m-%d"),
-            nrOfRXPDO=self.nrOfRXPDO,
-            nrOfTXPDO=self.nrOfTXPDO,
-            mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects,
-        ) + "\n"
+        return template.render(**self._get_render_context()) + "\n"
 
     def to_hpp(self):
         template = self.env.get_template("hpp.j2")
-        return template.render(
-            objects=self.objects,
-            info=self.info,
-            fonctionalities=self.fonctionalities,
-            time=datetime.now().strftime("%H:%M"),
-            date=datetime.now().strftime("%Y-%m-%d"),
-            signature=datetime.now().strftime("%Y%m%d%H%M"),
-            nrOfRXPDO=self.nrOfRXPDO,
-            nrOfTXPDO=self.nrOfTXPDO,
-            mandatoryObjects=self.mandatoryObjects,
-            optionalObjects=self.optionalObjects,
-            type_count=self.type_count,
-            subindex_count=self.subindex_count,
-            node_id=self.info["device"]["nodeID"],
-        ) + "\n"
+        return template.render(**self._get_render_context()) + "\n"
 
     def to_remote(self):
         template = self.env.get_template("remote.j2")

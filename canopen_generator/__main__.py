@@ -122,10 +122,15 @@ def generate_modes(od: ObjectDictionary, outdir: Path, force: bool):
     type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
 )
 @click.option(
-    "--code",
-    "-c",
+    "--local",
     required=False,
-    help="Generate the C++ files",
+    help="Generate the C++ files for manager",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+)
+@click.option(
+    "--remote",
+    required=False,
+    help="Generate the C++ files for remote",
     type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
 )
 @click.option(
@@ -135,17 +140,16 @@ def generate_modes(od: ObjectDictionary, outdir: Path, force: bool):
     help="Generate the documentation",
     type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
 )
-def cli(config, profile, force, eds, code, doc):
+def cli(config, profile, force, eds, local, remote, doc):
     if not profile:
         profile = PROFILE_FILE
 
-    if doc or eds or code:
-        with open(profile, "r") as p:
-            with open(config) as config:
-                file_name = Path(config.name).stem
-                od = ObjectDictionary(
-                    yaml.safe_load(p), yaml.safe_load(config), file_name
-                )
+    with open(profile, "r") as p:
+        with open(config) as config:
+            file_name = Path(config.name).stem
+            od = ObjectDictionary(
+                yaml.safe_load(p), yaml.safe_load(config), file_name
+            )
 
     gen = 0
 
@@ -157,11 +161,14 @@ def cli(config, profile, force, eds, code, doc):
         generate_eds(od, eds, force)
         gen += 1
 
-    if code:
-        generate_local(od, code, force)
-        generate_remote(od, code, force)
-        generate_enum(od, code, force)
-        generate_modes(od, code, force)
+    if local:
+        generate_local(od, local, force)
+        gen += 1
+
+    if remote:
+        generate_remote(od, remote, force)
+        generate_enum(od, remote, force)
+        generate_modes(od, remote, force)
         gen += 1
 
     if not gen:
