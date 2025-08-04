@@ -92,7 +92,6 @@ void SDO::uploadInitiateSend(uint32_t timestamp_us) {
         sendCommand.bits_initiate.e = true;
         sendCommand.bits_initiate.s = true;
         sendCommand.bits_initiate.n = SDO_INITIATE_DATA_LENGTH - size;
-        SDOAbortCodes abortCode;
         memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &transferData.data.u8,
                size);
     }

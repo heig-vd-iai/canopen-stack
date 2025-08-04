@@ -215,8 +215,8 @@ int8_t CommParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         }
         entriesNumber = value;
     } else if (id == odID + INDEX_COBID) {
-        PDOCobidEntry current = {cobId};
-        PDOCobidEntry dataEntry = {data.u32};
+        // PDOCobidEntry current = {cobId};
+        // PDOCobidEntry dataEntry = {data.u32};
         // Check if bits 0 to 30 are modified
         //        if (enabled && (current.value ^ dataEntry.value) &
         //        ~COBID_VALID_MASK) { //FIXME: don't call at restore or del if

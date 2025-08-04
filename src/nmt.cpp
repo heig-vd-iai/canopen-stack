@@ -38,7 +38,7 @@ void NMT::updateSM(NMTServiceCommands command) {
                 onReset();
             }
             nextState = NMTState_PreOperational;
-            [[fallthrough]];  // explicit fallthrough
+            // No break here [[fallthrough]];
         case NMTState_PreOperational:
             node._pdo.disable();
             node._sdo.enable();

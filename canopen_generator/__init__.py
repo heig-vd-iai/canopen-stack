@@ -653,7 +653,7 @@ class ObjectDictionary:
             nrOfTXPDO=self.nrOfTXPDO,
             mandatoryObjects=self.mandatoryObjects,
             optionalObjects=self.optionalObjects,
-        )
+        ) + "\n"
 
     def to_hpp(self):
         template = self.env.get_template("hpp.j2")
