@@ -77,13 +77,13 @@ union SDOCommandByte {
         unsigned n : 2;  // unused bytes 0..3 to complete the 4 bytes
         unsigned reserved : 1;
         SDOClientCommandSpecifiers ccs : 3;
-    } bits_initiate;
+    } initiate;
     struct {
         bool c : 1;  // 0: not final segment, 1: final segment
         unsigned n : 3;
         bool t : 1;  // toggle on each segment to detect errors
         SDOClientCommandSpecifiers ccs : 3;
-    } bits_segment;
+    } segment;
 };
 
 /**
@@ -99,13 +99,13 @@ union SDOBlockCommandByte {
         bool cc : 1;  // 0: client does not support CRC, 1: client supports CRC
         unsigned reserved : 2;
         SDOClientCommandSpecifiers ccs : 3;
-    } bits_downClientInitiate;
+    } downClientInitiate;
 
     // Used in "Block Download Sub-block Request" (client → server)
     struct {
         unsigned seqno : 7;  // sequence number of the block segment (1..127)
         bool c : 1;          // 0: more segments to follow, 1: last segment
-    } bits_downClientSub;
+    } downClientSub;
 
     // Used in "End Block Download Request" (client → server)
     struct {
@@ -113,7 +113,7 @@ union SDOBlockCommandByte {
         bool reserved : 1;
         unsigned n : 3;  // number of unused bytes (0..7) in the last segment
         SDOClientCommandSpecifiers ccs : 3;  // always SDO_CCS_BLOCK_DOWNLOAD
-    } bits_downClientEnd;
+    } downClientEnd;
 
     // Used in "Block Download Response" (server → client)
     struct {
@@ -123,7 +123,7 @@ union SDOBlockCommandByte {
         unsigned reserved : 2;
         SDOServerCommandSpecifiers
             scs : 3;  // always SDO_SCS_BLOCK_DOWNLOAD_RESPONSE
-    } bits_downServer;
+    } downServer;
 
     // Used in "Block Upload Request" (client → server)
     struct {
@@ -131,7 +131,7 @@ union SDOBlockCommandByte {
         bool cc : 1;  // 0: client does not support CRC, 1: client supports CRC
         unsigned reserved : 2;
         SDOClientCommandSpecifiers ccs : 3;  // always SDO_CCS_BLOCK_UPLOAD
-    } bits_upClient;
+    } upClient;
 
     // Used in "Initiate Block Upload Response" (server → client)
     struct {
@@ -141,13 +141,13 @@ union SDOBlockCommandByte {
         unsigned reserved : 2;
         SDOServerCommandSpecifiers
             scs : 3;  // always SDO_SCS_BLOCK_UPLOAD_RESPONSE
-    } bits_upServerInitiate;
+    } upServerInitiate;
 
     // Used in "Block Upload Sub-block Response" (server → client)
     struct {
         unsigned seqno : 7;  // sequence number of the block segment (1..127)
         bool c : 1;          // 0: more segments to follow, 1: last segment
-    } bits_upServerSub;
+    } upServerSub;
 
     // Used in "End Block Upload Response" (server → client)
     struct {
@@ -156,7 +156,7 @@ union SDOBlockCommandByte {
         unsigned n : 3;   // number of unused bytes (0..7) in the last segment
         SDOServerCommandSpecifiers
             scs : 3;  // always SDO_SCS_BLOCK_UPLOAD_RESPONSE
-    } bits_upServerEnd;
+    } upServerEnd;
 };
 
 /**
@@ -398,10 +398,11 @@ class SDO {
         uint32_t lastBlockRemainingBytes;
         unsigned retries;
         Data data;
-        SDOCommandByte sendCommand, recvCommand;
+
         bool isDomain = false;
     } transferData;
 
+    SDOCommandByte sendCommand, recvCommand;
     SDOBuffer transferBuffer;
 };
 }  // namespace CANopen
