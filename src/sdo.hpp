@@ -4,6 +4,7 @@
 #pragma once
 #include <cstdint>
 
+#include "frame.hpp"
 #include "od.hpp"
 
 #define SDO_TIMEOUT_US 300000000
@@ -159,74 +160,68 @@ union SDOBlockCommandByte {
 };
 
 /**
+ * SDOBuffer is a utility structure to manage the SDO data buffer.
+ * It provides methods to reset and append data to the buffer.
+ */
+struct SDOBuffer {
+    uint8_t data[SDO_BUFFSIZE] = {0};
+    uint32_t offset = 0;
+
+    void reset() {
+        offset = 0;
+        memset(data, 0, sizeof(data));
+    }
+    void append(const uint8_t *src, uint32_t size) {
+        uint32_t available = sizeof(data) - offset;
+        uint32_t toCopy = (size < available) ? size : available;
+        if (toCopy == 0) return;
+        memcpy(data + offset, src, toCopy);
+        offset += toCopy;
+    }
+};
+
+/**
  * SDO object.
  * It handles data upload and download, in regular and block mode transfer.
  * See CiA301:2011§7.2.4 (p. 37)
  */
 class SDO {
-    enum SDOServerStates {
-        SDOServerState_Ready,
-        SDOServerState_UploadPending,
-        SDOServerState_UploadSegmentPending,
-        SDOServerState_DownloadPending,
-        SDOServerState_DownloadSegmentPending,
-        SDOServerState_Uploading,
-        SDOServerState_Downloading,
-        SDOServerState_BlockPending,
-        SDOServerState_BlockUploading,
-        SDOServerState_BlockDownloading,
-        SDOServerState_BlockDownloadingEnding
-    };
-
-   private:
-    bool enabled = false;
-    uint16_t remoteAccesAttempt = 0;
-    SDOServerStates serverState = SDOServerState_Ready;
-    uint8_t domainBuffer[DOMAIN_MAX_SIZE];
-
-    struct {
-        int32_t odID;             // Index in object dictionary
-        uint16_t index;           // Object index
-        uint8_t subindex;         // Object subindex
-        uint16_t size;            // Object size
-        uint32_t remainingBytes;  // Remaining bytes to transfer in non
-                                  // expedited mode
-        uint32_t timestamp_us;
-        uint8_t toggle;
-
-        // Block transfer specific
-        uint16_t blksize;
-        uint16_t seqno;
-        uint16_t ackseq;
-        uint32_t lastBlockRemainingBytes;
-        unsigned retries;
-        Data data;
-        SDOCommandByte sendCommand, recvCommand;
-        bool isDomain = false;
-    } transferData;
-    struct {
-        uint8_t data[SDO_BUFFSIZE] = {0};
-        uint32_t offset = 0;
-    } buffer;
-
+   public:
     /**
      * Enables SDO functionality, should only be called internally by NMT class.
      */
-    void enable();
+    void enable() { enabled = true; }
 
     /**
      * Disables SDO functionality, should only be called internally by NMT
      * class.
      */
-    void disable();
+    void disable() { enabled = false; }
 
+    /**
+     * Checks for general SDO or block download timeouts and send block upload
+     * sub-blocks.
+     * @param timestamp_us Current timestamp in microseconds.
+     */
+    void update(uint32_t timestamp_us);
+
+    /**
+     * Receives and process an SDO frame.
+     * @param frame SDOFrame to be processed.
+     * @param timestamp_us Timestamp in microseconds of the frame reception.
+     */
+    void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
+
+   private:
     /**
      * Checks if a timeout has occurred.
      * @param timestamp_us Current timestamp in microseconds.
      * @param timeout_us Timeout duration in microseconds.
      * @return True if a timeout has occurred, otherwise false.
      */
-    bool isTimeout(uint32_t timestamp_us, uint32_t timeout_us);
+    bool isTimeout(uint32_t timestamp_us, uint32_t timeout_us) {
+        return timestamp_us - transferData.timestamp_us >= timeout_us;
+    }
 
     /**
      * Sends an abort frame with specified abort code and object index and
@@ -242,6 +237,11 @@ class SDO {
      * @param abortCode SDO abort code.
      */
     void sendAbort(uint32_t abortCode);
+
+    /**
+     * Abstraction to node hardware sendFrame method.
+     */
+    void sendFrame(const Frame &frame);
 
     /**
      * Handles upload initiate frames.
@@ -349,20 +349,6 @@ class SDO {
     void blockDownloadEndSub(uint32_t timestamp_us);
 
     /**
-     * Receives and process an SDO frame.
-     * @param frame SDOFrame to be processed.
-     * @param timestamp_us Timestamp in microseconds of the frame reception.
-     */
-    void receiveFrame(class SDOFrame &frame, uint32_t timestamp_us);
-
-    /**
-     * Checks for general SDO or block download timeouts and send block upload
-     * sub-blocks.
-     * @param timestamp_us Current timestamp in microseconds.
-     */
-    void update(uint32_t timestamp_us);
-
-    /**
      * Empty and reset the download buffer.
      */
     void bufferReset();
@@ -374,8 +360,48 @@ class SDO {
      */
     void bufferAppend(uint8_t *data, uint32_t sizeBytes);
 
-   public:
-    friend class NMT;
-    friend class Node;
+    ObjectDictionnary &od();
+
+    enum SDOServerStates {
+        SDOServerState_Ready,
+        SDOServerState_UploadPending,
+        SDOServerState_UploadSegmentPending,
+        SDOServerState_DownloadPending,
+        SDOServerState_DownloadSegmentPending,
+        SDOServerState_Uploading,
+        SDOServerState_Downloading,
+        SDOServerState_BlockPending,
+        SDOServerState_BlockUploading,
+        SDOServerState_BlockDownloading,
+        SDOServerState_BlockDownloadingEnding
+    };
+
+    bool enabled = false;
+    uint16_t remoteAccesAttempt = 0;
+    SDOServerStates serverState = SDOServerState_Ready;
+    uint8_t domainBuffer[DOMAIN_MAX_SIZE];
+
+    struct {
+        int32_t odID;             // Index in object dictionary
+        uint16_t index;           // Object index
+        uint8_t subindex;         // Object subindex
+        uint16_t size;            // Object size
+        uint32_t remainingBytes;  // Remaining bytes to transfer in non
+                                  // expedited mode
+        uint32_t timestamp_us;
+        uint8_t toggle;
+
+        // Block transfer specific
+        uint16_t blksize;
+        uint16_t seqno;
+        uint16_t ackseq;
+        uint32_t lastBlockRemainingBytes;
+        unsigned retries;
+        Data data;
+        SDOCommandByte sendCommand, recvCommand;
+        bool isDomain = false;
+    } transferData;
+
+    SDOBuffer transferBuffer;
 };
 }  // namespace CANopen
