@@ -258,11 +258,26 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
             serverState = SDOServerState_DownloadSegmentPending;
             transferData.timestamp_us = timestamp_us;
         } else {
-            downloadInitiateSend(timestamp_us);
+            downloadSegmentEnd(timestamp_us);
         }
     } else {
         downloadSegmentSend(timestamp_us);
     }
+}
+
+/**
+ * Validate last segment
+ */
+void SDO::downloadSegmentEnd(uint32_t timestamp_us) {
+    SDOCommandByte sendCommand = {0};
+    sendCommand.segment.ccs = SDO_CCS_INITIATE_DOWNLOAD_REQUEST;
+    sendCommand.segment.c = true;  // Last segment
+    sendCommand.segment.t = recvCommand.segment.t;
+    SDOFrame response(node.nodeId, sendCommand.value);
+    sendFrame(response);
+
+    serverState = SDOServerState_Ready;
+    transferData.timestamp_us = timestamp_us;
 }
 
 /**
@@ -566,7 +581,8 @@ void SDO::update(uint32_t timestamp_us) {
             if (od().writeData(transferData.data, transferData.index,
                                transferData.subindex, abortCode) == 0) {
                 remoteAccesAttempt = 0;
-                downloadInitiateSend(timestamp_us);
+                downloadSegmentEnd(timestamp_us);
+                serverState = SDOServerState_Ready;
             } else {
                 remoteAccesAttempt++;
             }

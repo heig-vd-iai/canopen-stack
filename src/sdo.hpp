@@ -317,6 +317,7 @@ class SDO {
     void downloadSegment(class SDOFrame &request, uint32_t timestamp_us);
 
     void downloadSegmentSend(uint32_t timestamp_us);
+    void downloadSegmentEnd(uint32_t timestamp_us);
 
     /**
      * Handles block upload initiate frames.
