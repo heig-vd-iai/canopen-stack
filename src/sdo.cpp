@@ -130,6 +130,8 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     sendCommand.segment.ccs = SDO_CCS_DOWNLOAD_SEGMENT_REQUEST;
     sendCommand.segment.t = recvCommand.segment.t;
     sendCommand.segment.n = SDO_SEGMENT_DATA_LENGTH - payloadSize;
+
+    transferData.remainingBytes -= payloadSize;
     sendCommand.segment.c = !transferData.remainingBytes;
 
     SDOFrame response(node.nodeId, sendCommand.value);
@@ -139,7 +141,7 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
 
     memcpy(response.data + SDO_SEGMENT_DATA_OFFSET, srcPtr, payloadSize);
 
-    transferData.remainingBytes -= payloadSize;
+
     sendFrame(response);
     if (sendCommand.segment.c) serverState = SDOServerState_Ready;
     transferData.timestamp_us = timestamp_us;
