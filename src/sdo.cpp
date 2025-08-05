@@ -83,34 +83,34 @@ void SDO::handleUploadInitiateRequest(SDOFrame &request,
 }
 
 void SDO::uploadInitiateSend(uint32_t timestamp_us) {
-    SDOFrame response(node.nodeId);
-    SDOCommandByte sendCommand = {0};
     int16_t size = transferData.size;
-    if (size > SDO_INITIATE_DATA_LENGTH) {  // Segment transfer
-        sendCommand.initiate.e = false;
-        sendCommand.initiate.s = true;
-        sendCommand.initiate.n = false;
-        response.setInitiateData(size);
-    } else {  // Expedited transfer
-        sendCommand.initiate.e = true;
-        sendCommand.initiate.s = true;
-        sendCommand.initiate.n = SDO_INITIATE_DATA_LENGTH - size;
+
+    const int maxFrameSize = SDO_INITIATE_DATA_LENGTH;
+    bool expedited = size <= maxFrameSize;
+    bool remSize = size > maxFrameSize ? 0 : maxFrameSize - size;
+
+    SDOCommandInitiate cmd(true, expedited, remSize,
+                           SDO_CCS_INITIATE_UPLOAD_REQUEST);
+
+    SDOFrame response(node.nodeId);
+    if (expedited) {
         memcpy(response.data + SDO_INITIATE_DATA_OFFSET, &transferData.data.u8,
                size);
+    } else {
+        response.setInitiateData(size);
     }
-    sendCommand.initiate.ccs = SDO_CCS_INITIATE_UPLOAD_REQUEST;
-    response.setCommandByte(sendCommand.value);
+    response.setCommandByte(cmd.encode());
     response.setIndex(transferData.index);
     response.setSubindex(transferData.subindex);
     sendFrame(response);
-    serverState = sendCommand.initiate.e ? SDOServerState_Ready
-                                         : SDOServerState_Uploading;
+
+    serverState = expedited ? SDOServerState_Ready : SDOServerState_Uploading;
     transferData.timestamp_us = timestamp_us;
 }
 
 void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     // Gather commands
-    sendCommand = {0};
+
     recvCommand = {request.getCommandByte()};
 
     // Toggle bit management
@@ -125,18 +125,20 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
                                : transferData.remainingBytes;
     uint32_t bytesSent =
         od().getSize(transferData.odID) - transferData.remainingBytes;
+
+    SDOCommandByte sendCommand = {0};
     sendCommand.segment.ccs = SDO_CCS_DOWNLOAD_SEGMENT_REQUEST;
     sendCommand.segment.t = recvCommand.segment.t;
     sendCommand.segment.n = SDO_SEGMENT_DATA_LENGTH - payloadSize;
     sendCommand.segment.c = !transferData.remainingBytes;
+
     SDOFrame response(node.nodeId, sendCommand.value);
-    if (transferData.isDomain) {
-        memcpy(response.data + SDO_SEGMENT_DATA_OFFSET,
-               domainBuffer + bytesSent, payloadSize);
-    } else {
-        memcpy(response.data + SDO_SEGMENT_DATA_OFFSET,
-               &transferData.data.u8 + bytesSent, payloadSize);
-    }
+    uint8_t *srcPtr = transferData.isDomain
+                           ? domainBuffer + bytesSent
+                           : &transferData.data.u8 + bytesSent;
+
+    memcpy(response.data + SDO_SEGMENT_DATA_OFFSET, srcPtr, payloadSize);
+
     transferData.remainingBytes -= payloadSize;
     sendFrame(response);
     if (sendCommand.segment.c) serverState = SDOServerState_Ready;
@@ -145,7 +147,6 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
 
 void SDO::handleDownloadInitiateRequest(SDOFrame &request,
                                         uint32_t timestamp_us) {
-    sendCommand = {0};
     recvCommand = {request.getCommandByte()};
     uint16_t index = request.getIndex();
     uint8_t subindex = request.getSubindex();
@@ -224,7 +225,6 @@ void SDO::downloadInitiateSend(uint32_t timestamp_us) {
 }
 
 void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
-    sendCommand = {0};
     recvCommand = {request.getCommandByte()};
     uint32_t size = od().getSize(transferData.odID);
     uint32_t payloadSize = SDO_SEGMENT_DATA_LENGTH - recvCommand.segment.n;
@@ -269,6 +269,8 @@ void SDO::downloadSegment(SDOFrame &request, uint32_t timestamp_us) {
 void SDO::downloadSegmentSend(uint32_t timestamp_us) {
     transferData.remainingBytes -=
         SDO_SEGMENT_DATA_LENGTH - recvCommand.segment.n;
+
+    SDOCommandByte sendCommand = {0};
     sendCommand.segment.ccs = SDO_CCS_INITIATE_DOWNLOAD_REQUEST;
     sendCommand.segment.t = recvCommand.segment.t;
     SDOFrame response(node.nodeId, sendCommand.value);

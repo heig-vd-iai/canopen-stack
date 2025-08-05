@@ -69,6 +69,37 @@ enum SDOServerCommandSpecifiers {
  * Initiate is used for both upload and download requests.
  * Segment is used for upload and download segments in non expedited mode.
  */
+struct SDOCommandInitiate {
+    union {
+        uint8_t value;
+        struct {
+            bool s : 1;      // 0: no specified size, 1: size specified
+            bool e : 1;      // 0: segmented transfer, 1: expedited transfer
+            unsigned n : 2;  // unused bytes 0..3 to complete the 4 bytes
+            unsigned reserved : 1;
+            SDOClientCommandSpecifiers ccs : 3;
+        } bits;
+    } data;
+
+    SDOCommandInitiate(uint8_t commandByte) {
+        data.value = commandByte;
+    }
+
+    SDOCommandInitiate(bool size, bool expedited, unsigned sizeBytes,
+                       SDOClientCommandSpecifiers commandSpecifier) {
+        data.value = 0;
+        data.bits.s = size;
+        data.bits.e = expedited;
+        data.bits.n = sizeBytes & 0x3;
+        data.bits.reserved = 0;
+        data.bits.ccs = commandSpecifier;
+    }
+
+    uint8_t encode() const {
+        return data.value;
+    }
+};
+
 union SDOCommandByte {
     uint8_t value;
     struct {
@@ -402,7 +433,7 @@ class SDO {
         bool isDomain = false;
     } transferData;
 
-    SDOCommandByte sendCommand, recvCommand;
+    SDOCommandByte recvCommand;
     SDOBuffer transferBuffer;
 };
 }  // namespace CANopen
