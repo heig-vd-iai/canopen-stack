@@ -164,11 +164,11 @@ struct SDOFrameDownloadSegmentResponse
  * | ccs |t|       |           reserved 1..7
  * +-----+-+-------+---------------------------------------------...
  */
-struct SDOFrameDownloadSegmentResponse
+struct SDOFrameUploadSegmentRequest
     : public SDOTFrame,
-      public CCSMixin<SDOFrameDownloadSegmentResponse>,
-      public ToggleBitMixin<SDOFrameDownloadSegmentResponse> {
-    SDOFrameDownloadSegmentResponse(uint8_t nodeId)
+      public CCSMixin<SDOFrameUploadSegmentRequest>,
+      public ToggleBitMixin<SDOFrameUploadSegmentRequest> {
+    SDOFrameUploadSegmentRequest(uint8_t nodeId)
         : SDOTFrame(nodeId) {
         set_ccs(CCS::UploadSegmentRequest);
     }
