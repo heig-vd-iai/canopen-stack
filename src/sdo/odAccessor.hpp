@@ -30,6 +30,10 @@ class ODAccessor {
     bool isWriteable() const {
         return metadata->access.bits.writeable;
     }
+    bool isDomain() const {
+        return metadata->dataType == DataType::DOMAIN;
+    }
+
     uint32_t getIndex() const {
         return index;
     }
@@ -39,6 +43,7 @@ class ODAccessor {
     uint16_t getSize() const {
         return size;
     }
+
 
     SDOAbortCodes lookup(uint32_t index, uint8_t subindex) {
         this->index = index;

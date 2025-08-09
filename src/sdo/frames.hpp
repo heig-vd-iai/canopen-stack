@@ -1,13 +1,22 @@
 #pragma once
 
+#include "enums.hpp"
 #include "mixins.hpp"
+
+#include "endianUtils.hpp"
 
 /**
  * SDO frame abort transfer.
+ * CiA 301:2011 §7.2.4.3.17 p. 61
  *
- * +-----+---------+-------------------------------+---------------+----
- * | ccs |         |           index               |   subindex    | code
- * +-----+---------+-------------------------------+---------------+----
+ * +---------------+---------------+---------------+---------------+----
+ * |       0       |       1       |       2       |      3        | 4..7
+ * | cs  |         |           index               |   subindex    | d
+ * +---------------+-------------------------------+---------------+----
+ *
+ * cs: Command Specifier (CCS or SCS)
+ * m: Multiplexer (index + subindex)
+ * d: Data field containing the SDO abort code.
  */
 struct SDOFrameAbort : public SDOTFrame,
                        public IndexSubindexMixin<SDOFrameAbort>,
@@ -17,18 +26,16 @@ struct SDOFrameAbort : public SDOTFrame,
         : SDOTFrame(nodeId) {
         set_ccs(CCS::AbortTransfer);
         setIndexSubIndex(index, subindex);
-        set_abortCode(abortCode);
+        setAbortCode(abortCode);
     }
 
    private:
     SDOAbortCodes abortCode() const {
-        const uint8_t* d = bytes();
-        return static_cast<SDOAbortCodes>(read_le32(d + 4));
+        return static_cast<SDOAbortCodes>(endian::read_le32(bytes() + 4));
     }
 
-    void set_abortCode(SDOAbortCodes code) {
-        uint8_t* d = bytes();
-        write_le32(d + 4, static_cast<uint32_t>(code));
+    void setAbortCode(SDOAbortCodes code) {
+        endian::write_le32(bytes() + 4, static_cast<uint32_t>(code));
     }
 };
 
@@ -139,7 +146,6 @@ struct SDOFrameInitiateUploadRequest
     }
 };
 
-
 /**
  * SDO frame for download response.
  *
@@ -151,8 +157,7 @@ struct SDOFrameDownloadSegmentResponse
     : public SDORFrame,
       public SCSMixin<SDOFrameDownloadSegmentResponse>,
       public ToggleBitMixin<SDOFrameDownloadSegmentResponse> {
-    SDOFrameDownloadSegmentResponse(uint8_t nodeId)
-        : SDORFrame(nodeId) {
+    SDOFrameDownloadSegmentResponse(uint8_t nodeId) : SDORFrame(nodeId) {
         set_scs(SCS::DownloadSegmentResponse);
     }
 };
@@ -168,8 +173,7 @@ struct SDOFrameUploadSegmentRequest
     : public SDOTFrame,
       public CCSMixin<SDOFrameUploadSegmentRequest>,
       public ToggleBitMixin<SDOFrameUploadSegmentRequest> {
-    SDOFrameUploadSegmentRequest(uint8_t nodeId)
-        : SDOTFrame(nodeId) {
+    SDOFrameUploadSegmentRequest(uint8_t nodeId) : SDOTFrame(nodeId) {
         set_ccs(CCS::UploadSegmentRequest);
     }
 };
@@ -199,6 +203,7 @@ struct SDOFrameDownloadSegmentRequest
  *
  * +-----+-+-----+-+---------------------------------------------...
  * | scs |t| n   |c|           segment-data 1..7
+ * |0|1|1| | | | | |
  * +-----+-+-----+-+---------------------------------------------...
  *
  */
@@ -206,10 +211,154 @@ struct SDOFrameUploadSegmentResponse
     : public SDORFrame,
       public SCSMixin<SDOFrameDownloadSegmentRequest>,
       public FrameSegmentMixin<SDOFrameUploadSegmentResponse> {
-    SDOFrameUploadSegmentResponse(uint8_t nodeId, uint16_t index = 0,
-                                  uint8_t subindex = 0)
+    SDOFrameUploadSegmentResponse(uint8_t nodeId, bool toggle = false)
         : SDORFrame(nodeId) {
         set_scs(SCS::UploadSegmentResponse);
-        setIndexSubIndex(index, subindex);
+        setToggleBit(toggle);
+    }
+};
+
+/**
+ * SDO Block download initiate request.
+ *
+ * +---------------+---------------+---------------+---------------+---
+ * |       0       |       1       |       2       |       3       | 4..7
+ * | ccs | | |R|s|C|            Index              | Subindex      | Size
+ * |1|1|0|x|x| | |0|                               |               |
+ * +---------------+---------------+---------------+---------------+---
+ * R (Client CRC): 0: no CRC support, 1: CRC support
+ * s: 0: size not specified, 1: size specified
+ * C (Client Subcommand): 0: initiate download request
+ */
+struct SDOFrameBlockDownloadInitiateRequest
+    : public SDORFrame,
+      public CCS<SDOFrameBlockDownloadInitiateRequest>,
+      public CRCBitMixin<SDOFrameBlockDownloadInitiateRequest>,
+      public BlockSizeMixin<SDOFrameBlockDownloadInitiateRequest>,
+      public IndexSubindexMixin<SDOFrameBlockDownloadInitiateRequest> {
+    SDOFrameBlockDownloadInitiateRequest(uint8_t nodeId, uint16_t index = 0,
+                                         uint8_t subindex = 0) {
+        set_ccs(CCS::BlockDownload);
+    }
+};
+
+/**
+ *  SDO Block upload initiate response.
+ *
+ * +---------------+---------------+---------------+---------------+---
+ * |       0       |       1       |       2       |       3       | 4..7
+ * | scs | | |R|s|C|            Index              | Subindex      | Size
+ * |1|1|0|x|x| | |0|                               |               |
+ * +---------------+---------------+---------------+---------------+---
+ * R (Client CRC): 0: no CRC support, 1: CRC support
+ * s: 0: size not specified, 1: size specified
+ * C (Client Subcommand): 0: initiate download request
+ */
+struct SDOFrameBlockUploadInitiateResponse
+    : public SDOTFrame,
+      public SCS<SDOFrameBlockUploadInitiateResponse>,
+      public CRCBitMixin<SDOFrameBlockUploadInitiateResponse>,
+      public BlockSizeMixin<SDOFrameBlockDownloadInitiateRequest>,
+      public IndexSubindexMixin<SDOFrameBlockUploadInitiateResponse> {
+    SDOFrameBlockUploadInitiateResponse(uint8_t nodeId, uint16_t index = 0,
+                                        uint8_t subindex = 0) {
+        set_scs(SCS::BlockUploadReponse);
+    }
+};
+
+/**
+ *  SDO Block download initiate response
+ *
+ * +---------------+---------------+---------------+----------+---------+
+ * |       0       |       1       |       2       |       3  |      4  |
+ * | scs | | |R| S |            Index              | Subindex | Blksize |
+ * |1|0|1|x|x| |0|0|                               |          |         |
+ * +---------------+---------------+---------------+----------+---------+
+ * R (Server CRC): 0: no CRC support, 1: CRC support
+ * S (Server Subcommand): 0: initiate download request
+ * Blksize: Size of the block in bytes
+ */
+struct SDOFrameBlockUploadInitiateResponse
+    : public SDORFrame,
+      public SCS<SDOFrameBlockUploadInitiateResponse>,
+      public BlockSizeMixin<SDOFrameBlockDownloadInitiateRequest>,
+      public IndexSubindexMixin<SDOFrameBlockUploadInitiateResponse> {
+    SDOFrameBlockUploadInitiateResponse(uint8_t nodeId, uint16_t index = 0,
+                                        uint8_t subindex = 0) {
+        set_scs(SCS::BlockDownloadResponse);
+    }
+};
+
+/**
+ *  SDO Block upload initial request
+ *
+ * +---------------+---------------+---------------+----------+---------+-----+
+ * |       0       |       1       |       2       |       3  |      4  |  5  |
+ * | ccs | | |R| S |            Index              | Subindex | Blksize | Pst |
+ * |1|1|0|x|x| |0|0|                               |          |         |     |
+ * +---------------+---------------+---------------+----------+---------+-----+
+ * R (Client CRC): 0: no CRC support, 1: CRC support
+ * S (Client Subcommand): 0: initiate download response
+ * Blksize: Size of the block in bytes
+ * Pst:
+ *   0: No change of transfer protocol,
+ *   pst > 0: switch to SDO upload, if data less than.
+ */
+struct SDOFrameBlockUploadInitiateResponse
+    : public SDORFrame,
+      public CCS<SDOFrameBlockUploadInitiateResponse>,
+      public BlockSizeMixin<SDOFrameBlockDownloadInitiateRequest>,
+      public PstMixin<SDOFrameBlockUploadInitiateResponse>,
+      public IndexSubindexMixin<SDOFrameBlockUploadInitiateResponse> {
+    SDOFrameBlockUploadInitiateResponse(uint8_t nodeId, uint16_t index = 0,
+                                        uint8_t subindex = 0) {
+        set_ccs(CCS::BlockUpload);
+    }
+};
+
+/**
+ * SDO Block upload/download subblock request.
+ *
+ * +---------------+-------------...
+ * |       0       |       1..7
+ * |c| seqno       | Data...
+ * | | | | | | | | |
+ * +---------------+-------------...
+ * Seqno: Sequence number of the subblock, 0 for the first subblock.
+ * c: Final transfer bit, 1 if this is the last subblock.
+ */
+struct SDOFrameUploadSubBlockRequest
+    : public SDOTFrame,
+      public FinalTransferMixin<SDOFrameUploadSubBlockRequest, 7> {
+    SDOFrameUploadSubBlockRequest(uint8_t nodeId, uint8_t seqno)
+        : SDOTFrame(nodeId) {
+        setFinalTransfer(seqno == 0);
+    }
+
+    void setData(const uint8_t* data, uint8_t size) {
+        size = size > 7 ? 7 : size; // Limit size to 7 bytes
+        memcpy(bytes() + 1, data, size);
+    }
+
+    const uint8_t* getDataPtr() const {
+        return bytes() + 1;
+    }
+};
+
+struct SDOFrameDownloadSubBlockRequest
+    : public SDORFrame,
+      public FinalTransferMixin<SDOFrameDownloadSubBlockRequest, 7> {
+    SDOFrameDownloadSubBlockRequest(uint8_t nodeId, uint8_t seqno)
+        : SDORFrame(nodeId) {
+        setFinalTransfer(seqno == 0);
+    }
+
+    void setData(const uint8_t* data, uint8_t size) {
+        size = size > 7 ? 7 : size; // Limit size to 7 bytes
+        memcpy(bytes() + 1, data, size);
+    }
+
+    const uint8_t* getDataPtr() const {
+        return bytes() + 1;
     }
 };

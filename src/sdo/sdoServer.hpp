@@ -25,9 +25,11 @@
     X(7, SDOFrameBlockUploadDispatch,        &SDO::handleBlockUploadDispatch)
 // clang-format on
 
+/**
+ * SDO Server class that manages SDO operations.
+ */
 class SDO {
-using CCS = std::underlying_type<SDOClientCommandSpecifiers>::type;
-
+    using CCS = std::underlying_type<SDOClientCommandSpecifiers>::type;
 
     ODAccessor &odAccessor;
     SDOAbortCode errorCode = SDOAbortCode_OK;
@@ -42,7 +44,7 @@ using CCS = std::underlying_type<SDOClientCommandSpecifiers>::type;
     State state = State::Idle;
     State awaitState = State::Idle;
 
-    DataPromise objectData;
+    Data objectData;
 
     // Type erasure for SDO Frame handlers.
     using ErasedHandler = void (*)(SDO &, SDOFrame &);
@@ -67,93 +69,44 @@ using CCS = std::underlying_type<SDOClientCommandSpecifiers>::type;
 
     SDO(ODAccessor &odAccessor) : odAccessor(odAccessor) {}
 
-    void handleInitiateUploadRequest(SDOFrameInitiateUploadRequest &request) {
-        uint32_t index = request.getIndex();
-        uint8_t subindex = request.getSubindex();
+    /**
+     * Client wants this server to read an object in the object dictionary.
+     */
+    void handleInitiateUploadRequest(SDOFrameInitiateUploadRequest &request);
+    void uploadFirstSegment(SDOFrameInitiateUploadRequest &request);
+    void handleUploadSubsequentSegment(SDOFrameUploadSegmentRequest &request);
 
-        if ((errorCode = odAccessor.lookup(index, subindex)) !=
-            SDOAbortCode_OK) {
-            abortOperation(errorCode);
-            return;
-        }
 
-        if (!odAccessor.isReadable()) {
-            abortOperation(SDOAbortCode_AttemptReadOnWriteOnly);
-            return;
-        }
+    /**
+     * Client wants this server to write an object in the object dictionary.
+     */
+    void handleInitiateDownloadRequest(SDOFrameInitiateDownloadRequest &request);
+    void handleDownloadSubsequentSegment(SDOFrameDownloadSegmentRequest &request);
+    void downloadInitiateEnd();
+    void downloadSegmentEnd();
 
+    void asyncRead(State nextState = State::Idle) {
         errorCode = odAccessor.asyncRead();
         if (errorCode != SDOAbortCode_OK) {
             abortOperation(errorCode);
             return;
         }
-
-        awaitState = State::UploadFirstSegment;
+        awaitState = nextState;
         state = State::AwaitODResponse;
     }
 
-    /**
-     * Client Request -> Server Response
-     */
-    void uploadFirstSegment(SDOFrameInitiateUploadRequest &request) {
-        uint8_t *dataPtr;
-        if (sdoObject.metadata.dataType == DataType::DOMAIN) {
-            remainingBytes = odData.domain.size;
-            dataPtr = domainBuffer;
-        } else {
-            remainingBytes = sdoObject.size;
-            dataPtr = &odData.u8;
-        }
-
-        SDOFrameUploadSegmentRequest response(node.nodeId, sdoObject.index,
-                                              sdoObject.subindex);
-
-        // If data size overflows the frame, segmented transfer is enabled
-        // thus, 0 bytes are sent in the first segment, but the size is set
-        // to the total size of the object.
-        auto dataSize = response.setData(&odData.u8, remainingBytes);
-        remainingBytes -= dataSize;
-
-        state = remainingBytes ? State::UploadSubsequentSegment : State::Idle;
-
-        sendFrame(response);
-        toggleBit = false;
-    }
-
-    void handleUploadSubsequentSegment(SDOFrameUploadSegmentRequest &request) {
-        SDOSegmentCommand recvCmd(request.getCommandByte());
-
-        // Toggle bit management
-        if (toggleBit != recvCmd.getToggleBit()) {
-            abortOperation(SDOAbortCode_ToggleBitNotAlternated);
+    void asyncWrite(State nextState = State::Idle) {
+        errorCode = odAccessor.asyncWrite();
+        if (errorCode != SDOAbortCode_OK) {
+            abortOperation(errorCode);
             return;
         }
-        toggleBit = !toggleBit;
-
-        SDOSegmentCommand sendCmd(SDO_CCS_DOWNLOAD_SEGMENT_REQUEST);
-        sendCmd.setSize(remainingBytes);
-
-        /**
-         * Must refetch odData in case of domain
-         * bufferSize >= IPCbuffer + PayloadSize
-         */
-
-        SDOSegmentFrame response(node.nodeId);
-        remainingBytes -= response.setData(&odData.u8, remainingBytes);
-
-        sendCmd.setIsFinalSegment(remainingBytes == 0);
-        response.setCommandByte(sendCmd.encode());
-
-        sendFrame(response);
-
-        if (remainingBytes == 0) state = State::Idle;
+        awaitState = nextState;
+        state = State::AwaitODResponse;
     }
 
-    void awaitODResponse(SDOFrame &request) {
-        if (odAccessor.errorOccurred())
-            abortOperation(odAccessor.getErrorCode());
-        else if (odAccessor.operationComplete()) {
-            odData = odAccessor.getData();
+    void awaitODResponse() {
+        if (odAccessor.readComplete()) {
             state = awaitState;
             executeNextAction();
         }
@@ -214,4 +167,4 @@ static_assert(
     sizeof(dispatch) / sizeof(ErasedHandler) ==
         static_cast<std::size_t>(SDOClientCommandSpecifiers::Reserved) + 1,
     "Mismatch between dispatch table and CCS enum range");
-}
+}  // namespace

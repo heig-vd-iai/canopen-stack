@@ -1,6 +1,11 @@
 #pragma once
 
+#include <cassert>
 #include <cstdint>
+#include <limits>
+#include <type_traits>
+
+namespace endian {
 
 inline void write_le32(uint8_t* p, uint32_t v) {
     p[0] = static_cast<uint8_t>(v & 0xFF);
@@ -24,3 +29,8 @@ inline uint32_t read_le32(const uint8_t* p) {
            (static_cast<uint32_t>(p[2]) << 16) |
            (static_cast<uint32_t>(p[3]) << 24);
 }
+
+inline void write_le8(uint8_t* p, uint8_t v) { *p = v; }
+inline uint8_t read_le8(const uint8_t* p) { return *p; }
+
+}  // namespace endian

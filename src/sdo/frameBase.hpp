@@ -33,9 +33,13 @@ struct Frame {
 
 /**
  * This is a specialized Frame used by the SDO class.
- * It is the base class for SDOFrame and SDOBlockFrame.
+ * It is the base class for SDOFrame.
  * It contains common accessors for both its subclasses.
- * CiA301:2011§7.2.4.3 (p. 48)
+ *
+ * CiA301:2011 §7.3.3 (p. 80)
+ *
+ * SDOTFrame: SDO Client -> SDO Server
+ * SDORFrame: SDO Server -> SDO Client
  */
 struct SDOTFrame : public Frame {
     SDOTFrame(uint8_t nodeId) : Frame(nodeId, 0b1011) { dlc = 8; }

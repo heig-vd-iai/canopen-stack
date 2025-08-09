@@ -1,9 +1,19 @@
+/**
+ * Frame mixins for SDO (Service Data Objects) in CANopen.
+ *
+ * Disclaimer: implementing these mixins would have been easier with
+ * bitfields and nested structures, but bitfields are not portable.
+ *
+ * With the desire to be compatible with C++14, concepts cannot be used.
+ *
+ */
 #pragma once
 
 #include <cstdint>
 #include <cstring>
 
-#include "endian_utils.hpp"
+#include "bitsUtils.hpp"
+#include "endianUtils.hpp"
 #include "enums.hpp"
 #include "frameBase.hpp"
 
@@ -23,6 +33,14 @@ struct SdoBitGuard {
 };
 
 /**
+ * Underlying type for CCS and SCS enums.
+ */
+template <class E, typename = typename std::enable_if<std::is_enum<E>::value>::type>
+constexpr auto to_underlying(E e) noexcept {
+    return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
+/**
  * Mixin for SDO frames that have an index and subindex.
  *
  * +---------------+---------------+---------------+---------------+---
@@ -33,30 +51,18 @@ struct SdoBitGuard {
  */
 template <class Derived>
 struct IndexSubindexMixin {
+    using Derived::bytes;
+
     void setIndexSubIndex(uint16_t index, uint8_t subindex) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        write_le16(d + 1, index);
-        d[3] = subindex;
+        endian::write_le16(bytes() + 1, index);
+        bytes()[3] = subindex;
     }
 
-    void setIndex(uint16_t index) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        write_le16(d + 1, index);
-    }
+    void setIndex(uint16_t index) { endian::write_le16(bytes() + 1, index); }
+    void setSubindex(uint8_t subindex) { bytes()[3] = subindex; }
 
-    void setSubindex(uint8_t subindex) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[3] = subindex;
-    }
-
-    uint16_t index() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return read_le16(d + 1);
-    }
-    uint8_t subindex() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return d[3];
-    }
+    uint16_t index() const { return endian::read_le16(bytes() + 1); }
+    uint8_t subindex() const { return bytes()[3]; }
 };
 
 /**
@@ -69,35 +75,31 @@ struct IndexSubindexMixin {
  *  ^^^^^
  */
 template <class Derived>
-struct CCSMixin : private ClaimBit<0>,
-                  private ClaimBit<1>,
-                  private ClaimBit<2>,
-                  private SdoBitGuard<Derived, 0, 1, 2> {
+struct CCSMixin : private ClaimBit<7>,
+                  private ClaimBit<6>,
+                  private ClaimBit<5>,
+                  private SdoBitGuard<Derived, 5, 6, 7> {
+    using Derived::bytes;
+
     void set_ccs(CCS ccs) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = static_cast<uint8_t>((d[0] & ~uint8_t(0xE0)) |
-                                    ((static_cast<uint8_t>(ccs) & 0x07) << 5));
+        bytes()[0] = (bytes()[0] & ~uint8_t(0xE0)) |
+                     ((to_underlying(ccs) & 0x07) << 5);
     }
-    CCS ccs() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return static_cast<CCS>((d[0] >> 5) & 0x07);
-    }
+    CCS ccs() const { return static_cast<CCS>((bytes()[0] >> 5) & 0x07); }
 };
 
 template <class Derived>
-struct SCSMixin : private ClaimBit<0>,
-                  private ClaimBit<1>,
-                  private ClaimBit<2>,
-                  private SdoBitGuard<Derived, 0, 1, 2> {
+struct SCSMixin : private ClaimBit<7>,
+                  private ClaimBit<6>,
+                  private ClaimBit<5>,
+                  private SdoBitGuard<Derived, 5, 6, 7> {
+    using Derived::bytes;
+
     void set_scs(SCS scs) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = static_cast<uint8_t>((d[0] & ~uint8_t(0xE0)) |
-                                    ((static_cast<uint8_t>(scs) & 0x07) << 5));
+        bytes()[0] = (bytes()[0] & ~uint8_t(0xE0)) |
+                     ((to_underlying(scs) & 0x07) << 5);
     }
-    SCS scs() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return static_cast<SCS>((d[0] >> 5) & 0x07);
-    }
+    SCS scs() const { return static_cast<SCS>((bytes()[0] >> 5) & 0x07); }
 };
 
 /**
@@ -110,16 +112,12 @@ struct SCSMixin : private ClaimBit<0>,
  *              ^
  */
 template <class Derived>
-struct ExpeditedTransferMixin : private ClaimBit<6>,
-                                private SdoBitGuard<Derived, 6> {
-    void set_expedited_transfer(bool expedited) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x40) | (expedited ? 0x40 : 0x00);
-    }
-    bool is_expedited_transfer() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x40) != 0;
-    }
+struct ExpeditedTransferMixin : private ClaimBit<1>,
+                                private SdoBitGuard<Derived, 1> {
+    using Derived::bytes;
+
+    void setExpeditedTransfer(bool exp) { setBit(bytes()[0], 1, exp); }
+    bool isExpeditedTransfer() const { return getBit(bytes()[0], 1); }
 };
 
 /**
@@ -129,19 +127,20 @@ struct ExpeditedTransferMixin : private ClaimBit<6>,
  * |       0       |       1       |       2       |       3       |
  * | | | | | | | |s|               |               |               |
  * +---------------+---------------+---------------+---------------+---
- *                ^
+ *                ^ uploads/downloads
+ *              ^ block uploads/downloads
+ *
+ * CiA 301 is not consistent about the size specified bit...
+ * In SDO uploads/downloads, bit 0 is used,
+ * while in block uploads/downloads, bit 1 is used.
  */
-template <class Derived>
-struct SizeSpecifiedMixin : private ClaimBit<7>,
-                            private SdoBitGuard<Derived, 7> {
-    void set_size_specified(bool specified) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x80) | (specified ? 0x80 : 0x00);
-    }
-    bool is_size_specified() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x80) != 0;
-    }
+template <class Derived, int Bit = 0>
+struct SizeSpecifiedMixin : private ClaimBit<Bit>,
+                            private SdoBitGuard<Derived, Bit> {
+    using Derived::bytes;
+
+    void setSizeSpecified(bool value) { setBit(bytes()[0], Bit, value); }
+    bool isSizeSpecified() const { return getBit(bytes()[0], Bit); }
 };
 
 /**
@@ -149,97 +148,133 @@ struct SizeSpecifiedMixin : private ClaimBit<7>,
  *
  * +---------------+---------------+---------------+---------------+---
  * |       0       |       1       |       2       |       3       |
- * | | | | | | | |c|               |               |               |
+ * |c| | | | | | |c|               |               |               |
  * +---------------+---------------+---------------+---------------+---
- *                ^
+ *                ^ For Upload/Download CiA 301:2011 §7.2.4.3.4 p.50
+ *  ^ For Block Upload/Download CiA 301:2011 §7.2.4.3.10 p.55
  */
-template <class Derived>
-struct FinalTransferMixin : private ClaimBit<7>,
-                            private SdoBitGuard<Derived, 7> {
-    void set_final_transfer(bool final_transfer) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x80) | (final_transfer ? 0x80 : 0x00);
-    }
-    bool is_final_transfer() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x80) != 0;
-    }
+template <class Derived, int Bit = 0>
+struct FinalTransferMixin : private ClaimBit<Bit>,
+                            private SdoBitGuard<Derived, Bit> {
+    using Derived::bytes;
+
+    void setFinalTransfer(bool final) { setBit(bytes()[0], Bit, final); }
+    bool finalTransfer() const { return getBit(bytes()[0], Bit); }
 };
 
 /**
  * Mixin for SDO frames that have a toggle bit.
+ * CiA 301:2011 §7.2.4.3.4 p.50
  *
  * +---------------+---------------+---------------+---------------+---
  * |       0       |       1       |       2       |       3       |
  * | | | |t| | | | |               |               |               |
  * +---------------+---------------+---------------+---------------+---
  *        ^
+ *
+ * t: toggle bit. This bit shall alternate for each subsequent segment
+ * that is downloaded. The first segment shall have the toggle-bit set to 0.
+ * The toggle bit shall be equal for the request and the response message.
  */
-template <class Derived>
-struct ToggleBitMixin : private ClaimBit<3>, private SdoBitGuard<Derived, 3> {
-    void set_toggle_bit(bool toggle) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x10) | (toggle ? 0x10 : 0x00);
-    }
-    bool is_toggle_bit() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x10) != 0;
-    }
+template <class Derived, int Bit = 4>
+struct ToggleBitMixin : private ClaimBit<Bit>,
+                        private SdoBitGuard<Derived, Bit> {
+    using Derived::bytes;
+
+    void setToggleBit(bool toggle) { setBit(bytes()[0], Bit, toggle); }
+    bool toggleBit() const { return getBit(bytes()[0], Bit); }
 };
 
 /**
  * Mixin for SDO frames that have a 2-bit unused bytes field.
+ * CiA 301:2011 §7.2.4.3.6 p.51
  *
- *  0 1 2 3 4 5 6 7
  * +---------------+---------------+---------------+---------------+---
  * |       0       |       1       |       2       |       3       |
  * | | | | | n | | |               |               |               |
  * +---------------+---------------+---------------+---------------+---
  *          ^^^
+ *
+ * Only valid if e = 1 and s = 1, otherwise 0. If valid it indicates
+ * the number of bytes in d that do not contain data.
+ * Bytes [8-n, 7] do not contain segment data.
  */
 template <class Derived>
-struct UnusedBytes2Mixin : private ClaimBit<4>,
-                           private ClaimBit<5>,
-                           private SdoBitGuard<Derived, 4, 5> {
-    void set_unused_bytes(uint8_t value) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x30) | ((value & 0x03) << 4);
+struct UnusedBytes2Mixin : private ClaimBit<2>,
+                           private ClaimBit<3>,
+                           private SdoBitGuard<Derived, 2, 3> {
+    using Derived::bytes;
+
+    void setUnusedBytes(uint8_t value) {
+        bits::set_field8(bytes()[0], 2u, 2u, value);  // implicit mask
     }
-    uint8_t unused_bytes() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x30) >> 4;
-    }
+
+    uint8_t unusedBytes() const { return bits::get_field8(bytes()[0], 2u, 2u); }
 };
 
 /**
- * Mixin for SDO frames that have a 2-bit unused bytes field.
+ * Mixin for SDO frames that have a 3-bit unused bytes field.
+ * CiA 301:2011 §7.2.4.3.4 p.50
  *
- *  0 1 2 3 4 5 6 7
  * +---------------+---------------+---------------+---------------+---
  * |       0       |       1       |       2       |       3       |
- * | | | | | n | | |               |               |               |
+ * | | | | |  n  | |               |               |               |
  * +---------------+---------------+---------------+---------------+---
- *          ^^^
+ *          ^^^^^
  */
 template <class Derived>
-struct UnusedBytes3Mixin : private ClaimBit<4>,
-                           private ClaimBit<5>,
-                           private SdoBitGuard<Derived, 4, 5> {
-    void set_unused_bytes(uint8_t value) {
-        uint8_t* d = static_cast<Derived*>(this)->bytes();
-        d[0] = (d[0] & ~0x70) | ((value & 0x03) << 4);
+struct UnusedBytes3Mixin : private ClaimBit<1>,
+                           private ClaimBit<2>,
+                           private ClaimBit<3>,
+                           private SdoBitGuard<Derived, 1, 2, 3> {
+    using Derived::bytes;
+
+    void setUnusedBytes(uint8_t value) {
+        bits::set_field8(bytes()[0], 1u, 3u, value);
     }
-    uint8_t unused_bytes() const {
-        const uint8_t* d = static_cast<const Derived*>(this)->bytes();
-        return (d[0] & 0x70) >> 4;
-    }
+
+    uint8_t unusedBytes() const { return bits::get_field8(bytes()[0], 1u, 3u); }
 };
 
+/**
+ * Mixin for SDO frames that have a client crc bit.
+ * CiA 301:2011 §7.2.4.3.9 p.53
+ *
+ * +---------------+---------------+---------------+---------------+---
+ * |       0       |       1       |       2       |       3       |
+ * | | | | | |C| | |               |               |               |
+ * +---------------+---------------+---------------+---------------+---
+ *            ^
+ * cc: Client CRC support bit
+ *  0 : no CRC support, 1: CRC support
+ * sc: Server CRC support bit
+ *  0 : no CRC support, 1: CRC support
+ */
+template <class Derived, int Bit = 2>
+struct CRCBitMixin : private ClaimBit<Bit>, private SdoBitGuard<Derived, Bit> {
+    using Derived::bytes;
+
+    void setCRCSupport(bool value) { setBit(bytes()[0], Bit, value); }
+    bool isCRCSupported() const { return getBit(bytes()[0], Bit); }
+};
+
+/**
+ * Mixin for SDO frames that have a frame segment.
+ * CiA 301:2011 §7.2.4.3.4 p.50
+ */
 template <class Derived>
-struct FrameSegmentMixin : public IndexSubindexMixin<Derived>,
-                           public FinalTransferMixin<Derived>,
+struct FrameSegmentMixin : public FinalTransferMixin<Derived>,
                            public ToggleBitMixin<Derived>,
                            public UnusedBytes3Mixin<Derived> {
+    using Derived::bytes;
+
+    /**
+     * Set payload size and data for the frame segment.
+     *
+     * Frame segment have 7 bytes of data.
+     * Instead of manually setting the size and the final transfer bit,
+     * this mixin provides a convenient way to manage the frame segment.
+     */
     unsigned setSize(uint32_t size) {
         auto available = 7;
         bool overflow = (size > available);
@@ -260,5 +295,48 @@ struct FrameSegmentMixin : public IndexSubindexMixin<Derived>,
         return payloadSize;
     }
 
-    void getData(uint8_t* dataPtr) { memcpy(dataPtr, &bytes()[1], getSize()); }
+    void getData(uint8_t* dataPtr) const {
+        memcpy(dataPtr, &bytes()[1], getSize());
+    }
+};
+
+/**
+ * Mixin for SDO Block: Transfer size
+ * CiA 301:2011 §7.2.4.3.13 p.58
+ */
+template <class Derived>
+struct TransferSizeMixin : public SizeSpecifiedMixin<Derived, 1> {
+    using Derived::bytes;
+
+    void setSize(uint32_t size) {
+        endian::write_le32(bytes() + 4, size);
+        setSizeSpecified(size > 0);
+    }
+    uint32_t size() const { return endian::read_le32(bytes() + 4); }
+};
+
+/**
+ * Mixin for SDO Block: Block size.
+ * CiA 301:2011 §7.2.4.3.13 p.58
+ */
+template <class Derived, unsigned Byte = 4>
+struct BlockSizeMixin {
+    using Derived::bytes;
+
+    void setBlockSize(uint8_t blksize) {
+        endian::write_le8(bytes() + Byte, blksize);
+    }
+    uint8_t blockSize() const { return endian::read_le8(bytes() + Byte); }
+};
+
+/**
+ * Mixin for SDO Block: Pst
+ * CiA 301:2011 §7.2.4.3.13 p.58
+ */
+template <class Derived, unsigned Byte = 5>
+struct PstMixin {
+    using Derived::bytes;
+
+    void setPst(uint8_t pst) { endian::write_le8(bytes() + Byte, pst); }
+    uint8_t pst() const { return endian::read_le8(bytes() + Byte); }
 };
