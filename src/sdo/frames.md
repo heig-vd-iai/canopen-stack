@@ -1,9 +1,108 @@
- SDO Block download initiate request
- +---------------+---------------+---------------+---------------+---
- |       0       |       1       |       2       |       3       | 4..7
- | ccs | | |R|s|C|            Index              | Subindex      | Size
- |1|1|0|x|x| | |0|                               |               |
- +---------------+---------------+---------------+---------------+---
+# SDO Protocol
+
+## SDO Download Initiate Request
+
+FrameType InitiateIndication
+
+```text
++---------------+---------------+---------------+---------------+---
+|       0       |       1       |       2       |       3       | 4..7
+| ccs | | n |e|s|            Index              | Subindex      | d
+|0|0|1|x|   | | |                               |               |
++---------------+---------------+---------------+---------------+---
+```
+
+- e0,s0: d: reserved
+- e0,s1: d: size to be downloaded
+- e1,s1: d: data to be downloaded
+- e1,s0: d: unspecified number of bytes to be downloaded
+
+## SDO Download Initiate Response
+
+```text
++---------------+---------------+---------------+---------------+
+|       0       |       1       |       2       |       3       |
+| scs |         |            Index              | Subindex      |
+|0|1|1|x|x|x|x|x|                               |               |
++---------------+---------------+---------------+---------------+
+```
+
+## SDO Download Segment Request
+
+```text
++---------------+---------------+------------...
+|       0       |       1       |       2
+| ccs |t|  n  |c| segment data 1..7
+|0|0|0| |     | |
++---------------+---------------+------------...
+```
+
+## SDO Download Segment Response
+
+```text
++---------------+
+|       0       |
+| scs |t|       |
+|0|0|1| |x|x|x|x|
++---------------+
+```
+
+## SDO Upload Initiate Request
+
+```text
++---------------+---------------+---------------+---------------+
+|       0       |       1       |       2       |       3       |
+| scs |         |            Index              | Subindex      |
+|0|1|0|x|x|x|x|x|                               |               |
++---------------+---------------+---------------+---------------+
+```
+
+## SDO Upload Initiate Response
+
+```text
++---------------+---------------+---------------+---------------+---
+|       0       |       1       |       2       |       3       | 4..7
+| scs | | n |e|s|            Index              | Subindex      | d
+|0|1|0|x|   | | |                               |               |
++---------------+---------------+---------------+---------------+---
+```
+
+## SDO Upload Segment Request
+
+```text
++---------------+
+|       0       |
+| ccs |t|       |
+|0|1|1| |x|x|x|x|
++---------------+
+```
+
+## SDO Upload Segment Response
+
+```text
++---------------+---------------+------------...
+|       0       |       1       |       2
+| scs |t|  n  |c| segment data 1..7
+|0|0|0| |     | |
++---------------+---------------+------------...
+```
+
+## Frames Upload/Download
+
+InitiateData
+InitiateAck
+SegmentData
+SegmentAck
+
+## SDO Block download initiate request
+
+```text
++---------------+---------------+---------------+---------------+---
+|       0       |       1       |       2       |       3       | 4..7
+| ccs | | |R|s|C|            Index              | Subindex      | Size
+|1|1|0|x|x| | |0|                               |               |
++---------------+---------------+---------------+---------------+---
+```
 
  SDO Block upload initiate response
  +---------------+---------------+---------------+---------------+---

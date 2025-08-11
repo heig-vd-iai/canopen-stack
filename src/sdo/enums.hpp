@@ -8,25 +8,25 @@
  *
  * It concerns the ccs (command code specifier) bits
  */
-enum class CCS : uint8_t {
-    DownloadSegmentRequest = 0,
-    InitiateDownloadRequest = 1,
-    InitiateUploadRequest = 2,
-    UploadSegmentRequest = 3,
-    AbortTransfer = 4,
-    BlockUpload = 5,
-    BlockDownload = 6,
-    Reserved = 7
-};
+enum class CS : uint8_t {
+    ClientDownloadSegmentRequest = 0, //OK
+    ClientInitiateDownloadRequest = 1, //OK
+    ClientInitiateUploadRequest = 2, //OK
+    ClientUploadSegmentRequest = 3, //OK
 
-enum class SCS : uint8_t {
-    InitiateDownloadResponse = 0,
-    DownloadSegmentResponse = 1,
-    InitiateUploadResponse = 2,
-    UploadSegmentResponse = 3,
+    ServerUploadSegmentResponse = 0, //OK
+    ServerDownloadSegmentResponse = 1, //OK
+    ServerInitiateUploadResponse = 2, //OK
+    ServerInitiateDownloadResponse = 3, //OK
+
     AbortTransfer = 4,
-    BlockUploadResponse = 5,
-    BlockDownloadResponse = 6,
+
+    ClientBlockUpload = 5,
+    ClientBlockDownload = 6,
+
+    ServerBlockUploadResponse = 6,
+    ServerBlockDownloadResponse = 5
+
     Reserved = 7
 };
 

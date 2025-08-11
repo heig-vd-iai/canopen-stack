@@ -38,13 +38,7 @@ struct Frame {
  *
  * CiA301:2011 §7.3.3 (p. 80)
  *
- * SDOTFrame: SDO Client -> SDO Server
- * SDORFrame: SDO Server -> SDO Client
  */
-struct SDOTFrame : public Frame {
-    SDOTFrame(uint8_t nodeId) : Frame(nodeId, 0b1011) { dlc = 8; }
-};
-
-struct SDORFrame : public Frame {
-    SDORFrame(uint8_t nodeId) : Frame(nodeId, 0b1100) { dlc = 8; }
+struct SDOFrame : public Frame {
+    SDOFrame(uint8_t nodeId = 0) : Frame(nodeId) { dlc = 8; }
 };

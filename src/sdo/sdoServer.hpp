@@ -124,6 +124,10 @@ class SDO {
         (this->*handler)();
     }
 
+    void sendFrame(SDOFrame &frame) {
+        frame.nodeId = node.nodeId;
+        frame.functionCode = 0b1011;
+    }
    public:
     /**
      * Called upon frame reception related to SDO services.

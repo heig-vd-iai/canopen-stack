@@ -75,31 +75,17 @@ struct IndexSubindexMixin {
  *  ^^^^^
  */
 template <class Derived>
-struct CCSMixin : private ClaimBit<7>,
+struct CSMixin : private ClaimBit<7>,
                   private ClaimBit<6>,
                   private ClaimBit<5>,
                   private SdoBitGuard<Derived, 5, 6, 7> {
     using Derived::bytes;
 
-    void set_ccs(CCS ccs) {
+    void setCS(CS cs) {
         bytes()[0] = (bytes()[0] & ~uint8_t(0xE0)) |
-                     ((to_underlying(ccs) & 0x07) << 5);
+                     ((to_underlying(cs) & 0x07) << 5);
     }
-    CCS ccs() const { return static_cast<CCS>((bytes()[0] >> 5) & 0x07); }
-};
-
-template <class Derived>
-struct SCSMixin : private ClaimBit<7>,
-                  private ClaimBit<6>,
-                  private ClaimBit<5>,
-                  private SdoBitGuard<Derived, 5, 6, 7> {
-    using Derived::bytes;
-
-    void set_scs(SCS scs) {
-        bytes()[0] = (bytes()[0] & ~uint8_t(0xE0)) |
-                     ((to_underlying(scs) & 0x07) << 5);
-    }
-    SCS scs() const { return static_cast<SCS>((bytes()[0] >> 5) & 0x07); }
+    unsigned cs() const { return (bytes()[0] >> 5) & 0x07; }
 };
 
 /**
@@ -222,11 +208,11 @@ struct UnusedBytes2Mixin : private ClaimBit<2>,
  * +---------------+---------------+---------------+---------------+---
  *          ^^^^^
  */
-template <class Derived>
-struct UnusedBytes3Mixin : private ClaimBit<1>,
-                           private ClaimBit<2>,
-                           private ClaimBit<3>,
-                           private SdoBitGuard<Derived, 1, 2, 3> {
+template <class Derived, unsigned start=1>
+struct UnusedBytes3Mixin : private ClaimBit<start>,
+                           private ClaimBit<start+1>,
+                           private ClaimBit<start+2>,
+                           private SdoBitGuard<Derived, start, start+1, start+2> {
     using Derived::bytes;
 
     void setUnusedBytes(uint8_t value) {
@@ -256,6 +242,62 @@ struct CRCBitMixin : private ClaimBit<Bit>, private SdoBitGuard<Derived, Bit> {
 
     void setCRCSupport(bool value) { setBit(bytes()[0], Bit, value); }
     bool isCRCSupported() const { return getBit(bytes()[0], Bit); }
+};
+
+template <class Derived>
+struct InitiateDataMixin : public SDOFrame,
+                           public IndexSubindexMixin<Derived>,
+                           public CSMixin<Derived>,
+                           public ExpeditedTransferMixin<Derived>,
+                           public SizeSpecifiedMixin<Derived>,
+                           public UnusedBytesMixin<Derived, 2> {
+    unsigned setSize(uint32_t size) {
+        auto available = 4;
+        bool overflow = (size > available);
+        auto payloadSize = overflow ? 0 : size;
+        set_unused_bytes(available - payloadSize);
+        set_final_transfer(!overflow);
+        return payloadSize;
+    }
+
+    unsigned getSize() const {
+        auto available = 4;
+        return available - unused_bytes();
+    }
+
+    unsigned setData(uint8_t* dataPtr, uint8_t size) {
+        auto payloadSize = setSize(size);
+        memcpy(&bytes()[1], dataPtr, payloadSize);
+        return payloadSize;
+    }
+
+    void getData(uint8_t* dataPtr) { memcpy(dataPtr, &bytes()[1], getSize()); }
+};
+
+/**
+ * Mixin for SDO frames that have a command specifier (CCS/SCS).
+ *
+ * +---------------+---------------+---------------+---------------+---
+ * |       0       |       1       |       2       |       3       |
+ * | |   seqno     |               |               |               |
+ * +---------------+---------------+---------------+---------------+---
+ *    ^^^^^^^^^^^^^
+ */
+template <class Derived>
+struct SeqNoSMixin : private ClaimBit<6>,
+                  private ClaimBit<5>,
+                  private ClaimBit<4>,
+                  private ClaimBit<3>,
+                  private ClaimBit<2>,
+                  private ClaimBit<1>,
+                  private ClaimBit<0>,
+                  private SdoBitGuard<Derived, 0, 1, 2, 3, 4, 5, 6> {
+    using Derived::bytes;
+
+    void setSequenceNumber(uint8_t seqNo) {
+        set_field8(bytes()[0], 0u, 7u, seqNo);
+    }
+    unsigned sequenceNumber() const { return get_field8(bytes()[0], 0u, 7u); }
 };
 
 /**
@@ -327,6 +369,20 @@ struct BlockSizeMixin {
         endian::write_le8(bytes() + Byte, blksize);
     }
     uint8_t blockSize() const { return endian::read_le8(bytes() + Byte); }
+};
+
+/**
+ * Mixin for SDO Block: Acqseq.
+ * CiA 301:2011 §7.2.4.3.10 p.55
+ */
+template <class Derived, unsigned Byte = 1>
+struct AcqSeqMixin {
+    using Derived::bytes;
+
+    void setAcknowledgeSequence(uint8_t blksize) {
+        endian::write_le8(bytes() + Byte, blksize);
+    }
+    uint8_t sequenceNumber() const { return endian::read_le8(bytes() + Byte); }
 };
 
 /**
