@@ -399,13 +399,6 @@ class IObjectDictionnary {
     virtual int32_t findObject(uint16_t index, uint8_t subindex) = 0;
     virtual Metadata *getMetadata(uint16_t index, uint8_t subindex) = 0;
     virtual Metadata *getMetadata(int32_t id) = 0;
-#if 0  // TODO: Not used?
-    virtual Data* getData(uint16_t index, uint8_t subindex) = 0;
-    virtual Data* getData(int32_t id) = 0;
-    virtual void setData(const Data &data, uint16_t index,
-                          uint8_t subindex) = 0;
-    virtual void setData(const Data &data, int32_t id) = 0;
-#endif
     virtual uint16_t getSize(uint16_t index, uint8_t subindex) = 0;
     virtual uint16_t getSize(int32_t id) = 0;
 };
