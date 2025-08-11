@@ -14,7 +14,7 @@
  * | cs  |         |           index               |   subindex    | d
  * +---------------+-------------------------------+---------------+----
  *
- * cs: Command Specifier (CCS or SCS)
+ * cs: Command Specifier (CCS or SCS with value 4)
  * m: Multiplexer (index + subindex)
  * d: Data field containing the SDO abort code.
  */
@@ -41,10 +41,13 @@ struct SDOFrameAbort : public SDOTFrame,
 
 /**
  * SDO frame for download request.
+ * CiA 301:2011 §7.2.4.3.3 p. 49
  *
  * +-----+-+---+-+-+-------------------------------+---------------+-----
  * | ccs | | n |e|s|           index               |   subindex    | data 4..7
  * +-----+-+---+-+-+-------------------------------+---------------+-----
+ * CCS = 1
+ *
  */
 struct SDOFrameInitiateDownloadRequest
     : public SDOTFrame,
@@ -56,13 +59,14 @@ struct SDOFrameInitiateDownloadRequest
     SDOFrameInitiateDownloadRequest(int8_t nodeId, uint16_t index = 0,
                                     uint8_t subindex = 0)
         : SDOTFrame(nodeId) {
-        set_ccs(CCS::DownloadSegmentRequest);
+        set_ccs(CCS::InitiateDownloadRequest);
         setIndexSubIndex(index, subindex);
     }
 };
 
 /**
  * SDO frame for upload response.
+ * CiA 301:2011 §7.2.4.3.3 p. 49
  *
  * +-----+-+---+-+-+-------------------------------+---------------+-----
  * | scs | | n |e|s|           index               |   subindex    | data 4..7
