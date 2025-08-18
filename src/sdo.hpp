@@ -81,9 +81,7 @@ struct SDOCommandInitiate {
         } bits;
     } data;
 
-    SDOCommandInitiate(uint8_t commandByte) {
-        data.value = commandByte;
-    }
+    SDOCommandInitiate(uint8_t commandByte) { data.value = commandByte; }
 
     SDOCommandInitiate(bool size, bool expedited, unsigned sizeBytes,
                        SDOClientCommandSpecifiers commandSpecifier) {
@@ -95,9 +93,7 @@ struct SDOCommandInitiate {
         data.bits.ccs = commandSpecifier;
     }
 
-    uint8_t encode() const {
-        return data.value;
-    }
+    uint8_t encode() const { return data.value; }
 };
 
 union SDOCommandByte {

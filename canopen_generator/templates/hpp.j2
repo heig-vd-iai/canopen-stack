@@ -82,8 +82,7 @@ public:
      * @param index The hex index of the object to find.
      * @return index in objectDataTable if found, -1 otherwise.
      */
-    int32_t findObject(uint16_t index);
-    int32_t findObject(uint16_t index, uint8_t subIndex);
+    int32_t findObject(uint16_t index, uint8_t subIndex = 0);
 
     /**
      * Access an object in the dictionary by array index using the subscript operator.

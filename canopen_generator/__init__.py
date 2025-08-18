@@ -1,13 +1,15 @@
 import configparser
 import io
+import textwrap
 from datetime import datetime
 from pathlib import Path
-import textwrap
+import os
 import jinja2
 import mdformat
 from voluptuous import MultipleInvalid
 
 from . import tree
+from .phf import PHF
 from .schema import config_schema, profile_schema
 from .type import Ctype_name, DataType, ObjectType, Type_code
 
@@ -654,6 +656,45 @@ class ObjectDictionary:
                     headers=headers,
                     modes=modes
                 )
+
+    def to_phf(self, header_file):
+        keys = [(obj.index, sub.subindex) for obj in self.objects for sub in obj.get_subobjects]
+        multiplexer = [((k[0] << 8) | (k[1] & 0xFF)) for k in keys]
+
+        values = list(range(len(multiplexer))) # Index
+
+        phf = PHF(multiplexer, values=values, M=None, target_load=0.877, seed=43)
+        best = phf.build_best_parallel(candidate_B_powers=[8, 9], trials_per_B=phf.trials, max_workers=os.cpu_count())
+
+        # Summarize best config
+        print("=== PHF (Object Lookup Summary) ===")
+        print(
+            f"M = {best.artifacts.P.M}, B = {best.artifacts.P.B}, "
+            f"A0 = {best.artifacts.P.A0}, A1 = {best.artifacts.P.A1}"
+        )
+        print(f"Load factor = {len(keys) / best.artifacts.P.M:.3f}")
+        print(f"dmax = {best.artifacts.dmax}, dmean = {best.artifacts.dmean:.2f}")
+        print(
+            f"Footprint (bytes) = {best.bytes_total}, "
+            f"types: displace={best.displace_ctype}, values={best.values_ctype}"
+        )
+
+        # Validate that every key probes to itself and retrieves the intended value
+        ok_count = 0
+        for k, v in zip(phf.keys, phf.values):
+            hit, got = PHF.find_py(k, best.artifacts)
+            if hit and got == v:
+                ok_count += 1
+        print(f"Validation: {ok_count}/{len(phf.keys)} keys mapped correctly.")
+
+        if ok_count != len(phf.keys):
+            raise ValueError("Some keys did not map correctly.")
+
+        # Generate C++ headers as strings (not saved to disk in this demo)
+        hpp = phf.get_hpp(trial=1, namespace="phf")
+        cpp = phf.get_cpp(trial=1, header_file=header_file, namespace="phf", number_format="hex16", cols=10)
+
+        return hpp, cpp
 
     def _get_render_context(self):
         return {

@@ -1,6 +1,7 @@
 #include "hardware-delay.hpp"
 #include "node.hpp"
 #include "od.hpp"
+#include "od_lookup.hpp"
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
@@ -171,30 +172,8 @@ int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return node.hardware().setRemoteData(data, id, abortCode);
 }
 
-int32_t ObjectDictionnary::findObject(uint16_t index) {
-    int32_t lower = 0;
-    int32_t upper = length - 1;
-    while (lower <= upper) {
-        int32_t mid = lower + (upper - lower) / 2;
-        if (CANopenOD::objectIndexTable[mid].first == index &&
-            CANopenOD::objectIndexTable[mid].second == 0)
-            return mid;
-        else if (CANopenOD::objectIndexTable[mid].first < index)
-            lower = mid + 1;
-        else
-            upper = mid - 1;
-    }
-    return -1;
-}
-
 int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
-    int32_t indexPos = findObject(index);
-    if (indexPos == -1) return -1;
-    int32_t id = indexPos + subindex;
-    if (CANopenOD::objectIndexTable[id].first == index &&
-        CANopenOD::objectIndexTable[id].second == subindex)
-        return id;
-    return -2;
+    return phf::find(index << 8 | subindex & 0xff);
 }
 
 int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,

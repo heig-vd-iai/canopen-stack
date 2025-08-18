@@ -135,12 +135,10 @@ void SDO::uploadSegment(SDOFrame &request, uint32_t timestamp_us) {
     sendCommand.segment.c = !transferData.remainingBytes;
 
     SDOFrame response(node.nodeId, sendCommand.value);
-    uint8_t *srcPtr = transferData.isDomain
-                           ? domainBuffer + bytesSent
-                           : &transferData.data.u8 + bytesSent;
+    uint8_t *srcPtr = transferData.isDomain ? domainBuffer + bytesSent
+                                            : &transferData.data.u8 + bytesSent;
 
     memcpy(response.data + SDO_SEGMENT_DATA_OFFSET, srcPtr, payloadSize);
-
 
     sendFrame(response);
     if (sendCommand.segment.c) serverState = SDOServerState_Ready;

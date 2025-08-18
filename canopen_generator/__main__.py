@@ -73,6 +73,14 @@ def generate_local(od: ObjectDictionary, outdir: Path, force: bool):
     with open(source, "w") as file:
         file.write(od.to_cpp())
 
+    header_file = "od_lookup.hpp"
+    hpp, cpp = od.to_phf(header_file)
+
+    with open(outdir / header_file, "w", encoding="utf-8", newline="\n") as f:
+        f.write(hpp + "\n")
+
+    with open(outdir / "od_lookup.cpp", "w", encoding="utf-8", newline="\n") as f:
+        f.write(cpp + "\n")
 
 def generate_remote(od: ObjectDictionary, outdir: Path, force: bool):
     header = outdir / "od_remote.hpp"

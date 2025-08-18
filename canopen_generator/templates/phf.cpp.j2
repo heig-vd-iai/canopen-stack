@@ -1,0 +1,64 @@
+#include "{{ header_file }}"
+#include <cstdint>
+
+namespace {{ namespace }} {
+{%- macro fmt_val(x, ctype) -%}
+{%- if number_format in ["hex", "hex16"] -%}
+  {%- if ctype in ["uint8_t","int8_t"] -%}0x{{ "%02X"|format(x) }}
+  {%- elif ctype in ["uint16_t","int16_t"] -%}0x{{ "%04X"|format(x) }}
+  {%- elif ctype in ["uint32_t","int32_t"] -%}0x{{ "%08X"|format(x) }}
+  {%- elif ctype in ["uint64_t","int64_t"] -%}0x{{ "%016X"|format(x) }}
+  {%- else -%}0x{{ "%04X"|format(x) }}
+  {%- endif -%}
+{%- else -%}
+  {{ x }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro dec_max_digits(ctype) -%}
+  {%- if   ctype in ["uint8_t"]  -%}3
+  {%- elif ctype in ["int8_t"]   -%}4
+  {%- elif ctype in ["uint16_t"] -%}5
+  {%- elif ctype in ["int16_t"]  -%}6
+  {%- elif ctype in ["uint32_t"] -%}10
+  {%- elif ctype in ["int32_t"]  -%}11
+  {%- elif ctype in ["uint64_t"] -%}20
+  {%- elif ctype in ["int64_t"]  -%}20
+  {%- else -%}10
+  {%- endif -%}
+{%- endmacro -%}
+{%- macro hex_digits(ctype) -%}
+  {%- if   ctype in ["uint8_t","int8_t"]   -%}2
+  {%- elif ctype in ["uint16_t","int16_t"] -%}4
+  {%- elif ctype in ["uint32_t","int32_t"] -%}8
+  {%- elif ctype in ["uint64_t","int64_t"] -%}16
+  {%- else -%}4
+  {%- endif -%}
+{%- endmacro -%}
+{%- macro token_width(ctype) -%}
+  {%- if number_format in ["hex", "hex16"] -%}
+    {{ (hex_digits(ctype)|int) + 4 }}  {# "0x" + digits + ", " = digits + 4 #}
+  {%- else -%}
+    {{ (dec_max_digits(ctype)|int) + 2 }} {# max digits + ", " #}
+  {%- endif -%}
+{%- endmacro -%}
+{# -- rendu d’un tableau avec calcul interne du nombre d’éléments par ligne #}
+{%- macro render_array(name, ctype, arr, line_width=80, indent=4) -%}
+const {{ ctype }} {{ name }}[{{ arr|length }}] = {
+{%- set tlen = token_width(ctype)|int -%}
+{%- set per = (line_width - indent) // tlen -%}
+{%- if per < 1 %}{% set per = 1 %}{% endif %}
+{% for x in arr -%}
+{% if loop.index0 % per == 0 %}{{ ' ' * indent }}{% endif -%}
+{{ fmt_val(x, ctype) }}{{ "," if not loop.last else "" }}{% if (loop.index % per == 0) or loop.last %}
+{% else %} {% endif -%}
+{% endfor -%}
+};
+{%- endmacro %}
+
+{{ render_array("g_displace", displace_ctype, D) }}
+
+{{ render_array("g_keys", keys_ctype, K) }}
+
+{{ render_array("g_values", values_ctype, V) }}
+
+} // namespace {{ namespace }}
