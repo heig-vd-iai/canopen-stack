@@ -553,7 +553,7 @@ class ObjectDictionary:
                     "ObjectType": obj.object_type,
                     "DataType": sub.type_value,
                     "AccessType": sub.access,
-                    "PDOMapping": sub.pdo_mapping,
+                    "PDOMapping": sub.pdo_mapping
                 }
                 if sub.default != "none":
                     config[section_name]["DefaultValue"] = str(sub.default)
@@ -587,6 +587,7 @@ class ObjectDictionary:
                         "DataType": sub.type_value,
                         "AccessType": sub.access,
                         "PDOMapping": sub.pdo_mapping,
+                        "Alias": getattr(sub, "alias", "")
                     }
                     if sub.default != "none":
                         config[section_name]["DefaultValue"] = str(sub.default)
