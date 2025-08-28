@@ -298,10 +298,10 @@ class PHF:
         keys: Sequence[int],
         values: Optional[Sequence[int]] = None,
         *,
-        trials: int = 5,
+        trials: int = 30,
         M: Optional[int] = None,
         B: Optional[int] = None,
-        target_load: float = 0.6,
+        target_load: float = 0.8,
         seed: Optional[int] = 43,
     ) -> None:
         if not (0.0 < target_load <= 1.0):
