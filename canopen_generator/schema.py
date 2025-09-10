@@ -95,7 +95,9 @@ data_schema = [
         Optional("highLimit", default="none"): Any(str, int, float),
         Optional("get", default="none"): str,
         Optional("set", default="none"): str,
+        Optional("unit", default="none"): str,
         Optional("attribute"): str,
+        Optional("scale", default=1): Any(int, float),
         Optional("enum"): config_enum,
         Optional("documentation", default=""): str,
     }, mutually_exclusive_accessor)
@@ -148,6 +150,7 @@ profile_schema = Schema(
                             Required("data"): data_schema,
                             Optional("get", default="none"): str,
                             Optional("set", default="none"): str,
+                            Optional("scale", default=1): Any(int, float),
                             Optional("attribute"): str,
                             # Optional("enum"): config_enum,
                         }
@@ -211,6 +214,7 @@ config_schema = Schema(
                     Optional("attribute"): str,
                     Optional("remote", default=False): bool,
                     Optional("unit", default="none"): str,
+                    Optional("scale", default=1): Any(int, float),
                     Optional("documentation", default=""): str,
                     Optional("enum"): config_enum,
                 }

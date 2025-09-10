@@ -116,6 +116,7 @@ class Object:
         self.get = object["get"]
         self.set = object["set"]
         self.attribute = object.get("attribute", None)
+        self.scale = object.get("scale", 1)
         self.category = object["category"]
         self.module = object["module"]
         self.logicalDevice = axis
@@ -189,6 +190,8 @@ class Object:
                         self.data[i].length = data["length"]
                     if "attribute" in data:
                         self.data[i].data['attribute'] = data["attribute"]
+                    if "scale" in data:
+                        self.data[i].data['scale'] = data["scale"]
 
                 self.data = self.data[: len(object["data"])]
 
@@ -211,6 +214,8 @@ class Object:
         if 'attribute' in object:
             self.data[0].data['attribute'] = object['attribute']
 
+        if 'scale' in object:
+            self.data[0].data['scale'] = object['scale']
     @property
     def object_type(self):
         if self.data[0].type == "domain":
@@ -544,7 +549,7 @@ class ObjectDictionary:
 
             for sub in obj.get_subobjects:
                 section_name = (
-                    f"{sub.index_hex}sub{sub.subindex}"
+                    f"{sub.index_hex}sub{sub.subindex:X}"
                     if obj.object_type not in ["0x07", "0x02"]
                     else sub.index_hex
                 )
@@ -577,7 +582,7 @@ class ObjectDictionary:
             for sub in obj.get_subobjects:
                 if obj.category != "mandatory":
                     section_name = (
-                        f"{sub.index_hex}sub{sub.subindex}"
+                        f"{sub.index_hex}sub{sub.subindex:X}"
                         if obj.object_type not in ["0x07", "0x02"]
                         else sub.index_hex
                     )
