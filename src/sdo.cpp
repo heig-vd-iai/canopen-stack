@@ -179,7 +179,7 @@ void SDO::handleDownloadInitiateRequest(SDOFrame &request,
             return;
         }
         SDOAbortCodes abortCode;
-        Data tmp;
+        Data tmp = {0}; // Necessary for remote (arch 16-bit vs 32-bit)
         memcpy(&tmp.u8, request.data + SDO_INITIATE_DATA_OFFSET, size);
         int8_t ret = od().writeData(tmp, index, subindex, abortCode);
         if (abortCode != SDOAbortCode_OK) {

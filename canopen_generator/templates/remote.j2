@@ -22,12 +22,12 @@ inline void set{{subobject.cpp_instance_name}}(const Data &data) {
     {{subobject.set}}(data.{{subobject.type_code}}{% if subobject.data.data.scale != 1 and subobject.data.data.scale != 1.0 %} * {% set scale = subobject.data.data.scale %}{% if scale == scale|int %}{{ scale|int }}{% else %}{{ "%.6g"|format(scale) }}f{% endif %}{% endif %});
 }
 {% endif %}
-{% if subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute %}
+{% if subobject.data.access in ['wo', 'rw'] and subobject.data.data.attribute %}
 inline void set{{subobject.cpp_instance_name}}(const Data &data) {
     {{subobject.data.data.attribute}} = {% if 'enum' in subobject.data.data and subobject.data.data.enum.class %}({{subobject.data.data.enum.class}}){% endif %}data.{{subobject.type_code}}{% if subobject.data.data.scale != 1 and subobject.data.data.scale != 1.0 %} * {% set scale = subobject.data.data.scale %}{% if scale == scale|int %}{{ scale|int }}{% else %}{{ "%.6g"|format(scale) }}f{% endif %}{% endif %};
 }
 {% endif %}
-{% if subobject.data.access in ['wo', 'rw'] and subobject.data.data.attribute %}
+{% if subobject.data.access in ['ro', 'rw'] and subobject.data.data.attribute %}
 inline void get{{subobject.cpp_instance_name}}(Data &data) {
     data.{{subobject.type_code}} = {{subobject.data.data.attribute}}{% if subobject.data.data.scale != 1 and subobject.data.data.scale != 1.0 %} * {% set inv = 1 / subobject.data.data.scale %}{% if inv == inv|int %}{{ inv|int }}{% else %}{{ "%.6g"|format(inv) }}f{% endif %}{% endif %};
 }
