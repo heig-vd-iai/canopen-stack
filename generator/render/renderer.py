@@ -17,7 +17,6 @@ from .context import RenderContext
 
 TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
 
-EDS_BAUDRATES = [10, 20, 50, 125, 250, 500, 800, 1000]
 SINGLE_ENTRY_OBJECT_TYPES = ("0x07", "0x02")
 
 REMOTE_TYPES = {
@@ -220,25 +219,10 @@ class Renderer:
         }
 
         config["DeviceInfo"] = {
-            "VendorName": device.vendor.name,
-            "VendorNumber": str(device.vendor.number),
-            "ProductName": device.product.name,
-            "ProductNumber": str(device.product.number),
-            "RevisionNumber": str(device.revision.to_int()),
-            "OrderCode": device.order_code,
-            **{
-                f"Baudrate_{rate}": str(int(rate in device.baudrate))
-                for rate in EDS_BAUDRATES
-            },
-            "SimpleBootUpMaster": str(int(device.simple_bootup_master)),
-            "SimpleBootUpSlave": str(int(device.simple_bootup_slave)),
-            "Granularity": str(device.granularity),
-            "DynamicChannelsSupported": str(int(device.dynamic_channels_supported)),
-            "CompactPDO": str(int(device.compact_pdo)),
-            "GroupMessaging": str(int(device.group_messaging)),
-            "NrOfRXPDO": str(self.ctx.nrOfRXPDO),
-            "NrOfTXPDO": str(self.ctx.nrOfTXPDO),
-            "LSS_Supported": str(int(device.lss_supported)),
+            key: str(value)
+            for key, value in device.to_eds_dict(
+                self.ctx.nrOfRXPDO, self.ctx.nrOfTXPDO
+            ).items()
         }
 
         mandatory = self.ctx.mandatoryObjects

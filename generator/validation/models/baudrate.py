@@ -18,11 +18,11 @@ class Baudrate(set):
 
     def to_dict(self) -> dict[int, bool]:
         """Convert the Baudrate set to a dictionary."""
-        return {b: (b in self) for b in CIA_BAUDRATES}
+        return {b: (b in self) for b in sorted(CIA_BAUDRATES)}
 
     def to_dict_eds(self) -> dict[str, int]:
         """Convert the Baudrate set to a dictionary for EDS export."""
-        return {f"BaudRate_{b}": int(b in self) for b in CIA_BAUDRATES}
+        return {f"BaudRate_{b}": int(b in self) for b in sorted(CIA_BAUDRATES)}
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type, _handler):
