@@ -1,8 +1,16 @@
 """Validation schema for a device configuration file."""
 
-from typing import Annotated, Any, Dict, List, Union
+from typing import Annotated, Any, Dict, List, Optional, Tuple, Union
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    RootModel,
+    ValidationError,
+    model_validator,
+)
+from pydantic_core import ErrorDetails
 
 from ..helpers import infer_object_type, resolve_inheritance
 from .array import Array
@@ -49,3 +57,13 @@ class SchemaConfig(BaseModel):
     def device_profile(self) -> int:
         """The CiA device profile number announced by object 0x1000."""
         return next((p for p in self.profiles if p >= 400), 0)
+
+
+def validate_config(
+    config_data,
+) -> Tuple[Optional[SchemaConfig], List[ErrorDetails]]:
+    """Validate raw configuration data, returning the model or the errors."""
+    try:
+        return SchemaConfig.model_validate(config_data), []
+    except ValidationError as error:
+        return None, error.errors()

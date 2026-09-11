@@ -6,7 +6,7 @@ from typing import cast
 import pytest
 
 from generator.validation import Datatype, Var
-from generator.validation.models.config import Config, SchemaConfig
+from generator.validation.models.config import SchemaConfig, validate_config
 
 
 @pytest.fixture
@@ -149,7 +149,7 @@ def test_schema_config_validation(sample_config_valid):
 
 def test_schema_config_validation_invalid(sample_config_invalid):
     """Test that the SchemaConfig validates a correct configuration."""
-    config, errors = Config(sample_config_invalid)
+    config, errors = validate_config(sample_config_invalid)
     assert config is None
     assert len(errors) > 0
 
