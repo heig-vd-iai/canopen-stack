@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pipx install poetry
+      - run: poetry install --no-root
+      - run: poetry run ruff check canopen_generator tests
+      - run: poetry run black --check canopen_generator tests
+      - run: poetry run pytest
+
+  cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make lib
+      - run: make test
+      - run: ./build/tests
+
+  format:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: clang-format --dry-run -Werror src/*.cpp src/*.hpp tests/cpp/*.cpp tests/cpp/fake-hardware.hpp
