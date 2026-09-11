@@ -1,0 +1,1 @@
+"""CANopen object dictionary generator."""
