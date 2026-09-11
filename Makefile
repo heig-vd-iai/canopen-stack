@@ -9,7 +9,7 @@ WARNINGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion \
 CXXFLAGS = -std=c++14 -Isrc -I$(OD_DIR) -include common.hpp -O2 -fPIC $(WARNINGS)
 
 LIB = canopen-slave.so
-LIB_SRCS = $(wildcard src/*.cpp)
+LIB_SRCS = $(wildcard src/*.cpp src/*/*.cpp)
 LIB_OBJS = $(patsubst src/%.cpp,build/lib/%.o,$(LIB_SRCS))
 
 OD_SRCS = $(wildcard $(OD_DIR)/*.cpp)
@@ -47,12 +47,19 @@ generate:
 	uv run python -m canopen_generator $(CONFIG) -f \
 		--local dist/cm --remote dist/cpu1 --eds dist --doc dist/docs
 
+FORMAT_SRCS = $(wildcard src/*.cpp src/*.hpp src/*/*.cpp src/*/*.hpp) \
+              $(wildcard tests/cpp/*.cpp tests/cpp/*.hpp)
+FORMAT_SRCS := $(filter-out tests/cpp/doctest.h,$(FORMAT_SRCS))
+
 format:
-	clang-format -i src/*.cpp src/*.hpp tests/cpp/*.cpp tests/cpp/fake-hardware.hpp
+	clang-format -i $(FORMAT_SRCS)
+
+format-check:
+	clang-format --dry-run -Werror $(FORMAT_SRCS)
 
 clean:
 	$(RM) -r build dist $(LIB)
 
 -include $(LIB_OBJS:.o=.d) $(OD_OBJS:.o=.d) $(TEST_OBJS:.o=.d)
 
-.PHONY: all lib test generate format clean
+.PHONY: all lib test generate format format-check clean
