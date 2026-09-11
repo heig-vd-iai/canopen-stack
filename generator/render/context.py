@@ -197,8 +197,9 @@ class RenderContext:
         counts = {code: 0 for code in TYPE_CODES}
         for obj in self.objects:
             for sub in obj.subobjects:
-                if sub.type_code in counts:
-                    counts[sub.type_code] += 1
+                code = "bool" if sub.type_code == "b" else sub.type_code
+                if code in counts:
+                    counts[code] += 1
         return counts
 
     @property

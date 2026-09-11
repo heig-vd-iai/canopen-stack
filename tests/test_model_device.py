@@ -87,8 +87,10 @@ def test_revision_from_int():
 
 
 def test_revision_invalid_format():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Revision.model_validate("1.2")
+    with pytest.raises(TypeError):
+        Revision.model_validate(4.2)
 
 
 def test_device_full_init():
