@@ -45,12 +45,9 @@ doc/latex
 
 # OD save file
 *.dat
-od.hpp
-od.cpp
-od_remote.hpp
-od.eds
-doc.md
-config_remote.hpp
+example/od.hpp
+example/c2000/od.hpp
+example/c2000/od.cpp
 
 sw-motion.yaml
 sw-motion-lite.yaml
