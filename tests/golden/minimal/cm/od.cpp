@@ -7,7 +7,7 @@
 
 using namespace CANopen;
 
-const uint64_t od_signature = 202609111135u;
+const uint64_t od_signature = 202609111257u;
 
 /**
  * Metadata declaration for each object.

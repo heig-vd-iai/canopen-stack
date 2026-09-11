@@ -183,14 +183,16 @@ def _parallel_trial(args):
 
 
 def _best_pick(curr: Optional[BestConfig], cand: BestConfig) -> BestConfig:
-    """Return the better of two candidates using bytes_total, dmax, then build time."""
+    """Return the better of two candidates using bytes_total, dmax, then (B, A0, A1)."""
     if curr is None:
         return cand
     if cand.bytes_total != curr.bytes_total:
         return cand if cand.bytes_total < curr.bytes_total else curr
     if cand.artifacts.dmax != curr.artifacts.dmax:
         return cand if cand.artifacts.dmax < curr.artifacts.dmax else curr
-    return cand if cand.build_ms < curr.build_ms else curr
+    cand_key = (cand.artifacts.P.B, cand.artifacts.P.A0, cand.artifacts.P.A1)
+    curr_key = (curr.artifacts.P.B, curr.artifacts.P.A0, curr.artifacts.P.A1)
+    return cand if cand_key < curr_key else curr
 
 
 def _candidate_powers(p_max: int) -> list[int]:

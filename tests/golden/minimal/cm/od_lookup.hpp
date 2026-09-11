@@ -22,23 +22,25 @@ extern const disp_t  g_displace[B];
 extern const key_t   g_keys[M];
 extern const value_t g_values[M];
 
+
 static inline key_t mix(key_t x) noexcept {
-    return key_t(x + (x >> 3)); // wrap modulo largeur de key_t
+    return x + (x >> 3);
 }
 
 static inline uint32_t h0(key_t x) noexcept {
-    key_t prod = key_t(uint32_t(mix(x)) * uint32_t(A0)); // modulo 2^KEY_BITS
-    return (uint32_t(prod) >> (KEY_BITS - B_BITS)) & (B - 1);
+    const key_t prod = mix(x) * A0;
+    return (prod >> (KEY_BITS - B_BITS)) & (B - 1);
 }
 
 static inline uint32_t h1(key_t x) noexcept {
-    key_t prod = key_t(uint32_t(mix(x)) * uint32_t(A1));
-    return uint32_t(prod) & (M - 1);
+    const key_t prod = mix(x) * A1;
+    return prod & (M - 1);
 }
+
 
 static inline int16_t find(key_t key) noexcept {
     const uint32_t b = h0(key);
-    const uint32_t i = (uint32_t)((h1(key) + g_displace[b]) & (M - 1));
+    const uint32_t i = (h1(key) + g_displace[b]) & (M - 1);
 #ifdef DEBUG
     assert(b < B);
     assert(i < M);
