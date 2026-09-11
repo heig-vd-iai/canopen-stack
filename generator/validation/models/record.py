@@ -1,4 +1,6 @@
-from typing import ClassVar, List, Literal, Optional, Union
+"""CANopen record object model."""
+
+from typing import List, Literal, Optional, Union
 
 from pydantic import ConfigDict, model_validator
 
@@ -8,83 +10,85 @@ from .enum import Enum, EnumProfile
 from .object_common import (
     HeaderCommon,
     HeaderCommonProfile,
+    Sub0,
     VarCommon,
     VarCommonProfile,
 )
 
+MAX_SUBENTRIES = 255
+
 
 class RecordEntry(VarCommon, HeaderCommon):
-    """Record entry object for storing subindex data."""
+    """One sub-index of a record."""
 
     model_config = ConfigDict(extra="forbid")
 
 
 class RecordEntryProfile(VarCommonProfile, HeaderCommonProfile):
-    """Record entry profile with additional information."""
+    """One sub-index of a record defined in a CiA profile."""
 
     enum: Optional[Union[Enum, EnumProfile]] = None
     model_config = ConfigDict(extra="forbid")
 
 
-class Record(HeaderCommon):
-    """Record object for storing subindex data."""
+def size_entry(
+    sub0: Sub0, count: int, get: Optional[str] = None, set: Optional[str] = None
+) -> RecordEntry:
+    """Build the sub-index 0 entry announcing the highest sub-index."""
+    return RecordEntry(
+        name=sub0.name,
+        datatype=Datatype.from_name("uint8"),
+        access=Access(read=sub0.access.read, write=sub0.access.write),
+        default=count if sub0.default is None else sub0.default,
+        get=get,
+        set=set,
+    )
+
+
+class RecordBase(HeaderCommon):
+    """Record object: heterogeneous entries at sub-indices 1..n.
+
+    Object-level `get`/`set` apply to every entry that has none of its own.
+    """
 
     type: Literal["record"] = "record"
+    get: Optional[str] = None
+    set: Optional[str] = None
+    sub0: Sub0 = Sub0()
+    record: list
+
+    @model_validator(mode="after")
+    def check_length(self):
+        if len(self.record) > MAX_SUBENTRIES:
+            raise ValueError(f"a record holds at most {MAX_SUBENTRIES} entries")
+        return self
+
+    def subentries(self) -> List[RecordEntry]:
+        """Every sub-index in order, sub-index 0 included."""
+        entries = [size_entry(self.sub0, len(self.record), self.get, self.set)]
+        for entry in self.record:
+            entries.append(
+                entry.model_copy(
+                    update={
+                        "get": entry.get if entry.get is not None else self.get,
+                        "set": entry.set if entry.set is not None else self.set,
+                    }
+                )
+            )
+        return entries
+
+
+class Record(RecordBase):
+    """Record object from a device configuration."""
+
     record: List[RecordEntry]
 
-    SIZE_ENTRY_NAME: ClassVar[str] = "Number of records"
-
-    @model_validator(mode="after")
-    def validate_and_inject_size_entry(self):
-        """Validate the length of the record and inject subindex 0 if needed."""
-
-        if len(self.record) > 255:
-            raise ValueError("Subindex length must be less than 256.")
-
-        # Check if subindex 0 is present
-        if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
-            size_entry = RecordEntry(
-                name=self.SIZE_ENTRY_NAME,
-                datatype=Datatype.from_name("uint8"),
-                access=Access.model_validate("r"),
-                default=len(self.record),
-            )
-            self.record.insert(0, size_entry)
-
-        else:
-            # Update default if already present
-            self.record[0].default = len(self.record)
-
-        return self
+    model_config = ConfigDict(extra="forbid")
 
 
-class RecordProfile(HeaderCommonProfile):
-    """Record object for storing subindex data."""
+class RecordProfile(RecordBase, HeaderCommonProfile):
+    """Record object defined in a CiA profile."""
 
-    type: Literal["record"] = "record"
     record: List[RecordEntryProfile] = []
 
-    SIZE_ENTRY_NAME: ClassVar[str] = "Number of records"
-
-    @model_validator(mode="after")
-    def validate_and_inject_size_entry(self):
-        """Validate the length of the record and inject subindex 0 if needed."""
-
-        if len(self.record) > 255:
-            raise ValueError("Subindex length must be less than 256.")
-
-        # Check if subindex 0 is present
-        if not self.record or self.record[0].name != self.SIZE_ENTRY_NAME:
-            size_entry = RecordEntry(
-                name=self.SIZE_ENTRY_NAME,
-                datatype=Datatype.from_name("uint8"),
-                access=Access.model_validate("r"),
-                default=len(self.record),
-            )
-            self.record.insert(0, size_entry)
-
-        else:
-            # Update default if already present
-            self.record[0].default = len(self.record)
-
-        return self
+    model_config = ConfigDict(extra="forbid")

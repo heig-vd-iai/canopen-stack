@@ -61,6 +61,7 @@ def sample_config_valid():
                         "name": "Field2",
                         "datatype": "string",
                         "default": "default",
+                        "size": 16,
                         "access": "w",
                     },
                 ],

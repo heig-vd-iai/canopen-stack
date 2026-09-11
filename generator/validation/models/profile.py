@@ -10,7 +10,7 @@ from pydantic import (
     model_validator,
 )
 
-from ..helpers import infer_object_type
+from ..helpers import infer_object_type, resolve_inheritance
 from .array import ArrayProfile
 from .markdown import Markdown
 from .mixins import MappingRootMixin
@@ -35,23 +35,7 @@ class ObjectsProfile(
         if not isinstance(v, dict):
             raise TypeError("Expected a dict for objects")
 
-        # Étape 1 : Résolution de l’héritage
-        def resolve(idx: int, visited: set[int]) -> dict:
-            obj = v[idx]
-            inherit_id = obj.get("inherit")
-            if not inherit_id:
-                return obj
-            if inherit_id not in v:
-                raise ValueError(
-                    f"Object {idx:04X}h inherits from unknown object {inherit_id:04X}h"
-                )
-            if inherit_id in visited:
-                raise ValueError(f"Circular inheritance detected at {idx:04X}h")
-            base = resolve(inherit_id, visited | {idx})
-            merged = {**base, **obj}
-            return merged
-
-        v = {idx: resolve(idx, set()) for idx in v}
+        v = resolve_inheritance(v)
 
         for obj in v.values():
             obj.setdefault("type", infer_object_type(obj))

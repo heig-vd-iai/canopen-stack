@@ -1,0 +1,180 @@
+device:
+  vendor:
+    name: HEIG-VD
+    number: 0
+  product:
+    name: minimal
+    number: 1
+  revision: 1
+  order_code: '0'
+  node_id: 1
+  baudrate:
+  - 10
+  - 20
+  - 50
+  - 125
+  - 250
+  - 500
+  - 800
+  - 1000
+  lss_supported: false
+  simple_bootup_slave: true
+  simple_bootup_master: false
+  granularity: 8
+  dynamic_channels_supported: false
+  compact_pdo: false
+  group_messaging: false
+info:
+  description: Minimal device used as generator fixture and golden reference
+  file_version: 1
+  file_revision: 0
+  created_by: canopen-stack
+  created_at: 2026-09-11 10:00:00
+  modified_by: canopen-stack
+profiles:
+- 301
+- 402
+objects:
+  0x1000: {}
+  0x1001: {}
+  0x1010: {}
+  0x1011: {}
+  0x1017:
+    default: 1000
+  0x1018:
+    record:
+    - default: 0
+    - default: 1
+    - default: 1
+    - default: 0
+  0x1400: {}
+  0x1600: {}
+  0x1800: {}
+  0x1A00: {}
+  0x2000:
+    name: Every scalar type
+    description: One entry per supported scalar type
+    module: fixture
+    sub0:
+      name: Number of entries
+      default: 11
+    record:
+    - name: A boolean
+      datatype: bool
+      access: rw
+      default: 1
+    - name: An int8
+      datatype: int8
+      access: rw
+      default: -8
+    - name: An int16
+      datatype: int16
+      access: rw
+      default: -16
+    - name: An int32
+      datatype: int32
+      access: rw
+      default: -32
+    - name: An int64
+      datatype: int64
+      access: rw
+      default: -64
+    - name: A uint16
+      datatype: uint16
+      access: rw
+      default: 16
+    - name: A uint32
+      datatype: uint32
+      access: rw
+      default: 32
+    - name: A uint64
+      datatype: uint64
+      access: rw
+      default: 64
+    - name: A float32
+      datatype: float32
+      access: rw
+      default: 1.5
+    - name: A float64
+      datatype: float64
+      access: rw
+      default: 2.5
+  0x2001:
+    name: A string
+    module: fixture
+    datatype: string
+    access: r
+    size: 16
+  0x2002:
+    name: A domain
+    module: fixture
+    datatype: domain
+    access: rw
+  0x2003:
+    name: A limited value
+    module: fixture
+    datatype: uint16
+    access: rw
+    default: 50
+    limits:
+      min: 10
+      max: 100
+  0x2004:
+    name: An array
+    module: fixture
+    sub0:
+      name: Number of entries
+    record:
+    - name: First element
+      datatype: uint32
+      access: rw
+      default: 1
+    - name: Second element
+      datatype: uint32
+      access: rw
+      default: 2
+    - name: Third element
+      datatype: uint32
+      access: rw
+      default: 3
+  0x2005:
+    name: A remote value
+    module: fixture
+    remote: cpu1
+    get: remote.getValue()
+    set: remote.setValue(@)
+    datatype: uint32
+    access: rw
+    default: 0
+  0x2006:
+    name: A remote attribute
+    module: fixture
+    remote: cpu1
+    scale: 0.001
+    get: remote.attribute
+    set: remote.attribute
+    datatype: float32
+    access: rw
+    default: 0
+  0x2007:
+    name: An enumerated value
+    module: fixture
+    enum:
+      typedef: FixtureLevel
+      values:
+        FIXTURE_LEVEL__LOW: 0
+        FIXTURE_LEVEL__HIGH: 1
+    datatype: uint8
+    access: rw
+    default: 0
+  0x6040: {}
+  0x6041: {}
+  0x6060:
+    enum:
+      typedef: OperationModes
+      values:
+        OPERATION_MODE__NONE: 0
+        OPERATION_MODE__PROFILE_POSITION: 1
+  0x6064:
+    remote: cpu1
+    get: remote.position

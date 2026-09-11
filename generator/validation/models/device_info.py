@@ -20,8 +20,8 @@ SimpleBootUpMaster=0                  Bool
 Granularity=8                         Uint 8
 DynamicChannelsSupported=1            Bool
 GroupMessaging=0                      Bool
-NrOfRxPdo=1                           Uint 16
-NrOfTxPdo=2                           Uint 16
+NrOfRXPDO=1                           Uint 16
+NrOfTXPDO=2                           Uint 16
 
 The Device class encapsulates all the fields in a structured way.
 """
@@ -32,7 +32,7 @@ from warnings import warn
 import semver
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from .baudrate import Baudrate
+from .baudrate import CIA_BAUDRATES, Baudrate
 
 
 class VendorProduct(BaseModel):
@@ -101,6 +101,11 @@ class Revision(BaseModel):
         elif isinstance(v, semver.VersionInfo):
             return {"major": v.major, "minor": v.minor, "patch": v.patch}
 
+        elif isinstance(v, int) and not isinstance(v, bool):
+            if not 0 <= v <= 0xFFFFFF:
+                raise ValueError(f"Revision number {v} does not fit in 24 bits")
+            return {"major": v >> 16, "minor": (v >> 8) & 0xFF, "patch": v & 0xFF}
+
         raise TypeError(f"Invalid input for Revision: {v} (type: {type(v)})")
 
     def to_int(self) -> int:
@@ -114,7 +119,7 @@ class Device(BaseModel):
     vendor: VendorProduct = Field(default_factory=lambda: VendorProduct(number=0))
     product: VendorProduct = Field(default_factory=lambda: VendorProduct(number=0))
     revision: Revision = Field(default_factory=lambda: Revision.model_validate("1.0.0"))
-    baudrate: Baudrate
+    baudrate: Baudrate = Field(default_factory=lambda: Baudrate(CIA_BAUDRATES))
     node_id: int = Field(1, ge=1, le=127)
     order_code: str = Field(default="", max_length=245)
     lss_supported: bool = Field(default=False)
@@ -122,9 +127,8 @@ class Device(BaseModel):
     simple_bootup_master: bool = Field(default=False)
     granularity: int = Field(8, ge=1, le=255)
     dynamic_channels_supported: bool = Field(default=False)
+    compact_pdo: bool = Field(default=False)
     group_messaging: bool = Field(default=False)
-    rpdo_count: int = Field(1, ge=0, le=255)
-    tpdo_count: int = Field(2, ge=0, le=255)
 
     @field_validator("baudrate", mode="before")
     @classmethod
@@ -137,7 +141,7 @@ class Device(BaseModel):
             return Baudrate(v)
         raise TypeError("Invalid baudrate format: expected dict, list, or set.")
 
-    def to_eds_dict(self) -> dict:
+    def to_eds_dict(self, rpdo_count: int, tpdo_count: int) -> dict:
         """Convert the device information to a dictionary suitable for EDS."""
 
         vendor = cast(VendorProduct, self.vendor)
@@ -157,7 +161,8 @@ class Device(BaseModel):
             "SimpleBootUpMaster": int(self.simple_bootup_master),
             "Granularity": self.granularity,
             "DynamicChannelsSupported": int(self.dynamic_channels_supported),
+            "CompactPDO": int(self.compact_pdo),
             "GroupMessaging": int(self.group_messaging),
-            "NrOfRxPdo": self.rpdo_count,
-            "NrOfTxPdo": self.tpdo_count,
+            "NrOfRXPDO": rpdo_count,
+            "NrOfTXPDO": tpdo_count,
         }

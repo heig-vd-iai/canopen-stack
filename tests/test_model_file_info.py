@@ -1,4 +1,4 @@
-"""Unit tests for device_info models."""
+"""Unit tests for device_info models used by the EDS [DeviceInfo] section."""
 
 import warnings
 
@@ -87,7 +87,7 @@ def test_revision_invalid_dict_missing_keys():
 def test_revision_invalid_type():
     """Invalid type raises TypeError."""
     with pytest.raises(TypeError):
-        Revision.model_validate(42)
+        Revision.model_validate(4.2)
 
 
 def test_device_to_eds_dict():
@@ -105,10 +105,8 @@ def test_device_to_eds_dict():
         granularity=8,
         dynamic_channels_supported=True,
         group_messaging=False,
-        rpdo_count=5,
-        tpdo_count=3,
     )
-    eds = dev.to_eds_dict()
+    eds = dev.to_eds_dict(rpdo_count=5, tpdo_count=3)
 
     assert eds["VendorName"] == "VendorX"
     assert eds["VendorNumber"] == 111
@@ -125,8 +123,9 @@ def test_device_to_eds_dict():
     assert eds["Granularity"] == 8
     assert eds["DynamicChannelsSupported"] == 1
     assert eds["GroupMessaging"] == 0
-    assert eds["NrOfRxPdo"] == 5
-    assert eds["NrOfTxPdo"] == 3
+    assert eds["CompactPDO"] == 0
+    assert eds["NrOfRXPDO"] == 5
+    assert eds["NrOfTXPDO"] == 3
 
 
 def test_device_baudrate_dict_input():
@@ -139,7 +138,7 @@ def test_device_baudrate_dict_input():
     )
     assert isinstance(dev.baudrate, Baudrate)
 
-    eds = dev.to_eds_dict()
+    eds = dev.to_eds_dict(rpdo_count=0, tpdo_count=0)
     assert eds["BaudRate_125"] == 1
     assert eds["BaudRate_250"] == 1
     assert eds["BaudRate_500"] == 0

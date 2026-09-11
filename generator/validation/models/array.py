@@ -1,16 +1,8 @@
-"""Model for CANopen objects with common attributes and validation."""
+"""CANopen array object model."""
 
-from typing import (
-    Annotated,
-    Any,
-    ClassVar,
-    List,
-    Literal,
-    Optional,
-    Union,
-)
+from typing import Annotated, List, Literal, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from .enum import Enum, EnumProfile
 from .limits import Limits
@@ -18,13 +10,17 @@ from .mixins import AccessorMixin, UnitMixin
 from .object_common import (
     HeaderCommon,
     HeaderCommonProfile,
+    Sub0,
     VarCommon,
     VarCommonProfile,
 )
+from .record import MAX_SUBENTRIES, RecordEntry, size_entry
+
+INDEX_PLACEHOLDER = "#"
 
 
 class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
-    """Array entry object for storing subindex data."""
+    """One sub-index of an array; the datatype comes from the array."""
 
     limits: Limits = Limits()
     enum: Optional[Enum] = None
@@ -32,134 +28,132 @@ class ArrayEntry(AccessorMixin, UnitMixin, HeaderCommon, BaseModel):
 
 
 class ArrayEntryProfile(ArrayEntry):
-    """Array entry profile with additional information."""
+    """One sub-index of an array defined in a CiA profile."""
 
     enum: Optional[Union[Enum, EnumProfile]] = None
 
 
-class InferArrayLengthMixin:
-    """Mixin to infer array length from data."""
+def ensure_array_entries(v, info, model_cls):
+    """Coerce raw entries to models and name the anonymous ones."""
+    if v is None:
+        return []
+    if not isinstance(v, list):
+        raise TypeError(f"array must be a list, got {type(v)}")
 
-    length: Optional[int]
+    result = []
+    array_name = info.data.get("name", "Array")
+
+    for i, item in enumerate(v, start=1):
+        if isinstance(item, model_cls):
+            result.append(item)
+        else:
+            item_data = dict(item)
+            if "name" not in item_data:
+                item_data["name"] = f"{array_name}_{i}"
+            result.append(model_cls(**item_data))
+
+    return result
+
+
+def substitute_index(text: Optional[str], subindex: int) -> Optional[str]:
+    if text is None:
+        return None
+    return text.replace(INDEX_PLACEHOLDER, str(subindex))
+
+
+class ArrayBase(HeaderCommon, VarCommon):
+    """Array object: entries of one datatype at sub-indices 1..length."""
+
+    type: Literal["array"] = "array"
+    length: Optional[Annotated[int, Field(ge=0, le=MAX_SUBENTRIES)]] = None
+    sub0: Sub0 = Sub0()
     array: list
 
-    ARRAY_SIZE_ENTRY_NAME: ClassVar[str] = "Number of array entries"
-
     @model_validator(mode="after")
-    def _infer_length_from_data(self) -> Any:
+    def infer_length(self):
         entry_count = len(self.array)
         if self.length is None:
             self.length = entry_count
         elif self.length < entry_count:
             raise ValueError(
-                f"Inconsistent array length: length={self.length} but data has {entry_count} entries."
+                f"Inconsistent array length: length={self.length} "
+                f"but data has {entry_count} entries."
             )
-
-        if entry_count == 0 or not self._has_subindex_0():
-            entry = self._make_subindex_0(self.length)
-            self.array.insert(0, entry)
-
         return self
 
-    def _has_subindex_0(self) -> bool:
-        if not self.array:
-            return False
-        maybe = self.array[0]
-        if isinstance(maybe, dict):
-            return maybe.get("name") == self.ARRAY_SIZE_ENTRY_NAME
-        elif hasattr(maybe, "name"):
-            return maybe.name == self.ARRAY_SIZE_ENTRY_NAME
-        return False
+    def subentries(self) -> List[RecordEntry]:
+        """Every sub-index in order, sub-index 0 included.
 
-    def _make_subindex_0(self, value: int) -> Any:
-        """Create the subindex 0 structure (as dict or model depending on context)."""
+        Entries beyond the declared ones repeat the last declared entry.
+        The '#' placeholder in names and accessors becomes the sub-index.
+        """
+        entries = [size_entry(self.sub0, self.length or 0, self.get, self.set)]
+        for subindex in range(1, (self.length or 0) + 1):
+            template = (
+                self.array[subindex - 1]
+                if subindex <= len(self.array)
+                else (self.array[-1] if self.array else None)
+            )
+            entries.append(self._entry(template, subindex))
+        return entries
 
-        return ArrayEntry(
-            name=self.ARRAY_SIZE_ENTRY_NAME,
-            # datatype="uint8",
-            access="r",
-            default=value,
+    def _entry(self, template: Optional[ArrayEntry], subindex: int) -> RecordEntry:
+        explicit = template.model_fields_set if template else set()
+
+        def pick(field: str):
+            if template is not None and field in explicit:
+                return getattr(template, field)
+            return getattr(self, field)
+
+        name = template.name if template else f"{self.name} {subindex}"
+        return RecordEntry(
+            name=substitute_index(name, subindex),
+            datatype=self.datatype,
+            remote=self.remote,
+            description=template.description if template else self.description,
+            module=self.module,
+            category=self.category,
+            access=pick("access"),
+            get=substitute_index(pick("get"), subindex),
+            set=substitute_index(pick("set"), subindex),
+            unit=pick("unit"),
+            scale=pick("scale"),
+            limits=pick("limits"),
+            enum=pick("enum"),
+            default=pick("default"),
+            pdo=self.pdo,
+            bitfield=self.bitfield,
+            size=self.size,
         )
 
 
-class BaseArray(HeaderCommon, VarCommon, InferArrayLengthMixin):
-    """Base class for array objects."""
-
-    type: Literal["array"] = "array"
-    length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
-
-
-class BaseArrayProfile(HeaderCommonProfile, VarCommonProfile, InferArrayLengthMixin):
-    """Base class for array objects."""
-
-    type: Literal["array"] = "array"
-    length: Optional[Annotated[int, Field(ge=0, le=255)]] = None
-
-
-class Array(BaseArray):
-    """Array object for storing subindex data."""
+class Array(ArrayBase):
+    """Array object from a device configuration."""
 
     array: List[ArrayEntry] = []
 
+    model_config = ConfigDict(extra="forbid")
+
     @field_validator("array", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
-        return cls._ensure_array_entry(v, info, model_cls=ArrayEntry)
-
-    @classmethod
-    def _ensure_array_entry(cls, v, info, model_cls):
-        """Ensure that the array is a list of ArrayEntry objects."""
-        if v is None:
-            return []
-        if not isinstance(v, list):
-            raise TypeError(f"array must be a list, got {type(v)}")
-
-        result = []
-        array_name = info.data.get("name", "Array")
-
-        for i, item in enumerate(v, start=1):
-            if isinstance(item, model_cls):
-                result.append(item)
-            else:
-                # Si item est un dict, vérifier si 'name' est présent
-                item_data = dict(item)  # safe copy
-                if "name" not in item_data:
-                    item_data["name"] = f"{array_name}_{i}"
-                result.append(model_cls(**item_data))
-
-        return result
+        return ensure_array_entries(v, info, ArrayEntry)
 
 
-class ArrayProfile(BaseArrayProfile):
-    """Array object for storing subindex data."""
+class ArrayProfile(ArrayBase, HeaderCommonProfile, VarCommonProfile):
+    """Array object defined in a CiA profile."""
 
     array: List[ArrayEntryProfile] = []
-    max_length: Annotated[int, Field(ge=0, le=255)] = Field(default=255)
+    max_length: Annotated[int, Field(ge=0, le=MAX_SUBENTRIES)] = Field(
+        default=MAX_SUBENTRIES
+    )
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("array", mode="before")
     @classmethod
     def ensure_array_entry(cls, v, info):
-        return cls._ensure_array_entry(v, info, model_cls=ArrayEntryProfile)
+        return ensure_array_entries(v, info, ArrayEntryProfile)
 
-    @classmethod
-    def _ensure_array_entry(cls, v, info, model_cls):
-        """Ensure that the array is a list of ArrayEntry objects."""
-        if v is None:
-            return []
-        if not isinstance(v, list):
-            raise TypeError(f"array must be a list, got {type(v)}")
 
-        result = []
-        array_name = info.data.get("name", "Array")
-
-        for i, item in enumerate(v, start=1):
-            if isinstance(item, model_cls):
-                result.append(item)
-            else:
-                # Si item est un dict, vérifier si 'name' est présent
-                item_data = dict(item)  # safe copy
-                if "name" not in item_data:
-                    item_data["name"] = f"{array_name}_{i}"
-                result.append(model_cls(**item_data))
-
-        return result
+BaseArray = ArrayBase

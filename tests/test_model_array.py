@@ -45,17 +45,41 @@ def test_array_creation():
     assert arr.type == "array"
     assert arr.length == 5
     assert isinstance(arr.array[0], ArrayEntry)
-    assert arr.array[0].default == 5
-    assert arr.array[1].default == 42
+    assert arr.array[0].default == 42
+
+    entries = arr.subentries()
+    assert len(entries) == 6
+    assert entries[0].name == "Highest sub-index supported"
+    assert entries[0].datatype.name == "uint8"
+    assert entries[0].default == 5
+    assert entries[1].name == "TestArray_1"
+    assert entries[1].datatype.name == "int32"
+    assert entries[1].default == 42
+    assert entries[5].default == 42
+    assert entries[5].limits.max == 100
 
 
 def test_array_defaults():
     arr = Array(name="EmptyArray", datatype="float32")
     assert arr.type == "array"
     assert arr.length == 0
-    assert len(arr.array) == 1
-    assert isinstance(arr.array[0], ArrayEntry)
-    assert arr.array[0].name == "Number of array entries"
+    assert arr.array == []
+    assert len(arr.subentries()) == 1
+
+
+def test_array_index_placeholder():
+    arr = Array(
+        name="Methods",
+        datatype="int8",
+        length=3,
+        access="r",
+        get="table[#]",
+        array=[{"name": "#st method"}],
+    )
+    entries = arr.subentries()
+    assert [e.name for e in entries[1:]] == ["1st method", "2st method", "3st method"]
+    assert entries[2].get == "table[2]"
+    assert str(entries[2].access) == "r"
 
 
 def test_array_invalid_data():

@@ -1,0 +1,768 @@
+profiles:
+  402:
+    name: Profile for drives and motion control
+    objects:
+      0x6007:
+        name: Abort connection option code
+        datatype: int16
+        access: rw
+        default: 1
+      0x603F:
+        name: Error code
+        category: mandatory
+        datatype: uint16
+        access: r
+        pdo: true
+      0x6040:
+        name: Controlword
+        category: mandatory
+        datatype: uint16
+        access: rw
+        pdo: true
+        default: 0
+      0x6041:
+        name: Statusword
+        category: mandatory
+        datatype: uint16
+        access: r
+        pdo: true
+        default: 0
+      0x6042:
+        name: vl target velocity
+        datatype: int16
+        access: rw
+        pdo: true
+      0x6043:
+        name: vl velocity demand
+        datatype: int16
+        access: r
+        pdo: true
+      0x6044:
+        name: vl velocity actual value
+        datatype: int16
+        access: r
+        pdo: true
+      0x6046:
+        name: vl velocity min max amount
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: vl velocity min amount
+          datatype: uint32
+          access: rw
+        - name: vl velocity max amount
+          datatype: uint32
+          access: rw
+      0x6048:
+        name: vl velocity acceleration
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: Delta speed
+          datatype: uint32
+          access: rw
+        - name: Delta time
+          datatype: uint16
+          access: rw
+      0x6049:
+        name: vl velocity deceleration
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: Delta speed
+          datatype: uint32
+          access: rw
+        - name: Delta time
+          datatype: uint16
+          access: rw
+      0x604A:
+        name: vl velocity quick stop
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: Delta speed
+          datatype: uint32
+          access: rw
+        - name: Delta time
+          datatype: uint16
+          access: rw
+      0x604B:
+        name: vl set-point factor
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: vl set-point factor numerator
+          datatype: int16
+          access: rw
+          default: 1
+        - name: vl set-point factor denominator
+          datatype: int16
+          access: rw
+          default: 1
+      0x604C:
+        name: vl dimension factor
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: vl dimension factor numerator
+          datatype: int32
+          access: rw
+          default: 1
+        - name: vl dimension factor denominator
+          datatype: int32
+          access: rw
+          default: 1
+      0x605A:
+        name: Quick stop option code
+        datatype: int16
+        access: rw
+        default: 2
+      0x605B:
+        name: Shutdown option code
+        datatype: int16
+        access: rw
+        default: 0
+      0x605C:
+        name: Disable operation option code
+        datatype: int16
+        access: rw
+        default: 1
+      0x605D:
+        name: Halt option code
+        datatype: int16
+        access: rw
+        default: 1
+      0x605E:
+        name: Fault reaction option code
+        datatype: int16
+        access: rw
+        default: 2
+      0x6060:
+        name: Modes of operation
+        category: mandatory
+        datatype: int16
+        access: rw
+        pdo: true
+      0x6061:
+        name: Modes of operation display
+        category: mandatory
+        datatype: int16
+        access: r
+        pdo: true
+      0x6062:
+        name: Position demand value
+        datatype: int32
+        access: r
+        pdo: true
+      0x6063:
+        name: Position actual value
+        datatype: int32
+        access: r
+        pdo: true
+      0x6064:
+        name: Position actual value
+        datatype: int32
+        access: r
+        pdo: true
+      0x6065:
+        name: Following error window
+        datatype: uint32
+        access: rw
+      0x6066:
+        name: Following error time out
+        datatype: uint16
+        access: rw
+      0x6067:
+        name: Position window
+        datatype: uint32
+        access: rw
+      0x6068:
+        name: Position window time
+        datatype: uint16
+        access: rw
+      0x6069:
+        name: Velocity sensor actual value
+        datatype: int32
+        access: r
+        pdo: true
+      0x606A:
+        name: Sensor selection code
+        datatype: int16
+        access: rw
+      0x606B:
+        name: Velocity demand value
+        datatype: int32
+        access: r
+        pdo: true
+      0x606C:
+        name: Velocity actual value
+        datatype: int32
+        access: r
+        pdo: true
+      0x606D:
+        name: Velocity window
+        datatype: uint16
+        access: rw
+      0x606E:
+        name: Velocity window time
+        datatype: uint16
+        access: rw
+      0x606F:
+        name: Velocity threshold
+        datatype: uint16
+        access: rw
+      0x6070:
+        name: Velocity threshold time
+        datatype: uint16
+        access: rw
+      0x6071:
+        name: Target torque
+        datatype: int16
+        access: rw
+        pdo: true
+      0x6072:
+        name: Max torque
+        datatype: uint16
+        access: rw
+      0x6073:
+        name: Max current
+        datatype: uint16
+        access: rw
+      0x6074:
+        name: Torque demand
+        datatype: int16
+        access: r
+        pdo: true
+      0x6075:
+        name: motor rated current
+        datatype: uint32
+        access: rw
+      0x6076:
+        name: motor rated torque
+        datatype: uint32
+        access: rw
+      0x6077:
+        name: Torque actual value
+        datatype: int16
+        access: r
+        pdo: true
+      0x6078:
+        name: Current actual value
+        datatype: int16
+        access: r
+        pdo: true
+      0x6079:
+        name: DC link voltage
+        datatype: uint32
+        access: r
+      0x6087:
+        name: Torque slope
+        datatype: uint32
+        access: rw
+      0x6088:
+        name: Torque profile type
+        datatype: int16
+        access: rw
+      0x607A:
+        name: Target position
+        datatype: int32
+        access: rw
+        pdo: true
+      0x607B:
+        name: Position range limit
+        record:
+        - name: Min position range limit
+          datatype: int32
+          access: rw
+        - name: Max position range limit
+          datatype: int32
+          access: rw
+      0x607D:
+        name: Software position limit
+        record:
+        - name: Min position limit
+          datatype: int32
+          access: rw
+        - name: Max position limit
+          datatype: int32
+          access: rw
+      0x607E:
+        name: Polarity
+        datatype: uint16
+        access: rw
+        default: 0
+      0x607F:
+        name: Max profile velocity
+        datatype: uint32
+        access: rw
+      0x6080:
+        name: Max motor speed
+        datatype: uint32
+        access: rw
+      0x6081:
+        name: Profile velocity
+        category: mandatory
+        datatype: uint32
+        access: rw
+      0x6082:
+        name: End velocity
+        datatype: uint32
+        access: rw
+      0x6083:
+        name: Profile acceleration
+        category: mandatory
+        datatype: uint32
+        access: rw
+      0x6084:
+        name: Profile deceleration
+        datatype: uint32
+        access: rw
+      0x6085:
+        name: Quick stop deceleration
+        datatype: uint32
+        access: rw
+      0x6086:
+        name: Motion profile type
+        datatype: int16
+        access: rw
+        default: 0
+      0x608F:
+        name: Position encoder resolution
+        record:
+        - name: Encoder increments
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: motor revolutions
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6090:
+        name: Velocity sensor resolution
+        record:
+        - name: Sensor increments
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: motor revolutions
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6091:
+        name: Gear ratio
+        record:
+        - name: Motor shaft revolutions
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: Driving shaft revolutions
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6092:
+        name: Feed constant
+        record:
+        - name: Feed
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: Shaft revolutions
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6096:
+        name: Velocity factor
+        record:
+        - name: Numerator
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: Denominator
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6097:
+        name: Acceleration factor
+        record:
+        - name: Numerator
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: Denominator
+          datatype: uint32
+          access: rw
+          default: 1
+      0x6098:
+        name: Homing method
+        datatype: int16
+        access: rw
+      0x6099:
+        name: Homing speed
+        record:
+        - name: Speed during search for switch
+          datatype: uint32
+          access: rw
+        - name: Speed during search for zero
+          datatype: uint32
+          access: rw
+      0x609A:
+        name: Homing acceleration
+        datatype: uint32
+        access: rw
+      0x60A2:
+        name: Jerk factor
+        record:
+        - name: Numerator
+          datatype: uint32
+          access: rw
+          default: 1
+        - name: Denominator
+          datatype: uint32
+          access: rw
+          default: 1
+      0x60A3:
+        name: Profile jerk use
+        datatype: uint8
+        access: rw
+        default: 1
+      0x60A4:
+        name: Profile jerk
+        record:
+        - name: profile jerk 1
+          datatype: uint32
+          access: rw
+        - name: profile jerk 2
+          datatype: uint32
+          access: rw
+        - name: profile jerk 3
+          datatype: uint32
+          access: rw
+        - name: profile jerk 4
+          datatype: uint32
+          access: rw
+        - name: profile jerk 5
+          datatype: uint32
+          access: rw
+        - name: profile jerk 6
+          datatype: uint32
+          access: rw
+      0x60A8:
+        name: SI unit Position
+        datatype: uint32
+        access: rw
+        default: 4244701184
+      0x60A9:
+        name: SI unit Velocity
+        datatype: uint32
+        access: rw
+        default: 4244701952
+      0x60AA:
+        name: SI unit Acceleration
+        datatype: uint32
+        access: rw
+        default: 4244723456
+      0x60AB:
+        name: SI unit Jerk
+        datatype: uint32
+        access: rw
+        default: 4244742144
+      0x60C5:
+        name: Max acceleration
+        datatype: uint32
+        access: rw
+      0x60C6:
+        name: Max deceleration
+        datatype: uint32
+        access: rw
+      0x607C:
+        name: Home offset
+        datatype: int32
+        access: rw
+      0x60B0:
+        name: Position offset
+        datatype: int32
+        access: rw
+      0x60B1:
+        name: Velocity offset
+        datatype: int32
+        access: rw
+      0x60B2:
+        name: Torque offset
+        datatype: int16
+        access: rw
+      0x60B8:
+        name: Touch probe function
+        datatype: uint16
+        access: rw
+      0x60B9:
+        name: Touch probe status
+        datatype: uint16
+        access: r
+      0x60BA:
+        name: Touch probe 1 positive edge
+        datatype: int32
+        access: r
+      0x60BB:
+        name: Touch probe 1 negative edge
+        datatype: int32
+        access: r
+      0x60BC:
+        name: Touch probe 2 positive edge
+        datatype: int32
+        access: r
+      0x60BD:
+        name: Touch probe 2 negative edge
+        datatype: int32
+        access: r
+      0x60C0:
+        name: Interpolation sub mode select
+        datatype: int16
+        access: rw
+      0x60C1:
+        name: Interpolation data record
+        record:
+        - name: Interpolation data record 1
+          datatype: int32
+          access: rw
+      0x60C2:
+        name: Interpolation time period
+        sub0:
+          access: rw
+        record:
+        - name: Interpolation time period
+          datatype: uint8
+          access: rw
+          default: 1
+        - name: Interpolation time index
+          datatype: int16
+          access: rw
+          default: -3
+      0x60C4:
+        name: Interpolation data configuration
+        record:
+        - name: Maximum buffer size
+          datatype: uint32
+          access: r
+        - name: Acutal buffe size
+          datatype: uint32
+          access: rw
+          default: 0
+        - name: Buffer organisation
+          datatype: uint8
+          access: rw
+          default: 0
+        - name: Buffer position
+          datatype: uint16
+          access: rw
+          default: 0
+        - name: Size of data record
+          datatype: uint8
+          access: w
+          default: 1
+        - name: Buffer clear
+          datatype: uint8
+          access: w
+          default: 0
+      0x60D0:
+        name: Touch probe source
+        record:
+        - name: Touch probe 1
+          datatype: int16
+          access: r
+      0x60D1:
+        name: Touch probe time stamp 1 positive value
+        datatype: uint32
+        access: r
+      0x60D2:
+        name: Touch probe time stamp 1 negative value
+        datatype: uint32
+        access: r
+      0x60D3:
+        name: Touch probe time stamp 2 positive value
+        datatype: uint32
+        access: r
+      0x60D4:
+        name: Touch probe time stamp 2 negative value
+        datatype: uint32
+        access: r
+      0x60D5:
+        name: Touch probe 1 positive edge counter
+        datatype: uint16
+        access: r
+      0x60D6:
+        name: Touch probe 1 negative edge counter
+        datatype: uint16
+        access: r
+      0x60D7:
+        name: Touch probe 2 positive edge counter
+        datatype: uint16
+        access: r
+      0x60D8:
+        name: Touch probe 2 negative edge counter
+        datatype: uint16
+        access: r
+      0x60E0:
+        name: Positive torque limit value
+        datatype: uint16
+        access: rw
+      0x60E1:
+        name: Negative torque limit value
+        datatype: uint16
+        access: rw
+      0x60E3:
+        name: Supported homing methods
+        sub0:
+          default: 1
+        length: 255
+        datatype: int16
+        array:
+        - name: '#st suported homing method'
+          access: r
+      0x60E4:
+        name: Additional position actual value
+        record:
+        - name: 1st additional position actual value
+          datatype: int32
+          access: r
+          pdo: true
+      0x60E5:
+        name: Additional velocity actual value
+        record:
+        - name: 1st additional velocity actual value
+          datatype: int32
+          access: r
+          pdo: true
+      0x60E6:
+        name: Additional position encoder resolution - encoder increments
+        record:
+        - name: 1st additional position encoder increments
+          datatype: uint32
+          access: rw
+      0x60E7:
+        name: Additional velocity encoder resolution - encoder increments per second
+        record:
+        - name: 1st additional velocity encoder increments per second
+          datatype: uint32
+          access: rw
+      0x60E8:
+        name: Additional gear ratio - motor shaft revolutions
+        record:
+        - name: 1st additional gear ratio motor shaft revolutions
+          datatype: uint32
+          access: rw
+      0x60E9:
+        name: Additional feed constant - feed
+        record:
+        - name: 1st additional feed constant feed
+          datatype: uint32
+          access: rw
+      0x60EA:
+        name: Commutation angle
+        datatype: uint16
+        access: rw
+      0x60EB:
+        name: Additional position encoder resolution - motor revolutions
+        record:
+        - name: 1st additional position motor revolutions
+          datatype: uint32
+          access: rw
+      0x60EC:
+        name: Additional velocity encoder resolution - motor revolutions per second
+        record:
+        - name: 1st additional velocity motor revolutions per second
+          datatype: uint32
+          access: rw
+      0x60ED:
+        name: Additional gear ratio - driving shaft revolutions
+        record:
+        - name: 1st additional gear ratio driving shaft revolutions
+          datatype: uint32
+          access: rw
+      0x60EE:
+        name: Additional feed constant - driving shaft revolutions
+        record:
+        - name: 1st additional feed constant shaft revolutions
+          datatype: uint32
+          access: rw
+      0x60F2:
+        name: Positioning option code
+        datatype: uint16
+        access: rw
+      0x60F4:
+        name: Following error actual value
+        datatype: int32
+        access: r
+      0x60F8:
+        name: Max slippage
+        datatype: int32
+        access: rw
+      0x60FA:
+        name: Control effort
+        datatype: int32
+        access: r
+      0x60FC:
+        name: Position demand internal value
+        datatype: int32
+        access: r
+      0x60FD:
+        name: Digital inputs
+        datatype: uint32
+        access: r
+        pdo: true
+      0x60FE:
+        name: Digital outputs
+        record:
+        - name: Pyhsical outputs
+          datatype: uint32
+          access: rw
+          pdo: true
+        - name: Bit mask mask
+          datatype: uint32
+          access: rw
+      0x60FF:
+        name: target velocity
+        datatype: int32
+        access: rw
+      0x6402:
+        name: Motor type
+        datatype: uint16
+        access: rw
+      0x6403:
+        name: Motor catalogue number
+        datatype: string
+        access: rw
+      0x6404:
+        name: Motor manufacturer
+        datatype: string
+        access: rw
+      0x6405:
+        name: http motor catalogue address
+        datatype: string
+        access: rw
+      0x6406:
+        name: Motor calibration date
+        datatype: uint64
+        access: rw
+      0x6407:
+        name: Motor service periode
+        datatype: uint32
+        access: rw
+      0x6502:
+        name: Supported drive modes
+        category: mandatory
+        datatype: uint32
+        access: r
+      0x6503:
+        name: Drive calatogue number
+        datatype: string
+        access: rw
+      0x6505:
+        name: http drive catalogue address
+        datatype: string
+        access: rw
+      0x67FE:
+        name: Version number
+        category: mandatory
+        datatype: uint32
+        access: r
+        default: 196864

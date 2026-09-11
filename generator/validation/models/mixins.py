@@ -75,5 +75,7 @@ class UnitMixin(BaseModel):
     @field_validator("unit")
     @classmethod
     def validate_unit(cls, v):
-        """Validate the unit string."""
+        """Validate the unit string; no unit is fine."""
+        if not v:
+            return v
         return validate_unit_string(v)

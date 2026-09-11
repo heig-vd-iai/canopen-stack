@@ -80,9 +80,15 @@ def test_revision_from_semver():
     assert r.major == 3 and r.minor == 1 and r.patch == 4
 
 
+def test_revision_from_int():
+    r = Revision.model_validate(0x010203)
+    assert r.major == 1 and r.minor == 2 and r.patch == 3
+    assert Revision.model_validate(1).to_int() == 1
+
+
 def test_revision_invalid_format():
     with pytest.raises(TypeError):
-        Revision.model_validate(1234)
+        Revision.model_validate("1.2")
 
 
 def test_device_full_init():
@@ -117,13 +123,10 @@ def test_device_invalid_baudrate_type():
 
 
 def test_device_default_values():
-    device = Device.model_validate(
-        {
-            "baudrate": [125],
-        }
-    )
+    device = Device.model_validate({})
     assert device.vendor.name == "Unknown"
     assert device.product.number == 0
     assert isinstance(device.revision, Revision)
-    assert 125 in device.baudrate
+    assert device.baudrate == {10, 20, 50, 125, 250, 500, 800, 1000}
     assert device.node_id == 1
+    assert device.compact_pdo is False

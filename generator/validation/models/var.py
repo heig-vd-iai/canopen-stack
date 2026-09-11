@@ -13,7 +13,7 @@ from .object_common import (
 
 
 class Var(HeaderCommon, VarCommon):
-    """Variable object for storing subindex data."""
+    """Variable object: a single value at sub-index 0."""
 
     type: Literal["var"] = "var"
 
@@ -21,7 +21,7 @@ class Var(HeaderCommon, VarCommon):
 
 
 class VarProfile(HeaderCommonProfile, VarCommonProfile):
-    """Variable object for storing subindex data."""
+    """Variable object defined in a CiA profile."""
 
     type: Literal["var"] = "var"
 

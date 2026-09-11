@@ -1,0 +1,596 @@
+profiles:
+  301:
+    name: Application layer and communication profile
+    objects:
+      0x1000:
+        name: Device type
+        category: mandatory
+        datatype: uint32
+        access: r
+      0x1001:
+        name: Error register
+        category: mandatory
+        get: node.emcy().errorRegister.getData
+        datatype: uint8
+        access: r
+        pdo: true
+      0x1002:
+        name: Manufacturer status register
+        datatype: uint32
+        access: r
+        pdo: true
+      0x1003:
+        name: Pre-defined error field
+        get: node.emcy().preDefinedErrorField.getData
+        set: node.emcy().preDefinedErrorField.setData
+        sub0:
+          name: Number of errors
+          access: rw
+          default: 0
+        record:
+        - name: 1st Standard error field
+          datatype: uint32
+          access: r
+        - name: 2nt Standard error field
+          datatype: uint32
+          access: r
+        - name: 3th Standard error field
+          datatype: uint32
+          access: r
+        - name: 4th Standard error field
+          datatype: uint32
+          access: r
+        - name: 5th Standard error field
+          datatype: uint32
+          access: r
+        - name: 6th Standard error field
+          datatype: uint32
+          access: r
+        - name: 7th Standard error field
+          datatype: uint32
+          access: r
+        - name: 8th Standard error field
+          datatype: uint32
+          access: r
+      0x1007:
+        name: Synchronous window length
+        datatype: uint32
+        access: rw
+        default: 0
+      0x1008:
+        name: Manufacturer device name
+        datatype: string
+        access: r
+      0x1009:
+        name: Manufacturer hardware version
+        datatype: string
+        access: r
+      0x100A:
+        name: Manufacturer software version
+        datatype: string
+        access: r
+      0x1010:
+        name: Store parameters
+        get: node.od().getSave
+        set: node.od().saveData
+        sub0:
+          name: highestt sub-index supported
+        record:
+        - name: save all parameters
+          datatype: uint32
+          access: rw
+        - name: save communication parameters
+          datatype: uint32
+          access: rw
+        - name: save application parameters
+          datatype: uint32
+          access: rw
+        - name: save manufacturer specific parameters A
+          datatype: uint32
+          access: rw
+        - name: save manufacturer specific parameters B
+          datatype: uint32
+          access: rw
+      0x1011:
+        name: Restore default parameters
+        get: node.od().getRestore
+        set: node.od().restoreData
+        sub0:
+          name: highestt sub-index supported
+        record:
+        - name: restore all parameters
+          datatype: uint32
+          access: rw
+        - name: restore communication parameters
+          datatype: uint32
+          access: rw
+        - name: restore application parameters
+          datatype: uint32
+          access: rw
+        - name: restore manufacturer specific parameters A
+          datatype: uint32
+          access: rw
+        - name: restore manufacturer specific parameters B
+          datatype: uint32
+          access: rw
+      0x1017:
+        name: Producer hearbeat time
+        category: mandatory
+        get: node.hb().getData
+        set: node.hb().setData
+        datatype: uint16
+        access: rw
+      0x1018:
+        name: Identity object
+        category: mandatory
+        sub0:
+          name: Number of entries
+        record:
+        - name: Vendor-ID
+          datatype: uint32
+          access: r
+        - name: Product code
+          datatype: uint32
+          access: r
+        - name: Revision number
+          datatype: uint32
+          access: r
+        - name: Serial number
+          datatype: uint32
+          access: r
+      0x1019:
+        name: Synchronous counter overflow value
+        get: node.sync().getData
+        set: node.sync().setData
+        datatype: uint8
+        access: rw
+      0x1020:
+        name: Verify configuration
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: Configuration date
+          datatype: uint32
+          access: rw
+        - name: Configuration time
+          datatype: uint32
+          access: rw
+      0x1029:
+        name: Error behavior
+        get: node.emcy().errorBehavior.getData
+        set: node.emcy().errorBehavior.setData
+        sub0:
+          name: Highestt sub-index supported
+        record:
+        - name: Communication error behavior
+          datatype: uint8
+          access: rw
+          default: 1
+        - name: Internal device error behavior
+          datatype: uint8
+          access: rw
+          default: 1
+      0x1400:
+        name: Receive PDO 1 communication parameter
+        get: node.pdo().rpdos[0].commParameter.getData
+        set: node.pdo().rpdos[0].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000200
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+      0x1401:
+        name: Receive PDO 2 communication parameter
+        get: node.pdo().rpdos[1].commParameter.getData
+        set: node.pdo().rpdos[1].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000300
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+      0x1402:
+        name: Receive PDO 3 communication parameter
+        get: node.pdo().rpdos[2].commParameter.getData
+        set: node.pdo().rpdos[2].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000400
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+      0x1403:
+        name: Receive PDO 4 communication parameter
+        get: node.pdo().rpdos[3].commParameter.getData
+        set: node.pdo().rpdos[3].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000500
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+      0x1600:
+        name: Receive PDO 1 mapping parameter
+        get: node.pdo().rpdos[0].mapParameter.getData
+        set: node.pdo().rpdos[0].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1601:
+        name: Receive PDO 2 mapping parameter
+        get: node.pdo().rpdos[1].mapParameter.getData
+        set: node.pdo().rpdos[1].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1602:
+        name: Receive PDO 3 mapping parameter
+        get: node.pdo().rpdos[2].mapParameter.getData
+        set: node.pdo().rpdos[2].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1603:
+        name: Receive PDO 4 mapping parameter
+        get: node.pdo().rpdos[3].mapParameter.getData
+        set: node.pdo().rpdos[3].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1800:
+        name: Transmit PDO 1 communication parameter
+        get: node.pdo().tpdos[0].commParameter.getData
+        set: node.pdo().tpdos[0].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000180
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+        - name: Inhibit time
+          datatype: uint16
+          access: rw
+        - name: Compatibility entry
+          datatype: uint8
+          access: rw
+        - name: Event timer
+          datatype: uint16
+          access: rw
+        - name: Sync start value
+          datatype: uint8
+          access: rw
+      0x1801:
+        name: Transmit PDO 2 communication parameter
+        get: node.pdo().tpdos[1].commParameter.getData
+        set: node.pdo().tpdos[1].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000280
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+        - name: Inhibit time
+          datatype: uint16
+          access: rw
+        - name: Compatibility entry
+          datatype: uint8
+          access: rw
+        - name: Event timer
+          datatype: uint16
+          access: rw
+        - name: Sync start value
+          datatype: uint8
+          access: rw
+      0x1802:
+        name: Transmit PDO 3 communication parameter
+        get: node.pdo().tpdos[2].commParameter.getData
+        set: node.pdo().tpdos[2].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000380
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+        - name: Inhibit time
+          datatype: uint16
+          access: rw
+        - name: Compatibility entry
+          datatype: uint8
+          access: rw
+        - name: Event timer
+          datatype: uint16
+          access: rw
+        - name: Sync start value
+          datatype: uint8
+          access: rw
+      0x1803:
+        name: Transmit PDO 4 communication parameter
+        get: node.pdo().tpdos[3].commParameter.getData
+        set: node.pdo().tpdos[3].commParameter.setData
+        sub0:
+          name: Number of of entries
+        record:
+        - name: COB-ID
+          datatype: uint32
+          access: rw
+          default: $NODEID+0x80000480
+        - name: Transmission type
+          datatype: uint8
+          access: rw
+        - name: Inhibit time
+          datatype: uint16
+          access: rw
+        - name: Compatibility entry
+          datatype: uint8
+          access: rw
+        - name: Event timer
+          datatype: uint16
+          access: rw
+        - name: Sync start value
+          datatype: uint8
+          access: rw
+      0x1A00:
+        name: Transmit PDO 1 mapping parameter
+        get: node.pdo().tpdos[0].mapParameter.getData
+        set: node.pdo().tpdos[0].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1A01:
+        name: Transmit PDO 2 mapping parameter
+        get: node.pdo().tpdos[1].mapParameter.getData
+        set: node.pdo().tpdos[1].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1A02:
+        name: Transmit PDO 3 mapping parameter
+        get: node.pdo().tpdos[2].mapParameter.getData
+        set: node.pdo().tpdos[2].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
+      0x1A03:
+        name: Transmit PDO 4 mapping parameter
+        get: node.pdo().tpdos[3].mapParameter.getData
+        set: node.pdo().tpdos[3].mapParameter.setData
+        sub0:
+          name: Number of of entries
+          access: rw
+          default: 0
+        record:
+        - name: 1st object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 2nd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 3rd object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 4th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 5th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 6th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 7th object to be mapped
+          datatype: uint32
+          access: rw
+        - name: 8th object to be mapped
+          datatype: uint32
+          access: rw
