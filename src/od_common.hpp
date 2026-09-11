@@ -59,8 +59,8 @@ int8_t setLocalData_float(const Data &data, int32_t id,
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_double(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode);
-int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode);
-int8_t setLocalData_char(const Data &data, int32_t id,
+int8_t getLocalData_string(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t setLocalData_string(const Data &data, int32_t id,
                          SDOAbortCodes &abortCode);
 int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_domain(const Data &data, int32_t id,

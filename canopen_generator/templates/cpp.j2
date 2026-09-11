@@ -183,18 +183,20 @@ uint8_t ObjectDictionnary::dataIndexTable[{{ subindex_count }}] = {
     {% elif subobject.type_value == "0x07" %}
     {{ counterU32.value }},
     {% set counterU32.value = counterU32.value + 1 %}
-    {% elif subobject.type_value == "0x16" %}
+    {% elif subobject.type_value == "0x1B" %}
     {{ counterU64.value }},
     {% set counterU64.value = counterU64.value + 1 %}
     {% elif subobject.type_value == "0x08" %}
     {{ counterF32.value }},
     {% set counterF32.value = counterF32.value + 1 %}
-    {% elif subobject.type_value == "0x09" %}
+    {% elif subobject.type_value == "0x11" %}
     {{ counterF64.value }},
     {% set counterF64.value = counterF64.value + 1 %}
-    {% elif subobject.type_value == "0x0A" %}
+    {% elif subobject.type_value == "0x09" %}
     {{ counterString.value }},
     {% set counterString.value = counterString.value + 1 %}
+    {% else %}
+    0,
     {% endif %}
     {% endfor %}
     {% endfor %}

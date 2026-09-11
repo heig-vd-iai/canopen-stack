@@ -146,11 +146,11 @@ int8_t setLocalData_double(const Data &data, int32_t id,
     return 0;
 }
 
-int8_t getLocalData_char(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t getLocalData_string(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return -1;  // TODO: implement
 }
 
-int8_t setLocalData_char(const Data &data, int32_t id,
+int8_t setLocalData_string(const Data &data, int32_t id,
                          SDOAbortCodes &abortCode) {
     return -1;  // TODO: implement
 }
