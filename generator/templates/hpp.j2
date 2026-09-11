@@ -18,7 +18,7 @@
 /* These defines map an object to its dictionnary array index */
 {% set counter = namespace(value=0) %}
 {% for object in objects %}
-{% for subobject in object.get_subobjects %}
+{% for subobject in object.subobjects %}
 #define OD_OBJECT_{{ object.index_hex }}_SUB{{ subobject.subindex}} {{ counter.value }}
 {% set counter.value = counter.value + 1 %}
 {% endfor %}
@@ -32,7 +32,7 @@ namespace CANopenOD {
 constexpr std::pair<uint16_t, uint8_t> objectIndexTable[OD_LENGTH] = {
     {% set counter = namespace(value=0) %}
     {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
+    {% for subobject in object.subobjects %}
     /* {{ "%04d"|format(counter.value) }} */ std::make_pair(0x{{ object.index_hex }}, {{ subobject.subindex }}),
     {% set counter.value = counter.value + 1 %}
     {% endfor %}
@@ -69,7 +69,7 @@ public:
     {% endfor %}
 
     {% for object in objects %}
-    {% for subobject in object.get_subobjects %}
+    {% for subobject in object.subobjects %}
     {% if subobject.type_value == "0x09" %}
     static char {{subobject.cpp_instance_name}}[{{subobject.length}}];
     {% endif %}

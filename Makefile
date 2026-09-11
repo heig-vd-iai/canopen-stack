@@ -1,6 +1,6 @@
 CXX ?= g++
 OD_DIR ?= tests/golden/minimal/cm
-CONFIG ?= examples/minimal.yaml
+CONFIG ?= examples/minimal.v2.yaml
 
 WARNINGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion \
            -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual \
@@ -44,8 +44,7 @@ build/tests-obj/%.o: tests/cpp/%.cpp
 	$(CXX) $(CXXFLAGS) -Itests/cpp -MMD -MP -c -o $@ $<
 
 generate:
-	uv run python -m canopen_generator $(CONFIG) -f \
-		--local dist/cm --remote dist/cpu1 --eds dist --doc dist/docs
+	uv run python -m generator generate $(CONFIG) -f --all dist
 
 format:
 	clang-format -i src/*.cpp src/*.hpp tests/cpp/*.cpp tests/cpp/fake-hardware.hpp

@@ -1,14 +1,21 @@
 """Mechanical migration of schema v1 files to schema v2."""
 
-import pytest
+from pathlib import Path
 
+import pytest
+import yaml
+
+from generator.loaders import read_yaml_file
 from generator.migrate import (
+    Dumper,
     HexInt,
     dump,
     migrate_config,
     migrate_object,
     migrate_profiles,
 )
+
+ROOT = Path(__file__).resolve().parent.parent
 
 V1_PROFILES = {
     "functionalities": {
@@ -225,3 +232,18 @@ def test_migrate_object_rejects_logical_devices():
 def test_dump_writes_hex_indices():
     text = dump({"objects": {HexInt(0x1A00): {"name": "x"}}})
     assert "0x1A00:" in text
+
+
+def test_minimal_example_is_the_migration_of_its_v1_version():
+    v1 = read_yaml_file(ROOT / "examples" / "minimal.yaml")
+    v1_profiles = read_yaml_file(ROOT / "tests" / "fixtures" / "profiles-v1.yaml")
+    migrated = yaml.safe_load(yaml.dump(migrate_config(v1, v1_profiles), Dumper=Dumper))
+    assert migrated == read_yaml_file(ROOT / "examples" / "minimal.v2.yaml")
+
+
+def test_shipped_profiles_are_the_migration_of_the_v1_profiles():
+    v1_profiles = read_yaml_file(ROOT / "tests" / "fixtures" / "profiles-v1.yaml")
+    migrated = migrate_profiles(v1_profiles)
+    for pid, data in migrated.items():
+        expected = read_yaml_file(ROOT / "generator" / "profiles" / f"{pid}.yaml")
+        assert yaml.safe_load(yaml.dump(data, Dumper=Dumper)) == expected

@@ -15,11 +15,11 @@ inline void getobject2005sub0(Data &data) {
 inline void setobject2005sub0(const Data &data) {
     remote.setValue(data.u32);
 }
-inline void setobject2006sub0(const Data &data) {
-    remote.attribute = data.f32 * 0.001f;
-}
 inline void getobject2006sub0(Data &data) {
     data.f32 = remote.attribute * 1000;
+}
+inline void setobject2006sub0(const Data &data) {
+    remote.attribute = data.f32 * 0.001f;
 }
 inline void getobject6064sub0(Data &data) {
     data.i32 = remote.position;

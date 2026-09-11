@@ -11,7 +11,7 @@ def import_fresh_phf(tmp_templates: Path) -> types.ModuleType:
     to `tmp_templates`. Returns the imported module object.
     """
     # Import module
-    import canopen_generator.phf as phf_mod  # assumes your file is importable as "phf.py"
+    import generator.phf as phf_mod
 
     # Monkeypatch TEMPLATE_DIR at module level and clear any existing envs
     phf_mod.TEMPLATE_DIR = tmp_templates

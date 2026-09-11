@@ -31,13 +31,13 @@ This implementation features the following:
 
 Before compiling anything, you need a YAML configuration file that describes the device's object dictionnary. Why not a regular EDS? Because EDS doesn't have the full story for each objects.
 
-The Python module *canopen_generator* is used to generate the object dictionnary header file from the configuration file.
+The Python module *generator* is used to generate the object dictionnary header file from the configuration file (schema v2, see `examples/minimal.v2.yaml`). A v1 configuration is converted with `uv run python -m generator migrate config`.
 
 ### Generate the object dictionnary
 
 ```bash
 uv sync
-uv run python -m canopen_generator config.yaml
+uv run python -m generator generate config.yaml --all dist
 ```
 
 ### Build local library

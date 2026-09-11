@@ -658,7 +658,7 @@ DataType = 0x09
 AccessType = ro
 PDOMapping = 0
 Alias = 
-DefaultValue = 0
+DefaultValue = 
 
 [2002]
 ParameterName = A domain

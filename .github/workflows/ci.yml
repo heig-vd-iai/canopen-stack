@@ -13,8 +13,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --locked
-      - run: uv run ruff check canopen_generator tests
-      - run: uv run black --check canopen_generator tests
+      - run: uv run ruff check generator tests
+      - run: uv run black --check generator tests
       - run: uv run pytest
 
   cpp:

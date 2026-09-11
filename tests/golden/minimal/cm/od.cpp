@@ -71,7 +71,7 @@ static Metadata_uint32_t object2000sub7Metadata{0b00011, 32};
 static Metadata_uint64_t object2000sub8Metadata{0b00011, 64};
 static Metadata_float object2000sub9Metadata{0b00011, 1.5};
 static Metadata_double object2000sub10Metadata{0b00011, 2.5};
-static Metadata_string object2001sub0Metadata{0b00011, "0", 16};
+static Metadata_string object2001sub0Metadata{0b00011, "", 16};
 static Metadata_domain object2002sub0Metadata{0b00011};
 static Metadata_uint16_t_limited object2003sub0Metadata{0b01011, 50, 10, 100};
 static Metadata_uint8_t object2004sub0Metadata{0b00011, 3};
@@ -558,7 +558,7 @@ int8_t (*ObjectDictionnary::objectSetterTable[73])(const Data &data, int32_t id,
     /* 0069 */ &setLocalData_uint16_t,
     /* 0070 */ &setLocalData_uint16_t,
     /* 0071 */ &setLocalData_int16_t,
-    /* 0072 */ &setRemoteData,
+    /* 0072 */ &setLocalData_int32_t,
 };
 // END GETTER/SETTER
 
@@ -669,7 +669,7 @@ double ObjectDictionnary::f64Table[1] = {
 };
 
 // string type data variable
-char ObjectDictionnary::object2001sub0[16] ={ 0 };
+char ObjectDictionnary::object2001sub0[16] = "";
 
 // string type data table
 char *ObjectDictionnary::stringTable[1] = {

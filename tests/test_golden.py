@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-CONFIG = ROOT / "examples" / "minimal.yaml"
+CONFIG = ROOT / "examples" / "minimal.v2.yaml"
 GOLDEN = ROOT / "tests" / "golden" / "minimal"
 
 VOLATILE_LINES = [
@@ -21,17 +21,12 @@ def generate(outdir: Path) -> None:
     cmd = [
         sys.executable,
         "-m",
-        "canopen_generator",
+        "generator",
+        "generate",
         str(CONFIG),
         "-f",
-        "--local",
-        str(outdir / "cm"),
-        "--remote",
-        str(outdir / "cpu1"),
-        "--eds",
+        "--all",
         str(outdir),
-        "--doc",
-        str(outdir / "docs"),
     ]
     subprocess.run(cmd, cwd=ROOT, check=True, capture_output=True)
 

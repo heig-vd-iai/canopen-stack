@@ -13,7 +13,7 @@
 
 | Name | Type | default |
 | --- | --- | --- |
-{% for data in object.data %}
+{% for data in object.subobjects %}
 | {{ data.name }} | {{ data.type }} | {{ data.default }} |
 {% endfor %}
 

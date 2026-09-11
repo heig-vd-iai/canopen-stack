@@ -27,7 +27,7 @@ One entry per supported scalar type
 
 | Name     | Type   | default |
 | -------- | ------ | ------- |
-| A string | string | 0       |
+| A string | string |         |
 
 ### A domain
 

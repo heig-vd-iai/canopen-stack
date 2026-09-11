@@ -1,0 +1,88 @@
+/**
+ * This file contains the remote getter and setter functions for the device.
+ *
+ * NOTICE: Auto-generated from the device's yaml file, do not edit manually!
+ */
+#pragma once
+
+inline void emptyGetter(Data &data) {}
+
+inline void emptySetter(const Data &data) {}
+
+{% for object in objects %}
+{% for subobject in object.subobjects %}
+{% if subobject.remote_getter %}
+inline void get{{subobject.cpp_instance_name}}(Data &data) {
+    data.{{subobject.type_code}} = {{subobject.remote_getter}};
+}
+{% endif %}
+{% if subobject.remote_setter %}
+inline void set{{subobject.cpp_instance_name}}(const Data &data) {
+    {{subobject.remote_setter}};
+}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+void (* const remoteGetter[])(Data &data) = {
+    {% for object in objects %}
+    {% for subobject in object.subobjects %}
+    {% if subobject.remote_getter %}
+    &get{{subobject.cpp_instance_name}},
+    {%else%}
+    emptyGetter,
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+void (*remoteSetter[])(const Data &data) = {
+    {% for object in objects %}
+    {% for subobject in object.subobjects %}
+    {% if subobject.remote_setter %}
+    &set{{subobject.cpp_instance_name}},
+    {%else%}
+    emptySetter,
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+// Object is a 24 bit number: (object << 8 | subobject)
+const int32_t remoteGetterBSTKeys[] = {
+    {% for item in tree_array %}
+    {% if item %}
+    {{item[0]}},
+    {% else %}
+    -1,
+    {% endif %}
+    {% endfor %}
+};
+
+const RemoteGetter remoteGetterBSTMap[] = {
+    {% for item in tree_array %}
+    {% if item %}
+    &get{{item[1][0]}},
+    {% else %}
+    emptyGetter,
+    {% endif %}
+    {% endfor %}
+};
+
+{% set type_map = {
+    'i16': 'REMOTE_TYPE__INT16',
+    'u16': 'REMOTE_TYPE__UINT16',
+    'i32': 'REMOTE_TYPE__INT32',
+    'u32': 'REMOTE_TYPE__UINT32',
+    'f32': 'REMOTE_TYPE__FLOAT32',
+} %}
+
+const RemoteType remoteTypeBSTMap[] = {
+    {% for item in tree_array %}
+    {% if item %}
+    {{ type_map.get(item[1][1], 'REMOTE_TYPE__UNKNOWN') }},
+    {% else %}
+    REMOTE_TYPE__UNKNOWN,
+    {% endif %}
+    {% endfor %}
+};
