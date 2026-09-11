@@ -1,0 +1,203 @@
+info:
+  fileVersion: 1
+  fileRevision: 0
+  description: Minimal device used as generator fixture and golden reference
+  createdBy: canopen-stack
+  creationTime: "10:00"
+  creationDate: "2026-09-11"
+  modifiedBy: canopen-stack
+  device:
+    vendorName: HEIG-VD
+    vendorNumber: 0
+    productName: minimal
+    productNumber: 1
+    revisionNumber: 1
+    orderCode: 0
+    nodeID: 1
+
+logicalDevices:
+  0: 402
+
+objectDictionary:
+  0x1000:
+    profile: 301
+    module: cia301
+  0x1001:
+    profile: 301
+    module: cia301
+  0x1010:
+    profile: 301
+    module: cia301
+  0x1011:
+    profile: 301
+    module: cia301
+  0x1017:
+    profile: 301
+    module: cia301
+    data:
+      - default: 1000
+  0x1018:
+    profile: 301
+    module: cia301
+    data:
+      - default: 4
+      - default: 0
+      - default: 1
+      - default: 1
+      - default: 0
+  0x1400:
+    profile: 301
+    module: cia301
+  0x1600:
+    profile: 301
+    module: cia301
+  0x1800:
+    profile: 301
+    module: cia301
+  0x1A00:
+    profile: 301
+    module: cia301
+
+  0x2000:
+    name: Every scalar type
+    module: fixture
+    description: One entry per supported scalar type
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 11
+      - type: bool
+        name: A boolean
+        access: rw
+        default: 1
+      - type: int8
+        name: An int8
+        access: rw
+        default: -8
+      - type: int16
+        name: An int16
+        access: rw
+        default: -16
+      - type: int32
+        name: An int32
+        access: rw
+        default: -32
+      - type: int64
+        name: An int64
+        access: rw
+        default: -64
+      - type: uint16
+        name: A uint16
+        access: rw
+        default: 16
+      - type: uint32
+        name: A uint32
+        access: rw
+        default: 32
+      - type: uint64
+        name: A uint64
+        access: rw
+        default: 64
+      - type: float32
+        name: A float32
+        access: rw
+        default: 1.5
+      - type: float64
+        name: A float64
+        access: rw
+        default: 2.5
+  0x2001:
+    name: A string
+    module: fixture
+    data:
+      - type: string
+        access: ro
+        length: 16
+  0x2002:
+    name: A domain
+    module: fixture
+    data:
+      - type: domain
+        access: rw
+  0x2003:
+    name: A limited value
+    module: fixture
+    data:
+      - type: uint16
+        access: rw
+        default: 50
+        lowLimit: 10
+        highLimit: 100
+  0x2004:
+    name: An array
+    module: fixture
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 3
+      - type: uint32
+        name: First element
+        access: rw
+        default: 1
+      - type: uint32
+        name: Second element
+        access: rw
+        default: 2
+      - type: uint32
+        name: Third element
+        access: rw
+        default: 3
+  0x2005:
+    name: A remote value
+    module: fixture
+    remote: true
+    get: remote.getValue
+    set: remote.setValue
+    data:
+      - type: uint32
+        access: rw
+        default: 0
+  0x2006:
+    name: A remote attribute
+    module: fixture
+    remote: true
+    attribute: remote.attribute
+    scale: 0.001
+    data:
+      - type: float32
+        access: rw
+        default: 0
+  0x2007:
+    name: An enumerated value
+    module: fixture
+    enum:
+      class: FixtureLevel
+      data:
+        FIXTURE_LEVEL__LOW: 0
+        FIXTURE_LEVEL__HIGH: 1
+    data:
+      - type: uint8
+        access: rw
+        default: 0
+
+  0x6040:
+    profile: 402
+    module: cia402
+  0x6041:
+    profile: 402
+    module: cia402
+  0x6060:
+    profile: 402
+    module: cia402
+    enum:
+      class: OperationModes
+      data:
+        OPERATION_MODE__NONE: 0
+        OPERATION_MODE__PROFILE_POSITION: 1
+  0x6064:
+    profile: 402
+    module: cia402
+    remote: true
+    attribute: remote.position

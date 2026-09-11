@@ -1,0 +1,757 @@
+[FileInfo]
+FileName = minimal.eds
+FileVersion = 1
+FileRevision = 0
+EDSVersion = 4.0
+Description = Minimal device used as generator fixture and golden reference
+CreationTime = 10:00
+CreationDate = 2026-09-11
+CreatedBy = canopen-stack
+ModificationTime = 11:35
+ModificationDate = 2026-09-11
+ModifiedBy = canopen-stack
+
+[DeviceInfo]
+VendorName = HEIG-VD
+VendorNumber = 0
+ProductName = minimal
+ProductNumber = 1
+RevisionNumber = 1
+OrderCode = 0
+Baudrate_10 = 1
+Baudrate_20 = 1
+Baudrate_50 = 1
+Baudrate_125 = 1
+Baudrate_250 = 1
+Baudrate_500 = 1
+Baudrate_800 = 1
+Baudrate_1000 = 1
+SimpleBootUpMaster = 0
+SimpleBootUpSlave = 1
+Granularity = 8
+DynamicChannelsSupported = 0
+CompactPDO = 0
+GroupMessaging = 0
+NrOfRXPDO = 1
+NrOfTXPDO = 1
+LSS_Supported = 0
+
+[MandatoryObjects]
+SupportedObjects = 7
+2 = 0x1000
+3 = 0x1001
+4 = 0x1017
+5 = 0x1018
+6 = 0x6040
+7 = 0x6041
+8 = 0x6060
+
+[1000]
+ParameterName = Device type
+ObjectType = 0x07
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0x00000192
+
+[1001]
+ParameterName = Error register
+ObjectType = 0x07
+DataType = 0x05
+AccessType = ro
+PDOMapping = 1
+DefaultValue = 0
+
+[1017]
+ParameterName = Producer hearbeat time
+ObjectType = 0x07
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+DefaultValue = 1000
+
+[1018]
+ParameterName = Identity object
+ObjectType = 0x09
+SubNumber = 5
+
+[1018sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 4
+
+[1018sub1]
+ParameterName = Vendor-ID
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
+[1018sub2]
+ParameterName = Product code
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1018sub3]
+ParameterName = Revision number
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1018sub4]
+ParameterName = Serial number
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
+[6040]
+ParameterName = Controlword
+ObjectType = 0x07
+DataType = 0x06
+AccessType = rw
+PDOMapping = 1
+DefaultValue = 0
+
+[6041]
+ParameterName = Statusword
+ObjectType = 0x07
+DataType = 0x06
+AccessType = ro
+PDOMapping = 1
+DefaultValue = 0
+
+[6060]
+ParameterName = Modes of operation
+ObjectType = 0x07
+DataType = 0x03
+AccessType = rw
+PDOMapping = 1
+DefaultValue = 0
+
+[OptionalObjects]
+SupportedObjects = 15
+2 = 0x1010
+3 = 0x1011
+4 = 0x1400
+5 = 0x1600
+6 = 0x1800
+7 = 0x1a00
+8 = 0x2000
+9 = 0x2001
+10 = 0x2002
+11 = 0x2003
+12 = 0x2004
+13 = 0x2005
+14 = 0x2006
+15 = 0x2007
+16 = 0x6064
+
+[1010]
+ParameterName = Store parameters
+ObjectType = 0x09
+SubNumber = 6
+
+[1010sub0]
+ParameterName = highestt sub-index supported
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 5
+
+[1010sub1]
+ParameterName = save all parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1010sub2]
+ParameterName = save communication parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1010sub3]
+ParameterName = save application parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1010sub4]
+ParameterName = save manufacturer specific parameters A
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1010sub5]
+ParameterName = save manufacturer specific parameters B
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1011]
+ParameterName = Restore default parameters
+ObjectType = 0x09
+SubNumber = 6
+
+[1011sub0]
+ParameterName = highestt sub-index supported
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 5
+
+[1011sub1]
+ParameterName = restore all parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1011sub2]
+ParameterName = restore communication parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1011sub3]
+ParameterName = restore application parameters
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1011sub4]
+ParameterName = restore manufacturer specific parameters A
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1011sub5]
+ParameterName = restore manufacturer specific parameters B
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1400]
+ParameterName = Receive PDO 1 communication parameter
+ObjectType = 0x09
+SubNumber = 3
+
+[1400sub0]
+ParameterName = Number of of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 2
+
+[1400sub1]
+ParameterName = COB-ID
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 2147484161
+
+[1400sub2]
+ParameterName = Transmission type
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600]
+ParameterName = Receive PDO 1 mapping parameter
+ObjectType = 0x09
+SubNumber = 9
+
+[1600sub0]
+ParameterName = Number of of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub1]
+ParameterName = 1st object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub2]
+ParameterName = 2nd object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub3]
+ParameterName = 3rd object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub4]
+ParameterName = 4th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub5]
+ParameterName = 5th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub6]
+ParameterName = 6th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub7]
+ParameterName = 7th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1600sub8]
+ParameterName = 8th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1800]
+ParameterName = Transmit PDO 1 communication parameter
+ObjectType = 0x09
+SubNumber = 7
+
+[1800sub0]
+ParameterName = Number of of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 6
+
+[1800sub1]
+ParameterName = COB-ID
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 2147484033
+
+[1800sub2]
+ParameterName = Transmission type
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1800sub3]
+ParameterName = Inhibit time
+ObjectType = 0x09
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1800sub4]
+ParameterName = Compatibility entry
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1800sub5]
+ParameterName = Event timer
+ObjectType = 0x09
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1800sub6]
+ParameterName = Sync start value
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00]
+ParameterName = Transmit PDO 1 mapping parameter
+ObjectType = 0x09
+SubNumber = 9
+
+[1a00sub0]
+ParameterName = Number of of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub1]
+ParameterName = 1st object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub2]
+ParameterName = 2nd object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub3]
+ParameterName = 3rd object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub4]
+ParameterName = 4th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub5]
+ParameterName = 5th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub6]
+ParameterName = 6th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub7]
+ParameterName = 7th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[1a00sub8]
+ParameterName = 8th object to be mapped
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[2000]
+ParameterName = Every scalar type
+ObjectType = 0x09
+SubNumber = 11
+
+[2000sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 11
+
+[2000sub1]
+ParameterName = A boolean
+ObjectType = 0x09
+DataType = 0x01
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 1
+
+[2000sub2]
+ParameterName = An int8
+ObjectType = 0x09
+DataType = 0x02
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = -8
+
+[2000sub3]
+ParameterName = An int16
+ObjectType = 0x09
+DataType = 0x03
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = -16
+
+[2000sub4]
+ParameterName = An int32
+ObjectType = 0x09
+DataType = 0x04
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = -32
+
+[2000sub5]
+ParameterName = An int64
+ObjectType = 0x09
+DataType = 0x15
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = -64
+
+[2000sub6]
+ParameterName = A uint16
+ObjectType = 0x09
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 16
+
+[2000sub7]
+ParameterName = A uint32
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 32
+
+[2000sub8]
+ParameterName = A uint64
+ObjectType = 0x09
+DataType = 0x1B
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 64
+
+[2000sub9]
+ParameterName = A float32
+ObjectType = 0x09
+DataType = 0x08
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 1.5
+
+[2000subA]
+ParameterName = A float64
+ObjectType = 0x09
+DataType = 0x11
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 2.5
+
+[2001]
+ParameterName = A string
+ObjectType = 0x07
+DataType = 0x09
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[2002]
+ParameterName = A domain
+ObjectType = 0x02
+DataType = 0x0F
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[2003]
+ParameterName = A limited value
+ObjectType = 0x07
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 50
+
+[2004]
+ParameterName = An array
+ObjectType = 0x09
+SubNumber = 4
+
+[2004sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+Alias = 
+DefaultValue = 3
+
+[2004sub1]
+ParameterName = First element
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 1
+
+[2004sub2]
+ParameterName = Second element
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 2
+
+[2004sub3]
+ParameterName = Third element
+ObjectType = 0x09
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 3
+
+[2005]
+ParameterName = A remote value
+ObjectType = 0x07
+DataType = 0x07
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[2006]
+ParameterName = A remote attribute
+ObjectType = 0x07
+DataType = 0x08
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[2007]
+ParameterName = An enumerated value
+ObjectType = 0x07
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+Alias = 
+DefaultValue = 0
+
+[6064]
+ParameterName = Position actual value
+ObjectType = 0x07
+DataType = 0x04
+AccessType = ro
+PDOMapping = 1
+Alias = 
+DefaultValue = 0
+
