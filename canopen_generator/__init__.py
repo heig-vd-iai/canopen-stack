@@ -716,7 +716,7 @@ class ObjectDictionary:
 
         # Validate that every key probes to itself and retrieves the intended value
         ok_count = 0
-        for k, v in zip(phf.keys, phf.values):
+        for k, v in zip(phf.keys, phf.values, strict=False):
             hit, got = PHF.find_py(k, best.artifacts)
             if hit and got == v:
                 ok_count += 1

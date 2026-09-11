@@ -44,7 +44,7 @@ build/tests-obj/%.o: tests/cpp/%.cpp
 	$(CXX) $(CXXFLAGS) -Itests/cpp -MMD -MP -c -o $@ $<
 
 generate:
-	poetry run python -m canopen_generator $(CONFIG) -f \
+	uv run python -m canopen_generator $(CONFIG) -f \
 		--local dist/cm --remote dist/cpu1 --eds dist --doc dist/docs
 
 format:

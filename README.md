@@ -36,8 +36,8 @@ The Python module *canopen_generator* is used to generate the object dictionnary
 ### Generate the object dictionnary
 
 ```bash
-poetry install
-poetry run python -mcanopen_generator config.yaml
+uv sync
+uv run python -m canopen_generator config.yaml
 ```
 
 ### Build local library

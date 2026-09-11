@@ -312,7 +312,7 @@ class PHF:
             raise ValueError("target_load must be in (0.0, 1.0].")
 
         self.keys, self.values = self._prepare_keys_values(keys, values)
-        self.items = list(zip(self.keys, self.values))
+        self.items = list(zip(self.keys, self.values, strict=False))
 
         self.key_bits = 16 if (max(self.keys, default=0) <= 0xFFFF) else 32
         self.key_mask = (1 << self.key_bits) - 1
@@ -345,7 +345,7 @@ class PHF:
                 raise ValueError("Values must have the same cardinality as keys.")
             if any(v < 0 for v in values):
                 raise ValueError("Values must be unsigned (>= 0).")
-            kv = dict(zip(keys, values))
+            kv = dict(zip(keys, values, strict=False))
             if set(kv.keys()) != set(keys_t):
                 raise ValueError("Values must be provided for all unique keys.")
             values_t = tuple(kv[k] for k in keys_t)
@@ -424,7 +424,7 @@ class PHF:
             if any(used[i] for i in indices):
                 continue
             D[b] = d
-            for (k, val), i in zip(bucket, indices):
+            for (k, val), i in zip(bucket, indices, strict=False):
                 used[i] = True
                 K[i] = k
                 V[i] = val

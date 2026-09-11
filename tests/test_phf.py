@@ -178,7 +178,7 @@ def test_probe_and_find_consistency(tmp_templates, keys_small, values_small):
     art = best.artifacts
 
     # Every key must be found and return its assigned value
-    for k, v in zip(h.keys, h.values):
+    for k, v in zip(h.keys, h.values, strict=False):
         i = phf.PHF.probe_index(k, art)
         assert 0 <= i < art.P.M
         ok, val = phf.PHF.find_py(k, art)

@@ -9,14 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.12"
-      - run: pipx install poetry
-      - run: poetry install --no-root
-      - run: poetry run ruff check canopen_generator tests
-      - run: poetry run black --check canopen_generator tests
-      - run: poetry run pytest
+      - run: uv sync --locked
+      - run: uv run ruff check canopen_generator tests
+      - run: uv run black --check canopen_generator tests
+      - run: uv run pytest
 
   cpp:
     runs-on: ubuntu-latest
