@@ -7,7 +7,7 @@
 | --- | --- |
 {% for object in objects %}
 {% if object.module == module %}
-| {{ object.index_hex }} | [{{ object.name }}](modules/{{object.module}}/#{{ object.name | replace(' ', '-') | lower }}) |
+| {{ object.index_hex }} | [{{ object.name }}]({{ object.module }}.md#{{ object.name | replace(' ', '-') | lower }}) |
 {% endif %}
 {% endfor %}
 

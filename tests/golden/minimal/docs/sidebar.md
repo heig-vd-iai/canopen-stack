@@ -1,8 +1,8 @@
 <!-- docs/_sidebar.md -->
 
 * [Home](/)
-* [Object Dictionnary](objectDictionnary.md)
+* [Object Dictionary](index.md)
 * [Modules]()
-    * [cia301](modules/cia301.md)
-    * [fixture](modules/fixture.md)
-    * [cia402](modules/cia402.md)
+    * [cia301](cia301.md)
+    * [fixture](fixture.md)
+    * [cia402](cia402.md)
