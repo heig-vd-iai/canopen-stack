@@ -12,6 +12,9 @@ using namespace CANopen;
 
 MapParameter::MapParameter(int16_t index) {
     odID = node.od().findObject(index);
+    for (uint8_t i = 0; i < OD_PDO_MAPPING_MAX; i++) {
+        mappedObjects[i] = 0;
+    }
     if (odID < 0) {
         entriesNumber = 0;
     } else {

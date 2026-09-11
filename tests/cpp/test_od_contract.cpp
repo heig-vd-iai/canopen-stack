@@ -38,6 +38,7 @@ TEST_CASE("findObject resolves every generated key and rejects unknown ones") {
     CHECK(node.od().findObject(0x1000, 0) == OD_OBJECT_1000_SUB0);
     CHECK(node.od().findObject(0x6064, 0) == OD_OBJECT_6064_SUB0);
     CHECK(node.od().findObject(0xFFFF, 0) < 0);
+    CHECK(node.od().findObject(0x0000, 0) < 0);
     CHECK(node.od().findObject(0x1000, 9) < 0);
     CHECK_FALSE(node.od().isSubValid(0x2FFF, 0));
 }
@@ -84,6 +85,9 @@ TEST_CASE("metadata carries access rights, type and limits") {
     CHECK(bool(mappable->access.bits.mappable));
 
     CHECK(node.od().getMetadata(0x2FFF, 0) == nullptr);
+    CHECK(node.od().getMetadata(-1) == nullptr);
+    CHECK(node.od().getMetadata(OD_LENGTH) == nullptr);
+    CHECK(node.od().getSize(-1) == 0);
     CHECK(node.od().getSize(0x2000, 8) == sizeof(uint64_t));
     CHECK(node.od().getSize(0x2002, 0) == DOMAIN_MAX_SIZE);
 }

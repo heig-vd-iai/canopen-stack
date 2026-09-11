@@ -396,6 +396,9 @@ struct Metadata *ObjectDictionnary::getMetadata(uint16_t index,
 }
 
 struct Metadata *ObjectDictionnary::getMetadata(int32_t id) {
+    if (id < 0 || id >= static_cast<int32_t>(length)) {
+        return nullptr;
+    }
     return const_cast<Metadata *>(objectMetadataTable[id]);
 }
 
@@ -408,6 +411,9 @@ uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
 }
 
 uint16_t ObjectDictionnary::getSize(int32_t id) {
+    if (id < 0 || id >= static_cast<int32_t>(length)) {
+        return 0;
+    }
     const DataType dataType = objectMetadataTable[id]->dataType;
     if (dataType == static_cast<DataType>(0x01)) {
         return sizeof(bool);
