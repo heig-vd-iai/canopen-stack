@@ -61,3 +61,4 @@ dist/
 build/
 .venv/
 *.egg-info/
+.coverage
