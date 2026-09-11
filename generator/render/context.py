@@ -107,10 +107,9 @@ class SubObjectView:
     @property
     def meta_data(self) -> str:
         mappable = bool(self.pdo_mapping)
-        writeable = True
         return (
             f"0b{int(self.remote)}{int(self.limited)}{int(mappable)}"
-            f"{int(writeable)}{int(self.readable)}"
+            f"{int(self.writable)}{int(self.readable)}"
         )
 
     @property
