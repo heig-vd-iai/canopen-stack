@@ -175,7 +175,9 @@ def _parallel_trial(args):
     phf_local = PHF(keys, values=values, M=M, B=B, trials=1, seed=seed)
     rng = random.Random(seed)
     t0 = time.perf_counter()
-    art = phf_local._build_search_fixed(phf_local.items, M, B, rng=rng, max_attempts=max_attempts)
+    art = phf_local._build_search_fixed(
+        phf_local.items, M, B, rng=rng, max_attempts=max_attempts
+    )
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
     return (B, art, elapsed_ms)
 
@@ -568,7 +570,6 @@ class PHF:
             if art is not None:
                 return art
         raise RuntimeError("Failed to find parameters within max_attempts.")
-
 
     def _build_search_fixed(
         self,

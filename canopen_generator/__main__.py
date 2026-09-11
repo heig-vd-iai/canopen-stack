@@ -82,6 +82,7 @@ def generate_local(od: ObjectDictionary, outdir: Path, force: bool):
     with open(outdir / "od_lookup.cpp", "w", encoding="utf-8", newline="\n") as f:
         f.write(cpp + "\n")
 
+
 def generate_remote(od: ObjectDictionary, outdir: Path, force: bool):
     header = outdir / "od_remote.hpp"
     if not force and header.exists():
@@ -93,6 +94,7 @@ def generate_remote(od: ObjectDictionary, outdir: Path, force: bool):
     with open(header, "w") as file:
         file.write(od.to_remote())
 
+
 def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
     enum_file = outdir / "od_enum.hpp"
     if not force and enum_file.exists():
@@ -102,6 +104,7 @@ def generate_enum(od: ObjectDictionary, outdir: Path, force: bool):
     with open(enum_file, "w") as file:
         file.write(od.to_enum())
 
+
 def generate_modes(od: ObjectDictionary, outdir: Path, force: bool):
     modes_file = outdir / "od_modes.hpp"
     if not force and modes_file.exists():
@@ -110,6 +113,7 @@ def generate_modes(od: ObjectDictionary, outdir: Path, force: bool):
     outdir.mkdir(parents=True, exist_ok=True)
     with open(modes_file, "w") as file:
         file.write(od.to_modes())
+
 
 @click.command()
 @click.argument("config", type=click.Path(exists=True))
@@ -155,9 +159,7 @@ def cli(config, profile, force, eds, local, remote, doc):
     with open(profile, "r") as p:
         with open(config) as config:
             file_name = Path(config.name).stem
-            od = ObjectDictionary(
-                yaml.safe_load(p), yaml.safe_load(config), file_name
-            )
+            od = ObjectDictionary(yaml.safe_load(p), yaml.safe_load(config), file_name)
 
     gen = 0
 

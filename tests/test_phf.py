@@ -1,8 +1,5 @@
 # tests/test_phf.py
-import sys
-import platform
 import types
-import importlib
 from pathlib import Path
 
 import pytest
@@ -15,6 +12,7 @@ def import_fresh_phf(tmp_templates: Path) -> types.ModuleType:
     """
     # Import module
     import canopen_generator.phf as phf_mod  # assumes your file is importable as "phf.py"
+
     # Monkeypatch TEMPLATE_DIR at module level and clear any existing envs
     phf_mod.TEMPLATE_DIR = tmp_templates
     return phf_mod
@@ -55,7 +53,7 @@ def tmp_templates(tmp_path):
 
     # Minimal cpp template: emit sizes and a few entries
     (tdir / "phf.cpp.j2").write_text(
-        "#include \"{{ header_file }}\"\n"
+        '#include "{{ header_file }}"\n'
         "namespace {{ namespace }} {\n"
         "  // sizes: D={{ D|length }}, K={{ K|length }}, V={{ V|length }}\n"
         "  // first-D={{ D[0] if D|length>0 else 0 }}\n"
@@ -120,7 +118,7 @@ def test_build_best_any_basic(tmp_templates, keys_small, values_small, parallel)
     art = best.artifacts
     assert isinstance(art, phf.TrialArtifacts)
     # K should contain exactly our keys and empties (depending on M)
-    assert set(k for k in art.K if k in keys_small) == set(keys_small)
+    assert {k for k in art.K if k in keys_small} == set(keys_small)
     # Consistency of D size and M size
     assert len(art.D) == art.P.B
     assert len(art.K) == art.P.M
@@ -152,7 +150,7 @@ def test_code_generation_renders_with_minimal_templates(
     phf = import_fresh_phf(tmp_templates)
 
     h = phf.PHF(keys_small, values_small, seed=42, trials=2, target_load=0.6)
-    best = h.build_best_any(parallel=False, trials_per_B=2)
+    h.build_best_any(parallel=False, trials_per_B=2)
 
     # Ensure we use the new template dir for rendering
     # Reset env to force re-creation with new loader
@@ -168,7 +166,7 @@ def test_code_generation_renders_with_minimal_templates(
         header_file="phf_lookup.hpp",
         number_format=number_format,
     )
-    assert "include \"phf_lookup.hpp\"" in cpp
+    assert 'include "phf_lookup.hpp"' in cpp
     assert "sizes: D=" in cpp
     assert "key-bits=" in cpp
 
@@ -202,25 +200,33 @@ def test_value_type_selection_uint8_uint16_uint32(tmp_templates):
     vals1 = [0, 10, 200, 255]
     h1 = phf.PHF(keys, vals1, seed=1, trials=1)
     best1 = h1.build_best_any(parallel=False, trials_per_B=1)
-    dc1, vc1 = h1._resolve_ctypes(best1.artifacts, displace_ctype=None, values_ctype=None)
+    dc1, vc1 = h1._resolve_ctypes(
+        best1.artifacts, displace_ctype=None, values_ctype=None
+    )
     assert vc1 == "uint8_t"
 
     # Case 2: values fit in uint16 (but exceed 255)
     vals2 = [0, 256, 65535, 1000]
     h2 = phf.PHF(keys, vals2, seed=2, trials=1)
     best2 = h2.build_best_any(parallel=False, trials_per_B=1)
-    dc2, vc2 = h2._resolve_ctypes(best2.artifacts, displace_ctype=None, values_ctype=None)
+    dc2, vc2 = h2._resolve_ctypes(
+        best2.artifacts, displace_ctype=None, values_ctype=None
+    )
     assert vc2 == "uint16_t"
 
     # Case 3: values require uint32
     vals3 = [0, 65536, 70000, 2**31]
     h3 = phf.PHF(keys, vals3, seed=3, trials=1)
     best3 = h3.build_best_any(parallel=False, trials_per_B=1)
-    dc3, vc3 = h3._resolve_ctypes(best3.artifacts, displace_ctype=None, values_ctype=None)
+    dc3, vc3 = h3._resolve_ctypes(
+        best3.artifacts, displace_ctype=None, values_ctype=None
+    )
     assert vc3 == "uint32_t"
 
 
-def test_build_not_found_raises_with_tiny_budget(tmp_templates, keys_small, values_small, monkeypatch):
+def test_build_not_found_raises_with_tiny_budget(
+    tmp_templates, keys_small, values_small, monkeypatch
+):
     """
     Force an impossibly small max_attempts to trigger failure path in _build_search_fixed.
     This is artificial but validates the error handling.

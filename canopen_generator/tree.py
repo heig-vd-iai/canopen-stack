@@ -5,6 +5,7 @@ class TreeNode:
         self.left = None
         self.right = None
 
+
 def build_balanced_bst(pairs: list[tuple[int, str]]) -> TreeNode:
     if not pairs:
         return None
@@ -12,8 +13,9 @@ def build_balanced_bst(pairs: list[tuple[int, str]]) -> TreeNode:
     key, value = pairs[mid]
     root = TreeNode(key, value)
     root.left = build_balanced_bst(pairs[:mid])
-    root.right = build_balanced_bst(pairs[mid + 1:])
+    root.right = build_balanced_bst(pairs[mid + 1 :])
     return root
+
 
 def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
     result = []
@@ -29,6 +31,7 @@ def bst_to_array_zero_indexed(root: TreeNode) -> list[tuple[int, str] | None]:
 
     insert(root, 0)
     return result
+
 
 def search_bst_array(tree: list[tuple[int, str] | None], key: int) -> str | None:
     index = 0
