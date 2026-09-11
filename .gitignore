@@ -58,3 +58,4 @@ doc.pdf
 src/od.hpp
 src/od.cpp
 dist/
+build/
