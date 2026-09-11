@@ -168,7 +168,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 5
 
 [1010sub1]
@@ -177,7 +176,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1010sub2]
@@ -186,7 +184,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1010sub3]
@@ -195,7 +192,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1010sub4]
@@ -204,7 +200,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1010sub5]
@@ -213,7 +208,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1011]
@@ -227,7 +221,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 5
 
 [1011sub1]
@@ -236,7 +229,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1011sub2]
@@ -245,7 +237,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1011sub3]
@@ -254,7 +245,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1011sub4]
@@ -263,7 +253,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1011sub5]
@@ -272,7 +261,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1400]
@@ -286,7 +274,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 2
 
 [1400sub1]
@@ -295,7 +282,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 2147484161
 
 [1400sub2]
@@ -304,7 +290,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600]
@@ -318,7 +303,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub1]
@@ -327,7 +311,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub2]
@@ -336,7 +319,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub3]
@@ -345,7 +327,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub4]
@@ -354,7 +335,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub5]
@@ -363,7 +343,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub6]
@@ -372,7 +351,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub7]
@@ -381,7 +359,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1600sub8]
@@ -390,7 +367,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1800]
@@ -404,7 +380,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 6
 
 [1800sub1]
@@ -413,7 +388,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 2147484033
 
 [1800sub2]
@@ -422,7 +396,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1800sub3]
@@ -431,7 +404,6 @@ ObjectType = 0x09
 DataType = 0x06
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1800sub4]
@@ -440,7 +412,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1800sub5]
@@ -449,7 +420,6 @@ ObjectType = 0x09
 DataType = 0x06
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1800sub6]
@@ -458,7 +428,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00]
@@ -472,7 +441,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub1]
@@ -481,7 +449,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub2]
@@ -490,7 +457,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub3]
@@ -499,7 +465,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub4]
@@ -508,7 +473,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub5]
@@ -517,7 +481,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub6]
@@ -526,7 +489,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub7]
@@ -535,7 +497,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [1a00sub8]
@@ -544,7 +505,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [2000]
@@ -558,7 +518,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 11
 
 [2000sub1]
@@ -567,7 +526,6 @@ ObjectType = 0x09
 DataType = 0x01
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 1
 
 [2000sub2]
@@ -576,7 +534,6 @@ ObjectType = 0x09
 DataType = 0x02
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = -8
 
 [2000sub3]
@@ -585,7 +542,6 @@ ObjectType = 0x09
 DataType = 0x03
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = -16
 
 [2000sub4]
@@ -594,7 +550,6 @@ ObjectType = 0x09
 DataType = 0x04
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = -32
 
 [2000sub5]
@@ -603,7 +558,6 @@ ObjectType = 0x09
 DataType = 0x15
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = -64
 
 [2000sub6]
@@ -612,7 +566,6 @@ ObjectType = 0x09
 DataType = 0x06
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 16
 
 [2000sub7]
@@ -621,7 +574,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 32
 
 [2000sub8]
@@ -630,7 +582,6 @@ ObjectType = 0x09
 DataType = 0x1B
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 64
 
 [2000sub9]
@@ -639,7 +590,6 @@ ObjectType = 0x09
 DataType = 0x08
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 1.5
 
 [2000subA]
@@ -648,7 +598,6 @@ ObjectType = 0x09
 DataType = 0x11
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 2.5
 
 [2001]
@@ -657,7 +606,6 @@ ObjectType = 0x07
 DataType = 0x09
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 
 
 [2002]
@@ -666,7 +614,6 @@ ObjectType = 0x02
 DataType = 0x0F
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [2003]
@@ -675,7 +622,6 @@ ObjectType = 0x07
 DataType = 0x06
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 50
 
 [2004]
@@ -689,7 +635,6 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-Alias = 
 DefaultValue = 3
 
 [2004sub1]
@@ -698,7 +643,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 1
 
 [2004sub2]
@@ -707,7 +651,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 2
 
 [2004sub3]
@@ -716,7 +659,6 @@ ObjectType = 0x09
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 3
 
 [2005]
@@ -725,7 +667,6 @@ ObjectType = 0x07
 DataType = 0x07
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [2006]
@@ -734,7 +675,6 @@ ObjectType = 0x07
 DataType = 0x08
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [2007]
@@ -743,7 +683,6 @@ ObjectType = 0x07
 DataType = 0x05
 AccessType = rw
 PDOMapping = 0
-Alias = 
 DefaultValue = 0
 
 [6064]
@@ -752,6 +691,5 @@ ObjectType = 0x07
 DataType = 0x04
 AccessType = ro
 PDOMapping = 1
-Alias = 
 DefaultValue = 0
 

@@ -173,7 +173,7 @@ class Renderer:
         )
         return hpp, cpp
 
-    def _eds_object(self, config: configparser.ConfigParser, obj, alias: bool):
+    def _eds_object(self, config: configparser.ConfigParser, obj):
         if obj.object_type not in SINGLE_ENTRY_OBJECT_TYPES:
             config[obj.index_hex] = {
                 "ParameterName": obj.name,
@@ -194,8 +194,6 @@ class Renderer:
                 "AccessType": sub.access,
                 "PDOMapping": sub.pdo_mapping,
             }
-            if alias:
-                config[section]["Alias"] = ""
             config[section]["DefaultValue"] = str(sub.default)
 
     def to_eds(self) -> str:
@@ -251,14 +249,14 @@ class Renderer:
             **{str(i + 1): f"0x{obj.index_hex}" for i, obj in enumerate(mandatory)},
         }
         for obj in mandatory:
-            self._eds_object(config, obj, alias=False)
+            self._eds_object(config, obj)
 
         config["OptionalObjects"] = {
             "SupportedObjects": str(len(optional)),
             **{str(i + 1): f"0x{obj.index_hex}" for i, obj in enumerate(optional)},
         }
         for obj in optional:
-            self._eds_object(config, obj, alias=True)
+            self._eds_object(config, obj)
 
         output = io.StringIO()
         config.write(output)
