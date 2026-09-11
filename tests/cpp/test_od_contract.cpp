@@ -29,7 +29,8 @@ TEST_CASE("generated tables have one entry per subindex") {
 }
 
 TEST_CASE("findObject resolves every generated key and rejects unknown ones") {
-    for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
+    const int32_t length = OD_LENGTH;
+    for (int32_t id = 0; id < length; id++) {
         const uint16_t index = CANopenOD::objectIndexTable[id].first;
         const uint8_t subindex = CANopenOD::objectIndexTable[id].second;
         CHECK(node.od().findObject(index, subindex) == id);

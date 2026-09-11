@@ -25,7 +25,7 @@ class HB {
     uint32_t lastPublish = 0;
     uint8_t toggleBit = 0;
     uint16_t heartbeatTime_ms = 0;
-    uint32_t odID;
+    int32_t odID;
 
     HB();
 
@@ -59,8 +59,8 @@ class HB {
    public:
     friend class NMT;
     friend class Node;
-    int8_t getData(Data &data, uint32_t odID, SDOAbortCodes &abortCode);
+    int8_t getData(Data &data, int32_t odID, SDOAbortCodes &abortCode);
 
-    int8_t setData(const Data &data, uint32_t odID, SDOAbortCodes &abortCode);
+    int8_t setData(const Data &data, int32_t odID, SDOAbortCodes &abortCode);
 };
 }  // namespace CANopen

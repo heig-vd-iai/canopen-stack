@@ -146,21 +146,19 @@ int8_t setLocalData_double(const Data &data, int32_t id,
     return 0;
 }
 
-int8_t getLocalData_string(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t getLocalData_string(Data &, int32_t, SDOAbortCodes &) {
     return -1;  // TODO: implement
 }
 
-int8_t setLocalData_string(const Data &data, int32_t id,
-                         SDOAbortCodes &abortCode) {
+int8_t setLocalData_string(const Data &, int32_t, SDOAbortCodes &) {
     return -1;  // TODO: implement
 }
 
-int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+int8_t getLocalData_domain(Data &, int32_t, SDOAbortCodes &) {
     return -1;  // TODO: implement
 }
 
-int8_t setLocalData_domain(const Data &data, int32_t id,
-                           SDOAbortCodes &abortCode) {
+int8_t setLocalData_domain(const Data &, int32_t, SDOAbortCodes &) {
     return -1;  // TODO: implement
 }
 
@@ -173,7 +171,7 @@ int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
 }
 
 int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
-    return phf::find(index << 8 | subindex & 0xff);
+    return phf::find(static_cast<uint32_t>(index << 8) | (subindex & 0xffu));
 }
 
 int8_t ObjectDictionnary::readData(Data &data, uint16_t index, uint8_t subindex,
@@ -269,7 +267,7 @@ int8_t ObjectDictionnary::saveData(const Data &data, int32_t id,
         abortCode = SDOAbortCode_SubindexNonExistent;
         return -1;
     }
-    if (saveData(id - odID)) {
+    if (saveData(static_cast<uint8_t>(id - odID))) {
         return 0;
     } else {
         abortCode = SDOAbortCode_AccessFailedHardwareError;
@@ -329,7 +327,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
         minIndex = 0x2000;
         maxIndex = 0x4FFF;
     }
-    for (int i = 0; i < length; i++) {
+    for (int32_t i = 0; i < static_cast<int32_t>(length); i++) {
         if (CANopenOD::objectIndexTable[i].first >= minIndex &&
             CANopenOD::objectIndexTable[i].first <= maxIndex) {
             tmp = getMetadata(i)->getDefaultValue();
@@ -361,7 +359,7 @@ int8_t ObjectDictionnary::restoreData(const Data &data, int32_t id,
         abortCode = SDOAbortCode_SubindexNonExistent;
         return -1;
     }
-    if (restoreData(id - odID)) {
+    if (restoreData(static_cast<uint8_t>(id - odID))) {
         return 0;
     } else {
         abortCode = SDOAbortCode_AccessFailedHardwareError;
@@ -394,26 +392,33 @@ struct Metadata *ObjectDictionnary::getMetadata(uint16_t index,
     if (id < 0) {
         return nullptr;
     }
-    return (Metadata *)objectMetadataTable[id];
+    return const_cast<Metadata *>(objectMetadataTable[id]);
 }
 
 struct Metadata *ObjectDictionnary::getMetadata(int32_t id) {
-    return (Metadata *)objectMetadataTable[id];
+    return const_cast<Metadata *>(objectMetadataTable[id]);
 }
 
 uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
     int32_t id = findObject(index, subindex);
     if (id == -1) {
-        return (uint16_t)-1;
+        return UINT16_MAX;
     }
-    return getSize((uint32_t)id);
+    return getSize(id);
 }
 
 uint16_t ObjectDictionnary::getSize(int32_t id) {
-    switch (objectMetadataTable[id]->dataType) {
-        case 0x01:  // TODO: use enume type. now limitation for TI ethercat
-                    // stack
-            return sizeof(bool);
+    const DataType dataType = objectMetadataTable[id]->dataType;
+    if (dataType == static_cast<DataType>(0x01)) {
+        return sizeof(bool);
+    }
+    if (dataType == static_cast<DataType>(0x08)) {
+        return sizeof(float);
+    }
+    if (dataType == static_cast<DataType>(0x11)) {
+        return sizeof(double);
+    }
+    switch (dataType) {
         case DataType::INTEGER8:
             return sizeof(int8_t);
         case DataType::INTEGER16:
@@ -430,10 +435,6 @@ uint16_t ObjectDictionnary::getSize(int32_t id) {
             return sizeof(uint32_t);
         case DataType::UNSIGNED64:
             return sizeof(uint64_t);
-        case 0x08:
-            return sizeof(float);
-        case 0x11:
-            return sizeof(double);
         case DataType::VISIBLE_STRING:
             return sizeof(char);  // TODO: read string length
         case DataType::DOMAIN:

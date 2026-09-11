@@ -18,7 +18,7 @@ void HB::publishState(NMTStates state, uint8_t toggleBit) {
 
 void HB::update(uint32_t timestamp_us) {  // TODO: add local data
     if (heartbeatTime_ms == 0) return;
-    uint32_t heartbeatTime_us = (uint32_t)heartbeatTime_ms * 1000;
+    uint32_t heartbeatTime_us = static_cast<uint32_t>(heartbeatTime_ms) * 1000;
     if (heartbeatTime_ms > 0 && timestamp_us - lastPublish >= heartbeatTime_us)
         publishState(node._nmt.getState());
 }
@@ -31,14 +31,14 @@ void HB::receiveFrame(Frame &frame) {
 
 void HB::resetToggleBit() { toggleBit = 0; }
 
-int8_t HB::setData(const Data &data, uint32_t id, SDOAbortCodes &abortCode) {
+int8_t HB::setData(const Data &data, int32_t id, SDOAbortCodes &) {
     if (id == odID) {
         heartbeatTime_ms = data.u16;
     }
     return 0;  // TODO: Is this the expected return value?
 }
 
-int8_t HB::getData(Data &data, uint32_t id, SDOAbortCodes &abortCode) {
+int8_t HB::getData(Data &data, int32_t id, SDOAbortCodes &) {
     if (id == odID) {
         data.u16 = heartbeatTime_ms;
     }

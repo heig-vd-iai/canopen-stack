@@ -10,6 +10,7 @@ class Frame;
 
 class HardwareInterface {
    public:
+    virtual ~HardwareInterface() = default;
     virtual void init() = 0;
     virtual void update() = 0;
     /**

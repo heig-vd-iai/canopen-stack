@@ -45,15 +45,15 @@ void Node::init(HardwareInterface *hardware) {
 
 void Node::receiveFrame(Frame frame) {
     uint32_t timestamp = node.hardware().getTime_us();
-    switch ((FunctionCodes)frame.functionCode) {
+    switch (static_cast<FunctionCodes>(frame.functionCode)) {
         case FunctionCode_NMT:
-            _nmt.receiveFrame((NMTFrame &)frame);
+            _nmt.receiveFrame(static_cast<NMTFrame &>(frame));
             break;
         case FunctionCode_HEARTBEAT:
             _hb.receiveFrame(frame);
             break;
         case FunctionCode_SYNC:
-            _sync.receiveFrame((SYNCFrame &)frame, timestamp);
+            _sync.receiveFrame(static_cast<SYNCFrame &>(frame), timestamp);
             break;
         case FunctionCode_TPDO1:
         case FunctionCode_TPDO2:
@@ -68,7 +68,7 @@ void Node::receiveFrame(Frame frame) {
             _pdo.receiveRPDO(frame, timestamp);
             break;
         case FunctionCode_RSDO:
-            _sdo.receiveFrame((SDOFrame &)frame, timestamp);
+            _sdo.receiveFrame(static_cast<SDOFrame &>(frame), timestamp);
             break;
         default:
             break;

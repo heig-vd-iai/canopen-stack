@@ -12,7 +12,7 @@ void NMT::initSM() { updateSM(); }
 
 void NMT::updateSM(NMTServiceCommands command) {
     NMTStates nextState = currentState;
-    ParameterGroups pg;
+    ParameterGroups pg = ParameterGroup_All;
     switch (currentState) {
         case NMTState_Initialisation:
             node._pdo.disable();
@@ -38,7 +38,7 @@ void NMT::updateSM(NMTServiceCommands command) {
                 onReset();
             }
             nextState = NMTState_PreOperational;
-            // No break here [[fallthrough]];
+            /* fallthrough */
         case NMTState_PreOperational:
             node._pdo.disable();
             node._sdo.enable();
@@ -124,7 +124,7 @@ bool CANopen::resetCallBack() { return true; }
 void NMT::receiveFrame(NMTFrame &frame) {
     uint8_t targetId = frame.getTargetId();
     if (frame.nodeId != 0 || (targetId != node.nodeId && targetId != 0)) return;
-    setTransition((NMTServiceCommands)frame.getCommand());
+    setTransition(static_cast<NMTServiceCommands>(frame.getCommand()));
 }
 
 void NMT::setTransition(NMTServiceCommands command) {

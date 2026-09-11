@@ -12,7 +12,12 @@ namespace CANopen {
 struct Metadata {
     Access access;
     DataType dataType;
-    virtual Data getDefaultValue() { return (Data){0}; }
+    virtual ~Metadata() = default;
+    virtual Data getDefaultValue() {
+        Data data;
+        data.u64 = 0;
+        return data;
+    }
 };
 
 struct Metadata_bool : public Metadata {
@@ -20,7 +25,7 @@ struct Metadata_bool : public Metadata {
     Metadata_bool(uint8_t access, bool defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
-        this->dataType = (DataType)0x01;
+        this->dataType = static_cast<DataType>(0x01);
     }
     Data getDefaultValue() override {
         Data data;
@@ -299,7 +304,7 @@ struct Metadata_float : public Metadata {
     Metadata_float(uint8_t access, float defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
-        this->dataType = (DataType)0x08;
+        this->dataType = static_cast<DataType>(0x08);
     }
     Data getDefaultValue() override {
         Data data;
@@ -317,7 +322,7 @@ struct Metadata_float_limited : public Metadata_float {
         this->min = min;
         this->max = max;
         this->access.value = access;
-        this->dataType = (DataType)0x08;
+        this->dataType = static_cast<DataType>(0x08);
     }
     Data getDefaultValue() override {
         Data data;
@@ -332,7 +337,7 @@ struct Metadata_double : public Metadata {
     Metadata_double(uint8_t access, double defaultValue) {
         this->defaultValue = defaultValue;
         this->access.value = access;
-        this->dataType = (DataType)0x11;
+        this->dataType = static_cast<DataType>(0x11);
     }
     Data getDefaultValue() override {
         Data data;
@@ -350,7 +355,7 @@ struct Metadata_double_limited : public Metadata_double {
         this->min = min;
         this->max = max;
         this->access.value = access;
-        this->dataType = (DataType)0x11;
+        this->dataType = static_cast<DataType>(0x11);
     }
     Data getDefaultValue() override {
         Data data;
@@ -362,7 +367,7 @@ struct Metadata_double_limited : public Metadata_double {
 struct Metadata_string : public Metadata {
     std::string defaultValue;
     uint16_t length;
-    Metadata_string(uint8_t access, std::string defaultValue, uint16_t length) {
+    Metadata_string(uint8_t access, std::string defaultValue, uint16_t) {
         this->defaultValue = defaultValue;
         this->access.value = access;
         this->dataType = DataType::VISIBLE_STRING;
@@ -378,6 +383,7 @@ struct Metadata_domain : public Metadata {
 
 class IObjectDictionnary {
    public:
+    virtual ~IObjectDictionnary() = default;
     virtual int8_t readData(Data &data, uint16_t index, uint8_t subindex,
                             SDOAbortCodes &abortCode) = 0;
     virtual int8_t writeData(const Data &data, uint16_t index, uint8_t subindex,
