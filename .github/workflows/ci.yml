@@ -27,7 +27,6 @@ jobs:
 
   format:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - run: clang-format --dry-run -Werror src/*.cpp src/*.hpp tests/cpp/*.cpp tests/cpp/fake-hardware.hpp

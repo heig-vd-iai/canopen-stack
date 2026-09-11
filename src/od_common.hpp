@@ -61,7 +61,7 @@ int8_t setLocalData_double(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode);
 int8_t getLocalData_string(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_string(const Data &data, int32_t id,
-                         SDOAbortCodes &abortCode);
+                           SDOAbortCodes &abortCode);
 int8_t getLocalData_domain(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_domain(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode);
