@@ -21,7 +21,7 @@ This implementation features the following:
 - Automatic generation of the object dictionnary as a header file from a device's EDS file.
 - Non volatile storage of object dictionnary.
 - NMT slave that can be controlled by a master or by the application.
-- SDO server that supports regular and block transactions.
+- SDO server that supports expedited, segmented and block transfers with CRC. DOMAIN objects are streamed through a `DomainHandler` (see `src/od/domainHandler.hpp`), so a firmware image never sits in RAM.
 - PDO for both transmission and reception that supports dynamic PDO mapping and RTR.
 - Heartbeat producer.
 - Sync consumer that triggers TPDO transmission.
@@ -485,7 +485,8 @@ Despite the majority of the CANopen specification being well implemented, there 
 The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
 - LSS is not supported.
 - Object flags (ObjFlags) is not supported.
-- SDO block transfer CRC and PST not supported.
+- SDO block transfer PST (protocol switch threshold) is accepted but ignored: the server always answers a block request with a block transfer.
+- SDO timeouts default to 1 s per transfer, 100 ms between block sub-blocks and 100 ms for a remote object. Override with `-DCANOPEN_SDO_TIMEOUT_US`, `-DCANOPEN_SDO_BLOCK_TIMEOUT_US`, `-DCANOPEN_SDO_REMOTE_TIMEOUT_US` (see `src/sdo/config.hpp`).
 
 Ignored and non-implemented objects :
 

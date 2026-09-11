@@ -12,13 +12,15 @@ Node node;
 
 using namespace CANopen;
 
-Node::Node() {}
+Node::Node() : _odAccessor(_od), _sdo(_odAccessor, OD_NODE_ID) {}
 
 ObjectDictionnary &Node::od() { return _od; }
 
 NMT &Node::nmt() { return _nmt; }
 
 HB &Node::hb() { return _hb; }
+
+ODAccessor &Node::odAccessor() { return _odAccessor; }
 
 SDO &Node::sdo() { return _sdo; }
 
@@ -32,6 +34,7 @@ HardwareInterface &Node::hardware() { return *_hardware; }
 
 void Node::init(HardwareInterface *hardware) {
     _hardware = hardware;
+    _sdo.setHardware(*hardware);
     _hardware->init();
     usleep(1000);
     _pdo.init();
@@ -68,7 +71,7 @@ void Node::receiveFrame(Frame frame) {
             _pdo.receiveRPDO(frame, timestamp);
             break;
         case FunctionCode_RSDO:
-            _sdo.receiveFrame(static_cast<SDOFrame &>(frame), timestamp);
+            _sdo.receiveFrame(frame, timestamp);
             break;
         default:
             break;
