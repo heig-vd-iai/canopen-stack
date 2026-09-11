@@ -25,7 +25,7 @@ inline void getobject6064sub0(Data &data) {
     data.i32 = remote.position;
 }
 
-void (* const remoteGetter[])(Data &data) = {
+void (* const remoteGetter[73])(Data &data) = {
     emptyGetter,
     emptyGetter,
     emptyGetter,
@@ -101,7 +101,7 @@ void (* const remoteGetter[])(Data &data) = {
     &getobject6064sub0,
 };
 
-void (*remoteSetter[])(const Data &data) = {
+void (*remoteSetter[73])(const Data &data) = {
     emptySetter,
     emptySetter,
     emptySetter,

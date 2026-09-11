@@ -24,7 +24,7 @@ inline void set{{subobject.cpp_instance_name}}(const Data &data) {
 {% endfor %}
 {% endfor %}
 
-void (* const remoteGetter[])(Data &data) = {
+void (* const remoteGetter[{{ subindex_count }}])(Data &data) = {
     {% for object in objects %}
     {% for subobject in object.subobjects %}
     {% if subobject.remote_getter %}
@@ -36,7 +36,7 @@ void (* const remoteGetter[])(Data &data) = {
     {% endfor %}
 };
 
-void (*remoteSetter[])(const Data &data) = {
+void (*remoteSetter[{{ subindex_count }}])(const Data &data) = {
     {% for object in objects %}
     {% for subobject in object.subobjects %}
     {% if subobject.remote_setter %}
