@@ -248,14 +248,14 @@ class Renderer:
 
         config["MandatoryObjects"] = {
             "SupportedObjects": str(len(mandatory)),
-            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(mandatory)},
+            **{str(i + 1): f"0x{obj.index_hex}" for i, obj in enumerate(mandatory)},
         }
         for obj in mandatory:
             self._eds_object(config, obj, alias=False)
 
         config["OptionalObjects"] = {
             "SupportedObjects": str(len(optional)),
-            **{str(i + 2): f"0x{obj.index_hex}" for i, obj in enumerate(optional)},
+            **{str(i + 1): f"0x{obj.index_hex}" for i, obj in enumerate(optional)},
         }
         for obj in optional:
             self._eds_object(config, obj, alias=True)
