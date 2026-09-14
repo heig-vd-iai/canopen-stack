@@ -5,7 +5,6 @@
 
 #include "emergency.hpp"
 #include "heartbeat.hpp"
-#include "nmt.hpp"
 #include "sync.hpp"
 
 using namespace CANopen;
@@ -53,12 +52,6 @@ void EmergencyFrame::setErrorRegister(uint8_t errorRegister) {
 void EmergencyFrame::setManufacturerCode(uint32_t manufacturerCode) {
     *(uint32_t *)(data + EMCY_MANUFACTURER_OFFSET) = manufacturerCode;
 }
-
-NMTFrame::NMTFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_NMT) {}
-
-uint8_t NMTFrame::getCommand() const { return data[NMT_COMMAND_OFFSET]; }
-
-uint8_t NMTFrame::getTargetId() const { return data[NMT_NODEID_OFFSET]; }
 
 SYNCFrame::SYNCFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_SYNC) {}
 

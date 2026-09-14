@@ -13,7 +13,7 @@ LIB_SRCS = $(wildcard src/*.cpp src/*/*.cpp)
 LIB_OBJS = $(patsubst src/%.cpp,build/lib/%.o,$(LIB_SRCS))
 
 # Smallest stack that answers on the bus: NMT, SDO and heartbeat.
-MINIMAL_SRCS = src/node.cpp src/nmt.cpp src/frame.cpp src/heartbeat.cpp \
+MINIMAL_SRCS = src/node.cpp src/nmt/nmt.cpp src/frame.cpp src/heartbeat.cpp \
                src/od_common.cpp src/od/odAccessor.cpp \
                $(wildcard src/sdo/*.cpp)
 MINIMAL_OD_DIR ?= tests/golden/bootloader/cm

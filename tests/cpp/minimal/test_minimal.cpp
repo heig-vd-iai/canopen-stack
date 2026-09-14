@@ -85,7 +85,7 @@ struct MinimalNode {
     }
 
     void command(NMTServiceCommands command) {
-        NMTFrame frame(0);
+        Frame frame(0, FunctionCode_NMT);
         frame.dlc = 2;
         frame.data[0] = command;
         frame.data[1] = OD_NODE_ID;

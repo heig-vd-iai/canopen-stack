@@ -109,6 +109,8 @@ TEST_CASE("limited setter rejects values outside its range") {
     CHECK(node.od().writeData(data, 0x2003, 0, abortCode) == 0);
     CHECK(abortCode == SDOAbortCode_OK);
     CHECK(readById(OD_OBJECT_2003_SUB0).u16 == 60);
+    data.u16 = 50;
+    CHECK(node.od().writeData(data, 0x2003, 0, abortCode) == 0);
 }
 
 TEST_CASE("local write then read round-trips through the typed tables") {

@@ -47,7 +47,7 @@ TEST_CASE("NMT start command switches to operational") {
 
 TEST_CASE("update drains the transport before running the services") {
     FakeHardware &hardware = initNodeOnce();
-    NMTFrame start(0);
+    Frame start(0, FunctionCode_NMT);
     start.dlc = 2;
     start.data[0] = NMTServiceCommand_Start;
     start.data[1] = OD_NODE_ID;

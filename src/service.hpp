@@ -6,6 +6,7 @@
 #include <cstdint>
 
 #include "enums.hpp"
+#include "nmt/states.hpp"
 
 #ifndef CANOPEN_MAX_SERVICES
 #define CANOPEN_MAX_SERVICES 8

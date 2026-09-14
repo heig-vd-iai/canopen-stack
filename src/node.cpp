@@ -50,7 +50,7 @@ void Node::receiveFrame(Frame frame) {
         static_cast<FunctionCodes>(frame.functionCode);
     const uint32_t now_us = _transport.getTime_us();
     if (functionCode == FunctionCode_NMT) {
-        _nmt.receiveFrame(static_cast<NMTFrame &>(frame));
+        _nmt.receiveFrame(frame);
         return;
     }
     for (uint8_t i = 0; i < _serviceCount; i++) {

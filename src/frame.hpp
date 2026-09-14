@@ -98,30 +98,6 @@ struct EmergencyFrame : public Frame {
 };
 
 /**
- * This is a specialized Frame used by the NMT class.
- * CiA301:2011§7.2.8.3.1 (p. 72)
- */
-struct NMTFrame : public Frame {
-    /**
-     * Constructor for specialized CANopen NMT frame.
-     * @param nodeId Node ID.
-     */
-    NMTFrame(uint8_t nodeId);
-
-    /**
-     * Get the NMT command.
-     * @return The NMT command.
-     */
-    uint8_t getCommand() const;
-
-    /**
-     * Get the target node ID for the command (0 if broadcasting).
-     * @return The target node ID.
-     */
-    uint8_t getTargetId() const;
-};
-
-/**
  * This is a specialized Frame used by the SYNC class.
  * CiA301:2011§7.2.5.3.1 (p. 63)
  */
