@@ -24,7 +24,7 @@ bool FilePersistence::saveGroup(uint8_t parameterGroup) {
     std::ofstream file(groupPath(parameterGroup),
                        std::ios::out | std::ios::binary | std::ios::trunc);
     if (!file) return false;
-    for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
+    for (int32_t id = 0; id < OD_LENGTH; id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
                               parameterGroup))
             continue;
@@ -42,7 +42,7 @@ bool FilePersistence::loadGroup(uint8_t parameterGroup) {
     std::ifstream file(groupPath(parameterGroup),
                        std::ios::in | std::ios::binary);
     if (!file) return false;
-    for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
+    for (int32_t id = 0; id < OD_LENGTH; id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
                               parameterGroup))
             continue;

@@ -161,8 +161,8 @@ TEST_CASE("a firmware image is written to 0x1F50 by block download") {
     uint32_t offset = 0;
     uint8_t seqno = 0;
     while (offset < image.size()) {
-        const uint32_t length =
-            image.size() - offset > 7 ? 7 : image.size() - offset;
+        const uint32_t remaining = static_cast<uint32_t>(image.size()) - offset;
+        const uint32_t length = remaining > 7 ? 7 : remaining;
         const bool last = offset + length >= image.size();
         Bytes segment;
         segment.push_back(static_cast<uint8_t>((last ? 0x80 : 0x00) | ++seqno));

@@ -283,17 +283,13 @@ TEST_CASE("unknown object, unknown subindex and invalid command abort") {
 }
 
 TEST_CASE("write on a read-only object aborts") {
-    Metadata *metadata = node.od().getMetadata(0x1001, 0);
-    REQUIRE(metadata != nullptr);
-    metadata->access.bits.writeable = false;
     Bench b;
     b.replay({
-        {{0x2f, 0x01, 0x10, 0x00, 0x05},
-         {{0x80, 0x01, 0x10, 0x00, 0x02, 0x00, 0x01, 0x06}},
+        {{0x23, 0x00, 0x10, 0x00, 0x01, 0x02, 0x03, 0x04},
+         {{0x80, 0x00, 0x10, 0x00, 0x02, 0x00, 0x01, 0x06}},
          0},
     });
-    metadata->access.bits.writeable = true;
-    CHECK(readValue(0x1001, 0).u8 == 0);
+    CHECK(readValue(0x1000, 0).u32 == 0x00000192u);
 }
 
 TEST_CASE("value outside the limits aborts") {

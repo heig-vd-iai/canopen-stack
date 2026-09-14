@@ -66,21 +66,41 @@ TEST_CASE("default values land in the right typed table") {
     CHECK(readById(OD_OBJECT_1018_SUB2).u32 == 1);
 }
 
-TEST_CASE("metadata carries access rights, type and limits") {
-    Metadata *limited = node.od().getMetadata(0x2003, 0);
+TEST_CASE("metadata carries access rights, type, size and limits") {
+    const Metadata *limited = node.od().getMetadata(0x2003, 0);
     REQUIRE(limited != nullptr);
     CHECK(bool(limited->access.bits.readable));
     CHECK(bool(limited->access.bits.writeable));
     CHECK(bool(limited->access.bits.limited));
     CHECK_FALSE(bool(limited->access.bits.remote));
     CHECK(limited->dataType == DataType::UNSIGNED16);
+    CHECK(limited->size == sizeof(uint16_t));
     CHECK(limited->getDefaultValue().u16 == 50);
+    CHECK(*static_cast<const uint16_t *>(limited->low) == 10);
+    CHECK(*static_cast<const uint16_t *>(limited->high) == 100);
 
-    Metadata *remote = node.od().getMetadata(0x2005, 0);
+    const Metadata *plain = node.od().getMetadata(0x2000, 9);
+    REQUIRE(plain != nullptr);
+    CHECK(plain->dataType == DataType::REAL32);
+    CHECK(plain->low == nullptr);
+    CHECK(plain->getDefaultValue().f32 == doctest::Approx(1.5f));
+
+    const Metadata *string = node.od().getMetadata(0x2001, 0);
+    REQUIRE(string != nullptr);
+    CHECK(string->dataType == DataType::VISIBLE_STRING);
+    CHECK(string->size == 16);
+    CHECK(string->getDefaultValue().u64 == 0);
+
+    const Metadata *domain = node.od().getMetadata(0x2002, 0);
+    REQUIRE(domain != nullptr);
+    CHECK(domain->dataType == DataType::DOMAIN);
+    CHECK(domain->defaultValue == nullptr);
+
+    const Metadata *remote = node.od().getMetadata(0x2005, 0);
     REQUIRE(remote != nullptr);
     CHECK(bool(remote->access.bits.remote));
 
-    Metadata *mappable = node.od().getMetadata(0x6040, 0);
+    const Metadata *mappable = node.od().getMetadata(0x6040, 0);
     REQUIRE(mappable != nullptr);
     CHECK(bool(mappable->access.bits.mappable));
 
@@ -90,6 +110,7 @@ TEST_CASE("metadata carries access rights, type and limits") {
     CHECK(node.od().getSize(-1) == 0);
     CHECK(node.od().getSize(0x2000, 8) == sizeof(uint64_t));
     CHECK(node.od().getSize(0x2002, 0) == DOMAIN_MAX_SIZE);
+    CHECK(node.od().getSize(0x2001, 0) == 16);
 }
 
 TEST_CASE("limited setter rejects values outside its range") {

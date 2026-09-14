@@ -4,16 +4,16 @@
 namespace CANopen {
 
 struct CycleTime {
-    float cycleTime;
-    float cycleTimeMax;
-    float cycleTimeMin;
+    uint32_t cycleTime;
+    uint32_t cycleTimeMax;
+    uint32_t cycleTimeMin;
 };
 
 class Monitoring {
     CycleTime hardware, hb, sdo, pdo;
-    float cpuLoad;
-    float cpuLoadMax;
-    float cpuLoadMin;
+    uint32_t cpuLoad;
+    uint32_t cpuLoadMax;
+    uint32_t cpuLoadMin;
 
    public:
     Monitoring();
@@ -22,17 +22,17 @@ class Monitoring {
     void setCycleTimeSdo(uint32_t time);
     void setCycleTimePdo(uint32_t time);
 
-    float getCycleTimeHardware() { return hardware.cycleTime; }
-    float getCycleTimeMaxHardware() { return hardware.cycleTimeMax; }
-    float getCycleTimeMinHardware() { return hardware.cycleTimeMin; }
-    float getCycleTimeHb() { return hb.cycleTime; }
-    float getCycleTimeMaxHb() { return hb.cycleTimeMax; }
-    float getCycleTimeMinHb() { return hb.cycleTimeMin; }
-    float getCycleTimePdo() { return pdo.cycleTime; }
-    float getCycleTimeMaxPdo() { return pdo.cycleTimeMax; }
-    float getCycleTimeMinPdo() { return pdo.cycleTimeMin; }
-    float getCycleTimeSdo() { return sdo.cycleTime; }
-    float getCycleTimeMaxSdo() { return sdo.cycleTimeMax; }
-    float getCycleTimeMinSdo() { return sdo.cycleTimeMin; }
+    uint32_t getCycleTimeHardware() { return hardware.cycleTime; }
+    uint32_t getCycleTimeMaxHardware() { return hardware.cycleTimeMax; }
+    uint32_t getCycleTimeMinHardware() { return hardware.cycleTimeMin; }
+    uint32_t getCycleTimeHb() { return hb.cycleTime; }
+    uint32_t getCycleTimeMaxHb() { return hb.cycleTimeMax; }
+    uint32_t getCycleTimeMinHb() { return hb.cycleTimeMin; }
+    uint32_t getCycleTimePdo() { return pdo.cycleTime; }
+    uint32_t getCycleTimeMaxPdo() { return pdo.cycleTimeMax; }
+    uint32_t getCycleTimeMinPdo() { return pdo.cycleTimeMin; }
+    uint32_t getCycleTimeSdo() { return sdo.cycleTime; }
+    uint32_t getCycleTimeMaxSdo() { return sdo.cycleTimeMax; }
+    uint32_t getCycleTimeMinSdo() { return sdo.cycleTimeMin; }
 };
 }  // namespace CANopen

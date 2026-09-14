@@ -57,7 +57,7 @@ void PdoChannel::bind(ObjectDictionnary &dictionary, PdoDirection direction,
 }
 
 Data PdoChannel::defaultOf(int32_t id) const {
-    Metadata *metadata = od->getMetadata(id);
+    const Metadata *metadata = od->getMetadata(id);
     Data data;
     data.u64 = 0;
     if (metadata != nullptr) data = metadata->getDefaultValue();
@@ -186,7 +186,7 @@ int8_t PdoChannel::writeMap(const Data &data, int32_t id,
 
 SDOAbortCodes PdoChannel::checkMapEntry(uint32_t entry) const {
     if (entry == 0) return SDOAbortCode_OK;
-    Metadata *metadata =
+    const Metadata *metadata =
         od->getMetadata(pdo::mappedIndex(entry), pdo::mappedSubindex(entry));
     if (metadata == nullptr) return SDOAbortCode_ObjectNonExistent;
     const bool usable = dir == PdoDirection::Transmit

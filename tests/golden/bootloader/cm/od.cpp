@@ -6,45 +6,46 @@
 
 using namespace CANopen;
 
-const uint64_t od_signature = 202609141112u;
+const uint64_t od_signature = 202609141328u;
 
 /**
- * Metadata declaration for each object.
+ * Default values and limits of each object, then their metadata.
  */
-static Metadata_uint32_t object1000sub0Metadata{0b00001, 0x00000000};
-static Metadata_uint8_t object1001sub0Metadata{0b00101, 0};
-static Metadata_uint16_t object1017sub0Metadata{0b00011, 1000};
-static Metadata_uint8_t object1018sub0Metadata{0b00001, 4};
-static Metadata_uint32_t object1018sub1Metadata{0b00001, 0};
-static Metadata_uint32_t object1018sub2Metadata{0b00001, 2};
-static Metadata_uint32_t object1018sub3Metadata{0b00001, 1};
-static Metadata_uint32_t object1018sub4Metadata{0b00001, 0};
-static Metadata_uint8_t object1f50sub0Metadata{0b00001, 1};
-static Metadata_domain object1f50sub1Metadata{0b00010};
-static Metadata_uint8_t object1f51sub0Metadata{0b00001, 1};
-static Metadata_uint8_t object1f51sub1Metadata{0b00011, 0};
-static Metadata_uint8_t object1f56sub0Metadata{0b00001, 1};
-static Metadata_uint32_t object1f56sub1Metadata{0b00001, 0};
-static Metadata_uint8_t object1f57sub0Metadata{0b00001, 1};
-static Metadata_uint32_t object1f57sub1Metadata{0b00001, 0};
+namespace {
+constexpr uint32_t object1000sub0Default = 0x00000000;
+constexpr uint8_t object1001sub0Default = 0;
+constexpr uint16_t object1017sub0Default = 1000;
+constexpr uint8_t object1018sub0Default = 4;
+constexpr uint32_t object1018sub1Default = 0;
+constexpr uint32_t object1018sub2Default = 2;
+constexpr uint32_t object1018sub3Default = 1;
+constexpr uint32_t object1018sub4Default = 0;
+constexpr uint8_t object1f50sub0Default = 1;
+constexpr uint8_t object1f51sub0Default = 1;
+constexpr uint8_t object1f51sub1Default = 0;
+constexpr uint8_t object1f56sub0Default = 1;
+constexpr uint32_t object1f56sub1Default = 0;
+constexpr uint8_t object1f57sub0Default = 1;
+constexpr uint32_t object1f57sub1Default = 0;
+}  // namespace
 
-const Metadata *ObjectDictionnary::objectMetadataTable[16] = {
-    /* 0000 */  &object1000sub0Metadata,
-    /* 0001 */  &object1001sub0Metadata,
-    /* 0002 */  &object1017sub0Metadata,
-    /* 0003 */  &object1018sub0Metadata,
-    /* 0004 */  &object1018sub1Metadata,
-    /* 0005 */  &object1018sub2Metadata,
-    /* 0006 */  &object1018sub3Metadata,
-    /* 0007 */  &object1018sub4Metadata,
-    /* 0008 */  &object1f50sub0Metadata,
-    /* 0009 */  &object1f50sub1Metadata,
-    /* 0010 */  &object1f51sub0Metadata,
-    /* 0011 */  &object1f51sub1Metadata,
-    /* 0012 */  &object1f56sub0Metadata,
-    /* 0013 */  &object1f56sub1Metadata,
-    /* 0014 */  &object1f57sub0Metadata,
-    /* 0015 */  &object1f57sub1Metadata,
+const Metadata ObjectDictionnary::objectMetadataTable[16] = {
+    /* 0000 */ makeMetadata(0b00001, object1000sub0Default),
+    /* 0001 */ makeMetadata(0b00101, object1001sub0Default),
+    /* 0002 */ makeMetadata(0b00011, object1017sub0Default),
+    /* 0003 */ makeMetadata(0b00001, object1018sub0Default),
+    /* 0004 */ makeMetadata(0b00001, object1018sub1Default),
+    /* 0005 */ makeMetadata(0b00001, object1018sub2Default),
+    /* 0006 */ makeMetadata(0b00001, object1018sub3Default),
+    /* 0007 */ makeMetadata(0b00001, object1018sub4Default),
+    /* 0008 */ makeMetadata(0b00001, object1f50sub0Default),
+    /* 0009 */ makeDomainMetadata(0b00010),
+    /* 0010 */ makeMetadata(0b00001, object1f51sub0Default),
+    /* 0011 */ makeMetadata(0b00011, object1f51sub1Default),
+    /* 0012 */ makeMetadata(0b00001, object1f56sub0Default),
+    /* 0013 */ makeMetadata(0b00001, object1f56sub1Default),
+    /* 0014 */ makeMetadata(0b00001, object1f57sub0Default),
+    /* 0015 */ makeMetadata(0b00001, object1f57sub1Default),
 };
 
 /**
@@ -98,21 +99,6 @@ int8_t (*ObjectDictionnary::objectSetterTable[16])(const Data &data, int32_t id,
 // END GETTER/SETTER
 
 
-// Default values for bool
-bool ObjectDictionnary::boolTable[0] = {
-};
-// Default values for i8
-int8_t ObjectDictionnary::i8Table[0] = {
-};
-// Default values for i16
-int16_t ObjectDictionnary::i16Table[0] = {
-};
-// Default values for i32
-int32_t ObjectDictionnary::i32Table[0] = {
-};
-// Default values for i64
-int64_t ObjectDictionnary::i64Table[0] = {
-};
 // Default values for u8
 uint8_t ObjectDictionnary::u8Table[7] = {
     /* 0000 - 001 */ 0,
@@ -137,21 +123,9 @@ uint32_t ObjectDictionnary::u32Table[7] = {
     /* 0005 - 013 */ 0,
     /* 0006 - 015 */ 0,
 };
-// Default values for u64
-uint64_t ObjectDictionnary::u64Table[0] = {
-};
-// Default values for f32
-float ObjectDictionnary::f32Table[0] = {
-};
-// Default values for f64
-double ObjectDictionnary::f64Table[0] = {
-};
 
 // string type data variable
 
-// string type data table
-char *ObjectDictionnary::stringTable[0] = {
-};
 
 // index data table
 

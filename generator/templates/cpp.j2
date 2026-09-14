@@ -9,19 +9,38 @@ using namespace CANopen;
 const uint64_t od_signature = {{ signature }}u;
 
 /**
- * Metadata declaration for each object.
+ * Default values and limits of each object, then their metadata.
  */
+namespace {
 {% for object in objects %}
 {% for subobject in object.subobjects %}
-static Metadata_{{subobject.ctype_name}}{% if subobject.limited %}_limited{% endif %} {{subobject.cpp_instance_name}}Metadata{{"{"}}{{ subobject.meta_data }}{% if subobject.type == "string" %}, "{{subobject.default}}"{% elif subobject.type != "domain" %}, {{subobject.default}}{% endif %}{% if subobject.limited %}, {{subobject.low_limit}}, {{subobject.high_limit}}{% endif %}{% if subobject.type == "string" %}, {{subobject.length}}{% endif %}};
+{% if subobject.ctype_name == "string" %}
+constexpr char {{subobject.cpp_instance_name}}Default[] = "{{ subobject.default }}";
+{% elif subobject.ctype_name != "domain" %}
+constexpr {{ subobject.ctype_name }} {{subobject.cpp_instance_name}}Default = {{ subobject.default }};
+{% if subobject.limited %}
+constexpr {{ subobject.ctype_name }} {{subobject.cpp_instance_name}}Low = {{ subobject.low_limit }};
+constexpr {{ subobject.ctype_name }} {{subobject.cpp_instance_name}}High = {{ subobject.high_limit }};
+{% endif %}
+{% endif %}
 {% endfor %}
 {% endfor %}
+}  // namespace
 
-const Metadata *ObjectDictionnary::objectMetadataTable[{{ subindex_count }}] = {
+const Metadata ObjectDictionnary::objectMetadataTable[{{ subindex_count }}] = {
 {% set counter = namespace(value=0) %}
 {% for object in objects %}
 {% for subobject in object.subobjects %}
-    /* {{ "%04d"|format(counter.value) }} */  &{{subobject.cpp_instance_name}}Metadata,
+{% set name = subobject.cpp_instance_name %}
+{% if subobject.ctype_name == "string" %}
+    /* {{ "%04d"|format(counter.value) }} */ makeStringMetadata({{ subobject.meta_data }}, {{name}}Default, {{ subobject.length }}),
+{% elif subobject.ctype_name == "domain" %}
+    /* {{ "%04d"|format(counter.value) }} */ makeDomainMetadata({{ subobject.meta_data }}),
+{% elif subobject.limited %}
+    /* {{ "%04d"|format(counter.value) }} */ makeMetadata({{ subobject.meta_data }}, {{name}}Default, {{name}}Low, {{name}}High),
+{% else %}
+    /* {{ "%04d"|format(counter.value) }} */ makeMetadata({{ subobject.meta_data }}, {{name}}Default),
+{% endif %}
 {% set counter.value = counter.value + 1 %}
 {% endfor %}
 {% endfor %}
@@ -105,6 +124,7 @@ int8_t (*ObjectDictionnary::objectSetterTable[{{ subindex_count }}])(const Data 
 ] %}
 
 {% for item in datatypes %}
+{% if type_count[item.type] > 0 %}
 // Default values for {{ item.type }}
 {{ item.ctype }} ObjectDictionnary::{{ item.type }}Table[{{ type_count[item.type] }}] = {
     {% set counter = namespace(value=0) %}
@@ -119,6 +139,7 @@ int8_t (*ObjectDictionnary::objectSetterTable[{{ subindex_count }}])(const Data 
     {% endfor %}
     {% endfor %}
 };
+{% endif %}
 {% endfor %}
 
 // string type data variable
@@ -130,6 +151,7 @@ char ObjectDictionnary::{{subobject.cpp_instance_name}}[{{subobject.length}}] = 
 {% endfor %}
 {% endfor %}
 
+{% if type_count.str > 0 %}
 // string type data table
 char *ObjectDictionnary::stringTable[{{ type_count.str }}] = {
     {% for object in objects %}
@@ -140,6 +162,7 @@ char *ObjectDictionnary::stringTable[{{ type_count.str }}] = {
     {% endfor %}
     {% endfor %}
 };
+{% endif %}
 
 // index data table
 {% set counterBool = namespace(value=0) %}

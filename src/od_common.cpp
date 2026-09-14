@@ -8,6 +8,13 @@
 #include "od_lookup.hpp"
 
 namespace {
+constexpr uint16_t SAVE_INDEX = 0x1010;
+constexpr uint32_t SAVE_SIGNATURE = 0x65766173;
+constexpr uint16_t RESTORE_INDEX = 0x1011;
+constexpr uint32_t RESTORE_SIGNATURE = 0x64616F6C;
+constexpr int32_t MAX_SUB_INDEX = 255;
+constexpr uint32_t REMOTE_ACCESS_TIMEOUT_US = 10000;
+
 CanTransport *clock = nullptr;
 Persistence *store = nullptr;
 RemoteObjects *remoteObjects = nullptr;
@@ -55,6 +62,7 @@ int8_t odRestoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
     return dictionary.restoreData(data, id, abortCode);
 }
 
+#if OD_BOOL_COUNT > 0
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.b =
@@ -69,7 +77,9 @@ int8_t setLocalData_bool(const Data &data, int32_t id,
         data.b;
     return 0;
 }
+#endif
 
+#if OD_I8_COUNT > 0
 int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.i8 = ObjectDictionnary::i8Table[ObjectDictionnary::dataIndexTable[id]];
@@ -82,7 +92,9 @@ int8_t setLocalData_int8_t(const Data &data, int32_t id,
     ObjectDictionnary::i8Table[ObjectDictionnary::dataIndexTable[id]] = data.i8;
     return 0;
 }
+#endif
 
+#if OD_I16_COUNT > 0
 int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.i16 =
@@ -97,7 +109,9 @@ int8_t setLocalData_int16_t(const Data &data, int32_t id,
         data.i16;
     return 0;
 }
+#endif
 
+#if OD_I32_COUNT > 0
 int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.i32 =
@@ -112,7 +126,9 @@ int8_t setLocalData_int32_t(const Data &data, int32_t id,
         data.i32;
     return 0;
 }
+#endif
 
+#if OD_I64_COUNT > 0
 int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.i64 =
@@ -127,7 +143,9 @@ int8_t setLocalData_int64_t(const Data &data, int32_t id,
         data.i64;
     return 0;
 }
+#endif
 
+#if OD_U8_COUNT > 0
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.u8 = ObjectDictionnary::u8Table[ObjectDictionnary::dataIndexTable[id]];
@@ -140,7 +158,9 @@ int8_t setLocalData_uint8_t(const Data &data, int32_t id,
     ObjectDictionnary::u8Table[ObjectDictionnary::dataIndexTable[id]] = data.u8;
     return 0;
 }
+#endif
 
+#if OD_U16_COUNT > 0
 int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.u16 =
@@ -155,7 +175,9 @@ int8_t setLocalData_uint16_t(const Data &data, int32_t id,
         data.u16;
     return 0;
 }
+#endif
 
+#if OD_U32_COUNT > 0
 int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.u32 =
@@ -170,7 +192,9 @@ int8_t setLocalData_uint32_t(const Data &data, int32_t id,
         data.u32;
     return 0;
 }
+#endif
 
+#if OD_U64_COUNT > 0
 int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.u64 =
@@ -185,7 +209,9 @@ int8_t setLocalData_uint64_t(const Data &data, int32_t id,
         data.u64;
     return 0;
 }
+#endif
 
+#if OD_F32_COUNT > 0
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.f32 =
@@ -200,7 +226,9 @@ int8_t setLocalData_float(const Data &data, int32_t id,
         data.f32;
     return 0;
 }
+#endif
 
+#if OD_F64_COUNT > 0
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
     data.f64 =
@@ -215,6 +243,7 @@ int8_t setLocalData_double(const Data &data, int32_t id,
         data.f64;
     return 0;
 }
+#endif
 
 int8_t getLocalData_string(Data &, int32_t, SDOAbortCodes &) {
     return -1;  // TODO: implement
@@ -382,7 +411,7 @@ bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[i].first,
                               parameterGroup))
             continue;
-        const Data tmp = getMetadata(i)->getDefaultValue();
+        const Data tmp = objectMetadataTable[i].getDefaultValue();
         writeDataWait(tmp, i, abortCode);
     }
     return true;
@@ -430,20 +459,16 @@ bool ObjectDictionnary::isSubValid(uint16_t index, uint8_t subindex) {
     return findObject(index, subindex) != -1;
 }
 
-struct Metadata *ObjectDictionnary::getMetadata(uint16_t index,
-                                                uint8_t subindex) {
-    int32_t id = findObject(index, subindex);
-    if (id < 0) {
-        return nullptr;
-    }
-    return const_cast<Metadata *>(objectMetadataTable[id]);
+const Metadata *ObjectDictionnary::getMetadata(uint16_t index,
+                                               uint8_t subindex) {
+    return getMetadata(findObject(index, subindex));
 }
 
-struct Metadata *ObjectDictionnary::getMetadata(int32_t id) {
+const Metadata *ObjectDictionnary::getMetadata(int32_t id) {
     if (id < 0 || id >= static_cast<int32_t>(length)) {
         return nullptr;
     }
-    return const_cast<Metadata *>(objectMetadataTable[id]);
+    return &objectMetadataTable[id];
 }
 
 uint16_t ObjectDictionnary::getSize(uint16_t index, uint8_t subindex) {
@@ -458,38 +483,7 @@ uint16_t ObjectDictionnary::getSize(int32_t id) {
     if (id < 0 || id >= static_cast<int32_t>(length)) {
         return 0;
     }
-    const DataType dataType = objectMetadataTable[id]->dataType;
-    if (dataType == static_cast<DataType>(0x01)) {
-        return sizeof(bool);
-    }
-    if (dataType == static_cast<DataType>(0x08)) {
-        return sizeof(float);
-    }
-    if (dataType == static_cast<DataType>(0x11)) {
-        return sizeof(double);
-    }
-    switch (dataType) {
-        case DataType::INTEGER8:
-            return sizeof(int8_t);
-        case DataType::INTEGER16:
-            return sizeof(int16_t);
-        case DataType::INTEGER32:
-            return sizeof(int32_t);
-        case DataType::INTEGER64:
-            return sizeof(int64_t);
-        case DataType::UNSIGNED8:
-            return sizeof(uint8_t);
-        case DataType::UNSIGNED16:
-            return sizeof(uint16_t);
-        case DataType::UNSIGNED32:
-            return sizeof(uint32_t);
-        case DataType::UNSIGNED64:
-            return sizeof(uint64_t);
-        case DataType::VISIBLE_STRING:
-            return sizeof(char);  // TODO: read string length
-        case DataType::DOMAIN:
-            return DOMAIN_MAX_SIZE;
-        default:
-            return 0;
-    }
+    const Metadata &metadata = objectMetadataTable[id];
+    return metadata.dataType == DataType::DOMAIN ? DOMAIN_MAX_SIZE
+                                                 : metadata.size;
 }

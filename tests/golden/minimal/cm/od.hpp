@@ -6,7 +6,7 @@
 #pragma once
 
 #include "od_common.hpp"
-#include "iobject-dictionnary.hpp"
+#include "od/metadata.hpp"
 
 #define OD_NODE_ID 1
 
@@ -14,6 +14,20 @@
 #define OD_TPDO_COUNT 1
 #define OD_RPDO_COUNT 1
 #define OD_LENGTH 73
+
+/* Number of entries per typed data table, 0 when the table does not exist */
+#define OD_BOOL_COUNT 1
+#define OD_I8_COUNT 1
+#define OD_I16_COUNT 2
+#define OD_I32_COUNT 2
+#define OD_I64_COUNT 1
+#define OD_U8_COUNT 15
+#define OD_U16_COUNT 7
+#define OD_U32_COUNT 38
+#define OD_U64_COUNT 1
+#define OD_F32_COUNT 2
+#define OD_F64_COUNT 1
+#define OD_STR_COUNT 1
 
 /* These defines map an object to its dictionnary array index */
 #define OD_OBJECT_1000_SUB0 0
@@ -173,11 +187,11 @@ constexpr std::pair<uint16_t, uint8_t> objectIndexTable[OD_LENGTH] = {
 
 }
 
-class ObjectDictionnary : IObjectDictionnary{
+class ObjectDictionnary {
 
 public:
     const uint32_t length = OD_LENGTH;
-    static const Metadata *objectMetadataTable[OD_LENGTH];
+    static const Metadata objectMetadataTable[OD_LENGTH];
     static int8_t (*objectGetterTable[OD_LENGTH])(Data &data, int32_t id, SDOAbortCodes &abortCode);
     static int8_t (*objectSetterTable[OD_LENGTH])(const Data &data, int32_t id, SDOAbortCodes &abortCode);
     static uint8_t dataIndexTable[OD_LENGTH];
@@ -312,8 +326,8 @@ public:
      * @param subIndex The subindex to the object
      * @return The metadata of the object.
      */
-    Metadata* getMetadata(uint16_t index, uint8_t subindex);
-    Metadata* getMetadata(int32_t id);
+    const Metadata *getMetadata(uint16_t index, uint8_t subindex);
+    const Metadata *getMetadata(int32_t id);
     uint16_t getSize(uint16_t index, uint8_t subindex);
     uint16_t getSize(int32_t id);
 };

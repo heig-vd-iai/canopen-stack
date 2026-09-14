@@ -3,9 +3,9 @@
 #include <cstdint>
 
 #include "enums.hpp"
-#include "iobject-dictionnary.hpp"
 #include "od.hpp"
 #include "od/domainHandler.hpp"
+#include "od/metadata.hpp"
 #include "unions.hpp"
 
 namespace CANopen {
@@ -52,7 +52,7 @@ class ODAccessor {
 
     ObjectDictionnary &od;
     DomainHandler *domainHandler = nullptr;
-    Metadata *metadata = nullptr;
+    const Metadata *metadata = nullptr;
     int32_t objectId = -1;
     uint16_t objectIndex = 0;
     uint8_t objectSubindex = 0;

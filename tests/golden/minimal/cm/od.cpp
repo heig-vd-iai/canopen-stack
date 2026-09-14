@@ -6,159 +6,162 @@
 
 using namespace CANopen;
 
-const uint64_t od_signature = 202609141111u;
+const uint64_t od_signature = 202609141328u;
 
 /**
- * Metadata declaration for each object.
+ * Default values and limits of each object, then their metadata.
  */
-static Metadata_uint32_t object1000sub0Metadata{0b00001, 0x00000192};
-static Metadata_uint8_t object1001sub0Metadata{0b00101, 0};
-static Metadata_uint8_t object1010sub0Metadata{0b00001, 5};
-static Metadata_uint32_t object1010sub1Metadata{0b00011, 0};
-static Metadata_uint32_t object1010sub2Metadata{0b00011, 0};
-static Metadata_uint32_t object1010sub3Metadata{0b00011, 0};
-static Metadata_uint32_t object1010sub4Metadata{0b00011, 0};
-static Metadata_uint32_t object1010sub5Metadata{0b00011, 0};
-static Metadata_uint8_t object1011sub0Metadata{0b00001, 5};
-static Metadata_uint32_t object1011sub1Metadata{0b00011, 0};
-static Metadata_uint32_t object1011sub2Metadata{0b00011, 0};
-static Metadata_uint32_t object1011sub3Metadata{0b00011, 0};
-static Metadata_uint32_t object1011sub4Metadata{0b00011, 0};
-static Metadata_uint32_t object1011sub5Metadata{0b00011, 0};
-static Metadata_uint16_t object1017sub0Metadata{0b00011, 1000};
-static Metadata_uint8_t object1018sub0Metadata{0b00001, 4};
-static Metadata_uint32_t object1018sub1Metadata{0b00001, 0};
-static Metadata_uint32_t object1018sub2Metadata{0b00001, 1};
-static Metadata_uint32_t object1018sub3Metadata{0b00001, 1};
-static Metadata_uint32_t object1018sub4Metadata{0b00001, 0};
-static Metadata_uint8_t object1400sub0Metadata{0b00001, 2};
-static Metadata_uint32_t object1400sub1Metadata{0b00011, 2147484161};
-static Metadata_uint8_t object1400sub2Metadata{0b00011, 0};
-static Metadata_uint8_t object1600sub0Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub1Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub2Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub3Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub4Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub5Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub6Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub7Metadata{0b00011, 0};
-static Metadata_uint32_t object1600sub8Metadata{0b00011, 0};
-static Metadata_uint8_t object1800sub0Metadata{0b00001, 6};
-static Metadata_uint32_t object1800sub1Metadata{0b00011, 2147484033};
-static Metadata_uint8_t object1800sub2Metadata{0b00011, 0};
-static Metadata_uint16_t object1800sub3Metadata{0b00011, 0};
-static Metadata_uint8_t object1800sub4Metadata{0b00011, 0};
-static Metadata_uint16_t object1800sub5Metadata{0b00011, 0};
-static Metadata_uint8_t object1800sub6Metadata{0b00011, 0};
-static Metadata_uint8_t object1a00sub0Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub1Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub2Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub3Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub4Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub5Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub6Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub7Metadata{0b00011, 0};
-static Metadata_uint32_t object1a00sub8Metadata{0b00011, 0};
-static Metadata_uint8_t object2000sub0Metadata{0b00001, 10};
-static Metadata_bool object2000sub1Metadata{0b00011, 1};
-static Metadata_int8_t object2000sub2Metadata{0b00011, -8};
-static Metadata_int16_t object2000sub3Metadata{0b00011, -16};
-static Metadata_int32_t object2000sub4Metadata{0b00011, -32};
-static Metadata_int64_t object2000sub5Metadata{0b00011, -64};
-static Metadata_uint16_t object2000sub6Metadata{0b00011, 16};
-static Metadata_uint32_t object2000sub7Metadata{0b00011, 32};
-static Metadata_uint64_t object2000sub8Metadata{0b00011, 64};
-static Metadata_float object2000sub9Metadata{0b00011, 1.5};
-static Metadata_double object2000sub10Metadata{0b00011, 2.5};
-static Metadata_string object2001sub0Metadata{0b00001, "", 16};
-static Metadata_domain object2002sub0Metadata{0b00011};
-static Metadata_uint16_t_limited object2003sub0Metadata{0b01011, 50, 10, 100};
-static Metadata_uint8_t object2004sub0Metadata{0b00001, 3};
-static Metadata_uint32_t object2004sub1Metadata{0b00011, 1};
-static Metadata_uint32_t object2004sub2Metadata{0b00011, 2};
-static Metadata_uint32_t object2004sub3Metadata{0b00011, 3};
-static Metadata_uint32_t object2005sub0Metadata{0b10011, 0};
-static Metadata_float object2006sub0Metadata{0b10011, 0};
-static Metadata_uint8_t object2007sub0Metadata{0b00011, 0};
-static Metadata_uint16_t object6040sub0Metadata{0b00111, 0};
-static Metadata_uint16_t object6041sub0Metadata{0b00101, 0};
-static Metadata_int16_t object6060sub0Metadata{0b00111, 0};
-static Metadata_int32_t object6064sub0Metadata{0b10101, 0};
+namespace {
+constexpr uint32_t object1000sub0Default = 0x00000192;
+constexpr uint8_t object1001sub0Default = 0;
+constexpr uint8_t object1010sub0Default = 5;
+constexpr uint32_t object1010sub1Default = 0;
+constexpr uint32_t object1010sub2Default = 0;
+constexpr uint32_t object1010sub3Default = 0;
+constexpr uint32_t object1010sub4Default = 0;
+constexpr uint32_t object1010sub5Default = 0;
+constexpr uint8_t object1011sub0Default = 5;
+constexpr uint32_t object1011sub1Default = 0;
+constexpr uint32_t object1011sub2Default = 0;
+constexpr uint32_t object1011sub3Default = 0;
+constexpr uint32_t object1011sub4Default = 0;
+constexpr uint32_t object1011sub5Default = 0;
+constexpr uint16_t object1017sub0Default = 1000;
+constexpr uint8_t object1018sub0Default = 4;
+constexpr uint32_t object1018sub1Default = 0;
+constexpr uint32_t object1018sub2Default = 1;
+constexpr uint32_t object1018sub3Default = 1;
+constexpr uint32_t object1018sub4Default = 0;
+constexpr uint8_t object1400sub0Default = 2;
+constexpr uint32_t object1400sub1Default = 2147484161;
+constexpr uint8_t object1400sub2Default = 0;
+constexpr uint8_t object1600sub0Default = 0;
+constexpr uint32_t object1600sub1Default = 0;
+constexpr uint32_t object1600sub2Default = 0;
+constexpr uint32_t object1600sub3Default = 0;
+constexpr uint32_t object1600sub4Default = 0;
+constexpr uint32_t object1600sub5Default = 0;
+constexpr uint32_t object1600sub6Default = 0;
+constexpr uint32_t object1600sub7Default = 0;
+constexpr uint32_t object1600sub8Default = 0;
+constexpr uint8_t object1800sub0Default = 6;
+constexpr uint32_t object1800sub1Default = 2147484033;
+constexpr uint8_t object1800sub2Default = 0;
+constexpr uint16_t object1800sub3Default = 0;
+constexpr uint8_t object1800sub4Default = 0;
+constexpr uint16_t object1800sub5Default = 0;
+constexpr uint8_t object1800sub6Default = 0;
+constexpr uint8_t object1a00sub0Default = 0;
+constexpr uint32_t object1a00sub1Default = 0;
+constexpr uint32_t object1a00sub2Default = 0;
+constexpr uint32_t object1a00sub3Default = 0;
+constexpr uint32_t object1a00sub4Default = 0;
+constexpr uint32_t object1a00sub5Default = 0;
+constexpr uint32_t object1a00sub6Default = 0;
+constexpr uint32_t object1a00sub7Default = 0;
+constexpr uint32_t object1a00sub8Default = 0;
+constexpr uint8_t object2000sub0Default = 10;
+constexpr bool object2000sub1Default = 1;
+constexpr int8_t object2000sub2Default = -8;
+constexpr int16_t object2000sub3Default = -16;
+constexpr int32_t object2000sub4Default = -32;
+constexpr int64_t object2000sub5Default = -64;
+constexpr uint16_t object2000sub6Default = 16;
+constexpr uint32_t object2000sub7Default = 32;
+constexpr uint64_t object2000sub8Default = 64;
+constexpr float object2000sub9Default = 1.5;
+constexpr double object2000sub10Default = 2.5;
+constexpr char object2001sub0Default[] = "";
+constexpr uint16_t object2003sub0Default = 50;
+constexpr uint16_t object2003sub0Low = 10;
+constexpr uint16_t object2003sub0High = 100;
+constexpr uint8_t object2004sub0Default = 3;
+constexpr uint32_t object2004sub1Default = 1;
+constexpr uint32_t object2004sub2Default = 2;
+constexpr uint32_t object2004sub3Default = 3;
+constexpr uint32_t object2005sub0Default = 0;
+constexpr float object2006sub0Default = 0;
+constexpr uint8_t object2007sub0Default = 0;
+constexpr uint16_t object6040sub0Default = 0;
+constexpr uint16_t object6041sub0Default = 0;
+constexpr int16_t object6060sub0Default = 0;
+constexpr int32_t object6064sub0Default = 0;
+}  // namespace
 
-const Metadata *ObjectDictionnary::objectMetadataTable[73] = {
-    /* 0000 */  &object1000sub0Metadata,
-    /* 0001 */  &object1001sub0Metadata,
-    /* 0002 */  &object1010sub0Metadata,
-    /* 0003 */  &object1010sub1Metadata,
-    /* 0004 */  &object1010sub2Metadata,
-    /* 0005 */  &object1010sub3Metadata,
-    /* 0006 */  &object1010sub4Metadata,
-    /* 0007 */  &object1010sub5Metadata,
-    /* 0008 */  &object1011sub0Metadata,
-    /* 0009 */  &object1011sub1Metadata,
-    /* 0010 */  &object1011sub2Metadata,
-    /* 0011 */  &object1011sub3Metadata,
-    /* 0012 */  &object1011sub4Metadata,
-    /* 0013 */  &object1011sub5Metadata,
-    /* 0014 */  &object1017sub0Metadata,
-    /* 0015 */  &object1018sub0Metadata,
-    /* 0016 */  &object1018sub1Metadata,
-    /* 0017 */  &object1018sub2Metadata,
-    /* 0018 */  &object1018sub3Metadata,
-    /* 0019 */  &object1018sub4Metadata,
-    /* 0020 */  &object1400sub0Metadata,
-    /* 0021 */  &object1400sub1Metadata,
-    /* 0022 */  &object1400sub2Metadata,
-    /* 0023 */  &object1600sub0Metadata,
-    /* 0024 */  &object1600sub1Metadata,
-    /* 0025 */  &object1600sub2Metadata,
-    /* 0026 */  &object1600sub3Metadata,
-    /* 0027 */  &object1600sub4Metadata,
-    /* 0028 */  &object1600sub5Metadata,
-    /* 0029 */  &object1600sub6Metadata,
-    /* 0030 */  &object1600sub7Metadata,
-    /* 0031 */  &object1600sub8Metadata,
-    /* 0032 */  &object1800sub0Metadata,
-    /* 0033 */  &object1800sub1Metadata,
-    /* 0034 */  &object1800sub2Metadata,
-    /* 0035 */  &object1800sub3Metadata,
-    /* 0036 */  &object1800sub4Metadata,
-    /* 0037 */  &object1800sub5Metadata,
-    /* 0038 */  &object1800sub6Metadata,
-    /* 0039 */  &object1a00sub0Metadata,
-    /* 0040 */  &object1a00sub1Metadata,
-    /* 0041 */  &object1a00sub2Metadata,
-    /* 0042 */  &object1a00sub3Metadata,
-    /* 0043 */  &object1a00sub4Metadata,
-    /* 0044 */  &object1a00sub5Metadata,
-    /* 0045 */  &object1a00sub6Metadata,
-    /* 0046 */  &object1a00sub7Metadata,
-    /* 0047 */  &object1a00sub8Metadata,
-    /* 0048 */  &object2000sub0Metadata,
-    /* 0049 */  &object2000sub1Metadata,
-    /* 0050 */  &object2000sub2Metadata,
-    /* 0051 */  &object2000sub3Metadata,
-    /* 0052 */  &object2000sub4Metadata,
-    /* 0053 */  &object2000sub5Metadata,
-    /* 0054 */  &object2000sub6Metadata,
-    /* 0055 */  &object2000sub7Metadata,
-    /* 0056 */  &object2000sub8Metadata,
-    /* 0057 */  &object2000sub9Metadata,
-    /* 0058 */  &object2000sub10Metadata,
-    /* 0059 */  &object2001sub0Metadata,
-    /* 0060 */  &object2002sub0Metadata,
-    /* 0061 */  &object2003sub0Metadata,
-    /* 0062 */  &object2004sub0Metadata,
-    /* 0063 */  &object2004sub1Metadata,
-    /* 0064 */  &object2004sub2Metadata,
-    /* 0065 */  &object2004sub3Metadata,
-    /* 0066 */  &object2005sub0Metadata,
-    /* 0067 */  &object2006sub0Metadata,
-    /* 0068 */  &object2007sub0Metadata,
-    /* 0069 */  &object6040sub0Metadata,
-    /* 0070 */  &object6041sub0Metadata,
-    /* 0071 */  &object6060sub0Metadata,
-    /* 0072 */  &object6064sub0Metadata,
+const Metadata ObjectDictionnary::objectMetadataTable[73] = {
+    /* 0000 */ makeMetadata(0b00001, object1000sub0Default),
+    /* 0001 */ makeMetadata(0b00101, object1001sub0Default),
+    /* 0002 */ makeMetadata(0b00001, object1010sub0Default),
+    /* 0003 */ makeMetadata(0b00011, object1010sub1Default),
+    /* 0004 */ makeMetadata(0b00011, object1010sub2Default),
+    /* 0005 */ makeMetadata(0b00011, object1010sub3Default),
+    /* 0006 */ makeMetadata(0b00011, object1010sub4Default),
+    /* 0007 */ makeMetadata(0b00011, object1010sub5Default),
+    /* 0008 */ makeMetadata(0b00001, object1011sub0Default),
+    /* 0009 */ makeMetadata(0b00011, object1011sub1Default),
+    /* 0010 */ makeMetadata(0b00011, object1011sub2Default),
+    /* 0011 */ makeMetadata(0b00011, object1011sub3Default),
+    /* 0012 */ makeMetadata(0b00011, object1011sub4Default),
+    /* 0013 */ makeMetadata(0b00011, object1011sub5Default),
+    /* 0014 */ makeMetadata(0b00011, object1017sub0Default),
+    /* 0015 */ makeMetadata(0b00001, object1018sub0Default),
+    /* 0016 */ makeMetadata(0b00001, object1018sub1Default),
+    /* 0017 */ makeMetadata(0b00001, object1018sub2Default),
+    /* 0018 */ makeMetadata(0b00001, object1018sub3Default),
+    /* 0019 */ makeMetadata(0b00001, object1018sub4Default),
+    /* 0020 */ makeMetadata(0b00001, object1400sub0Default),
+    /* 0021 */ makeMetadata(0b00011, object1400sub1Default),
+    /* 0022 */ makeMetadata(0b00011, object1400sub2Default),
+    /* 0023 */ makeMetadata(0b00011, object1600sub0Default),
+    /* 0024 */ makeMetadata(0b00011, object1600sub1Default),
+    /* 0025 */ makeMetadata(0b00011, object1600sub2Default),
+    /* 0026 */ makeMetadata(0b00011, object1600sub3Default),
+    /* 0027 */ makeMetadata(0b00011, object1600sub4Default),
+    /* 0028 */ makeMetadata(0b00011, object1600sub5Default),
+    /* 0029 */ makeMetadata(0b00011, object1600sub6Default),
+    /* 0030 */ makeMetadata(0b00011, object1600sub7Default),
+    /* 0031 */ makeMetadata(0b00011, object1600sub8Default),
+    /* 0032 */ makeMetadata(0b00001, object1800sub0Default),
+    /* 0033 */ makeMetadata(0b00011, object1800sub1Default),
+    /* 0034 */ makeMetadata(0b00011, object1800sub2Default),
+    /* 0035 */ makeMetadata(0b00011, object1800sub3Default),
+    /* 0036 */ makeMetadata(0b00011, object1800sub4Default),
+    /* 0037 */ makeMetadata(0b00011, object1800sub5Default),
+    /* 0038 */ makeMetadata(0b00011, object1800sub6Default),
+    /* 0039 */ makeMetadata(0b00011, object1a00sub0Default),
+    /* 0040 */ makeMetadata(0b00011, object1a00sub1Default),
+    /* 0041 */ makeMetadata(0b00011, object1a00sub2Default),
+    /* 0042 */ makeMetadata(0b00011, object1a00sub3Default),
+    /* 0043 */ makeMetadata(0b00011, object1a00sub4Default),
+    /* 0044 */ makeMetadata(0b00011, object1a00sub5Default),
+    /* 0045 */ makeMetadata(0b00011, object1a00sub6Default),
+    /* 0046 */ makeMetadata(0b00011, object1a00sub7Default),
+    /* 0047 */ makeMetadata(0b00011, object1a00sub8Default),
+    /* 0048 */ makeMetadata(0b00001, object2000sub0Default),
+    /* 0049 */ makeMetadata(0b00011, object2000sub1Default),
+    /* 0050 */ makeMetadata(0b00011, object2000sub2Default),
+    /* 0051 */ makeMetadata(0b00011, object2000sub3Default),
+    /* 0052 */ makeMetadata(0b00011, object2000sub4Default),
+    /* 0053 */ makeMetadata(0b00011, object2000sub5Default),
+    /* 0054 */ makeMetadata(0b00011, object2000sub6Default),
+    /* 0055 */ makeMetadata(0b00011, object2000sub7Default),
+    /* 0056 */ makeMetadata(0b00011, object2000sub8Default),
+    /* 0057 */ makeMetadata(0b00011, object2000sub9Default),
+    /* 0058 */ makeMetadata(0b00011, object2000sub10Default),
+    /* 0059 */ makeStringMetadata(0b00001, object2001sub0Default, 16),
+    /* 0060 */ makeDomainMetadata(0b00011),
+    /* 0061 */ makeMetadata(0b01011, object2003sub0Default, object2003sub0Low, object2003sub0High),
+    /* 0062 */ makeMetadata(0b00001, object2004sub0Default),
+    /* 0063 */ makeMetadata(0b00011, object2004sub1Default),
+    /* 0064 */ makeMetadata(0b00011, object2004sub2Default),
+    /* 0065 */ makeMetadata(0b00011, object2004sub3Default),
+    /* 0066 */ makeMetadata(0b10011, object2005sub0Default),
+    /* 0067 */ makeMetadata(0b10011, object2006sub0Default),
+    /* 0068 */ makeMetadata(0b00011, object2007sub0Default),
+    /* 0069 */ makeMetadata(0b00111, object6040sub0Default),
+    /* 0070 */ makeMetadata(0b00101, object6041sub0Default),
+    /* 0071 */ makeMetadata(0b00111, object6060sub0Default),
+    /* 0072 */ makeMetadata(0b10101, object6064sub0Default),
 };
 
 /**

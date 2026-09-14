@@ -110,7 +110,7 @@ void EMCY::init() {
 }
 
 Data EMCY::defaultOf(int32_t id) const {
-    Metadata *metadata = od.getMetadata(id);
+    const Metadata *metadata = od.getMetadata(id);
     Data data;
     data.u64 = 0;
     if (metadata != nullptr) data = metadata->getDefaultValue();
@@ -134,8 +134,9 @@ void EMCY::send(uint16_t errorCode, uint32_t manufacturerCode) {
 
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
     if (!enabled) return;
-    errorRegister |= emcy::registerMask(bitOf(errorCode)) |
-                     emcy::registerMask(ErrorRegisterBit_Generic);
+    errorRegister = static_cast<uint8_t>(
+        errorRegister | emcy::registerMask(bitOf(errorCode)) |
+        emcy::registerMask(ErrorRegisterBit_Generic));
     errors.push(emcy::historyEntry(errorCode, manufacturerCode));
     send(errorCode, manufacturerCode);
     applyBehavior(errorCode);

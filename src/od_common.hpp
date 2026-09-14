@@ -5,24 +5,8 @@
 #include "enums.hpp"
 #include "unions.hpp"
 
-#define OD_GRANULARITY 8
 #define OD_PDO_MAPPING_MAX 8
-#define OD_ENTRY_SIZE_MAX 1024
-#define OBJECT_INDEX_COUNT 0
-
-#define X1A00_MAP_DISABLED 0
-#define X1A00_SAM_MPDO 0xFE
-#define X1A00_DAM_MPDO 0xFF
-
-#define SAVE_INDEX 0x1010
-#define SAVE_SIGNATURE 0x65766173
-#define RESTORE_INDEX 0x1011
-#define RESTORE_SIGNATURE 0x64616F6C
-
-#define MAX_SUB_INDEX 255
-
 #define DOMAIN_MAX_SIZE 800
-#define REMOTE_ACCESS_TIMEOUT_US 10000
 
 namespace CANopen {
 class CanTransport;

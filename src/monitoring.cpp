@@ -62,5 +62,4 @@ void Monitoring::setCycleTimeSdo(uint32_t time) {
     if (UNLIKELY(sdo.cycleTime < sdo.cycleTimeMin)) {
         sdo.cycleTimeMin = sdo.cycleTime;
     }
-    cpuLoad = 0;  // TODO: Implement CPU load calculation
 }

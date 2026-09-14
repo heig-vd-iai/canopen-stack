@@ -38,7 +38,7 @@ SYNC::SYNC(ObjectDictionnary &od, SyncListener *listener)
 
 void SYNC::init() {
     overflowId = od.findObject(sync::COUNTER_OVERFLOW_INDEX);
-    Metadata *metadata = od.getMetadata(overflowId);
+    const Metadata *metadata = od.getMetadata(overflowId);
     overflow = metadata == nullptr ? sync::COUNTER_NONE
                                    : metadata->getDefaultValue().u8;
     if (!sync::isValidOverflow(overflow)) overflow = sync::COUNTER_NONE;

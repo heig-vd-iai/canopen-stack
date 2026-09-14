@@ -33,7 +33,7 @@ HB::HB(ObjectDictionnary &od, CanTransport &transport, uint8_t nodeId)
 
 void HB::init() {
     producerTimeId = od.findObject(hb::PRODUCER_TIME_INDEX);
-    Metadata *metadata = od.getMetadata(producerTimeId);
+    const Metadata *metadata = od.getMetadata(producerTimeId);
     period_ms = metadata == nullptr ? 0 : metadata->getDefaultValue().u16;
 }
 

@@ -17,7 +17,7 @@ int8_t missingPdo(SDOAbortCodes &abortCode) {
 }
 
 bool isRemote(ObjectDictionnary &od, int32_t id) {
-    Metadata *metadata = od.getMetadata(id);
+    const Metadata *metadata = od.getMetadata(id);
     return metadata != nullptr && metadata->access.bits.remote;
 }
 
