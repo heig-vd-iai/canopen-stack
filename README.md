@@ -3,10 +3,10 @@
 - [CANopen](#canopen)
   - [Introduction](#introduction)
   - [Getting Started](#getting-started)
-    - [Generate the object dictionnary](#generate-the-object-dictionnary)
-    - [Build local library](#build-local-library)
+    - [Generate the object dictionary](#generate-the-object-dictionary)
+    - [Build and test on the host](#build-and-test-on-the-host)
   - [Documentation](#documentation)
-  - [Object Dictionnary](#object-dictionnary)
+  - [Object Dictionary](#object-dictionary)
   - [Hardware Interface](#hardware-interface)
   - [Usage Guide](#usage-guide)
   - [Adding Objects](#adding-objects)
@@ -14,182 +14,136 @@
 
 ## Introduction
 
-This is a C++14 written CANopen slave library. It is based on the official [CIA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.
+This is a C++14 CANopen slave library. It is based on the official [CiA 301 CANopen application layer and communication profile](https://www.can-cia.org/groups/specifications/) document.
 
 This implementation features the following:
 
-- Automatic generation of the object dictionnary as a header file from a device's EDS file.
-- Non volatile storage of object dictionnary.
+- Object dictionary generated as static C++ tables from a YAML description of the device, with the matching EDS file and Markdown documentation.
+- Non volatile storage of the object dictionary, one parameter group at a time.
 - NMT slave that can be controlled by a master or by the application.
 - SDO server that supports expedited, segmented and block transfers with CRC. DOMAIN objects are streamed through a `DomainHandler` (see `src/od/domainHandler.hpp`), so a firmware image never sits in RAM.
-- PDO for both transmission and reception that supports dynamic PDO mapping and RTR.
-- Heartbeat producer.
-- Sync consumer that triggers TPDO transmission.
-- Emergency producer with managed error register and pre-defined error field.
+- PDO for both transmission and reception with dynamic mapping, RTR, inhibit time and event timer.
+- Heartbeat producer and node guarding.
+- SYNC consumer with counter that triggers synchronous TPDO transmission.
+- Emergency producer with managed error register, pre-defined error field and error behaviour.
+- Services are attached to the node one by one, so a bootloader can link NMT, SDO and heartbeat only.
 
 ## Getting Started
 
-Before compiling anything, you need a YAML configuration file that describes the device's object dictionnary. Why not a regular EDS? Because EDS doesn't have the full story for each objects.
+Before compiling anything, you need a YAML configuration file that describes the device's object dictionary. Why not a regular EDS? Because EDS doesn't have the full story for each object: where the data lives, how it is read and written, its unit and its enumeration.
 
-The Python module *generator* is used to generate the object dictionnary header file from the configuration file (schema v2, see `examples/minimal.v2.yaml`). A v1 configuration is converted with `uv run python -m generator migrate config`.
+The Python package `generator` renders the object dictionary from the configuration file (schema v2, see `examples/minimal.v2.yaml` and `examples/bootloader.v2.yaml`). Standard objects come from the profiles in `generator/profiles/`, so the configuration only lists the objects the device implements.
 
-### Generate the object dictionnary
+### Generate the object dictionary
 
 ```bash
 uv sync
 uv run python -m generator generate config.yaml --all dist
 ```
 
-### Build local library
+`--all DIR` renders every target under `DIR`. `--local DIR`, `--remote DIR`, `--eds DIR` and `--doc DIR` render one of them:
 
-Despite the library would not be useful on a PC, it can still be compiled to check for errors. This library is meant to be embedded in a microcontroller, more specifically a TMS32F28388d with a CM core and a C2000 core.
+| Files | Target | Content |
+|---|---|---|
+| `cm/od.hpp`, `cm/od.cpp`, `cm/od_lookup.{hpp,cpp}` | node core | dictionary tables, `OD_OBJECT_<index>_SUB<n>` ids, perfect hash lookup |
+| `cpu1/od_remote.hpp`, `cpu1/od_enum.hpp`, `cpu1/od_modes.hpp` | remote core | getters and setters of the `remote` objects, enumerations, modes of operation |
+| `od.eds` | master tools | EDS file |
+| `docs/*.md` | documentation | one Markdown page per module |
+
+A configuration written for the previous schema is converted with:
 
 ```bash
-make
+uv run python -m generator migrate config old.yaml new.yaml
 ```
+
+### Build and test on the host
+
+The library targets a TMS320F28388D (Cortex-M4 core for the stack, C28x core for the real-time application), but it builds on any C++14 compiler. The host build uses the dictionary of `tests/golden/minimal/`:
+
+```bash
+make            # canopen-slave.so
+make test       # build/tests (doctest)
+./build/tests
+make example    # build/example, a SocketCAN node on vcan0
+make lib-minimal test-minimal   # NMT + SDO + heartbeat only, bootloader dictionary
+```
+
+`make generate` renders `examples/minimal.v2.yaml` into `dist/`. Set `OD_DIR` to build against another dictionary.
 
 ## Documentation
 
-To generate Doxygen documentation:
+To generate the Doxygen documentation:
 
 ```bash
 sudo apt install doxygen graphviz
-git submodule init # Fetch Doxygen Awesome CSS
-git submodule update
 doxygen Doxyfile
 ```
 
-## Object Dictionnary
+The generated dictionary also comes with a Markdown page per module (`docs/` target of the generator).
 
-The object dictionnary is created from an associated EDS file. Because it is converted into a header file, it is statically allocated and its size is known at compile time.
+## Object Dictionary
 
-The dictionnary is composed by an array of objects. Each object is identified by a hexadecimal index. Objects are themselves composed by an array of entries. Each entry is identified by a subindex.
+The object dictionary is rendered from the YAML configuration into static tables, so it is allocated at compile time and its size is known. Every sub-index gets an id, exposed as `OD_OBJECT_<index>_SUB<n>`, that indexes the tables of `ObjectDictionnary`:
 
-The entries hold the data source, read/write access and data size. To access the data from the dictionnary, the 16 bits index of the object and the entry 8 bits subindex are used.
+| Table | Content |
+|---|---|
+| `CANopenOD::objectIndexTable` | `(index, subindex)` of each id, sorted |
+| `objectMetadataTable` | `Metadata` of each id, in read-only memory |
+| `objectGetterTable`, `objectSetterTable` | function called to read or write each id |
+| `boolTable`, `u8Table`, ..., `f64Table`, `stringTable` | the values, one table per C type |
+| `dataIndexTable` | position of each id in its typed table |
 
-The CANopen standard defines a list of object types, such as VAR, RECORD or ARRAY. These notions are used only during the dictionnary rendering phase.
-VAR type is rendered as a single variable, RECORD as a struct containing variables, and RECORD as a pair of single variable and an array.
+`Metadata` (see `src/od/metadata.hpp`) is a plain struct built at compile time: access rights, data type, size, and pointers to the default value and to the limits. The default values are used by `restoreData()` and by the services at `init()`.
 
-In the C++ application, data is always accessed using the index/subindex multiplexer, so the object type doesn't matter at all. For VAR objects, data is simply located at subindex 0.
+Getters and setters follow the same signature, `int8_t f(Data &data, int32_t id, SDOAbortCodes &abortCode)`, and return:
 
-The standard also defines a list of object dictionnary data types.
-For simplicity, this library supports all of the "primitive" data types that have a direct C type equivalent, with some tweaks.
+- `0`: the value was read or written.
+- `1`: the access is pending, the caller has to poll again (objects served by the other core).
+- `-1`: the access failed, `abortCode` tells why.
 
-Here is the list of supported data types and their assigned C type :
+`ObjectDictionnary::readData()` and `writeData()` route an access to these tables, by id or by index and subindex. `readDataWait()` and `writeDataWait()` (see `src/od_common.hpp`) wait up to 10 ms for a pending remote access.
 
-| Code | Name            | C Type     |
-| ---- | --------------- | ---------- |
-| 0x01 | BOOLEAN         | `bool`       |
-| 0x02 | INTEGER8        | `int8_t`     |
-| 0x03 | INTEGER16       | `int16_t`    |
-| 0x04 | INTEGER32       | `int32_t`    |
-| 0x05 | UNSIGNED8       | `uint8_t`    |
-| 0x06 | UNSIGNED16      | `uint16_t`   |
-| 0x07 | UNSIGNED32      | `uint32_t`   |
-| 0x08 | REAL32          | `float`      |
-| 0x09 | VISIBLE_STRING  | `uint8_t[ ]` |
-| 0x0A | OCTET_STRING    | `uint8_t[ ]` |
-| 0x0B | UNICODE_STRING  | `uint8_t[ ]` |
-| 0x0C | TIME_OF_DAY     | `uint64_t`   |
-| 0x0D | TIME_DIFFERENCE | `uint64_t`   |
-| 0x10 | INTEGER24       | `int32_t`    |
-| 0x11 | REAL64          | `double`     |
-| 0x12 | INTEGER40       | `int64_t`    |
-| 0x13 | INTEGER48       | `int64_t`    |
-| 0x14 | INTEGER56       | `int64_t`    |
-| 0x15 | INTEGER64       | `int64_t`    |
-| 0x16 | UNSIGNED24      | `uint32_t`   |
-| 0x18 | UNSIGNED40      | `uint64_t`   |
-| 0x19 | UNSIGNED48      | `uint64_t`   |
-| 0x1A | UNSIGNED56      | `uint64_t`   |
-| 0x1B | UNSIGNED64      | `uint64_t`   |
+The supported data types and their C type:
 
-All of the non-regular integer types are automatically cast to the higher regular type, so for example INTEGER40 will be converted to INTEGER64, and so on.
+| Code | Name           | C Type     |
+| ---- | -------------- | ---------- |
+| 0x01 | BOOLEAN        | `bool`     |
+| 0x02 | INTEGER8       | `int8_t`   |
+| 0x03 | INTEGER16      | `int16_t`  |
+| 0x04 | INTEGER32      | `int32_t`  |
+| 0x05 | UNSIGNED8      | `uint8_t`  |
+| 0x06 | UNSIGNED16     | `uint16_t` |
+| 0x07 | UNSIGNED32     | `uint32_t` |
+| 0x08 | REAL32         | `float`    |
+| 0x09 | VISIBLE_STRING | `char[]`   |
+| 0x0F | DOMAIN         | streamed   |
+| 0x11 | REAL64         | `double`   |
+| 0x15 | INTEGER64      | `int64_t`  |
+| 0x1B | UNSIGNED64     | `uint64_t` |
 
-For the sake of simplicity and versatility, there is no difference between the 3 string types. They are all treated as an utf-8 encoded char array, meaning that nearly every modern character can be stored.
+A DOMAIN object has no storage in the dictionary. The SDO server hands its data to the `DomainHandler` registered on the node, chunk by chunk, in both directions.
 
-This behaviour may not be compatible with all master implementations for non-ascii characters. Also, UNICODE_STRING is expected to have characters encoded on 16 bits each, so watch out for compatibility.
+The standard objects the stack serves itself:
 
-The DOMAIN type is not supported. This type is usually manufacturer specific, and is typically linked to external files that should not be stored directly in the dictionnary.
+| Index | Name | Service |
+| --- | --- | --- |
+| 0x1000 | Device type | dictionary |
+| 0x1001 | Error register | EMCY |
+| 0x1003 | Pre-defined error field | EMCY |
+| 0x1005 | COB-ID SYNC | SYNC |
+| 0x1007 | Synchronous window length | PDO |
+| 0x1010 | Store parameters | dictionary |
+| 0x1011 | Restore default parameters | dictionary |
+| 0x1017 | Producer heartbeat time | HB |
+| 0x1018 | Identity object | dictionary |
+| 0x1019 | Synchronous counter overflow value | SYNC |
+| 0x1029 | Error behaviour | EMCY |
+| 0x1400 to 0x15FF | RPDO communication parameter | PDO |
+| 0x1600 to 0x17FF | RPDO mapping parameter | PDO |
+| 0x1800 to 0x19FF | TPDO communication parameter | PDO |
+| 0x1A00 to 0x1BFF | TPDO mapping parameter | PDO |
 
-A list of pre-defined objects is also defined by the standard, some of which are mandatory for any CANopen application.
-
-This library only takes standard objects into account. Device profile or manufacturer specific objects can be added manually.
-
-A lot of objects are not implemented as they are not related to slave functionnalities. More details under the Limitations section.
-
-Here is the list of standard objects, with unsupported ones being crossed :
-
-| Index      | Name                               |
-| ---------- | ---------------------------------- |
-| 0x1000     | Device type                        |
-| 0x1001     | Error register                     |
-| 0x1002     | Manufacturer status register       |
-| 0x1003     | Pre-defined error field            |
-| ~~0x1005~~ | ~~COB-ID SYNC~~                    |
-| ~~0x1006~~ | ~~Communication cycle period~~     |
-| 0x1007     | Synchronous window length          |
-| 0x1008     | Manufacturer device name           |
-| 0x1009     | Manufacturer hardware version      |
-| 0x100A     | Manufacturer software version      |
-| 0x100C     | Guard time                         |
-| ~~0x100D~~ | ~~Life time factor~~               |
-| 0x1010     | Store parameters                   |
-| 0x1011     | Restore default parameters         |
-| ~~0x1012~~ | ~~COB-ID TIME~~                    |
-| ~~0x1013~~ | ~~High resolution time stamp~~     |
-| ~~0x1014~~ | ~~COB-ID EMCY~~                    |
-| ~~0x1015~~ | ~~Inhibit Time EMCY~~              |
-| ~~0x1016~~ | ~~Consumer heartbeat time~~        |
-| 0x1017     | Producer heartbeat time            |
-| 0x1018     | Identity Object                    |
-| 0x1019     | Synchronous counter overflow value |
-| ~~0x1020~~ | ~~Verify configuration~~           |
-| ~~0x1021~~ | ~~Store EDS~~                      |
-| 0x1022     | Storage format                     |
-| ~~0x1023~~ | ~~OS command~~                     |
-| ~~0x1024~~ | ~~OS command mode~~                |
-| ~~0x1025~~ | ~~OS debugger interface~~          |
-| ~~0x1026~~ | ~~OS prompt~~                      |
-| ~~0x1027~~ | ~~Module list~~                    |
-| ~~0x1028~~ | ~~Emergency consumer~~             |
-| ~~0x1200~~ | ~~1st SDO server parameter~~       |
-| ...        | ...                                |
-| ~~0x127F~~ | ~~128th SDO server parameter~~     |
-| ~~0x1280~~ | ~~1st SDO client parameter~~       |
-| ...        | ...                                |
-| ~~0x12FF~~ | ~~128th SDO client parameter~~     |
-| 0x1400     | 1st RPDO communication parameter   |
-| ...        | ...                                |
-| 0x15FF     | 512th RPDO communication parameter |
-| 0x1600     | 1st RPDO mapping parameter         |
-| ...        | ...                                |
-| 0x17FF     | 512th RPDO mapping parameter       |
-| 0x1800     | 1st TPDO communication parameter   |
-| ...        | ...                                |
-| 0x19FF     | 512th TPDO communication parameter |
-| 0x1A00     | 1st TPDO mapping parameter         |
-| ...        | ...                                |
-| 0x1BFF     | 512th TPDO mapping parameter       |
-| ~~0x1FA0~~ | ~~Object scanner list~~            |
-| ...        | ...                                |
-| ~~0x1FCF~~ | ~~Object scanner list~~            |
-| ~~0x1FD0~~ | ~~Object dispatching list~~        |
-| ...        | ...                                |
-| ~~0x1FFF~~ | ~~Object dispatching list~~        |
-
-Objects are stored in the object dictionary using getter and setter functions. These functions are implemented as arrays of function pointers:
-
-Getter Table: `int8_t (*objectGetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)`
-Setter Table: `int8_t (*objectSetterTable[325])(Data &data, int32_t id, SDOAbortCodes &abortCode)`
-
-The getter and setter functions return the following values:
-
-- 0: The value was successfully found or set.
-- -1: An error occurred while accessing or modifying the value.
-- 1: The data is in the process of being retrieved or updated.
-
-This structure allows for efficient and organized access to objects within the dictionary, ensuring consistent error handling and status reporting.
+Any other object, standard or manufacturer specific, is a plain dictionary entry. The profiles in `generator/profiles/301.yaml` and `402.yaml` describe the standard ones, so listing `0x1017: {}` in the configuration is enough.
 
 ## Hardware Interface
 
@@ -204,19 +158,19 @@ The library is device-agnostic. The application implements three small interface
 The node is built on top of them and `update()` drains the transport, polls the remote side and runs the services:
 
 ```cpp
-#include "canopen.hpp"
 #include "FilePersistence.hpp"
 #include "SocketCanTransport.hpp"
+#include "full-node.hpp"
 #include "hal/remote-objects.hpp"
 
 static CANopen::SocketCanTransport transport("vcan0");
 static CANopen::FilePersistence persistence;
 static CANopen::NullRemote remote;
-CANopen::Node CANopen::node(transport, persistence, remote);
+static CANopen::FullNode canopen(transport, persistence, remote);
 
 int main() {
-    CANopen::node.init();
-    while (true) CANopen::node.update();
+    canopen.init();
+    while (true) canopen.update();
 }
 ```
 
@@ -229,230 +183,190 @@ Persistence images hold eight bytes per object of the parameter group, in dictio
 
 ## Usage Guide
 
-The usage of the library is all done through the Node object.
+A `Node` owns the object dictionary and the NMT state machine. The protocol services (`HB`, `SDO`, `PDO`, `SYNC`, `EMCY`) are separate objects attached to the node with `attach()`. `FullNode` (see `src/full-node.hpp`) builds and attaches all of them. An application that needs less builds the services it wants:
 
-An example project using SocketCan interface (for Linux) is provided in `example/linux/main.cpp` and built with `make example`.
+```cpp
+#include "hb/hb.hpp"
+#include "node.hpp"
+#include "sdo/sdoServer.hpp"
+
+static CANopen::Node node(transport, persistence, remote);
+static CANopen::HB hb(node.od(), transport, node.nodeId);
+static CANopen::SDO sdo(node.odAccessor(), transport, node.nodeId);
+
+int main() {
+    node.attach(hb);
+    node.attach(sdo);
+    CANopen::bindHeartbeat(hb);
+    node.init();
+    while (true) node.update();
+}
+```
+
+`bindHeartbeat()`, `bindPdo()`, `bindSync()` and `bindEmergency()` route the objects a service owns (0x1017, 0x1400..., 0x1005, 0x1001...) to that instance. An object whose service is not bound answers `SDOAbortCode_ObjectNonExistent`. `make lib-minimal` builds this configuration against `examples/bootloader.v2.yaml` without linking PDO, SYNC or EMCY.
 
 > [NOTE]
-> Only one Node object should be used per program, because its ID is obtained from the od.hpp file. Since the header file is specific to a single node, running multiple nodes on a single device means you will need different projects using different header files.
+> Only one node per program: the dictionary tables are generated as static data and the node id comes from `od.hpp`.
 
-Before starting, some words of caution. Since this library is designed to be used on an OS or a microcontroller, **there is no built-in concurrency protection.** This task is up to the user.
+There is no built-in concurrency protection. `update()` polls the transport, so a single loop is the easiest approach. If frames are received from an interrupt or a thread, queue them and feed them to `receiveFrame()` from the loop, or guard `update()` with a mutex.
 
-The node must be updated in a loop, while still being able to receive messages asynchronously.
+Load the saved parameters before `init()`, save them from the application or through object 0x1010:
 
-A typical approach regarding the updating and message reception of the node could be one of those :
+```cpp
+node.od().loadData(ParameterGroup_All);
+node.init();
+...
+node.od().saveData(ParameterGroup_Application);
+```
 
-- cyclical
-- threaded
-- interruption
+Dictionary access goes through the `Data` union and the generated ids:
 
-By using the cyclical approach, CAN message polling and node updating can both be done in the same loop. This would be the easiest approach.
+```cpp
+Data value;
+value.u64 = 0;
+SDOAbortCodes abortCode;
+if (node.od().readData(value, OD_OBJECT_6064_SUB0, abortCode) == 0)
+    printf("Position %ld\n", static_cast<long>(value.i32));
 
-When using threads or interruptions, one solution would be to use a message queue, so that new messages are not immediatly fed to the node. The main program loop can then process each message cyclically, righ before or after updating the node.
+value.f32 = 49.3f;
+node.od().writeData(value, 0x6048, 1, abortCode);
+```
 
-If using threads, another easier solution would be to simply use a mutex to avoid receiving and updating at the same time. The Linux example stays single-threaded: `update()` polls the transport.
-
-When instanciating a node, its init method should be called when the setup is done.
-
-It is possible to get and change the NMT state from the application by using the nmt accessor:
+The NMT state is read and changed from the application:
 
 ```cpp
 if (node.nmt().getState() == NMTState_PreOperational)
-{
-    node.nmt().setTransition(NMTServiceCommand_Start)
-    cout << "Entered operationnal state" << endl;
-}
+    node.nmt().setTransition(NMTServiceCommand_Start);
 ```
 
-By using the pdo accessor, you can subscribe to RPDO reception and timeout events:
+The PDO service reports RPDO reception and timeout, and sends event-driven TPDOs (transmission type 0xFE or 0xFF) on request:
 
 ```cpp
-// Subscribe to events using lambda function.
-node.pdo().onTimeout([](unsigned index) { cout << "Timeout occured on RPDO" << index << endl; });
-node.pdo().onReceive([](unsigned index) { cout << "Received RPDO" << index << endl; });
+canopen.pdo.onReceive([](unsigned number) { printf("RPDO %u\n", number); });
+canopen.pdo.onTimeout([](unsigned number) { printf("RPDO %u timed out\n", number); });
+
+// Write the mapped entries first, then transmit.
+canopen.pdo.transmitTPDO(0);
 ```
 
-If the transmission type is set to event-driven (0xFE of 0xFF), TPDOs can be sent by the application:
+The EMCY service emits EMCY messages, sets the matching bit of the error register and pushes the error to the history:
 
 ```cpp
-// Write new values to mapped entries first, then transmit the TPDO
-node.od()[OD_OBJECT_6048]->setValue(0, (float)49.3);
-node.od()[OD_OBJECT_6048]->setValue(1, (float)420.42);
-node.pdo().transmitTPDO(0)
+if (voltage < MIN_VOLTAGE) canopen.emcy.raiseError(EMCYErrorCode_Voltage);
+
+canopen.emcy.clearErrorBit(ErrorRegisterBit_Voltage);
+if (canopen.emcy.getErrorRegister() == 0) canopen.emcy.clearHistory();
 ```
 
-The emcy accessor is used to emit EMCY messages on the network:
+The generic bit is set with every error. Clearing the last error bit clears the register and sends an error reset message.
+
+DOMAIN objects need a `DomainHandler` registered on the accessor before `init()`. `example/linux/main.cpp` keeps object 0x2002 in a buffer; a bootloader writes the chunks to flash.
 
 ```cpp
-if(voltage < MIN_VOLTAGE)
-{
-    // Don't forget the generic bit will be set as well !
-    node.emcy().raiseError(EMCYErrorCode_Voltage);
-    throw "Error: Voltage too low !";
-}
+canopen.node.odAccessor().setDomainHandler(&domain);
 ```
-
-The corresponding bit in the error register will automatically be set, and the error will be pushed to the error history.
-
-Don't forget the generic error bit will be set as well.
-
-When an error is cleared in the application, it can be cleared from the error register:
-
-```cpp
-// Don't forget to clear the generic bit as well
-node.emcy().clearErrorBit(ErrorRegisterBit_Voltage);
-node.emcy().clearErrorBit(ErrorRegisterBit_Generic);
-if(node.emcy().getErrorRegister() == 0)
-{
-    cout << "All errors cleared, clearing history" << endl;
-    node.emcy().clearHistory();
-}
-```
-
-The access to the object dictionnary data is done with the od accessor.
-Saving is normally done from object 0x1010 via SDO, but can also be done from the application.
-
-Data loading is typically done before `calling node.init()`:
-
-```cpp
-int main()
-{
-    Node node;
-    node.od().loadData(0);
-    std::cout << "Loaded " << node.od().length << " dictionnary objects from non-volatile memory" << std::endl;
-    node.init();
-
-    while(...) { ... }
-    node.od().saveData(0);
-
-    return 0;
-}
-```
-
-Data access is done from the object instance itself. Templated getter and setter are used to read/write from the entry :
-
-```cpp
-float value;
-Object *obj = node.od()[OD_OBJECT_6048];
-if (!obj->getValue(0, &value))
-    throw "Error: Could not read value from entry. Invalid size ?";
-cout << "Value: " << value << endl;
-if (!obj->setValue(0, (float)64.23))
-    throw "Error: Could not write value to entry. Invalid size ?";
-```
-
-The operation will fail if the incorrect type is supplied. The read/write access is bypassed for these methods.
 
 ## Adding Objects
 
-Some objects have additionnal read/write restrictions. Typically, some reserved values are forbidden and the SDO request is aborted with a specific abort code.
-In objects 0x1010 and 0x1011, used respectively for storing and restoring data, a write access shall trigger an action, but not a write action.
+Objects are described in the `objects` block of the YAML configuration, keyed by index. An object listed in a profile inherits its description, so `{}` or a few overrides are enough. A new object gives its name, type and access:
 
-This is a perfect use for polymorphism. All of the special objects have their own class that derive from the base Object class.
-
-Depending on the device profile or manufacturer's needs, it may be necessary to implement new special objects.
-
-This section explains how to do so.
-
-The new class should have the name *ObjectXXXX*, where *XXXX* is the hexadecimal index of the object. This will be shared for the Python and C++ class.
-The first thing to to is to create a new Python class corresponding to the object, and put it in the generator/objects folder.
-
-The class should inherit one of the three VarObject, ArrayObject, RecordObject classes depending on the object type.
-
-It is important to choose the matching Object class because it will perform some checks based on it, and most importantly, will render the C++ code accordingly.
-
-In the `super().__init__()` method, make sure to use the same class name for the cppObjectName parameter.
-
-```python
-from canopen.objectdictionary import Variable
-from .generic import VarObject, ArrayObject, RecordObject
-
-class ObjectXXXX(VarObject):
-    """Object XXXX: ..."""
-    def __init__(self, index: int, entries: "list[Variable]") -> None:
-        super().__init__(index, entries, "ObjectXXXX")
+```yaml
+profiles:
+- 301
+- 402
+objects:
+  0x1017:
+    default: 1000
+  0x2003:
+    name: A limited value
+    module: fixture
+    datatype: uint16
+    access: rw
+    default: 50
+    limits:
+      min: 10
+      max: 100
+  0x2004:
+    name: An array
+    module: fixture
+    sub0:
+      name: Number of entries
+    record:
+    - name: First element
+      datatype: uint32
+      access: rw
+      default: 1
+    - name: Second element
+      datatype: uint32
+      access: rw
+      default: 2
 ```
 
-Once done, it has to be imported from the generator.py file.
-Then, in the toCANopenObject function, an if condition must be added for the corresponding object type (Var, Record, Array).
+The fields of a variable:
 
-This allows using the equality operator or chained comparison expression.
+| Field | Meaning |
+|---|---|
+| `datatype` | `bool`, `int8`...`int64`, `uint8`...`uint64`, `float32`, `float64`, `string`, `domain` |
+| `access` | `r`, `w`, `rw` |
+| `default` | initial value, restored by object 0x1011 |
+| `limits` | `min` and `max`, a write outside aborts with `DownloadValueTooLow` or `TooHigh` |
+| `size` | capacity of a `string` |
+| `pdo` | `true` when the entry can be mapped in a PDO |
+| `unit`, `scale` | physical unit and scale of the value |
+| `enum` | `typedef` and `values`, rendered in `od_enum.hpp` |
+| `module` | Markdown page the object is documented on |
 
-```python
-from objects.object_XXXX import ObjectXXXX
+A record or array adds `sub0` and a `record` list, one item per sub-index.
 
-...
+An object whose value lives on the other core is declared `remote`. `get` and `set` are C++ expressions evaluated on that core, rendered in `od_remote.hpp`; `@` stands for the written value. A `scale` converts the CANopen value to the internal one:
 
-def toCANopenObject(object: Union[Variable, Array, Record]):
-    if isinstance(object, Variable):
-        if object.index == 0xXXXX: return ObjectXXXX(object.index, [object])
-        return VarObject(object.index, [object])
+```yaml
+  0x6064:
+    remote: cpu1
+    get: remote.position
+  0x2005:
+    name: A remote value
+    remote: cpu1
+    get: remote.getValue()
+    set: remote.setValue(@)
+    datatype: uint32
+    access: rw
 ```
 
-Once done, the script will generate the new ObjectXXXX C++ class if it appears in the EDS file.
+On the node core, a remote object is read and written through `RemoteObjects::getRemoteData()` and `setRemoteData()`, which return `1` until the other core answers. The SDO server and the PDO service poll on their own; the application uses `readDataWait()` and `writeDataWait()`.
 
-The next step is to create the twin C++ class. Start by creating a pair of object_XXXX.hpp and object_XXXX.cpp files into src/objects.
-The new class should inherit from the Object class.
+A local object can also name its own handler with `get` and `set`: the generated getter and setter then call these functions, declared by the application with the common signature. This is how the services serve their objects (`hbGetData`, `pdoGetTpdoComm`...), see `src/od_common.hpp`.
 
-```cpp
-#include "../object.hpp"
-
-namespace CANopen
-{
-    class ObjectXXXX : public Object
-    {
-    private:
-        SDOAbortCodes preReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
-        void postReadBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, uint32_t offset) override;
-        SDOAbortCodes preWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
-        void postWriteBytes(uint8_t subindex, uint8_t *bytes, uint32_t size, class Node &node) override;
-
-    public:
-        ObjectXXXX(uint16_t index, uint8_t subNumber, const ObjectEntryBase *entries[]) : Object(index, subNumber, entries) {}
-    };
-}
-```
-
-The pre/post read/write can be overridden, and any other useful methods can be added. **Don't touch any non virtual methods.**
-
-The final step is to include the newly created header file in the src/od_include.hpp file so that the od.hpp file can have access to the new object declaration.
+After changing the configuration, render it again and rebuild. `tests/test_golden.py` compares the rendering of the example configurations with `tests/golden/`; run `uv run pytest --update-golden` after a deliberate change of the generator.
 
 ## Limitations
 
-Despite the majority of the CANopen specification being well implemented, there are still some limitations and non-implemented features:
-
 - The TIME object is not supported.
 - PDO mapping is limited to 8 objects, as granularity is set to 8 (byte level mapping).
-- The generic pre-defined connection set is used, so custom COB-IDs for most objects are not supported (see CiA301:2011§7.3.3 at page 80).
-- Because of the generic connection set, mutation of COB-IDs during runtime is unsupported.
-- Multiple RPDOS above default 4 are not supported, but multiple TPDOS (above default 4) are supported.
-- MPDOs are not supported
-- Multiple SDOs not supported.
-- Node guarding is not supported.
+- COB-IDs of PDOs and SYNC are read from the dictionary; the other services use the pre-defined connection set (CiA301:2011§7.3.3).
+- MPDOs are not supported.
+- One SDO server, no SDO client.
+- Heartbeat consumer is not supported.
 - OS commands are not supported.
-- If object 1029 (Error behaviour) is present, only subindex 1 (communication error) is accounted for, as other entries are device specific.
-- The SYNC object has an internal counter that is incremented on each SYNC message. If the data contains a counter value, it is copied to the internal counter, otherwise the internal counter is incremented up to its maximum value.
-The maximum value depends on whether or not object 1019 is present: if it is, the max value will be in range 2 to 240 (0 will set it to 240) based on the value of object 1019. If not, standard 240.
 - LSS is not supported.
-- Object flags (ObjFlags) is not supported.
+- Object flags (ObjFlags) are not supported.
+- The SYNC counter follows the received value when the message carries one, otherwise it increments up to the overflow of object 0x1019 (240 when the object is absent).
 - SDO block transfer PST (protocol switch threshold) is accepted but ignored: the server always answers a block request with a block transfer.
 - SDO timeouts default to 1 s per transfer, 100 ms between block sub-blocks and 100 ms for a remote object. Override with `-DCANOPEN_SDO_TIMEOUT_US`, `-DCANOPEN_SDO_BLOCK_TIMEOUT_US`, `-DCANOPEN_SDO_REMOTE_TIMEOUT_US` (see `src/sdo/config.hpp`).
+- VISIBLE_STRING objects have a default text and a capacity, but the SDO server does not transfer them yet.
 
-Ignored and non-implemented objects :
+Ignored and non-implemented objects:
 
-- Object 1005: standard SYNC COB-ID is used
+- Object 1006: SYNC producer
 - Object 1012: standard TIME COB-ID is used
-- Object 1014: standard EMCY COB-ID is used
-- Object 1006: sync producer feature
-- Object 100D: node guarding unsupported
 - Object 1013: not consumed and not published
+- Object 1014: standard EMCY COB-ID is used
 - Object 1015: no inhibit time for EMCY
-- Object 1016: heartbeat consumer feature
+- Object 1016: heartbeat consumer
 - Object 1020: manufacturer specific
-- Object 1021: DOMAIN unsupported
-- Objects 1023: OS commands unsupported
-- Objects 1027: modular devices unsupported
-- Object 1028: emergency consumer feature
-- Objects 1200 to 127F: multiple SDO unsupported
-- Objects 1280 to 12FF: multiple SDO unsupported
-- Objects 1FA0 to 1FFF: MPDO unsupported
+- Object 1021: EDS storage
+- Object 1023: OS commands
+- Object 1027: modular devices
+- Object 1028: emergency consumer
+- Objects 1200 to 12FF: additional SDO servers and clients
+- Objects 1FA0 to 1FFF: MPDO
