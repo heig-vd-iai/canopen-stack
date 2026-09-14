@@ -1,6 +1,6 @@
 #include "C2000CanTransport.hpp"
 #include "C2000Persistence.hpp"
-#include "canopen.hpp"
+#include "full-node.hpp"
 #include "hal/remote-objects.hpp"
 extern "C" {
 #include "cm.h"
@@ -12,12 +12,12 @@ CANopen::C2000Persistence persistence;
 CANopen::NullRemote remote;
 }  // namespace
 
-CANopen::Node CANopen::node(transport, persistence, remote);
+CANopen::FullNode canopen(transport, persistence, remote);
 
 int main() {
     CM_init();
-    CANopen::node.init();
+    canopen.init();
     while (true) {
-        CANopen::node.update();
+        canopen.update();
     }
 }

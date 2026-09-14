@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "frame.hpp"
+#include "full-node.hpp"
 #include "hal/can-transport.hpp"
 #include "hal/persistence.hpp"
 #include "hal/remote-objects.hpp"
-#include "node.hpp"
 
 namespace CANopen {
 
@@ -91,12 +91,14 @@ class FakeHardware : public CanTransport,
 };
 
 extern FakeHardware fakeHardware;
+extern FullNode canopen;
+extern Node &node;
 
 inline FakeHardware &initNodeOnce() {
     static bool initialised = false;
     if (!initialised) {
         initialised = true;
-        node.init();
+        canopen.init();
     }
     return fakeHardware;
 }

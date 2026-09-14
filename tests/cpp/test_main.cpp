@@ -4,5 +4,6 @@
 
 namespace CANopen {
 FakeHardware fakeHardware;
-Node node(fakeHardware, fakeHardware, fakeHardware);
+FullNode canopen(fakeHardware, fakeHardware, fakeHardware);
+Node &node = canopen.node;
 }  // namespace CANopen

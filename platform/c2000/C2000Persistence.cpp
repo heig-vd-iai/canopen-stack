@@ -7,7 +7,7 @@ extern "C" {
 #include "F021_F2838x_CM.h"
 #include "cm.h"
 }
-#include "node.hpp"
+#include "od.hpp"
 #include "od/parameterGroup.hpp"
 #include "od_common.hpp"
 #include "od_lookup.hpp"
@@ -88,9 +88,8 @@ bool C2000Persistence::program(uint32_t address, const uint64_t &value) {
 bool C2000Persistence::saveGroup(uint8_t parameterGroup) {
     const Sector *sector = sectorOf(parameterGroup);
     if (sector == nullptr || !eraseSector(*sector)) return false;
-    ObjectDictionnary &od = node.od();
     uint32_t address = sector->origin;
-    for (int32_t id = 0; id < static_cast<int32_t>(od.length); id++) {
+    for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
                               parameterGroup))
             continue;
@@ -110,9 +109,8 @@ bool C2000Persistence::loadGroup(uint8_t parameterGroup) {
     const Sector *sector = sectorOf(parameterGroup);
     if (sector == nullptr) return false;
     if (isBlank(sector->origin, OBJECT_IMAGE_SIZE / 4)) return false;
-    ObjectDictionnary &od = node.od();
     uint32_t address = sector->origin;
-    for (int32_t id = 0; id < static_cast<int32_t>(od.length); id++) {
+    for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
                               parameterGroup))
             continue;

@@ -6,7 +6,7 @@
 
 #include "FilePersistence.hpp"
 #include "SocketCanTransport.hpp"
-#include "canopen.hpp"
+#include "full-node.hpp"
 #include "hal/remote-objects.hpp"
 #include "od/domainHandler.hpp"
 
@@ -57,23 +57,23 @@ FilePersistence persistence;
 NullRemote remote;
 BufferDomain domain;
 
-}  // namespace
+FullNode canopen(transport, persistence, remote);
 
-Node CANopen::node(transport, persistence, remote);
+}  // namespace
 
 int main(int argc, char *argv[]) {
     const char *interface = argc > 1 ? argv[1] : "vcan0";
     transport.setInterface(interface);
     signal(SIGINT, [](int) { quit = 1; });
 
-    node.odAccessor().setDomainHandler(&domain);
-    node.init();
+    canopen.node.odAccessor().setDomainHandler(&domain);
+    canopen.init();
     if (!transport.isOpen()) return 1;
     printf("Node %u on %s, Ctrl-C to stop\n",
-           static_cast<unsigned>(node.nodeId), interface);
+           static_cast<unsigned>(canopen.node.nodeId), interface);
 
     while (!quit) {
-        node.update();
+        canopen.update();
         std::this_thread::sleep_for(std::chrono::microseconds(200));
     }
     return 0;

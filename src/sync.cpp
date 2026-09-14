@@ -2,36 +2,62 @@
 
 #include "enums.hpp"
 #include "frame.hpp"
-#include "node.hpp"
-// #include "objects/object_1019.hpp"
+#include "od_common.hpp"
+#include "pdo.hpp"
+
 using namespace CANopen;
 
-SYNC::SYNC() {}
+namespace {
+SYNC *boundSync = nullptr;
+}
+
+void CANopen::bindSync(SYNC &sync) { boundSync = &sync; }
+
+int8_t syncGetData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundSync == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundSync->getData(data, id, abortCode);
+}
+
+int8_t syncSetData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundSync == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundSync->setData(data, id, abortCode);
+}
+
+SYNC::SYNC(ObjectDictionnary &od, PDO *pdo) : od(od), pdo(pdo) {}
 
 void SYNC::init() {
-    odID = node.od().findObject(SYNC_INDEX);
+    odID = od.findObject(SYNC_INDEX);
     if (odID < 0) {
         maxCounter = MAX_COUNTER;
     } else {
         Data tmp;
-        SDOAbortCodes aborteCode;
-        getLocalData_uint8_t(tmp, odID, aborteCode);
+        SDOAbortCodes abortCode;
+        getLocalData_uint8_t(tmp, odID, abortCode);
         maxCounter = tmp.u8 < MIN_COUNTER ? MAX_COUNTER : tmp.u8;
     }
 }
 
-void SYNC::enable() { enabled = true; }
+void SYNC::update(uint32_t) {}
 
-void SYNC::disable() { enabled = false; }
+void SYNC::onNmtState(NMTStates state) {
+    enabled = state == NMTState_PreOperational || state == NMTState_Operational;
+}
 
-void SYNC::receiveFrame(SYNCFrame &frame, uint32_t timestamp_us) {
-    if (!enabled || frame.nodeId != 0) return;
+void SYNC::onFrame(Frame &frame, uint32_t now_us) {
+    SYNCFrame &syncFrame = static_cast<SYNCFrame &>(frame);
+    if (!enabled || syncFrame.nodeId != 0) return;
     // In case a sync frame is received without a value, increment internal
     // counter, otherwise copy.
-    internalCounter = frame.isCounter() ? frame.getCounter()
-                                        : internalCounter % maxCounter + 1;
+    internalCounter = syncFrame.isCounter() ? syncFrame.getCounter()
+                                            : internalCounter % maxCounter + 1;
     if (onSyncFunc) onSyncFunc(internalCounter);
-    node._pdo.onSync(internalCounter, timestamp_us);
+    if (pdo != nullptr) pdo->onSync(internalCounter, now_us);
 }
 
 void SYNC::onSync(std::function<void(unsigned)> callback) {

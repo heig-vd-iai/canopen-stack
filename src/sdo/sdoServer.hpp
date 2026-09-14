@@ -14,11 +14,12 @@
 #include "hal/can-transport.hpp"
 #include "od/odAccessor.hpp"
 #include "sdo/config.hpp"
+#include "service.hpp"
 #include "utils/crc.hpp"
 
 namespace CANopen {
 
-class SDO {
+class SDO : public Service {
    public:
     SDO(ODAccessor &accessor, CanTransport &transport, uint8_t nodeId);
 
@@ -26,8 +27,16 @@ class SDO {
     void disable();
     bool isIdle() const { return state == State::Idle; }
 
+    bool consumes(FunctionCodes functionCode) const override {
+        return functionCode == FunctionCode_RSDO;
+    }
+    void onFrame(Frame &frame, uint32_t now_us) override {
+        receiveFrame(frame, now_us);
+    }
+    void onNmtState(NMTStates state) override;
+
     void receiveFrame(const Frame &frame, uint32_t now_us);
-    void update(uint32_t now_us);
+    void update(uint32_t now_us) override;
 
    private:
     enum class State {

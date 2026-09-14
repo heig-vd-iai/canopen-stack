@@ -4,47 +4,35 @@
 #include "nmt.hpp"
 
 #include "frame.hpp"
-#include "node.hpp"
+#include "od/parameterGroup.hpp"
 
 using namespace CANopen;
 
+NMT::NMT(ObjectDictionnary &od, RemoteObjects &remote, ServiceBus &bus,
+         uint8_t nodeId)
+    : od(od), remote(remote), bus(bus), nodeId(nodeId) {}
+
 void NMT::initSM() { updateSM(); }
+
+void NMT::runInitialisation() {
+    ParameterGroups pg = resetState == NMTResetState_ResetCommunication
+                             ? ParameterGroup_Communication
+                             : ParameterGroup_All;
+    if (!od.loadData(pg)) od.restoreData(pg);
+    if (pg == ParameterGroup_All) {
+        remote.resetRemote();
+        if (onReset != nullptr) onReset();
+    }
+}
 
 void NMT::updateSM(NMTServiceCommands command) {
     NMTStates nextState = currentState;
-    ParameterGroups pg = ParameterGroup_All;
     switch (currentState) {
         case NMTState_Initialisation:
-            node._pdo.disable();
-            node._sdo.disable();
-            node._sync.disable();
-            node._emcy.disable();
-            switch (resetState) {
-                case NMTResetState_Initialising:
-                case NMTResetState_ResetApplication:
-                    pg = ParameterGroup_All;
-                    break;
-                case NMTResetState_ResetCommunication:
-                    pg = ParameterGroup_Communication;
-                    node._hb.resetToggleBit();
-                    break;
-            }
-            if (!node._od.loadData(pg)) {
-                node._od.restoreData(pg);
-            }
-            node._pdo.reloadTPDO();
-            node._pdo.reloadRPDO();
-            if (pg == ParameterGroup_All) {
-                node._remote.resetRemote();
-                if (onReset != nullptr) onReset();
-            }
+            runInitialisation();
             nextState = NMTState_PreOperational;
-            /* fallthrough */
+            break;
         case NMTState_PreOperational:
-            node._pdo.disable();
-            node._sdo.enable();
-            node._sync.enable();
-            node._emcy.enable();
             switch (command) {
                 case NMTServiceCommand_Start:
                     nextState = NMTState_Operational;
@@ -65,10 +53,6 @@ void NMT::updateSM(NMTServiceCommands command) {
             }
             break;
         case NMTState_Operational:
-            node._pdo.enable();
-            node._sdo.enable();
-            node._sync.enable();
-            node._emcy.enable();
             switch (command) {
                 case NMTServiceCommand_EnterPreOperational:
                     nextState = NMTState_PreOperational;
@@ -89,10 +73,6 @@ void NMT::updateSM(NMTServiceCommands command) {
             }
             break;
         case NMTState_Stopped:
-            node._pdo.disable();
-            node._sdo.disable();
-            node._sync.disable();
-            node._emcy.disable();
             switch (command) {
                 case NMTServiceCommand_EnterPreOperational:
                     nextState = NMTState_PreOperational;
@@ -113,16 +93,14 @@ void NMT::updateSM(NMTServiceCommands command) {
             }
             break;
     }
-    if (currentState == NMTState_Initialisation &&
-        nextState == NMTState_PreOperational) {
-        node._hb.publishState(NMTState_Initialisation);
-    }
+    if (nextState == currentState) return;
     currentState = nextState;
+    bus.publishNmtState(currentState);
 }
 
 void NMT::receiveFrame(NMTFrame &frame) {
     uint8_t targetId = frame.getTargetId();
-    if (frame.nodeId != 0 || (targetId != node.nodeId && targetId != 0)) return;
+    if (frame.nodeId != 0 || (targetId != nodeId && targetId != 0)) return;
     setTransition(static_cast<NMTServiceCommands>(frame.getCommand()));
 }
 

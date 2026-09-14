@@ -3,15 +3,117 @@
  */
 #include "pdo.hpp"
 
+#include <cstddef>
 #include <cstring>
 
 #include "enums.hpp"
 #include "frame.hpp"
-#include "node.hpp"
+#include "od_common.hpp"
+
 using namespace CANopen;
 
-MapParameter::MapParameter(int16_t index) {
-    odID = node.od().findObject(index);
+namespace {
+PDO *boundPdo = nullptr;
+}
+
+void CANopen::bindPdo(PDO &pdo) { boundPdo = &pdo; }
+
+namespace {
+
+int8_t missingPdo(SDOAbortCodes &abortCode) {
+    abortCode = SDOAbortCode_ObjectNonExistent;
+    return -1;
+}
+
+template <typename Channel, std::size_t count>
+int8_t commGet(Channel (&channels)[count], Data &data, int32_t id,
+               SDOAbortCodes &abortCode) {
+    for (std::size_t i = 0; i < count; i++) {
+        if (channels[i].commParameter.getData(data, id, abortCode) == 0)
+            return 0;
+    }
+    return -1;
+}
+
+template <typename Channel, std::size_t count>
+int8_t commSet(Channel (&channels)[count], const Data &data, int32_t id,
+               SDOAbortCodes &abortCode) {
+    for (std::size_t i = 0; i < count; i++) {
+        if (channels[i].commParameter.setData(data, id, abortCode) != 0)
+            continue;
+        if (channels[i].commParameter.takeRemap()) {
+            boundPdo->reloadTPDO();
+            boundPdo->reloadRPDO();
+        }
+        return 0;
+    }
+    return -1;
+}
+
+template <typename Channel, std::size_t count>
+int8_t mapGet(Channel (&channels)[count], Data &data, int32_t id,
+              SDOAbortCodes &abortCode) {
+    for (std::size_t i = 0; i < count; i++) {
+        if (channels[i].mapParameter.getData(data, id, abortCode) == 0)
+            return 0;
+    }
+    return -1;
+}
+
+template <typename Channel, std::size_t count>
+int8_t mapSet(Channel (&channels)[count], const Data &data, int32_t id,
+              SDOAbortCodes &abortCode) {
+    for (std::size_t i = 0; i < count; i++) {
+        if (channels[i].mapParameter.setData(data, id, abortCode) == 0)
+            return 0;
+    }
+    return -1;
+}
+
+}  // namespace
+
+int8_t pdoGetRpdoComm(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return commGet(boundPdo->rpdos, data, id, abortCode);
+}
+
+int8_t pdoSetRpdoComm(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return commSet(boundPdo->rpdos, data, id, abortCode);
+}
+
+int8_t pdoGetTpdoComm(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return commGet(boundPdo->tpdos, data, id, abortCode);
+}
+
+int8_t pdoSetTpdoComm(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return commSet(boundPdo->tpdos, data, id, abortCode);
+}
+
+int8_t pdoGetRpdoMap(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return mapGet(boundPdo->rpdos, data, id, abortCode);
+}
+
+int8_t pdoSetRpdoMap(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return mapSet(boundPdo->rpdos, data, id, abortCode);
+}
+
+int8_t pdoGetTpdoMap(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return mapGet(boundPdo->tpdos, data, id, abortCode);
+}
+
+int8_t pdoSetTpdoMap(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundPdo == nullptr) return missingPdo(abortCode);
+    return mapSet(boundPdo->tpdos, data, id, abortCode);
+}
+
+MapParameter::MapParameter(ObjectDictionnary &od, int16_t index) : od(&od) {
+    odID = od.findObject(index);
     for (uint8_t i = 0; i < OD_PDO_MAPPING_MAX; i++) {
         mappedObjects[i] = 0;
     }
@@ -29,7 +131,7 @@ MapParameter::MapParameter(int16_t index) {
     }
 }
 
-MapParameter::MapParameter() {
+MapParameter::MapParameter() : od(nullptr) {
     odID = -1;
     entriesNumber = 0;
     for (uint8_t i = 0; i < OD_PDO_MAPPING_MAX; i++) {
@@ -70,8 +172,7 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
             uint32_t sizeSum = 0;
             for (unsigned i = 0; i < value; i++) {
                 PDOMapEntry entry = {getMappedValue(i)};
-                sizeSum +=
-                    node.od().getSize(entry.bits.index, entry.bits.subindex);
+                sizeSum += od->getSize(entry.bits.index, entry.bits.subindex);
             }
             if (sizeSum > PDO_DLC) {
                 abortCode = SDOAbortCodes::SDOAbortCode_MappedPDOLengthExceeded;
@@ -82,12 +183,12 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
     } else {
         PDOMapEntry entry;
         entry.value = data.u32;
-        if (!node.od().isSubValid(entry.bits.index, entry.bits.subindex)) {
+        if (!od->isSubValid(entry.bits.index, entry.bits.subindex)) {
             abortCode = SDOAbortCodes::SDOAbortCode_ObjectNonExistent;
             entry.value = 0;
         } else {
             Metadata meta =
-                *node.od().getMetadata(entry.bits.index, entry.bits.subindex);
+                *od->getMetadata(entry.bits.index, entry.bits.subindex);
             if (!meta.access.bits.mappable || !meta.access.bits.readable) {
                 abortCode = SDOAbortCodes::SDOAbortCode_CannotMapToPDO;
                 return -1;
@@ -101,6 +202,7 @@ int8_t MapParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
 
 CANopen::MapParameter &CANopen::MapParameter::operator=(
     const MapParameter &other) {
+    od = other.od;
     entriesNumber = other.entriesNumber;
     odID = other.odID;
     for (uint8_t i = 0; i < entriesNumber; i++) {
@@ -109,8 +211,8 @@ CANopen::MapParameter &CANopen::MapParameter::operator=(
     return *this;
 }
 
-CommParameter::CommParameter(int16_t index) {
-    odID = node.od().findObject(index);
+CommParameter::CommParameter(ObjectDictionnary &od, int16_t index) {
+    odID = od.findObject(index);
     if (odID < 0) {
         entriesNumber = 6;
         cobId = 0;
@@ -259,12 +361,13 @@ int8_t CommParameter::setData(Data data, int32_t id, SDOAbortCodes &abortCode) {
         return -1;
     }
     abortCode = SDOAbortCodes::SDOAbortCode_OK;
-
-    if (remap) {
-        node.pdo().reloadTPDO();
-        node.pdo().reloadRPDO();
-    }
     return 0;
+}
+
+bool CommParameter::takeRemap() {
+    bool pending = remap;
+    remap = false;
+    return pending;
 }
 
 CommParameter &CommParameter::operator=(const CommParameter &other) {
@@ -279,34 +382,82 @@ CommParameter &CommParameter::operator=(const CommParameter &other) {
     return *this;
 }
 
-PDO::PDO() {}
+PDO::PDO(ObjectDictionnary &od, CanTransport &transport, RemoteObjects &remote,
+         uint8_t nodeId)
+    : od(od), transport(transport), remote(remote), nodeId(nodeId) {}
 
 void PDO::init() {
     for (unsigned i = 0; i < OD_TPDO_COUNT; i++) initTPDO(i);
     for (unsigned i = 0; i < OD_RPDO_COUNT; i++) initRPDO(i);
 }
 
+bool PDO::consumes(FunctionCodes functionCode) const {
+    switch (functionCode) {
+        case FunctionCode_TPDO1:
+        case FunctionCode_TPDO2:
+        case FunctionCode_TPDO3:
+        case FunctionCode_TPDO4:
+        case FunctionCode_RPDO1:
+        case FunctionCode_RPDO2:
+        case FunctionCode_RPDO3:
+        case FunctionCode_RPDO4:
+            return true;
+        default:
+            return false;
+    }
+}
+
+void PDO::onFrame(Frame &frame, uint32_t now_us) {
+    switch (static_cast<FunctionCodes>(frame.functionCode)) {
+        case FunctionCode_TPDO1:
+        case FunctionCode_TPDO2:
+        case FunctionCode_TPDO3:
+        case FunctionCode_TPDO4:
+            receiveTPDO(frame, now_us);
+            break;
+        default:
+            receiveRPDO(frame, now_us);
+            break;
+    }
+}
+
+void PDO::onNmtState(NMTStates state) {
+    if (this->state == NMTState_Initialisation &&
+        state == NMTState_PreOperational)
+        reload();
+    if (state == NMTState_Operational)
+        enable();
+    else
+        disable();
+    this->state = state;
+}
+
+void PDO::reload() {
+    reloadTPDO();
+    reloadRPDO();
+}
+
 void PDO::enable() {
     enabled = true;
-    node.remote().enablePDO();
+    remote.enablePDO();
 }
 
 void PDO::disable() {
     enabled = false;
-    node.remote().disablePDO();
+    remote.disablePDO();
 }
 
 void PDO::initTPDO(unsigned index) {
     tpdos[index].commParameter =
-        CommParameter(TPDO_COMMUNICATION_INDEX + index);
-    tpdos[index].mapParameter = MapParameter(TPDO_MAPPING_INDEX + index);
+        CommParameter(od, TPDO_COMMUNICATION_INDEX + index);
+    tpdos[index].mapParameter = MapParameter(od, TPDO_MAPPING_INDEX + index);
     remapTPDO(index);
 }
 
 void PDO::initRPDO(unsigned index) {
     rpdos[index].commParameter =
-        CommParameter(RPDO_COMMUNICATION_INDEX + index);
-    rpdos[index].mapParameter = MapParameter(RPDO_MAPPING_INDEX + index);
+        CommParameter(od, RPDO_COMMUNICATION_INDEX + index);
+    rpdos[index].mapParameter = MapParameter(od, RPDO_MAPPING_INDEX + index);
     remapRPDO(index);
 }
 
@@ -316,15 +467,14 @@ void PDO::remapTPDO(unsigned index) {
     uint32_t sizeSum = tpdo->size = tpdo->count = 0;
     for (unsigned i = 0; i < OD_PDO_MAPPING_MAX; i++) {
         PDOMapEntry content = {tpdo->mapParameter.getMappedValue(i)};
-        int32_t id =
-            node.od().findObject(content.bits.index, content.bits.subindex);
-        sizeSum += node.od().getSize(id);
+        int32_t id = od.findObject(content.bits.index, content.bits.subindex);
+        sizeSum += od.getSize(id);
         if (sizeSum > PDO_DLC) break;
         tpdo->mappedEntries[i] = id;
         tpdo->size = sizeSum;
         if (id != -1) tpdo->count++;
     }
-    node.remote().configRemoteTPDO(
+    remote.configRemoteTPDO(
         index, tpdo->mappedEntries);  // assuming all TPDOs are remote TODO: add
                                       // check if remote
 }
@@ -335,26 +485,25 @@ void PDO::remapRPDO(unsigned index) {
     uint32_t sizeSum = rpdo->size = rpdo->count = 0;
     for (unsigned i = 0; i < OD_PDO_MAPPING_MAX; i++) {
         PDOMapEntry content = {rpdo->mapParameter.getMappedValue(i)};
-        int32_t id =
-            node.od().findObject(content.bits.index, content.bits.subindex);
-        sizeSum += node.od().getSize(id);
+        int32_t id = od.findObject(content.bits.index, content.bits.subindex);
+        sizeSum += od.getSize(id);
         if (sizeSum > PDO_DLC) break;
         rpdo->mappedEntries[i] = id;
         rpdo->size = sizeSum;
         if (id != -1) rpdo->count++;
     }
-    node.remote().configRemoteRPDO(index, rpdo->mappedEntries);
+    remote.configRemoteRPDO(index, rpdo->mappedEntries);
 }
 
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
     TPDO *tpdo = tpdos + index;
     uint32_t bytesTransferred = 0;
     Data tmp[OD_PDO_MAPPING_MAX];
-    node.remote().getRemoteTPDO(
+    remote.getRemoteTPDO(
         index, tmp);  // assuming all TPDOs are remote TODO: add check if remote
     for (unsigned i = 0; i < tpdo->count; i++) {
         int32_t id = tpdo->mappedEntries[i];
-        uint32_t size = node.od().getSize(id);
+        uint32_t size = od.getSize(id);
         if (bytesTransferred + size > PDO_DLC) break;
         memcpy(buffer + bytesTransferred, &tmp[i], size);
         bytesTransferred += size;
@@ -369,11 +518,11 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
     Data tmp[OD_PDO_MAPPING_MAX];
     for (unsigned i = 0; i < rpdo->count; i++) {
         int32_t id = rpdo->mappedEntries[i];
-        uint32_t size = node.od().getSize(id);
+        uint32_t size = od.getSize(id);
         memcpy(&tmp[i], buffer + bytesTransferred, size);
         bytesTransferred += size;
     }
-    node.remote().setRemoteRPDO(index, tmp);
+    remote.setRemoteRPDO(index, tmp);
     rpdo->timestamp_us = timestamp_us;
     rpdo->watchTimeoutFlag = true;
 }
@@ -384,12 +533,12 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us) {
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
-    node.transport().sendFrame(frame);
+    transport.sendFrame(frame);
     tpdo->timestamp_us = timestamp_us;
 }
 
 void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us) {
-    if (!enabled || frame.nodeId != node.nodeId || !frame.rtr) return;
+    if (!enabled || frame.nodeId != nodeId || !frame.rtr) return;
     uint8_t index;
     switch ((FunctionCodes)frame.functionCode) {
         case FunctionCode_TPDO1:
@@ -416,7 +565,7 @@ void PDO::receiveTPDO(Frame &frame, uint32_t timestamp_us) {
 }
 
 void PDO::receiveRPDO(Frame &frame, uint32_t timestamp_us) {
-    if (!enabled || frame.nodeId != node.nodeId) return;
+    if (!enabled || frame.nodeId != nodeId) return;
     uint8_t index;
     switch ((FunctionCodes)frame.functionCode) {
         case FunctionCode_RPDO1:
@@ -489,7 +638,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
         if (send) {
             uint32_t syncWindow = getSyncWindow_us();
             if (syncWindow != 0 &&
-                node.transport().getTime_us() - timestamp_us > syncWindow)
+                transport.getTime_us() - timestamp_us > syncWindow)
                 break;
             sendTPDO(i, timestamp_us);
         }
@@ -505,8 +654,8 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
 uint32_t PDO::getSyncWindow_us() {
     uint32_t value = 0;
     Data tmp;
-    if (node.od().isSubValid(0x1007, 0x00)) {
-        node.od().readData(tmp, 0x1007, 0x00);
+    if (od.isSubValid(0x1007, 0x00)) {
+        od.readData(tmp, 0x1007, 0x00);
         value = tmp.u32;
     };
     return value * 1000;
@@ -519,7 +668,7 @@ void PDO::transmitTPDO(unsigned index) {
     if (transmission == ACYCLIC) {
         tpdo->syncFlag = true;
     } else if (transmission >= EVENT1) {
-        uint32_t timestamp_us = node.transport().getTime_us();
+        uint32_t timestamp_us = transport.getTime_us();
         bool supported = tpdo->commParameter.isInhibitSupported();
         if (!supported ||
             (supported && (tpdo->commParameter.getInhibitTime_us() == 0 ||

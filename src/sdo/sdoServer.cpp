@@ -26,6 +26,13 @@ const SDO::Route SDO::routes[] = {
 SDO::SDO(ODAccessor &accessor, CanTransport &transport, uint8_t nodeId)
     : accessor(accessor), transport(transport), nodeId(nodeId) {}
 
+void SDO::onNmtState(NMTStates state) {
+    if (state == NMTState_PreOperational || state == NMTState_Operational)
+        enable();
+    else
+        disable();
+}
+
 void SDO::disable() {
     enabled = false;
     reset();

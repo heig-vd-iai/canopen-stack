@@ -25,17 +25,34 @@
 #define REMOTE_ACCESS_TIMEOUT_US 10000
 
 namespace CANopen {
+class CanTransport;
+class Persistence;
 class RemoteObjects;
-}
-
-using namespace CANopen;
+class EMCY;
+class HB;
+class PDO;
+class SYNC;
 
 /**
- * Route remote objects to their implementation.
- * Called once by Node::Node; the only link between generated code and
- * hardware.
+ * Route the object dictionary to the hardware it needs.
+ * Called once by Node::Node. The dictionary tables are generated as static
+ * data, so a program holds exactly one dictionary and one such binding.
  */
-void bindRemote(RemoteObjects &remote);
+void bindHardware(CanTransport &transport, Persistence &persistence,
+                  RemoteObjects &remote);
+
+/**
+ * Route the objects served by a service to its instance.
+ * Called by the application when it attaches the service, or by FullNode.
+ * A service that is not bound answers SDOAbortCode_ObjectNonExistent.
+ */
+void bindEmergency(EMCY &emcy);
+void bindHeartbeat(HB &hb);
+void bindPdo(PDO &pdo);
+void bindSync(SYNC &sync);
+}  // namespace CANopen
+
+using namespace CANopen;
 
 /**
  * Read or write an object and wait for a pending remote access to complete.
@@ -86,3 +103,28 @@ int8_t setLocalData_domain(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode);
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+
+/* Objects served by a CANopen service, referenced by the generated tables. */
+int8_t odGetSave(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t odSaveData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t odGetRestore(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t odRestoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t emcyGetErrorRegister(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t emcyGetErrorField(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t emcySetErrorField(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode);
+int8_t emcyGetErrorBehavior(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t emcySetErrorBehavior(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode);
+int8_t hbGetData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t hbSetData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t syncGetData(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t syncSetData(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoGetRpdoComm(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoSetRpdoComm(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoGetTpdoComm(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoSetTpdoComm(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoGetRpdoMap(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoSetRpdoMap(const Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoGetTpdoMap(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t pdoSetTpdoMap(const Data &data, int32_t id, SDOAbortCodes &abortCode);
