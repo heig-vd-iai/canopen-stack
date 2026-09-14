@@ -11,7 +11,7 @@
 #include "od_common.hpp"
 #include "pdo/pdo.hpp"
 #include "sdo/sdoServer.hpp"
-#include "sync.hpp"
+#include "sync/sync.hpp"
 
 namespace CANopen {
 

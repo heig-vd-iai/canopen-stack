@@ -10,6 +10,7 @@
 #include "pdo/config.hpp"
 #include "pdo/pdoChannel.hpp"
 #include "service.hpp"
+#include "sync/sync.hpp"
 
 namespace CANopen {
 
@@ -18,7 +19,7 @@ namespace CANopen {
  * unpack the received ones into the object dictionary or the remote side.
  * See CiA301:2011§7.2.2 (p. 33)
  */
-class PDO : public Service {
+class PDO : public Service, public SyncListener {
    public:
     PDO(ObjectDictionnary &od, CanTransport &transport, RemoteObjects &remote,
         uint8_t nodeId);
@@ -35,7 +36,7 @@ class PDO : public Service {
      * @param counter SYNC counter, 0 when the producer does not send one.
      * @param now_us Timestamp in microseconds of the SYNC reception.
      */
-    void onSync(uint8_t counter, uint32_t now_us);
+    void onSync(uint8_t counter, uint32_t now_us) override;
 
     /**
      * Trigger an application event on a TPDO.

@@ -43,27 +43,4 @@ struct Frame {
     uint16_t getCobID() const;
 };
 
-/**
- * This is a specialized Frame used by the SYNC class.
- * CiA301:2011§7.2.5.3.1 (p. 63)
- */
-struct SYNCFrame : public Frame {
-    /**
-     * Constructor for specialized CANopen SYNC frame.
-     * @param nodeId Node ID.
-     */
-    SYNCFrame(uint8_t nodeId);
-
-    /**
-     * Check if the optionnal counter value is present in the message.
-     * @return True if the counter is set, false otherwise.
-     */
-    bool isCounter() const;
-
-    /**
-     * Get the counter value.
-     * @return The counter value.
-     */
-    uint8_t getCounter() const;
-};
 }  // namespace CANopen
