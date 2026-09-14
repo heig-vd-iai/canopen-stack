@@ -195,8 +195,19 @@ def migrate_data(data: list, remote: bool, shape: Optional[list] = None) -> dict
     return out
 
 
-def migrate_object(index: int, obj: dict, profile_obj: Optional[dict]) -> dict:
-    """One v1 object dictionary entry as a v2 object."""
+def migrate_object(
+    index: int,
+    obj: dict,
+    profile_obj: Optional[dict],
+    shadowed: Optional[dict] = None,
+) -> dict:
+    """One v1 object dictionary entry as a v2 object.
+
+    `shadowed` is the profile definition of the same index when the v1 object
+    does not reference its profile: v2 completes every listed index from the
+    profiles, so the accessors the profile declares are switched off
+    explicitly to keep the object on local storage.
+    """
     if "logicalDevices" in obj:
         raise ValueError(f"0x{index:04X}: per-object logicalDevices are not supported")
 
@@ -225,6 +236,9 @@ def migrate_object(index: int, obj: dict, profile_obj: Optional[dict]) -> dict:
     if "enum" in obj:
         out["enum"] = migrate_enum(obj["enum"])
     out.update(migrate_accessors(obj, remote, first_access))
+    for key in ("get", "set"):
+        if shadowed and _given(shadowed, key) and key not in out:
+            out[key] = None
     out.update(migrate_data(data, remote, shape))
     return out
 
@@ -310,7 +324,19 @@ def migrate_config(v1: dict, v1_profiles: dict) -> dict:
         )
         if profile and profile_obj is None:
             raise ValueError(f"0x{index:04X}: not found in v1 profile {profile}")
-        out["objects"][HexInt(index)] = migrate_object(index, obj, profile_obj)
+        shadowed = None
+        if not profile:
+            shadowed = next(
+                (
+                    v1_profile_objects[pid][index]
+                    for pid in sorted(profiles)
+                    if index in v1_profile_objects.get(pid, {})
+                ),
+                None,
+            )
+        out["objects"][HexInt(index)] = migrate_object(
+            index, obj, profile_obj, shadowed
+        )
     return out
 
 

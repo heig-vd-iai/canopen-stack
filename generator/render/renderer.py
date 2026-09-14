@@ -12,7 +12,7 @@ import jinja2
 import mdformat
 
 from .. import tree
-from ..phf import PHF
+from ..phf import PHF, BuildNotFound
 from .context import RenderContext
 
 TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
@@ -138,6 +138,30 @@ class Renderer:
             modes.append((f"Mode{mode_suffix}", suffix, item))
         return self.env.get_template("modes.j2").render(headers=headers, modes=modes)
 
+    @staticmethod
+    def _build_phf(keys: list, values: list):
+        """Build the lookup hash, widening the table when no seed succeeds.
+
+        A small dictionary can leave every displacement search without a
+        solution at the derived table size; the next power of two always has
+        one and costs a few hundred bytes of flash.
+        """
+        table_size = None
+        for _ in range(4):
+            phf = PHF(keys, values=values, M=table_size, target_load=0.877, seed=43)
+            candidate_B_powers = [p for p in (8, 9) if (1 << p) <= phf.M] or None
+            try:
+                best = phf.build_best_parallel(
+                    candidate_B_powers=candidate_B_powers,
+                    trials_per_B=phf.trials,
+                    max_workers=os.cpu_count(),
+                )
+            except BuildNotFound:
+                table_size = phf.M * 2
+                continue
+            return phf, best
+        raise BuildNotFound(f"No lookup hash found for {len(keys)} objects.")
+
     def to_phf(self, header_file: str) -> Tuple[str, str]:
         keys = [
             (obj.index << 8) | (sub.subindex & 0xFF)
@@ -146,13 +170,7 @@ class Renderer:
         ]
         values = list(range(len(keys)))
 
-        phf = PHF(keys, values=values, M=None, target_load=0.877, seed=43)
-        candidate_B_powers = [p for p in (8, 9) if (1 << p) <= phf.M] or None
-        best = phf.build_best_parallel(
-            candidate_B_powers=candidate_B_powers,
-            trials_per_B=phf.trials,
-            max_workers=os.cpu_count(),
-        )
+        phf, best = self._build_phf(keys, values)
 
         mapped = sum(
             1

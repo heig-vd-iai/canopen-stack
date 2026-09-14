@@ -4,14 +4,62 @@
 #include "emergency.hpp"
 
 #include "frame.hpp"
-#include "node.hpp"
+#include "od_common.hpp"
 
 using namespace CANopen;
 
+namespace {
+EMCY *boundEmcy = nullptr;
+}
+
+void CANopen::bindEmergency(EMCY &emcy) { boundEmcy = &emcy; }
+
+int8_t emcyGetErrorRegister(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundEmcy == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundEmcy->errorRegister.getData(data, id, abortCode);
+}
+
+int8_t emcyGetErrorField(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundEmcy == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundEmcy->preDefinedErrorField.getData(data, id, abortCode);
+}
+
+int8_t emcySetErrorField(const Data &data, int32_t id,
+                         SDOAbortCodes &abortCode) {
+    if (boundEmcy == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundEmcy->preDefinedErrorField.setData(data, id, abortCode);
+}
+
+int8_t emcyGetErrorBehavior(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    if (boundEmcy == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundEmcy->errorBehavior.getData(data, id, abortCode);
+}
+
+int8_t emcySetErrorBehavior(const Data &data, int32_t id,
+                            SDOAbortCodes &abortCode) {
+    if (boundEmcy == nullptr) {
+        abortCode = SDOAbortCode_ObjectNonExistent;
+        return -1;
+    }
+    return boundEmcy->errorBehavior.setData(data, id, abortCode);
+}
+
 ErrorRegister::ErrorRegister() : value(0) {}
 
-void ErrorRegister::init() {
-    odID = node.od().findObject(ERROR_REGISTER_INDEX);
+void ErrorRegister::init(ObjectDictionnary &od) {
+    odID = od.findObject(ERROR_REGISTER_INDEX);
 }
 
 uint8_t ErrorRegister::getValue() { return value; }
@@ -103,8 +151,8 @@ int8_t ErrorRegister::setData(const Data &data, int32_t odID,
 
 PreDefinesErrorField::PreDefinesErrorField() : errorsNumber(0) {}
 
-void PreDefinesErrorField::init() {
-    odID = node.od().findObject(PREDEFINED_ERROR_FIELD_INDEX);
+void PreDefinesErrorField::init(ObjectDictionnary &od) {
+    odID = od.findObject(PREDEFINED_ERROR_FIELD_INDEX);
     for (int i = 0; i < PREDEFINED_ERROR_FIELD_SIZE; i++) errorsField[i] = 0;
 }
 
@@ -171,8 +219,8 @@ int8_t PreDefinesErrorField::setData(const Data &data, int32_t odID,
 
 ErrorBehavior::ErrorBehavior() {}
 
-void ErrorBehavior::init() {
-    odID = node.od().findObject(ERROR_BEHAVIOR_INDEX);
+void ErrorBehavior::init(ObjectDictionnary &od) {
+    odID = od.findObject(ERROR_BEHAVIOR_INDEX);
     Data data;
     SDOAbortCodes abortCode;
     numberOfEntries = 2;
@@ -220,22 +268,24 @@ int8_t ErrorBehavior::setData(const Data &data, int32_t odID,
     return 0;
 }
 
-EMCY::EMCY() : errorRegister(), preDefinedErrorField(), errorBehavior() {}
+EMCY::EMCY(ObjectDictionnary &od, CanTransport &transport, NMT &nmt,
+           uint8_t nodeId)
+    : od(od), transport(transport), nmt(nmt), nodeId(nodeId) {}
 
 void EMCY::init() {
-    errorRegister.init();
-    preDefinedErrorField.init();
-    errorBehavior.init();
+    errorRegister.init(od);
+    preDefinedErrorField.init(od);
+    errorBehavior.init(od);
 }
 
-void EMCY::enable() { enabled = true; }
-
-void EMCY::disable() { enabled = false; }
+void EMCY::onNmtState(NMTStates state) {
+    enabled = state == NMTState_PreOperational || state == NMTState_Operational;
+}
 
 void EMCY::sendError(uint16_t errorCode, uint32_t manufacturerCode) {
-    EmergencyFrame frame(node.nodeId, errorCode, errorRegister.getValue(),
+    EmergencyFrame frame(nodeId, errorCode, errorRegister.getValue(),
                          manufacturerCode);
-    node.hardware().sendFrame(frame);
+    transport.sendFrame(frame);
 }
 
 void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
@@ -303,7 +353,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
                                                    // communication error
         default:
         case ErrorBehaviorValue_PreOperational:
-            if (node._nmt.getState() == NMTState_Operational)
+            if (nmt.getState() == NMTState_Operational)
                 command = NMTServiceCommand_EnterPreOperational;
             break;
         case ErrorBehaviorValue_None:
@@ -313,7 +363,7 @@ void EMCY::raiseError(uint16_t errorCode, uint16_t manufacturerCode) {
             command = NMTServiceCommand_Stop;
             break;
     }
-    node._nmt.setTransition(command);
+    nmt.setTransition(command);
 }
 
 void EMCY::clearErrorBit(unsigned bit) {

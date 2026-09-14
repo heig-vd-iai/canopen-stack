@@ -247,3 +247,30 @@ def test_shipped_profiles_are_the_migration_of_the_v1_profiles():
     for pid, data in migrated.items():
         expected = read_yaml_file(ROOT / "generator" / "profiles" / f"{pid}.yaml")
         assert yaml.safe_load(yaml.dump(data, Dumper=Dumper)) == expected
+
+
+def test_bootloader_example_is_the_migration_of_its_v1_version():
+    v1 = read_yaml_file(ROOT / "examples" / "bootloader.yaml")
+    v1_profiles = read_yaml_file(ROOT / "tests" / "fixtures" / "profiles-v1.yaml")
+    migrated = yaml.safe_load(yaml.dump(migrate_config(v1, v1_profiles), Dumper=Dumper))
+    assert migrated == read_yaml_file(ROOT / "examples" / "bootloader.v2.yaml")
+
+
+def test_standalone_object_switches_off_the_profile_accessors():
+    config = {
+        "info": {"device": {"nodeID": 1}},
+        "objectDictionary": {
+            0x1018: {
+                "name": "Identity object",
+                "data": [
+                    {"type": "uint8", "access": "ro", "default": 2},
+                    {"type": "uint32", "access": "ro"},
+                    {"type": "uint32", "access": "ro"},
+                ],
+            }
+        },
+    }
+    migrated = migrate_config(config, V1_PROFILES)
+    identity = migrated["objects"][0x1018]
+    assert identity["get"] is None
+    assert "set" not in identity

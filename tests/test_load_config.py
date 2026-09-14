@@ -29,7 +29,7 @@ def test_profile_object_is_completed(config):
     assert heartbeat.module == "cia301"
     assert heartbeat.category == "mandatory"
     assert heartbeat.default == 1000
-    assert heartbeat.get == "node.hb().getData"
+    assert heartbeat.get == "hbGetData"
 
 
 def test_record_override_by_position(config):

@@ -1,148 +1,218 @@
-#include "hardware-delay.hpp"
-#include "node.hpp"
+#include "od_common.hpp"
+
+#include "hal/can-transport.hpp"
+#include "hal/persistence.hpp"
+#include "hal/remote-objects.hpp"
 #include "od.hpp"
+#include "od/parameterGroup.hpp"
 #include "od_lookup.hpp"
+
+namespace {
+CanTransport *clock = nullptr;
+Persistence *store = nullptr;
+RemoteObjects *remoteObjects = nullptr;
+ObjectDictionnary dictionary;
+}  // namespace
+
+void CANopen::bindHardware(CanTransport &transport, Persistence &persistence,
+                           RemoteObjects &remote) {
+    clock = &transport;
+    store = &persistence;
+    remoteObjects = &remote;
+}
+
+int8_t readDataWait(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    const uint32_t start = clock->getTime_us();
+    int8_t result;
+    while ((result = dictionary.readData(data, id, abortCode)) == 1) {
+        if (clock->getTime_us() - start > REMOTE_ACCESS_TIMEOUT_US) break;
+    }
+    return result;
+}
+
+int8_t writeDataWait(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    const uint32_t start = clock->getTime_us();
+    int8_t result;
+    while ((result = dictionary.writeData(data, id, abortCode)) == 1) {
+        if (clock->getTime_us() - start > REMOTE_ACCESS_TIMEOUT_US) break;
+    }
+    return result;
+}
+
+int8_t odGetSave(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return dictionary.getSave(data, id, abortCode);
+}
+
+int8_t odSaveData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return dictionary.saveData(data, id, abortCode);
+}
+
+int8_t odGetRestore(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return dictionary.getRestore(data, id, abortCode);
+}
+
+int8_t odRestoreData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    return dictionary.restoreData(data, id, abortCode);
+}
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.b = node.od().boolTable[node.od().dataIndexTable[id]];
+    data.b =
+        ObjectDictionnary::boolTable[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_bool(const Data &data, int32_t id,
                          SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().boolTable[node.od().dataIndexTable[id]] = data.b;
+    ObjectDictionnary::boolTable[ObjectDictionnary::dataIndexTable[id]] =
+        data.b;
     return 0;
 }
 
 int8_t getLocalData_int8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.i8 = node.od().i8Table[node.od().dataIndexTable[id]];
+    data.i8 = ObjectDictionnary::i8Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_int8_t(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().i8Table[node.od().dataIndexTable[id]] = data.i8;
+    ObjectDictionnary::i8Table[ObjectDictionnary::dataIndexTable[id]] = data.i8;
     return 0;
 }
 
 int8_t getLocalData_int16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.i16 = node.od().i16Table[node.od().dataIndexTable[id]];
+    data.i16 =
+        ObjectDictionnary::i16Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_int16_t(const Data &data, int32_t id,
                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().i16Table[node.od().dataIndexTable[id]] = data.i16;
+    ObjectDictionnary::i16Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.i16;
     return 0;
 }
 
 int8_t getLocalData_int32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.i32 = node.od().i32Table[node.od().dataIndexTable[id]];
+    data.i32 =
+        ObjectDictionnary::i32Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_int32_t(const Data &data, int32_t id,
                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().i32Table[node.od().dataIndexTable[id]] = data.i32;
+    ObjectDictionnary::i32Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.i32;
     return 0;
 }
 
 int8_t getLocalData_int64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.i64 = node.od().i64Table[node.od().dataIndexTable[id]];
+    data.i64 =
+        ObjectDictionnary::i64Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_int64_t(const Data &data, int32_t id,
                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().i64Table[node.od().dataIndexTable[id]] = data.i64;
+    ObjectDictionnary::i64Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.i64;
     return 0;
 }
 
 int8_t getLocalData_uint8_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.u8 = node.od().u8Table[node.od().dataIndexTable[id]];
+    data.u8 = ObjectDictionnary::u8Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_uint8_t(const Data &data, int32_t id,
                             SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().u8Table[node.od().dataIndexTable[id]] = data.u8;
+    ObjectDictionnary::u8Table[ObjectDictionnary::dataIndexTable[id]] = data.u8;
     return 0;
 }
 
 int8_t getLocalData_uint16_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.u16 = node.od().u16Table[node.od().dataIndexTable[id]];
+    data.u16 =
+        ObjectDictionnary::u16Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_uint16_t(const Data &data, int32_t id,
                              SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().u16Table[node.od().dataIndexTable[id]] = data.u16;
+    ObjectDictionnary::u16Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.u16;
     return 0;
 }
 
 int8_t getLocalData_uint32_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.u32 = node.od().u32Table[node.od().dataIndexTable[id]];
+    data.u32 =
+        ObjectDictionnary::u32Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_uint32_t(const Data &data, int32_t id,
                              SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().u32Table[node.od().dataIndexTable[id]] = data.u32;
+    ObjectDictionnary::u32Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.u32;
     return 0;
 }
 
 int8_t getLocalData_uint64_t(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.u64 = node.od().u64Table[node.od().dataIndexTable[id]];
+    data.u64 =
+        ObjectDictionnary::u64Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_uint64_t(const Data &data, int32_t id,
                              SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().u64Table[node.od().dataIndexTable[id]] = data.u64;
+    ObjectDictionnary::u64Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.u64;
     return 0;
 }
 
 int8_t getLocalData_float(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.f32 = node.od().f32Table[node.od().dataIndexTable[id]];
+    data.f32 =
+        ObjectDictionnary::f32Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_float(const Data &data, int32_t id,
                           SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().f32Table[node.od().dataIndexTable[id]] = data.f32;
+    ObjectDictionnary::f32Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.f32;
     return 0;
 }
 
 int8_t getLocalData_double(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    data.f64 = node.od().f64Table[node.od().dataIndexTable[id]];
+    data.f64 =
+        ObjectDictionnary::f64Table[ObjectDictionnary::dataIndexTable[id]];
     return 0;
 }
 
 int8_t setLocalData_double(const Data &data, int32_t id,
                            SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
-    node.od().f64Table[node.od().dataIndexTable[id]] = data.f64;
+    ObjectDictionnary::f64Table[ObjectDictionnary::dataIndexTable[id]] =
+        data.f64;
     return 0;
 }
 
@@ -163,11 +233,11 @@ int8_t setLocalData_domain(const Data &, int32_t, SDOAbortCodes &) {
 }
 
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return node.hardware().getRemoteData(data, id, abortCode);
+    return remoteObjects->getRemoteData(data, id, abortCode);
 }
 
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return node.hardware().setRemoteData(data, id, abortCode);
+    return remoteObjects->setRemoteData(data, id, abortCode);
 }
 
 int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
@@ -236,20 +306,20 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 }
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
-    if (parameterGroup == 1) {
-        uint64_t signature;
-        node.hardware().loadSignatureFromFlash(signature);
-        if (signature != od_signature) {
-            node.hardware().saveSignatureToFlash(od_signature);
+    Persistence &persistence = *store;
+    if (parameterGroup == ParameterGroup_All) {
+        uint64_t signature = 0;
+        if (!persistence.loadSignature(signature) ||
+            signature != od_signature) {
+            persistence.saveSignature(od_signature);
         }
         bool result = true;
-        result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
-        result &= node.hardware().saveDataToFlash(
-            ParameterGroup_Application);  // TODO: meta generate
-        result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA);
+        result &= persistence.saveGroup(ParameterGroup_Communication);
+        result &= persistence.saveGroup(ParameterGroup_Application);
+        result &= persistence.saveGroup(ParameterGroup_ManufacturerA);
         return result;
     }
-    return node.hardware().saveDataToFlash(parameterGroup);
+    return persistence.saveGroup(parameterGroup);
 }
 
 int8_t ObjectDictionnary::saveData(const Data &data, int32_t id,
@@ -291,55 +361,29 @@ int8_t ObjectDictionnary::getSave(Data &data, int32_t id,
 }
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
-    uint64_t signature;
-    node.hardware().loadSignatureFromFlash(signature);
-    if (signature != od_signature) {
+    Persistence &persistence = *store;
+    uint64_t signature = 0;
+    if (!persistence.loadSignature(signature) || signature != od_signature) {
         return false;
     }
-    if (parameterGroup == 1) {
-        node.hardware().loadDataFromFlash(ParameterGroup_Communication);
-        node.hardware().loadDataFromFlash(
-            ParameterGroup_Application);  // TODO: meta generate
-        node.hardware().loadDataFromFlash(
-            ParameterGroup_Application);  // load 2 time for load first unit
-                                          // TODO: find better way
-        node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA);
-        return true;
+    if (parameterGroup == ParameterGroup_All) {
+        bool result = true;
+        result &= persistence.loadGroup(ParameterGroup_Communication);
+        result &= persistence.loadGroup(ParameterGroup_Application);
+        result &= persistence.loadGroup(ParameterGroup_ManufacturerA);
+        return result;
     }
-    return node.hardware().loadDataFromFlash(parameterGroup);
+    return persistence.loadGroup(parameterGroup);
 }
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
-    Data tmp;
-    uint16_t minIndex = 0x0000;
-    uint16_t maxIndex = 0xFFFF;
     SDOAbortCodes abortCode;
-    int count = 0;
-
-    if (parameterGroup == ParameterGroup_Communication) {  // TODO: meta
-                                                           // generate
-        minIndex = 0x1000;  // TODO: move to define
-        maxIndex = 0x1FFF;
-    } else if (parameterGroup == ParameterGroup_Application) {
-        minIndex = 0x6000;
-        maxIndex = 0x9FFF;
-    } else if (parameterGroup == ParameterGroup_ManufacturerA) {
-        minIndex = 0x2000;
-        maxIndex = 0x4FFF;
-    }
     for (int32_t i = 0; i < static_cast<int32_t>(length); i++) {
-        if (CANopenOD::objectIndexTable[i].first >= minIndex &&
-            CANopenOD::objectIndexTable[i].first <= maxIndex) {
-            tmp = getMetadata(i)->getDefaultValue();
-            count = 0;
-            while (writeData(tmp, i, abortCode) == 1) {
-                count++;
-                if (count > MAX_WRITE_TRY) {
-                    break;
-                }
-            }
-            usleep(100);  // FIXME: understand why this is needed
-        }
+        if (!inParameterGroup(CANopenOD::objectIndexTable[i].first,
+                              parameterGroup))
+            continue;
+        const Data tmp = getMetadata(i)->getDefaultValue();
+        writeDataWait(tmp, i, abortCode);
     }
     return true;
 }

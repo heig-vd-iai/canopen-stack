@@ -29,7 +29,7 @@ def test_load_profile_301():
     sub0 = mapping.subentries()[0]
     assert str(sub0.access) == "rw"
     assert sub0.default == 0
-    assert sub0.get == "node.pdo().rpdos[0].mapParameter.getData"
+    assert sub0.get == "pdoGetRpdoMap"
 
 
 def test_load_profile_402():

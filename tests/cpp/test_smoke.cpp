@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "fake-hardware.hpp"
+#include "full-harness.hpp"
 #include "node.hpp"
 
 using namespace CANopen;
@@ -42,4 +42,30 @@ TEST_CASE("NMT start command switches to operational") {
     CHECK(node.nmt().getState() == NMTState_Operational);
     node.nmt().setTransition(NMTServiceCommand_EnterPreOperational);
     CHECK(node.nmt().getState() == NMTState_PreOperational);
+}
+
+TEST_CASE("update drains the transport before running the services") {
+    FakeHardware &hardware = initNodeOnce();
+    NMTFrame start(0);
+    start.dlc = 2;
+    start.data[0] = NMTServiceCommand_Start;
+    start.data[1] = OD_NODE_ID;
+    hardware.incoming.push_back(start);
+    node.update();
+    CHECK(hardware.incoming.empty());
+    CHECK(node.nmt().getState() == NMTState_Operational);
+    node.nmt().setTransition(NMTServiceCommand_EnterPreOperational);
+    CHECK(node.nmt().getState() == NMTState_PreOperational);
+}
+
+TEST_CASE("reset node resets the remote side and runs the application hook") {
+    FakeHardware &hardware = initNodeOnce();
+    static bool hookCalled = false;
+    node.nmt().onReset = []() { hookCalled = true; };
+    const unsigned before = hardware.remoteResets;
+    node.nmt().setTransition(NMTServiceCommand_ResetNode);
+    CHECK(hardware.remoteResets == before + 1);
+    CHECK(hookCalled);
+    CHECK(node.nmt().getState() == NMTState_PreOperational);
+    node.nmt().onReset = nullptr;
 }

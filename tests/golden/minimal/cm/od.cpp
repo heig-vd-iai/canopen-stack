@@ -3,11 +3,10 @@
  * This is an auto-generated file, do not edit it directly.
  */
 #include "od.hpp"
-#include "node.hpp"
 
 using namespace CANopen;
 
-const uint64_t od_signature = 202609141043u;
+const uint64_t od_signature = 202609141111u;
 
 /**
  * Metadata declaration for each object.
@@ -166,241 +165,241 @@ const Metadata *ObjectDictionnary::objectMetadataTable[73] = {
  * Getters/Setters for local data.
  */
 static int8_t getobject1001sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.emcy().errorRegister.getData(data, id, abortCode);
+    return emcyGetErrorRegister(data, id, abortCode);
 }
 static int8_t getobject1010sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t getobject1010sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t setobject1010sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().saveData(data, id, abortCode);
+    return odSaveData(data, id, abortCode);
 }
 static int8_t getobject1010sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t setobject1010sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().saveData(data, id, abortCode);
+    return odSaveData(data, id, abortCode);
 }
 static int8_t getobject1010sub3(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t setobject1010sub3(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().saveData(data, id, abortCode);
+    return odSaveData(data, id, abortCode);
 }
 static int8_t getobject1010sub4(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t setobject1010sub4(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().saveData(data, id, abortCode);
+    return odSaveData(data, id, abortCode);
 }
 static int8_t getobject1010sub5(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getSave(data, id, abortCode);
+    return odGetSave(data, id, abortCode);
 }
 static int8_t setobject1010sub5(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().saveData(data, id, abortCode);
+    return odSaveData(data, id, abortCode);
 }
 static int8_t getobject1011sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t getobject1011sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t setobject1011sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().restoreData(data, id, abortCode);
+    return odRestoreData(data, id, abortCode);
 }
 static int8_t getobject1011sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t setobject1011sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().restoreData(data, id, abortCode);
+    return odRestoreData(data, id, abortCode);
 }
 static int8_t getobject1011sub3(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t setobject1011sub3(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().restoreData(data, id, abortCode);
+    return odRestoreData(data, id, abortCode);
 }
 static int8_t getobject1011sub4(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t setobject1011sub4(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().restoreData(data, id, abortCode);
+    return odRestoreData(data, id, abortCode);
 }
 static int8_t getobject1011sub5(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().getRestore(data, id, abortCode);
+    return odGetRestore(data, id, abortCode);
 }
 static int8_t setobject1011sub5(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.od().restoreData(data, id, abortCode);
+    return odRestoreData(data, id, abortCode);
 }
 static int8_t getobject1017sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.hb().getData(data, id, abortCode);
+    return hbGetData(data, id, abortCode);
 }
 static int8_t setobject1017sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.hb().setData(data, id, abortCode);
+    return hbSetData(data, id, abortCode);
 }
 static int8_t getobject1400sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetRpdoComm(data, id, abortCode);
 }
 static int8_t getobject1400sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetRpdoComm(data, id, abortCode);
 }
 static int8_t setobject1400sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetRpdoComm(data, id, abortCode);
 }
 static int8_t getobject1400sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetRpdoComm(data, id, abortCode);
 }
 static int8_t setobject1400sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetRpdoComm(data, id, abortCode);
 }
 static int8_t getobject1600sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub3(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub3(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub4(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub4(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub5(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub5(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub6(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub6(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub7(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub7(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1600sub8(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetRpdoMap(data, id, abortCode);
 }
 static int8_t setobject1600sub8(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().rpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetRpdoMap(data, id, abortCode);
 }
 static int8_t getobject1800sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub3(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub3(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub4(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub4(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub5(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub5(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1800sub6(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.getData(data, id, abortCode);
+    return pdoGetTpdoComm(data, id, abortCode);
 }
 static int8_t setobject1800sub6(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].commParameter.setData(data, id, abortCode);
+    return pdoSetTpdoComm(data, id, abortCode);
 }
 static int8_t getobject1a00sub0(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub1(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub1(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub2(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub2(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub3(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub3(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub4(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub4(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub5(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub5(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub6(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub6(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub7(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub7(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t getobject1a00sub8(Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.getData(data, id, abortCode);
+    return pdoGetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject1a00sub8(const Data &data, int32_t id, SDOAbortCodes &abortCode){
-    return node.pdo().tpdos[0].mapParameter.setData(data, id, abortCode);
+    return pdoSetTpdoMap(data, id, abortCode);
 }
 static int8_t setobject2003sub0(const Data &data, int32_t id, SDOAbortCodes &abortCode){
     abortCode = data.u16 < 10 ? SDOAbortCode_DownloadValueTooLow : data.u16 > 100 ? SDOAbortCode_DownloadValueTooHigh : SDOAbortCode_OK;

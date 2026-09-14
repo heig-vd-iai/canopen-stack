@@ -1,0 +1,97 @@
+info:
+  fileVersion: 1
+  fileRevision: 0
+  description: Bootloader device, program download over SDO block transfer
+  createdBy: canopen-stack
+  creationTime: "10:00"
+  creationDate: "2026-09-14"
+  modifiedBy: canopen-stack
+  device:
+    vendorName: HEIG-VD
+    vendorNumber: 0
+    productName: bootloader
+    productNumber: 2
+    revisionNumber: 1
+    orderCode: 0
+    nodeID: 1
+
+logicalDevices:
+  0: 301
+
+objectDictionary:
+  0x1000:
+    profile: 301
+    module: cia301
+  0x1001:
+    name: Error register
+    module: cia301
+    data:
+      - type: uint8
+        access: ro
+        default: 0
+  0x1017:
+    profile: 301
+    module: cia301
+    data:
+      - default: 1000
+  0x1018:
+    profile: 301
+    module: cia301
+    data:
+      - default: 4
+      - default: 0
+      - default: 2
+      - default: 1
+      - default: 0
+
+  0x1F50:
+    name: Program data
+    module: cia302
+    description: Firmware image, written by SDO block download
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 1
+      - type: domain
+        name: Program number 1
+        access: wo
+  0x1F51:
+    name: Program control
+    module: cia302
+    description: Start, stop and reset the downloaded program
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 1
+      - type: uint8
+        name: Program number 1
+        access: rw
+        default: 0
+  0x1F56:
+    name: Program software identification
+    module: cia302
+    description: Checksum of the downloaded program
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 1
+      - type: uint32
+        name: Program number 1
+        access: ro
+        default: 0
+  0x1F57:
+    name: Flash status identification
+    module: cia302
+    description: Status of the last flash operation
+    data:
+      - type: uint8
+        name: Number of entries
+        access: ro
+        default: 1
+      - type: uint32
+        name: Program number 1
+        access: ro
+        default: 0

@@ -1,0 +1,205 @@
+[FileInfo]
+FileName = bootloader.eds
+FileVersion = 1
+FileRevision = 0
+EDSVersion = 4.0
+Description = Bootloader device, program download over SDO block transfer
+CreationTime = 10:00
+CreationDate = 2026-09-14
+CreatedBy = canopen-stack
+ModificationTime = 11:12
+ModificationDate = 2026-09-14
+ModifiedBy = canopen-stack
+
+[DeviceInfo]
+VendorName = HEIG-VD
+VendorNumber = 0
+ProductName = bootloader
+ProductNumber = 2
+RevisionNumber = 1
+OrderCode = 0
+LSS_Supported = 0
+BaudRate_10 = 1
+BaudRate_20 = 1
+BaudRate_50 = 1
+BaudRate_125 = 1
+BaudRate_250 = 1
+BaudRate_500 = 1
+BaudRate_800 = 1
+BaudRate_1000 = 1
+SimpleBootUpSlave = 1
+SimpleBootUpMaster = 0
+Granularity = 8
+DynamicChannelsSupported = 0
+CompactPDO = 0
+GroupMessaging = 0
+NrOfRXPDO = 0
+NrOfTXPDO = 0
+
+[MandatoryObjects]
+SupportedObjects = 4
+1 = 0x1000
+2 = 0x1001
+3 = 0x1017
+4 = 0x1018
+
+[1000]
+ParameterName = Device type
+ObjectType = 0x07
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0x00000000
+
+[1001]
+ParameterName = Error register
+ObjectType = 0x07
+DataType = 0x05
+AccessType = ro
+PDOMapping = 1
+DefaultValue = 0
+
+[1017]
+ParameterName = Producer hearbeat time
+ObjectType = 0x07
+DataType = 0x06
+AccessType = rw
+PDOMapping = 0
+DefaultValue = 1000
+
+[1018]
+ParameterName = Identity object
+ObjectType = 0x09
+SubNumber = 5
+
+[1018sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 4
+
+[1018sub1]
+ParameterName = Vendor-ID
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
+[1018sub2]
+ParameterName = Product code
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 2
+
+[1018sub3]
+ParameterName = Revision number
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1018sub4]
+ParameterName = Serial number
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
+[OptionalObjects]
+SupportedObjects = 4
+1 = 0x1f50
+2 = 0x1f51
+3 = 0x1f56
+4 = 0x1f57
+
+[1f50]
+ParameterName = Program data
+ObjectType = 0x09
+SubNumber = 2
+
+[1f50sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1f50sub1]
+ParameterName = Program number 1
+ObjectType = 0x09
+DataType = 0x0F
+AccessType = wo
+PDOMapping = 0
+DefaultValue = 0
+
+[1f51]
+ParameterName = Program control
+ObjectType = 0x09
+SubNumber = 2
+
+[1f51sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1f51sub1]
+ParameterName = Program number 1
+ObjectType = 0x09
+DataType = 0x05
+AccessType = rw
+PDOMapping = 0
+DefaultValue = 0
+
+[1f56]
+ParameterName = Program software identification
+ObjectType = 0x09
+SubNumber = 2
+
+[1f56sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1f56sub1]
+ParameterName = Program number 1
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
+[1f57]
+ParameterName = Flash status identification
+ObjectType = 0x09
+SubNumber = 2
+
+[1f57sub0]
+ParameterName = Number of entries
+ObjectType = 0x09
+DataType = 0x05
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 1
+
+[1f57sub1]
+ParameterName = Program number 1
+ObjectType = 0x09
+DataType = 0x07
+AccessType = ro
+PDOMapping = 0
+DefaultValue = 0
+
