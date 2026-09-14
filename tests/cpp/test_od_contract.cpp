@@ -48,7 +48,7 @@ TEST_CASE("device type is derived from the logical device profile") {
 }
 
 TEST_CASE("default values land in the right typed table") {
-    CHECK(readById(OD_OBJECT_2000_SUB0).u8 == 11);
+    CHECK(readById(OD_OBJECT_2000_SUB0).u8 == 10);
     CHECK(readById(OD_OBJECT_2000_SUB1).b == true);
     CHECK(readById(OD_OBJECT_2000_SUB2).i8 == -8);
     CHECK(readById(OD_OBJECT_2000_SUB3).i16 == -16);

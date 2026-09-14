@@ -7,7 +7,7 @@
 
 using namespace CANopen;
 
-const uint64_t od_signature = 202609111257u;
+const uint64_t od_signature = 202609141043u;
 
 /**
  * Metadata declaration for each object.
@@ -60,7 +60,7 @@ static Metadata_uint32_t object1a00sub5Metadata{0b00011, 0};
 static Metadata_uint32_t object1a00sub6Metadata{0b00011, 0};
 static Metadata_uint32_t object1a00sub7Metadata{0b00011, 0};
 static Metadata_uint32_t object1a00sub8Metadata{0b00011, 0};
-static Metadata_uint8_t object2000sub0Metadata{0b00001, 11};
+static Metadata_uint8_t object2000sub0Metadata{0b00001, 10};
 static Metadata_bool object2000sub1Metadata{0b00011, 1};
 static Metadata_int8_t object2000sub2Metadata{0b00011, -8};
 static Metadata_int16_t object2000sub3Metadata{0b00011, -16};
@@ -599,7 +599,7 @@ uint8_t ObjectDictionnary::u8Table[15] = {
     /* 0009 - 036 */ 0,
     /* 0010 - 038 */ 0,
     /* 0011 - 039 */ 0,
-    /* 0012 - 048 */ 11,
+    /* 0012 - 048 */ 10,
     /* 0013 - 062 */ 3,
     /* 0014 - 068 */ 0,
 };

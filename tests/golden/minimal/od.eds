@@ -7,8 +7,8 @@ Description = Minimal device used as generator fixture and golden reference
 CreationTime = 10:00
 CreationDate = 2026-09-11
 CreatedBy = canopen-stack
-ModificationTime = 12:57
-ModificationDate = 2026-09-11
+ModificationTime = 10:43
+ModificationDate = 2026-09-14
 ModifiedBy = canopen-stack
 
 [DeviceInfo]
@@ -163,7 +163,7 @@ ObjectType = 0x09
 SubNumber = 6
 
 [1010sub0]
-ParameterName = highestt sub-index supported
+ParameterName = Highest sub-index supported
 ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
@@ -216,7 +216,7 @@ ObjectType = 0x09
 SubNumber = 6
 
 [1011sub0]
-ParameterName = highestt sub-index supported
+ParameterName = Highest sub-index supported
 ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
@@ -269,7 +269,7 @@ ObjectType = 0x09
 SubNumber = 3
 
 [1400sub0]
-ParameterName = Number of of entries
+ParameterName = Number of entries
 ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
@@ -298,7 +298,7 @@ ObjectType = 0x09
 SubNumber = 9
 
 [1600sub0]
-ParameterName = Number of of entries
+ParameterName = Number of entries
 ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
@@ -375,7 +375,7 @@ ObjectType = 0x09
 SubNumber = 7
 
 [1800sub0]
-ParameterName = Number of of entries
+ParameterName = Number of entries
 ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
@@ -436,7 +436,7 @@ ObjectType = 0x09
 SubNumber = 9
 
 [1a00sub0]
-ParameterName = Number of of entries
+ParameterName = Number of entries
 ObjectType = 0x09
 DataType = 0x05
 AccessType = rw
@@ -518,7 +518,7 @@ ObjectType = 0x09
 DataType = 0x05
 AccessType = ro
 PDOMapping = 0
-DefaultValue = 11
+DefaultValue = 10
 
 [2000sub1]
 ParameterName = A boolean

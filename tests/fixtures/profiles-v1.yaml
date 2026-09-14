@@ -108,7 +108,7 @@ profiles:
         set: node.od().saveData
         data:
           - type: uint8
-            name: highestt sub-index supported
+            name: Highest sub-index supported
             access: ro
             default: 5
           - type: uint32
@@ -133,7 +133,7 @@ profiles:
         set: node.od().restoreData
         data:
           - type: uint8
-            name: highestt sub-index supported
+            name: Highest sub-index supported
             access: ro
             default: 5
           - type: uint32
@@ -192,7 +192,7 @@ profiles:
         category: optional
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -208,7 +208,7 @@ profiles:
         set: node.emcy().errorBehavior.setData
         data:
         - type: uint32
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           default: 2
           access: ro
         - type: uint8
@@ -226,7 +226,7 @@ profiles:
         set: node.pdo().rpdos[0].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 2
         - type: uint32
@@ -243,7 +243,7 @@ profiles:
         set: node.pdo().rpdos[1].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 2
         - type: uint32
@@ -260,7 +260,7 @@ profiles:
         set: node.pdo().rpdos[2].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 2
         - type: uint32
@@ -277,7 +277,7 @@ profiles:
         set: node.pdo().rpdos[3].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 2
         - type: uint32
@@ -294,7 +294,7 @@ profiles:
         set: node.pdo().rpdos[0].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -327,7 +327,7 @@ profiles:
         set: node.pdo().rpdos[1].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -360,7 +360,7 @@ profiles:
         set: node.pdo().rpdos[2].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -393,7 +393,7 @@ profiles:
         set: node.pdo().rpdos[3].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -426,7 +426,7 @@ profiles:
         set: node.pdo().tpdos[0].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 6
         - type: uint32
@@ -455,7 +455,7 @@ profiles:
         set: node.pdo().tpdos[1].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 6
         - type: uint32
@@ -484,7 +484,7 @@ profiles:
         set: node.pdo().tpdos[2].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 6
         - type: uint32
@@ -513,7 +513,7 @@ profiles:
         set: node.pdo().tpdos[3].commParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: ro
           default: 6
         - type: uint32
@@ -542,7 +542,7 @@ profiles:
         set: node.pdo().tpdos[0].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -575,7 +575,7 @@ profiles:
         category: optional
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -608,7 +608,7 @@ profiles:
         set: node.pdo().tpdos[2].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -641,7 +641,7 @@ profiles:
         set: node.pdo().tpdos[3].mapParameter.setData
         data:
         - type: uint8
-          name: Number of of entries
+          name: Number of entries
           access: rw
         - type: uint32
           name: 1st object to be mapped
@@ -723,7 +723,7 @@ profiles:
         name: vl velocity min max amount
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -736,7 +736,7 @@ profiles:
         name: vl velocity acceleration
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -749,7 +749,7 @@ profiles:
         name: vl velocity deceleration
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -762,7 +762,7 @@ profiles:
         name: vl velocity quick stop
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: uint32
@@ -775,7 +775,7 @@ profiles:
         name: vl set-point factor
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: int16
@@ -790,7 +790,7 @@ profiles:
         name: vl dimension factor
         data:
         - type: uint8
-          name: Highestt sub-index supported
+          name: Highest sub-index supported
           access: ro
           default: 2
         - type: int32

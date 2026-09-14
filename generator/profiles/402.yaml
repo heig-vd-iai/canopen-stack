@@ -44,8 +44,6 @@ profiles:
         pdo: true
       0x6046:
         name: vl velocity min max amount
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: vl velocity min amount
           datatype: uint32
@@ -55,8 +53,6 @@ profiles:
           access: rw
       0x6048:
         name: vl velocity acceleration
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: Delta speed
           datatype: uint32
@@ -66,8 +62,6 @@ profiles:
           access: rw
       0x6049:
         name: vl velocity deceleration
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: Delta speed
           datatype: uint32
@@ -77,8 +71,6 @@ profiles:
           access: rw
       0x604A:
         name: vl velocity quick stop
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: Delta speed
           datatype: uint32
@@ -88,8 +80,6 @@ profiles:
           access: rw
       0x604B:
         name: vl set-point factor
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: vl set-point factor numerator
           datatype: int16
@@ -101,8 +91,6 @@ profiles:
           default: 1
       0x604C:
         name: vl dimension factor
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: vl dimension factor numerator
           datatype: int32

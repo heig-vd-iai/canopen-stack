@@ -73,8 +73,6 @@ profiles:
         name: Store parameters
         get: node.od().getSave
         set: node.od().saveData
-        sub0:
-          name: highestt sub-index supported
         record:
         - name: save all parameters
           datatype: uint32
@@ -95,8 +93,6 @@ profiles:
         name: Restore default parameters
         get: node.od().getRestore
         set: node.od().restoreData
-        sub0:
-          name: highestt sub-index supported
         record:
         - name: restore all parameters
           datatype: uint32
@@ -146,8 +142,6 @@ profiles:
         access: rw
       0x1020:
         name: Verify configuration
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: Configuration date
           datatype: uint32
@@ -159,8 +153,6 @@ profiles:
         name: Error behavior
         get: node.emcy().errorBehavior.getData
         set: node.emcy().errorBehavior.setData
-        sub0:
-          name: Highestt sub-index supported
         record:
         - name: Communication error behavior
           datatype: uint8
@@ -175,7 +167,7 @@ profiles:
         get: node.pdo().rpdos[0].commParameter.getData
         set: node.pdo().rpdos[0].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -189,7 +181,7 @@ profiles:
         get: node.pdo().rpdos[1].commParameter.getData
         set: node.pdo().rpdos[1].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -203,7 +195,7 @@ profiles:
         get: node.pdo().rpdos[2].commParameter.getData
         set: node.pdo().rpdos[2].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -217,7 +209,7 @@ profiles:
         get: node.pdo().rpdos[3].commParameter.getData
         set: node.pdo().rpdos[3].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -231,7 +223,7 @@ profiles:
         get: node.pdo().rpdos[0].mapParameter.getData
         set: node.pdo().rpdos[0].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -264,7 +256,7 @@ profiles:
         get: node.pdo().rpdos[1].mapParameter.getData
         set: node.pdo().rpdos[1].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -297,7 +289,7 @@ profiles:
         get: node.pdo().rpdos[2].mapParameter.getData
         set: node.pdo().rpdos[2].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -330,7 +322,7 @@ profiles:
         get: node.pdo().rpdos[3].mapParameter.getData
         set: node.pdo().rpdos[3].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -363,7 +355,7 @@ profiles:
         get: node.pdo().tpdos[0].commParameter.getData
         set: node.pdo().tpdos[0].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -389,7 +381,7 @@ profiles:
         get: node.pdo().tpdos[1].commParameter.getData
         set: node.pdo().tpdos[1].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -415,7 +407,7 @@ profiles:
         get: node.pdo().tpdos[2].commParameter.getData
         set: node.pdo().tpdos[2].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -441,7 +433,7 @@ profiles:
         get: node.pdo().tpdos[3].commParameter.getData
         set: node.pdo().tpdos[3].commParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
         record:
         - name: COB-ID
           datatype: uint32
@@ -467,7 +459,7 @@ profiles:
         get: node.pdo().tpdos[0].mapParameter.getData
         set: node.pdo().tpdos[0].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -500,7 +492,7 @@ profiles:
         get: node.pdo().tpdos[1].mapParameter.getData
         set: node.pdo().tpdos[1].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -533,7 +525,7 @@ profiles:
         get: node.pdo().tpdos[2].mapParameter.getData
         set: node.pdo().tpdos[2].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:
@@ -566,7 +558,7 @@ profiles:
         get: node.pdo().tpdos[3].mapParameter.getData
         set: node.pdo().tpdos[3].mapParameter.setData
         sub0:
-          name: Number of of entries
+          name: Number of entries
           access: rw
           default: 0
         record:

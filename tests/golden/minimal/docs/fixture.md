@@ -9,7 +9,7 @@ One entry per supported scalar type
 
 | Name              | Type    | default |
 | ----------------- | ------- | ------- |
-| Number of entries | uint8   | 11      |
+| Number of entries | uint8   | 10      |
 | A boolean         | bool    | 1       |
 | An int8           | int8    | -8      |
 | An int16          | int16   | -16     |
