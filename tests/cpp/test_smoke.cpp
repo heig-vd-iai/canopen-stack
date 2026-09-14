@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "fake-hardware.hpp"
+#include "full-harness.hpp"
 #include "node.hpp"
 
 using namespace CANopen;

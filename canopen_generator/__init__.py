@@ -9,7 +9,7 @@ import jinja2
 import mdformat
 
 from . import tree
-from .phf import PHF
+from .phf import PHF, BuildNotFound
 from .schema import config_schema, profile_schema
 from .type import Ctype_name, DataType, ObjectType, Type_code
 
@@ -682,6 +682,35 @@ class ObjectDictionary:
                     headers.append(f"mode_{suffix}.hpp")
                     modes.append((f"Mode{mode_suffix}", suffix, item))
                 return template.render(headers=headers, modes=modes)
+        return template.render(headers=[], modes=[])
+
+    @staticmethod
+    def _build_phf(multiplexer, values):
+        """Build the lookup hash, widening the table when no seed succeeds.
+
+        A small dictionary can leave every displacement search without a
+        solution at the derived table size; the next power of two always has
+        one and costs a few hundred bytes of flash.
+        """
+        table_size = None
+        for _ in range(4):
+            phf = PHF(
+                multiplexer, values=values, M=table_size, target_load=0.877, seed=43
+            )
+            candidate_B_powers = [p for p in (8, 9) if (1 << p) <= phf.M] or None
+            try:
+                best = phf.build_best_parallel(
+                    candidate_B_powers=candidate_B_powers,
+                    trials_per_B=phf.trials,
+                    max_workers=os.cpu_count(),
+                )
+            except BuildNotFound:
+                table_size = phf.M * 2
+                continue
+            return phf, best
+        raise BuildNotFound(
+            f"No lookup hash found for {len(multiplexer)} objects."
+        )
 
     def to_phf(self, header_file):
         keys = [
@@ -693,13 +722,7 @@ class ObjectDictionary:
 
         values = list(range(len(multiplexer)))  # Index
 
-        phf = PHF(multiplexer, values=values, M=None, target_load=0.877, seed=43)
-        candidate_B_powers = [p for p in (8, 9) if (1 << p) <= phf.M] or None
-        best = phf.build_best_parallel(
-            candidate_B_powers=candidate_B_powers,
-            trials_per_B=phf.trials,
-            max_workers=os.cpu_count(),
-        )
+        phf, best = self._build_phf(multiplexer, values)
 
         # Summarize best config
         print("=== PHF (Object Lookup Summary) ===")

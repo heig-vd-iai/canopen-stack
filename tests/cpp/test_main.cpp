@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-#include "fake-hardware.hpp"
+#include "full-harness.hpp"
 
 namespace CANopen {
 FakeHardware fakeHardware;

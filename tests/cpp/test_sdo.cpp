@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "doctest.h"
-#include "fake-hardware.hpp"
+#include "full-harness.hpp"
 #include "node.hpp"
 #include "od.hpp"
 #include "od/domainHandler.hpp"
