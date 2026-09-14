@@ -193,95 +193,45 @@ This structure allows for efficient and organized access to objects within the d
 
 ## Hardware Interface
 
-This library is meant to be device-agnostic so it may run on any target. As such, it is necessary for the user to implement an interface between the library and the device.
+The library is device-agnostic. The application implements three small interfaces from `src/hal/` and hands them to the node:
 
-The interface is done by simply writing the function definition of a few class methods :
+| Interface | Header | Role |
+|---|---|---|
+| `CanTransport` | `hal/can-transport.hpp` | `init`, `sendFrame`, non-blocking `receiveFrame`, microsecond clock `getTime_us` (wraps at 0xFFFFFFFF) |
+| `Persistence` | `hal/persistence.hpp` | `saveGroup`/`loadGroup` per parameter group, `saveSignature`/`loadSignature` |
+| `RemoteObjects` | `hal/remote-objects.hpp` | Objects served by another core: `getRemoteData`/`setRemoteData` (return 1 while pending), PDO hooks, `resetRemote`, `updateError`. `NullRemote` for single-core targets |
 
-- `Node::sendFrame`: send a frame to the CAN network
-- `Node::getTime_us`: called for internal timing
-- `ObjectDictionnary::saveData`: save object dictionnary data to non-volatile memory
-- `ObjectDictionnary::loadData`: load object dictionnary data from non-volatile memory
-- `ObjectDictionnary::restoreData`: reset object dictionnary data to default
-
-Examples can be found in the example.cpp file under the /example folder. These methods are documented in their header file as well.
+The node is built on top of them and `update()` drains the transport, polls the remote side and runs the services:
 
 ```cpp
-void CANopen::Node::sendFrame(Frame &frame)
-{
-    // This example uses Linux SocketCan.
-    can_frame canFrame;
-    // Simply copy CANopen frame fields to regular CAN frame.
-    canFrame.can_dlc = frame.dlc;
-    canFrame.can_id = frame.getCobID();
-    memcpy(canFrame.data, frame.data, frame.dlc);
-    send(sock, &canFrame, sizeof(canFrame), 0)
+#include "canopen.hpp"
+#include "FilePersistence.hpp"
+#include "SocketCanTransport.hpp"
+#include "hal/remote-objects.hpp"
+
+static CANopen::SocketCanTransport transport("vcan0");
+static CANopen::FilePersistence persistence;
+static CANopen::NullRemote remote;
+CANopen::Node CANopen::node(transport, persistence, remote);
+
+int main() {
+    CANopen::node.init();
+    while (true) CANopen::node.update();
 }
 ```
 
-```cpp
-uint32_t CANopen::Node::getTime_us()
-{
-    // This example uses std::chrono to get elapsed time in µs.
-    // Returned time value doesn't have to be absolute, so a µs precise clock/counter value is also valid.
-    // It HAS to wrap around 0xFFFFFFFF though.
-    return (uint32_t)chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch()).count();
-}
-```
+Ready-made implementations:
 
-```cpp
-bool CANopen::ObjectDictionnary::saveData(uint8_t parameterGroup)
-{
-    // This example uses a file to store data.
-    // It will save everything, independent of the parameterGroup argument.
-    ofstream f(FILENAME, ios::out | ios::binary);
-    if (!f) return false;
-    // The dictionnary's data structure is located at objects.entries.data.
-    // This is the structure that needs to persist.
-    f.write((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
-    f.close();
-    // Return true is saving was successful, false otherwise.
-    return true;
-}
-```
+- `platform/linux/`: `SocketCanTransport` (SocketCAN, `MSG_DONTWAIT`, `CLOCK_MONOTONIC`) and `FilePersistence` (one `od-group<N>.dat` file per parameter group). Built by `make example` into `build/example`, which runs against `tests/golden/minimal/cm/` and the `example/example.py` master on `vcan0`.
+- `platform/c2000/`: `C2000CanTransport` (MCAN0, CPUTimer0) and `C2000Persistence` (F021 Flash API, one sector per parameter group). Only driverlib is needed. `platform/c2000/example/` is a TI application skeleton with its Makefile (`TOOLCHAINPATH`, `C2000WAREPATH`, `OD_DIR`). The dual-core `RemoteObjects` implementation lives in the application project because it depends on the IPC structures shared with CPU1.
 
-```cpp
-bool CANopen::ObjectDictionnary::loadData(uint8_t parameterGroup)
-{
-    // This example uses a file to load data.
-    // It will load everything, independent of the parameterGroup argument.
-    ifstream f(FILENAME, ios::in | ios::binary);
-    if (!f) return false;
-    // The dictionnary's data structure is located at objects.entries.data.
-    // This is the structure that needs to persist.
-    f.read((char *)&this->objects.entries.data, sizeof(this->objects.entries.data));
-    f.close();
-    // Reload PDOs according to potentially updated mapping parameters.
-    node.pdo().reloadTPDO();
-    node.pdo().reloadRPDO();
-    // Return true is loading was successful, false otherwise.
-    return true;
-}
-```
-
-```cpp
-bool CANopen::ObjectDictionnary::restoreData(uint8_t parameterGroup)
-{
-    // This example uses the ObjectDictionnaryconst Dataructor to reset data.
-    // It will reset everything, independent of the parameterGroup argument.
-    objects.entries.data = ObjectDictionnaryData();
-    // Reload PDOs according to potentially updated mapping parameters.
-    node.pdo().reloadTPDO();
-    node.pdo().reloadRPDO();
-    // Return true is restoring was successful, false otherwise.
-    return true;
-}
-```
+Persistence images hold eight bytes per object of the parameter group, in dictionary order, so the file and flash layouts are identical.
 
 ## Usage Guide
 
 The usage of the library is all done through the Node object.
 
-An example project using SocketCan interface (for Linux) is provided under the /example folder. The folder has a makefile that will compile the project into an executable.
+An example project using SocketCan interface (for Linux) is provided in `example/linux/main.cpp` and built with `make example`.
 
 > [NOTE]
 > Only one Node object should be used per program, because its ID is obtained from the od.hpp file. Since the header file is specific to a single node, running multiple nodes on a single device means you will need different projects using different header files.
@@ -300,7 +250,7 @@ By using the cyclical approach, CAN message polling and node updating can both b
 
 When using threads or interruptions, one solution would be to use a message queue, so that new messages are not immediatly fed to the node. The main program loop can then process each message cyclically, righ before or after updating the node.
 
-If using threads, another easier solution would be to simply use a mutex to avoid receiving and updating at the same time. This solution is used in the example.cpp file.
+If using threads, another easier solution would be to simply use a mutex to avoid receiving and updating at the same time. The Linux example stays single-threaded: `update()` polls the transport.
 
 When instanciating a node, its init method should be called when the setup is done.
 

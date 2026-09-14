@@ -14,9 +14,14 @@ C2000WAREPATH ?= /mnt/c/ti/C2000/C2000Ware_26_01_00_00
 # Flash API (headers + .lib): shipped with C2000Ware, absent from its GitHub mirror
 FLASHAPIPATH ?= $(C2000WAREPATH)/libraries/flash_api/$(DEVICE)
 DRIVERLIBPATH=$(C2000WAREPATH)/driverlib/$(DEVICE)/driverlib_cm
+DEVICESUPPORT=$(C2000WAREPATH)/device_support/$(DEVICE)/common
 
 # TI is using a different naming convention for the device libraries
 DEVICE_UC = $(shell echo $(DEVICE) | sed 's/^./\U&/')
+
+# CANopen stack and generated object dictionary
+STACK := $(realpath ../../..)
+OD_DIR ?= $(STACK)/tests/golden/minimal/cm
 
 DEFINES=DEBUG _FLASH
 
@@ -27,54 +32,46 @@ LIBS_INCLUDES=\
 	$(TOOLCHAINPATH)/lib \
 	$(TOOLCHAINPATH)/include
 
-CMDS=2838x_FLASH_lnk_cm.cmd
+CMDS ?= flash.cmd
 
-SRCS=$(shell find . -name '*.cpp' -o -name '*.c' -o -name '*.asm')
+SRCS=main_cm.cpp startup_cm.c
 
-# Common sources all cores
-SRCS += $(shell find $(realpath ../shared) -name '*.cpp')
-SRCS += $(shell find $(realpath ../shared) -name '*.c')
+# CANopen stack, C2000 platform and object dictionary
+SRCS += $(shell find $(STACK)/src -name '*.cpp')
+SRCS += $(wildcard $(STACK)/platform/c2000/*.cpp)
+SRCS += $(wildcard $(OD_DIR)/*.cpp)
 
-# CanOpen Stack
-SRCS += $(shell find $(realpath ../canopen-stack/src) -name '*.cpp')
-
-# Device support: CM_init / __error__ (linked resource in the CCS project)
-SRCS += $(C2000WAREPATH)/device_support/$(DEVICE)/common/source/cm.c
+# Device support: CM_init / __error__
+SRCS += $(DEVICESUPPORT)/source/cm.c
 
 # Driverlib sources
 SRCS+= $(DRIVERLIBPATH)/mcan.c \
 	   $(DRIVERLIBPATH)/ipc.c \
 	   $(DRIVERLIBPATH)/flash.c \
-	   $(DRIVERLIBPATH)/sysctl.c 
+	   $(DRIVERLIBPATH)/sysctl.c
 
-SRCS+=$(DRIVERLIBSRCS)
-
-INCLUDES= . ./device \
+INCLUDES= . \
 	$(TOOLCHAINPATH)/include \
 	$(TOOLCHAINPATH)/include/c \
 	$(DRIVERLIBPATH) \
 	$(DRIVERLIBPATH)/inc \
 	$(FLASHAPIPATH)/cm/include/FlashAPI \
 	$(FLASHAPIPATH)/cm/include/FlashAPI/Constants \
-	$(C2000WAREPATH)/device_support/$(DEVICE)/common/include \
-	../canopen-stack/src \
-	../canopen-stack/src/objects \
-	../shared
-
-
-DIRS = $(sort $(dir $(OBJS)))
+	$(DEVICESUPPORT)/include \
+	$(STACK)/src \
+	$(STACK)/platform/c2000 \
+	$(OD_DIR)
 
 OBJS=$(patsubst %.cpp, build/%.o, $(patsubst %.c, build/%.o, $(patsubst %.asm, build/%.o, $(SRCS))))
-
-# LIBS = $(C2000WAREPATH)/libraries/flash_api/f2838x/cm/lib/F2838x_CM_FlashAPI.lib
+DIRS = $(sort $(dir $(OBJS)))
 
 ifeq ($(TOOLCHAINPATH),/opt/ti/clang)
-CXX=$(TOOLCHAINPATH)/bin/tiararmclmclang
-HEX=$(TOOLCHAINPATH)/bin/tiararmhexmclang
+CXX=$(TOOLCHAINPATH)/bin/tiarmclang
+HEX=$(TOOLCHAINPATH)/bin/tiarmhex
 INCLUDES_FLAGS := $(foreach inc,$(INCLUDES),-I"$(inc)")
 DEFINES_FLAGS := $(foreach def,$(DEFINES),-D$(def))
 LIBS_INCLUDES := $(foreach lib,$(LIBS_INCLUDES),-Wl,-i$(lib))
-LIBS=foreach lib,$(LIBS),-Wl,-l$(lib)
+LIBS:=$(foreach lib,$(LIBS),-Wl,-l$(lib))
 
 FLAGS=-march=thumbv7em -mcpu=cortex-m4 \
 	-mfloat-abi=soft -mlittle-endian -mthumb -Oz -flto \
@@ -89,12 +86,12 @@ CXXFLAGS=$(FLAGS) -std=gnu++14
 CFLAGS=$(FLAGS) -std=c11
 
 CLFLAGS = $(FLAGS) \
-	-Wl,-m"link.map" -Wl,--heap_size=2048 \
+	-Wl,-m"build/link.map" -Wl,--heap_size=2048 \
 	-Wl,--stack_size=2048 \
-	-Wl,--reread_libs -Wl, \ #--define=RAM
+	-Wl,--reread_libs \
 	-Wl,--diag_wrap=off -Wl,--display_error_number \
 	-Wl,--verbose_diagnostics -Wl,--warn_sections \
-	-Wl,--xml_link_info="link.xml" \
+	-Wl,--xml_link_info="build/linkInfo.xml" \
 	-Wl,--rom_model \
 	$(LIBS_INCLUDES)
 
@@ -157,9 +154,6 @@ TARGET = build/firmware.out
 all: $(TARGET)
 	$(HEX) --boot --gpio8 --ascii -o "build/firmware.hex" $(TARGET)
 
-# all: $(OBJS) $(CMDS)
-# 	$(call verbose, $(CXX) $(CLFLAGS) -o $(TARGET) $^ $(LIBS) ${COMPILER_COLOR}, echo "${YELLOW}LINKINK ${TARGET} ${NC}")
-
 $(TARGET): $(OBJS) $(CMDS)
 	$(call verbose, $(CXX) $(CLFLAGS) -o $@ $^ $(LIBS) ${COMPILER_COLOR}, echo "${YELLOW}LINKING $@...${NC}")
 
@@ -168,7 +162,7 @@ $(TARGET): $(OBJS) $(CMDS)
 verbose = $(if $(VERBOSE),$(1),@$(1) && $(2))
 
 build/%.o: %.cpp | builddir
-	$(call verbose, $(CXX) -c $(CXXFLAGS) $(INCLUDES_FLAGS) $(PREPROC) $(OD)$@ $< ${COMPILER_COLOR}, echo "${GREEN}CCX $<${NC}") 
+	$(call verbose, $(CXX) -c $(CXXFLAGS) $(INCLUDES_FLAGS) $(PREPROC) $(OD)$@ $< ${COMPILER_COLOR}, echo "${GREEN}CCX $<${NC}")
 
 build/%.o: %.c | builddir
 	$(call verbose, $(CXX) -c $(CFLAGS) $(INCLUDES_FLAGS) $(PREPROC) $(OD)$@ $< ${COMPILER_COLOR}, echo "${GREEN}CC $<${NC}")
@@ -181,6 +175,5 @@ builddir:
 
 clean:
 	rm -rf build
-	rm -f firmware.out
 
 .PHONY: clean builddir all
