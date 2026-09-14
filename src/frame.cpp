@@ -3,7 +3,6 @@
  */
 #include "frame.hpp"
 
-#include "heartbeat.hpp"
 #include "sync.hpp"
 
 using namespace CANopen;
@@ -19,16 +18,6 @@ Frame Frame::fromCobId(uint16_t cobId) {
 uint16_t Frame::getCobID() const {
     return ((uint16_t)functionCode & FUNCTION_MASK) << FUNCTION_OFFSET |
            (nodeId & NODEID_MASK);
-}
-
-HeartbeatFrame::HeartbeatFrame(uint8_t nodeId, uint8_t state)
-    : Frame(nodeId, FunctionCode_HEARTBEAT) {
-    dlc = HEARTBEAT_DLC;
-    setNMTState(state);
-}
-
-void HeartbeatFrame::setNMTState(uint8_t state) {
-    data[HEARTBEAT_STATE_OFFSET] = state;
 }
 
 SYNCFrame::SYNCFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_SYNC) {}

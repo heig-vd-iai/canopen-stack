@@ -44,25 +44,6 @@ struct Frame {
 };
 
 /**
- * This is a specialized Frame used by the HB class.
- * See CiA301:2011§7.2.8.3.2.2 (p. 76)
- */
-struct HeartbeatFrame : public Frame {
-    /**
-     * Constructor for specialized CANopen heartbeat frame.
-     * @param nodeId Node ID.
-     * @param state Current NMT state.
-     */
-    HeartbeatFrame(uint8_t nodeId, uint8_t state);
-
-    /**
-     * Set the NMT state byte (byte 0).
-     * @param state Current NMT state to set.
-     */
-    void setNMTState(uint8_t state);
-};
-
-/**
  * This is a specialized Frame used by the SYNC class.
  * CiA301:2011§7.2.5.3.1 (p. 63)
  */

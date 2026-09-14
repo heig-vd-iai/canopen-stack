@@ -8,7 +8,7 @@
 
 #include "doctest.h"
 #include "fake-hardware.hpp"
-#include "heartbeat.hpp"
+#include "hb/hb.hpp"
 #include "node.hpp"
 #include "od/domainHandler.hpp"
 #include "sdo/sdoServer.hpp"

@@ -6,7 +6,7 @@
 #pragma once
 
 #include "emcy/emcy.hpp"
-#include "heartbeat.hpp"
+#include "hb/hb.hpp"
 #include "node.hpp"
 #include "od_common.hpp"
 #include "pdo/pdo.hpp"
