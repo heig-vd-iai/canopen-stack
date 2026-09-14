@@ -23,11 +23,8 @@ const SDO::Route SDO::routes[] = {
     {State::Idle, ANY_COMMAND, &SDO::onUnexpected},
 };
 
-SDO::SDO(ODAccessor &accessor, uint8_t nodeId)
-    : accessor(accessor), nodeId(nodeId) {}
-
-SDO::SDO(ODAccessor &accessor, HardwareInterface &hardware, uint8_t nodeId)
-    : accessor(accessor), hardware(&hardware), nodeId(nodeId) {}
+SDO::SDO(ODAccessor &accessor, CanTransport &transport, uint8_t nodeId)
+    : accessor(accessor), transport(transport), nodeId(nodeId) {}
 
 void SDO::disable() {
     enabled = false;
@@ -213,7 +210,7 @@ void SDO::resume(uint32_t now_us) {
 
 void SDO::send(const Frame &frame, uint32_t now_us) {
     lastActivity_us = now_us;
-    if (hardware != nullptr) hardware->sendFrame(frame);
+    transport.sendFrame(frame);
 }
 
 void SDO::abort(SDOAbortCodes code, uint32_t now_us) {

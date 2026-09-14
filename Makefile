@@ -19,6 +19,10 @@ TEST_BIN = build/tests
 TEST_SRCS = $(wildcard tests/cpp/*.cpp)
 TEST_OBJS = $(patsubst tests/cpp/%.cpp,build/tests-obj/%.o,$(TEST_SRCS))
 
+EXAMPLE_BIN = build/example
+EXAMPLE_SRCS = example/linux/main.cpp $(wildcard platform/linux/*.cpp)
+EXAMPLE_OBJS = $(patsubst %.cpp,build/example-obj/%.o,$(EXAMPLE_SRCS))
+
 all: lib
 
 lib: $(LIB)
@@ -43,11 +47,22 @@ build/tests-obj/%.o: tests/cpp/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -Itests/cpp -MMD -MP -c -o $@ $<
 
+example: $(EXAMPLE_BIN)
+
+$(EXAMPLE_BIN): $(LIB_OBJS) $(OD_OBJS) $(EXAMPLE_OBJS)
+	$(CXX) -o $@ $^
+
+build/example-obj/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -Iplatform/linux -MMD -MP -c -o $@ $<
+
 generate:
 	uv run python -m canopen_generator $(CONFIG) -f \
 		--local dist/cm --remote dist/cpu1 --eds dist --doc dist/docs
 
 FORMAT_SRCS = $(wildcard src/*.cpp src/*.hpp src/*/*.cpp src/*/*.hpp) \
+              $(wildcard platform/*/*.cpp platform/*/*.hpp) \
+              $(wildcard platform/c2000/example/*.cpp example/linux/*.cpp) \
               $(wildcard tests/cpp/*.cpp tests/cpp/*.hpp)
 FORMAT_SRCS := $(filter-out tests/cpp/doctest.h,$(FORMAT_SRCS))
 
@@ -60,6 +75,6 @@ format-check:
 clean:
 	$(RM) -r build dist $(LIB)
 
--include $(LIB_OBJS:.o=.d) $(OD_OBJS:.o=.d) $(TEST_OBJS:.o=.d)
+-include $(LIB_OBJS:.o=.d) $(OD_OBJS:.o=.d) $(TEST_OBJS:.o=.d) $(EXAMPLE_OBJS:.o=.d)
 
-.PHONY: all lib test generate format format-check clean
+.PHONY: all lib test example generate format format-check clean

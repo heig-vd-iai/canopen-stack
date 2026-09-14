@@ -11,7 +11,7 @@
 #include <cstdint>
 
 #include "frame.hpp"
-#include "hardware-interface.hpp"
+#include "hal/can-transport.hpp"
 #include "od/odAccessor.hpp"
 #include "sdo/config.hpp"
 #include "utils/crc.hpp"
@@ -20,12 +20,8 @@ namespace CANopen {
 
 class SDO {
    public:
-    SDO(ODAccessor &accessor, uint8_t nodeId);
-    SDO(ODAccessor &accessor, HardwareInterface &hardware, uint8_t nodeId);
+    SDO(ODAccessor &accessor, CanTransport &transport, uint8_t nodeId);
 
-    void setHardware(HardwareInterface &hardware) {
-        this->hardware = &hardware;
-    }
     void enable() { enabled = true; }
     void disable();
     bool isIdle() const { return state == State::Idle; }
@@ -110,7 +106,7 @@ class SDO {
     void reset();
 
     ODAccessor &accessor;
-    HardwareInterface *hardware = nullptr;
+    CanTransport &transport;
     const uint8_t nodeId;
     bool enabled = false;
     State state = State::Idle;

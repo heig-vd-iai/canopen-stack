@@ -288,12 +288,12 @@ void PDO::init() {
 
 void PDO::enable() {
     enabled = true;
-    node.hardware().enablePDO();
+    node.remote().enablePDO();
 }
 
 void PDO::disable() {
     enabled = false;
-    node.hardware().disablePDO();
+    node.remote().disablePDO();
 }
 
 void PDO::initTPDO(unsigned index) {
@@ -324,7 +324,7 @@ void PDO::remapTPDO(unsigned index) {
         tpdo->size = sizeSum;
         if (id != -1) tpdo->count++;
     }
-    node.hardware().configRemoteTPDO(
+    node.remote().configRemoteTPDO(
         index, tpdo->mappedEntries);  // assuming all TPDOs are remote TODO: add
                                       // check if remote
 }
@@ -343,14 +343,14 @@ void PDO::remapRPDO(unsigned index) {
         rpdo->size = sizeSum;
         if (id != -1) rpdo->count++;
     }
-    node.hardware().configRemoteRPDO(index, rpdo->mappedEntries);
+    node.remote().configRemoteRPDO(index, rpdo->mappedEntries);
 }
 
 void PDO::bufferizeTPDO(unsigned index, uint8_t *buffer) {
     TPDO *tpdo = tpdos + index;
     uint32_t bytesTransferred = 0;
     Data tmp[OD_PDO_MAPPING_MAX];
-    node.hardware().getRemoteTPDO(
+    node.remote().getRemoteTPDO(
         index, tmp);  // assuming all TPDOs are remote TODO: add check if remote
     for (unsigned i = 0; i < tpdo->count; i++) {
         int32_t id = tpdo->mappedEntries[i];
@@ -373,7 +373,7 @@ void PDO::unpackRPDO(unsigned index, uint8_t *buffer, uint32_t timestamp_us) {
         memcpy(&tmp[i], buffer + bytesTransferred, size);
         bytesTransferred += size;
     }
-    node.hardware().setRemoteRPDO(index, tmp);
+    node.remote().setRemoteRPDO(index, tmp);
     rpdo->timestamp_us = timestamp_us;
     rpdo->watchTimeoutFlag = true;
 }
@@ -384,7 +384,7 @@ void PDO::sendTPDO(unsigned index, uint32_t timestamp_us) {
     frame.dlc = tpdo->size;
     bufferizeTPDO(index, frame.data);
     tpdo->syncFlag = false;
-    node.hardware().sendFrame(frame);
+    node.transport().sendFrame(frame);
     tpdo->timestamp_us = timestamp_us;
 }
 
@@ -489,7 +489,7 @@ void PDO::onSync(uint8_t counter, uint32_t timestamp_us) {
         if (send) {
             uint32_t syncWindow = getSyncWindow_us();
             if (syncWindow != 0 &&
-                node.hardware().getTime_us() - timestamp_us > syncWindow)
+                node.transport().getTime_us() - timestamp_us > syncWindow)
                 break;
             sendTPDO(i, timestamp_us);
         }
@@ -519,7 +519,7 @@ void PDO::transmitTPDO(unsigned index) {
     if (transmission == ACYCLIC) {
         tpdo->syncFlag = true;
     } else if (transmission >= EVENT1) {
-        uint32_t timestamp_us = node.hardware().getTime_us();
+        uint32_t timestamp_us = node.transport().getTime_us();
         bool supported = tpdo->commParameter.isInhibitSupported();
         if (!supported ||
             (supported && (tpdo->commParameter.getInhibitTime_us() == 0 ||

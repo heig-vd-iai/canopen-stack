@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+namespace CANopen {
+
 struct CycleTime {
     float cycleTime;
     float cycleTimeMax;
@@ -33,3 +35,4 @@ class Monitoring {
     float getCycleTimeMaxSdo() { return sdo.cycleTimeMax; }
     float getCycleTimeMinSdo() { return sdo.cycleTimeMin; }
 };
+}  // namespace CANopen

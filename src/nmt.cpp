@@ -35,7 +35,8 @@ void NMT::updateSM(NMTServiceCommands command) {
             node._pdo.reloadTPDO();
             node._pdo.reloadRPDO();
             if (pg == ParameterGroup_All) {
-                onReset();
+                node._remote.resetRemote();
+                if (onReset != nullptr) onReset();
             }
             nextState = NMTState_PreOperational;
             /* fallthrough */
@@ -118,8 +119,6 @@ void NMT::updateSM(NMTServiceCommands command) {
     }
     currentState = nextState;
 }
-
-bool CANopen::resetCallBack() { return true; }
 
 void NMT::receiveFrame(NMTFrame &frame) {
     uint8_t targetId = frame.getTargetId();

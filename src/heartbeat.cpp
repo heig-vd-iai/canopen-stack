@@ -12,7 +12,7 @@ HB::HB() { odID = node.od().findObject(HEARTBEAT_INDEX, 0); }
 
 void HB::publishState(NMTStates state, uint8_t toggleBit) {
     HeartbeatFrame frame(node.nodeId, state | toggleBit << TOGGLE_OFFSET);
-    node.hardware().sendFrame(frame);
+    node.transport().sendFrame(frame);
     lastPublish = node.getTime_us();
 }
 

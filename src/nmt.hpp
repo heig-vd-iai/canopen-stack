@@ -11,8 +11,6 @@
 
 namespace CANopen {
 
-bool resetCallBack();
-
 /**
  * NMT object.
  * It handles the reception of NMT commands, as well as the management of the
@@ -52,7 +50,9 @@ class NMT {
     friend class ObjectDictionnary;
     friend class Node;
 
-    bool (*onReset)() = &resetCallBack;
+    /** Application hook run after a reset node, once the remote side is reset.
+     */
+    void (*onReset)() = nullptr;
 
     /**
      * Issue a state machine transition based on the given command.

@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#include "common.hpp"
+
+using namespace CANopen;
+
 Monitoring::Monitoring() {
     hardware.cycleTime = 0;
     hardware.cycleTimeMax = 0;

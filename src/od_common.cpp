@@ -1,7 +1,34 @@
-#include "hardware-delay.hpp"
+#include "hal/remote-objects.hpp"
 #include "node.hpp"
 #include "od.hpp"
+#include "od/parameterGroup.hpp"
 #include "od_lookup.hpp"
+
+namespace {
+RemoteObjects *remoteObjects = nullptr;
+}
+
+void bindRemote(RemoteObjects &remote) { remoteObjects = &remote; }
+
+int8_t readDataWait(Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    const uint32_t start = node.transport().getTime_us();
+    int8_t result;
+    while ((result = node.od().readData(data, id, abortCode)) == 1) {
+        if (node.transport().getTime_us() - start > REMOTE_ACCESS_TIMEOUT_US)
+            break;
+    }
+    return result;
+}
+
+int8_t writeDataWait(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
+    const uint32_t start = node.transport().getTime_us();
+    int8_t result;
+    while ((result = node.od().writeData(data, id, abortCode)) == 1) {
+        if (node.transport().getTime_us() - start > REMOTE_ACCESS_TIMEOUT_US)
+            break;
+    }
+    return result;
+}
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode) {
     abortCode = SDOAbortCode_OK;
@@ -163,11 +190,11 @@ int8_t setLocalData_domain(const Data &, int32_t, SDOAbortCodes &) {
 }
 
 int8_t getRemoteData(Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return node.hardware().getRemoteData(data, id, abortCode);
+    return remoteObjects->getRemoteData(data, id, abortCode);
 }
 
 int8_t setRemoteData(const Data &data, int32_t id, SDOAbortCodes &abortCode) {
-    return node.hardware().setRemoteData(data, id, abortCode);
+    return remoteObjects->setRemoteData(data, id, abortCode);
 }
 
 int32_t ObjectDictionnary::findObject(uint16_t index, uint8_t subindex) {
@@ -236,20 +263,20 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 }
 
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
-    if (parameterGroup == 1) {
-        uint64_t signature;
-        node.hardware().loadSignatureFromFlash(signature);
-        if (signature != od_signature) {
-            node.hardware().saveSignatureToFlash(od_signature);
+    Persistence &persistence = node.persistence();
+    if (parameterGroup == ParameterGroup_All) {
+        uint64_t signature = 0;
+        if (!persistence.loadSignature(signature) ||
+            signature != od_signature) {
+            persistence.saveSignature(od_signature);
         }
         bool result = true;
-        result &= node.hardware().saveDataToFlash(ParameterGroup_Communication);
-        result &= node.hardware().saveDataToFlash(
-            ParameterGroup_Application);  // TODO: meta generate
-        result &= node.hardware().saveDataToFlash(ParameterGroup_ManufacturerA);
+        result &= persistence.saveGroup(ParameterGroup_Communication);
+        result &= persistence.saveGroup(ParameterGroup_Application);
+        result &= persistence.saveGroup(ParameterGroup_ManufacturerA);
         return result;
     }
-    return node.hardware().saveDataToFlash(parameterGroup);
+    return persistence.saveGroup(parameterGroup);
 }
 
 int8_t ObjectDictionnary::saveData(const Data &data, int32_t id,
@@ -291,55 +318,29 @@ int8_t ObjectDictionnary::getSave(Data &data, int32_t id,
 }
 
 bool ObjectDictionnary::loadData(uint8_t parameterGroup) {
-    uint64_t signature;
-    node.hardware().loadSignatureFromFlash(signature);
-    if (signature != od_signature) {
+    Persistence &persistence = node.persistence();
+    uint64_t signature = 0;
+    if (!persistence.loadSignature(signature) || signature != od_signature) {
         return false;
     }
-    if (parameterGroup == 1) {
-        node.hardware().loadDataFromFlash(ParameterGroup_Communication);
-        node.hardware().loadDataFromFlash(
-            ParameterGroup_Application);  // TODO: meta generate
-        node.hardware().loadDataFromFlash(
-            ParameterGroup_Application);  // load 2 time for load first unit
-                                          // TODO: find better way
-        node.hardware().loadDataFromFlash(ParameterGroup_ManufacturerA);
-        return true;
+    if (parameterGroup == ParameterGroup_All) {
+        bool result = true;
+        result &= persistence.loadGroup(ParameterGroup_Communication);
+        result &= persistence.loadGroup(ParameterGroup_Application);
+        result &= persistence.loadGroup(ParameterGroup_ManufacturerA);
+        return result;
     }
-    return node.hardware().loadDataFromFlash(parameterGroup);
+    return persistence.loadGroup(parameterGroup);
 }
 
 bool ObjectDictionnary::restoreData(uint8_t parameterGroup) {
-    Data tmp;
-    uint16_t minIndex = 0x0000;
-    uint16_t maxIndex = 0xFFFF;
     SDOAbortCodes abortCode;
-    int count = 0;
-
-    if (parameterGroup == ParameterGroup_Communication) {  // TODO: meta
-                                                           // generate
-        minIndex = 0x1000;  // TODO: move to define
-        maxIndex = 0x1FFF;
-    } else if (parameterGroup == ParameterGroup_Application) {
-        minIndex = 0x6000;
-        maxIndex = 0x9FFF;
-    } else if (parameterGroup == ParameterGroup_ManufacturerA) {
-        minIndex = 0x2000;
-        maxIndex = 0x4FFF;
-    }
     for (int32_t i = 0; i < static_cast<int32_t>(length); i++) {
-        if (CANopenOD::objectIndexTable[i].first >= minIndex &&
-            CANopenOD::objectIndexTable[i].first <= maxIndex) {
-            tmp = getMetadata(i)->getDefaultValue();
-            count = 0;
-            while (writeData(tmp, i, abortCode) == 1) {
-                count++;
-                if (count > MAX_WRITE_TRY) {
-                    break;
-                }
-            }
-            usleep(100);  // FIXME: understand why this is needed
-        }
+        if (!inParameterGroup(CANopenOD::objectIndexTable[i].first,
+                              parameterGroup))
+            continue;
+        const Data tmp = getMetadata(i)->getDefaultValue();
+        writeDataWait(tmp, i, abortCode);
     }
     return true;
 }

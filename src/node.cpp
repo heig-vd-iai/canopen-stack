@@ -4,15 +4,19 @@
 #include "node.hpp"
 
 #include "frame.hpp"
-#include "hardware-delay.hpp"
-
-namespace CANopen {
-Node node;
-}  // namespace CANopen
+#include "od_common.hpp"
 
 using namespace CANopen;
 
-Node::Node() : _odAccessor(_od), _sdo(_odAccessor, OD_NODE_ID) {}
+Node::Node(CanTransport &transport, Persistence &persistence,
+           RemoteObjects &remote)
+    : _odAccessor(_od),
+      _sdo(_odAccessor, transport, OD_NODE_ID),
+      _transport(transport),
+      _persistence(persistence),
+      _remote(remote) {
+    bindRemote(remote);
+}
 
 ObjectDictionnary &Node::od() { return _od; }
 
@@ -30,24 +34,24 @@ SYNC &Node::sync() { return _sync; }
 
 EMCY &Node::emcy() { return _emcy; }
 
-HardwareInterface &Node::hardware() { return *_hardware; }
+CanTransport &Node::transport() { return _transport; }
 
-void Node::init(HardwareInterface *hardware) {
-    _hardware = hardware;
-    _sdo.setHardware(*hardware);
-    _hardware->init();
-    usleep(1000);
+Persistence &Node::persistence() { return _persistence; }
+
+RemoteObjects &Node::remote() { return _remote; }
+
+void Node::init() {
+    _transport.init();
+    _persistence.init();
+    _remote.init();
     _pdo.init();
-    usleep(1000);
     _sync.init();
-    usleep(1000);
     _emcy.init();
-    usleep(1000);
     _nmt.initSM();
 }
 
 void Node::receiveFrame(Frame frame) {
-    uint32_t timestamp = node.hardware().getTime_us();
+    uint32_t timestamp = _transport.getTime_us();
     switch (static_cast<FunctionCodes>(frame.functionCode)) {
         case FunctionCode_NMT:
             _nmt.receiveFrame(static_cast<NMTFrame &>(frame));
@@ -79,8 +83,10 @@ void Node::receiveFrame(Frame frame) {
 }
 
 void Node::update() {
-    hardware().update();
-    timestamp_us = node.hardware().getTime_us();
+    Frame frame;
+    while (_transport.receiveFrame(frame)) receiveFrame(frame);
+    _remote.updateError();
+    timestamp_us = _transport.getTime_us();
     _hb.update(timestamp_us);
     _sdo.update(timestamp_us);
     _pdo.update(timestamp_us);

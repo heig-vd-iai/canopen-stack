@@ -20,11 +20,30 @@
 #define RESTORE_SIGNATURE 0x64616F6C
 
 #define MAX_SUB_INDEX 255
-#define MAX_WRITE_TRY 100
 
 #define DOMAIN_MAX_SIZE 800
+#define REMOTE_ACCESS_TIMEOUT_US 10000
+
+namespace CANopen {
+class RemoteObjects;
+}
 
 using namespace CANopen;
+
+/**
+ * Route remote objects to their implementation.
+ * Called once by Node::Node; the only link between generated code and
+ * hardware.
+ */
+void bindRemote(RemoteObjects &remote);
+
+/**
+ * Read or write an object and wait for a pending remote access to complete.
+ * The wait is bounded by REMOTE_ACCESS_TIMEOUT_US on the transport clock.
+ * @return 0 on success, 1 on timeout, -1 on failure with abortCode set.
+ */
+int8_t readDataWait(Data &data, int32_t id, SDOAbortCodes &abortCode);
+int8_t writeDataWait(const Data &data, int32_t id, SDOAbortCodes &abortCode);
 
 int8_t getLocalData_bool(Data &data, int32_t id, SDOAbortCodes &abortCode);
 int8_t setLocalData_bool(const Data &data, int32_t id,
