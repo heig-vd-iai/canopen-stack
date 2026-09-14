@@ -9,7 +9,7 @@
 #include "heartbeat.hpp"
 #include "node.hpp"
 #include "od_common.hpp"
-#include "pdo.hpp"
+#include "pdo/pdo.hpp"
 #include "sdo/sdoServer.hpp"
 #include "sync.hpp"
 

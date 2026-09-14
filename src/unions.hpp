@@ -25,32 +25,6 @@ union Access {
 };
 
 /**
- * COB-ID entry in PDO communication parameter (0x1400, 0x1800)
- */
-union PDOCobidEntry {
-    uint32_t value;
-    struct {
-        uint32_t canId : 29;
-        bool frame : 1;
-        bool rtr : 1;
-        bool valid : 1;
-    } bits;
-};
-
-/**
- * Union representing the mapping value in PDO mapping parameter (0x1600,
- * 0x1A00).
- */
-union PDOMapEntry {
-    uint32_t value;
-    struct {
-        uint32_t length : 8;
-        uint32_t subindex : 8;
-        uint32_t index : 16;
-    } bits;
-};
-
-/**
  * Union representing the error register value in error register (0x1001).
  */
 union ErrorRegisterValue {

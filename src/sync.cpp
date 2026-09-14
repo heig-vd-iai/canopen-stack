@@ -3,7 +3,7 @@
 #include "enums.hpp"
 #include "frame.hpp"
 #include "od_common.hpp"
-#include "pdo.hpp"
+#include "pdo/pdo.hpp"
 
 using namespace CANopen;
 

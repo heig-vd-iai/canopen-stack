@@ -26,6 +26,10 @@ class FakeHardware : public CanTransport,
     bool signatureStored = false;
     std::vector<uint8_t> savedGroups;
     std::vector<uint8_t> loadedGroups;
+    std::map<uint16_t, std::vector<int32_t>> remoteTpdo;
+    std::map<uint16_t, std::vector<int32_t>> remoteRpdo;
+    unsigned pdoEnabled = 0;
+    unsigned pdoDisabled = 0;
 
     void init() override {}
     void sendFrame(const Frame &frame) override { sent.push_back(frame); }
@@ -62,12 +66,26 @@ class FakeHardware : public CanTransport,
         return 0;
     }
 
-    void configRemoteRPDO(uint16_t, int32_t[]) override {}
-    void configRemoteTPDO(uint16_t, int32_t[]) override {}
-    void enablePDO() override {}
-    void disablePDO() override {}
-    void getRemoteTPDO(uint16_t, Data[]) override {}
-    void setRemoteRPDO(uint16_t, Data[]) override {}
+    void configRemoteRPDO(uint16_t pdoIndex, int32_t odIDs[]) override {
+        remoteRpdo[pdoIndex].assign(odIDs, odIDs + OD_PDO_MAPPING_MAX);
+    }
+    void configRemoteTPDO(uint16_t pdoIndex, int32_t odIDs[]) override {
+        remoteTpdo[pdoIndex].assign(odIDs, odIDs + OD_PDO_MAPPING_MAX);
+    }
+    void enablePDO() override { pdoEnabled++; }
+    void disablePDO() override { pdoDisabled++; }
+    void getRemoteTPDO(uint16_t pdoIndex, Data data[]) override {
+        const std::vector<int32_t> &ids = remoteTpdo[pdoIndex];
+        for (size_t i = 0; i < ids.size(); i++) {
+            if (ids[i] >= 0) data[i] = remote[ids[i]];
+        }
+    }
+    void setRemoteRPDO(uint16_t pdoIndex, Data data[]) override {
+        const std::vector<int32_t> &ids = remoteRpdo[pdoIndex];
+        for (size_t i = 0; i < ids.size(); i++) {
+            if (ids[i] >= 0) remote[ids[i]] = data[i];
+        }
+    }
 
     bool saveGroup(uint8_t parameterGroup) override {
         savedGroups.push_back(parameterGroup);

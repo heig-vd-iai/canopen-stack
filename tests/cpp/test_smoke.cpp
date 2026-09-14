@@ -20,6 +20,7 @@ TEST_CASE("heartbeat is produced once 0x1017 is written") {
     period.u64 = 0;
     period.u16 = 100;
     REQUIRE(node.od().writeData(period, 0x1017, 0) == 0);
+    node.update();
 
     hardware.clearSent();
     hardware.advance(50 * 1000);
