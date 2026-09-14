@@ -36,18 +36,18 @@ class CustomNode(canopen.Node):
         self.sdo[0x1017].phys = value_ms
 
 
-node = CustomNode(1, "../generator/example.eds")
+node = CustomNode(1, "../tests/golden/minimal/od.eds")
 network = canopen.Network()
 network.add_node(node)
 network.connect(channel="vcan0", bustype="socketcan")
 try:
     ## Block download
     # data = ".susir lev cnun adauselam regetni oel seicirtlu eatiV .des sucal isin des essidnepsuS .sutcel teuqila di rotrot hbiN .iud ucra eranro sarc des taptulov orebil tidnalb deS .siruam sullet tipicsus eativ isin eugnoc cnuN .tema tis surup sittigas euqsiuq tsmutcid aetalp essatibah caH .niorp adauselam reprocmallu alugil te neipas ranivlup cnuN .teidrepmi silef euqsirelecs ue etatupluv sutem nI .te subicuaf neipas assam cenod merol rutetcesnoC .naenea sucnohr siruam eugnoc eativ susruc ucra a muspI .gnicsipida rutetcesnoc tema tis rolod muspi merol tse tegE .otsuj orebil man arreviv repmes tauqesnoC .ropmet assam ni surup subicuaf mauqilA .saneceam taptulov tidnalb mine tu oidO .euqen mine regetni mutnemele ranivlup subicuaF .saneceam satsege siprut ca semaf adauselam te suteN .euqsetnellep mauq supmet eativ euqen rotcua repmes sarc a sillavnoC .auqila angam erolod te erobal tu tnudidicni ropmet domsuie od des ,tile gnicsipida rutetcesnoc ,tema tis rolod muspi meroL".encode()
-    # with node.sdo[0x1F51].open("wb", size=len(data), block_transfer=True) as f:
+    # with node.sdo[0x2002].open("wb", size=len(data), block_transfer=True) as f:
     #     f.write(data)
 
     # Block upload
-    # with node.sdo[0x1F51].open("rb") as f:
+    # with node.sdo[0x2002].open("rb") as f:
     #     print(f.read(1024).decode())
 
     node.sdo[0x6060].phys = 42
@@ -60,8 +60,8 @@ try:
     node.tpdo[i].event_timer = 1000
     node.tpdo[i].inhibit_time = 10 * 1000
     node.tpdo[i].enabled = True
-    node.tpdo[i].add_variable(0x6060, 0)
-    node.tpdo[i].add_variable(0x6042, 0)
+    node.tpdo[i].add_variable(0x6041, 0)
+    node.tpdo[i].add_variable(0x6064, 0)
     node.tpdo.save()
 
     ## NMT

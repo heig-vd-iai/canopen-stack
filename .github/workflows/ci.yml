@@ -24,6 +24,7 @@ jobs:
       - run: make lib
       - run: make test
       - run: ./build/tests
+      - run: make example
 
   format:
     runs-on: ubuntu-latest
