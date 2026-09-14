@@ -2,7 +2,16 @@
 
 #include <cstdint>
 
-#include "enums.hpp"
+namespace CANopen {
+
+/** Parameter groups of objects 0x1010 and 0x1011. CiA301:2011§7.5.2.15 */
+enum ParameterGroups {
+    ParameterGroup_All = 1,
+    ParameterGroup_Communication = 2,
+    ParameterGroup_Application = 3,
+    ParameterGroup_ManufacturerA = 4,
+};
+}  // namespace CANopen
 
 namespace CANopen {
 
