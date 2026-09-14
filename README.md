@@ -223,7 +223,7 @@ int main() {
 Ready-made implementations:
 
 - `platform/linux/`: `SocketCanTransport` (SocketCAN, `MSG_DONTWAIT`, `CLOCK_MONOTONIC`) and `FilePersistence` (one `od-group<N>.dat` file per parameter group). Built by `make example` into `build/example`, which runs against `tests/golden/minimal/cm/` and the `example/example.py` master on `vcan0`.
-- `platform/c2000/`: `C2000CanTransport` (MCAN0, CPUTimer0) and `C2000Persistence` (F021 Flash API, one sector per parameter group). Only driverlib is needed. `platform/c2000/example/` is a TI application skeleton with its Makefile (`TOOLCHAINPATH`, `C2000WAREPATH`, `OD_DIR`). The dual-core `RemoteObjects` implementation lives in the application project because it depends on the IPC structures shared with CPU1.
+- `platform/c2000/`: `C2000CanTransport` (MCAN0, CPUTimer0) and `C2000Persistence` (F021 Flash API, sectors 10, 11 and 9 for the parameter groups, sector 12 for the signature, sector 13 left to the bootloader). Only driverlib is needed. `platform/c2000/example/` is a TI application skeleton with its Makefile (`TOOLCHAINPATH`, `C2000WAREPATH`, `OD_DIR`). The dual-core `RemoteObjects` implementation lives in the application project because it depends on the IPC structures shared with CPU1.
 
 Persistence images hold eight bytes per object of the parameter group, in dictionary order, so the file and flash layouts are identical.
 

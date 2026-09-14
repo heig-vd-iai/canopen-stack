@@ -27,14 +27,15 @@ constexpr uint32_t FSM_MAX_POLLS = 1000000;
 constexpr uint32_t OBJECT_IMAGE_SIZE = sizeof(uint64_t);
 }  // namespace
 
+// Sector 13 is left to the bootloader (application metadata at 0x0027FF80).
 const C2000Persistence::Sector C2000Persistence::sectors[] = {
     {ParameterGroup_Communication, 0x00270000, 0x00004000},
     {ParameterGroup_Application, 0x00274000, 0x00004000},
-    {ParameterGroup_ManufacturerA, 0x00278000, 0x00004000},
+    {ParameterGroup_ManufacturerA, 0x00260000, 0x00010000},
 };
 
 const C2000Persistence::Sector C2000Persistence::signatureSector = {
-    ParameterGroup_All, 0x0027FFF0, 0x00000010};
+    ParameterGroup_All, 0x00278000, 0x00004000};
 
 const C2000Persistence::Sector *C2000Persistence::sectorOf(
     uint8_t parameterGroup) {

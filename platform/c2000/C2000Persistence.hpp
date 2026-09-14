@@ -8,8 +8,8 @@ namespace CANopen {
 
 /**
  * Object dictionary images in CM flash bank 0 through the F021 Flash API.
- * One sector per parameter group, eight bytes per object in dictionary
- * order, plus a sector holding the dictionary signature.
+ * One sector per parameter group (10, 11 and 9), eight bytes per object in
+ * dictionary order, plus sector 12 holding the dictionary signature.
  */
 class C2000Persistence : public Persistence {
    public:

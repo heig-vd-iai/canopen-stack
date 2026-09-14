@@ -1,9 +1,10 @@
 /*
  * CM linker script for the canopen-stack example.
  * Sector 0 holds the vector table, initialisation records and the RAM
- * functions image; code and constants span sectors 1 to 9. Sectors 10 to 13
- * are reserved for C2000Persistence (one parameter group per sector,
- * signature at the end of sector 13) and must not receive any section.
+ * functions image; code and constants span sectors 1 to 8. Sectors 9 to 12
+ * belong to C2000Persistence (one parameter group per sector, signature in
+ * sector 12) and sector 13 to the bootloader: none of them receives a
+ * section.
  */
 MEMORY
 {
@@ -47,7 +48,7 @@ SECTIONS
    .resetisr        : > CMBANK0_RESETISR, ALIGN(16)
    .vftable         : > CMBANK0_SECTOR0, ALIGN(16)
    .vtable          : > S0RAM
-   .text            : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5 | CMBANK0_SECTOR6 | CMBANK0_SECTOR7 | CMBANK0_SECTOR8 | CMBANK0_SECTOR9, ALIGN(16)
+   .text            : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5 | CMBANK0_SECTOR6 | CMBANK0_SECTOR7 | CMBANK0_SECTOR8, ALIGN(16)
    .cinit           : > CMBANK0_SECTOR0, ALIGN(16)
    .pinit           : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3, ALIGN(16)
    .init_array      : > CMBANK0_SECTOR0, ALIGN(16)
