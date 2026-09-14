@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include "emergency.hpp"
+#include "emcy/emcy.hpp"
 #include "heartbeat.hpp"
 #include "node.hpp"
 #include "od_common.hpp"

@@ -3,7 +3,6 @@
  */
 #include "frame.hpp"
 
-#include "emergency.hpp"
 #include "heartbeat.hpp"
 #include "sync.hpp"
 
@@ -30,27 +29,6 @@ HeartbeatFrame::HeartbeatFrame(uint8_t nodeId, uint8_t state)
 
 void HeartbeatFrame::setNMTState(uint8_t state) {
     data[HEARTBEAT_STATE_OFFSET] = state;
-}
-
-EmergencyFrame::EmergencyFrame(uint8_t nodeId, uint16_t errorCode,
-                               uint8_t errorRegister, uint32_t manufacturerCode)
-    : Frame(nodeId, FunctionCode_EMCY) {
-    dlc = EMCY_DLC;
-    setErrorCode(errorCode);
-    setErrorRegister(errorRegister);
-    setManufacturerCode(manufacturerCode);
-}
-
-void EmergencyFrame::setErrorCode(uint16_t errorCode) {
-    *(uint16_t *)(data + EMCY_ERRCODE_OFFSET) = errorCode;
-}
-
-void EmergencyFrame::setErrorRegister(uint8_t errorRegister) {
-    data[EMCY_ERRREG_OFFSET] = errorRegister;
-}
-
-void EmergencyFrame::setManufacturerCode(uint32_t manufacturerCode) {
-    *(uint32_t *)(data + EMCY_MANUFACTURER_OFFSET) = manufacturerCode;
 }
 
 SYNCFrame::SYNCFrame(uint8_t nodeId) : Frame(nodeId, FunctionCode_SYNC) {}

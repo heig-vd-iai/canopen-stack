@@ -63,41 +63,6 @@ struct HeartbeatFrame : public Frame {
 };
 
 /**
- * This is a specialized Frame used by the EMCY class.
- * See CiA301:2011§7.2.7.3.1 (p. 68)
- */
-struct EmergencyFrame : public Frame {
-    /**
-     * Constructor for specialized CANopen emergency frame.
-     * @param nodeId Node ID.
-     * @param errorCode Error code, should be a value from EMCYErrorCodes enum.
-     * @param errorRegister Error register value, should come from object
-     * 0x1001.
-     * @param manufacturerCode Manufacturer-specific error code.
-     */
-    EmergencyFrame(uint8_t nodeId, uint16_t errorCode, uint8_t errorRegister,
-                   uint32_t manufacturerCode);
-
-    /**
-     * Set the error code.
-     * @param errorCode Error code to set.
-     */
-    void setErrorCode(uint16_t errorCode);
-
-    /**
-     * Set the error register value.
-     * @param errorRegister Error register to set.
-     */
-    void setErrorRegister(uint8_t errorRegister);
-
-    /**
-     * Set the manufacturer-specific error code.
-     * @param manufacturerCode Manufacturer-specific error code to set.
-     */
-    void setManufacturerCode(uint32_t manufacturerCode);
-};
-
-/**
  * This is a specialized Frame used by the SYNC class.
  * CiA301:2011§7.2.5.3.1 (p. 63)
  */

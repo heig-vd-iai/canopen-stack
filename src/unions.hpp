@@ -24,23 +24,6 @@ union Access {
     } bits;
 };
 
-/**
- * Union representing the error register value in error register (0x1001).
- */
-union ErrorRegisterValue {
-    uint8_t value;
-    struct {
-        bool genericError : 1;
-        bool current : 1;
-        bool voltage : 1;
-        bool temperature : 1;
-        bool communicationError : 1;
-        bool deviceProfileSpecific : 1;
-        bool reserved : 1;
-        bool manufacturerSpecific : 1;
-    } bits;
-};
-
 union Data {
     bool b;
     int8_t i8;
