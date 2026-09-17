@@ -125,7 +125,8 @@ void C2000CanTransport::sendFrame(const Frame &frame) {
     element.id = static_cast<uint32_t>(frame.getCobID()) << 18;
     element.dlc = frame.dlc;
     element.rtr = frame.rtr;
-    memcpy(element.data, frame.data, frame.dlc);
+    // MCAN_TxBufElement::data holds one CAN byte per 16 bit word.
+    for (uint8_t i = 0; i < frame.dlc; i++) element.data[i] = frame.data[i];
     MCAN_TxFIFOStatus status;
     MCAN_getTxFIFOQueStatus(MCAN0_BASE, &status);
     MCAN_writeMsgRam(MCAN0_BASE, MCAN_MEM_TYPE_FIFO, status.putIdx, &element);
@@ -145,7 +146,8 @@ bool C2000CanTransport::receiveFrame(Frame &frame) {
     frame = Frame::fromCobId(static_cast<uint16_t>((element.id >> 18) & 0x7FF));
     frame.dlc = element.dlc > CAN_DATA_LENGTH ? CAN_DATA_LENGTH : element.dlc;
     frame.rtr = element.rtr;
-    memcpy(frame.data, element.data, frame.dlc);
+    for (uint8_t i = 0; i < frame.dlc; i++)
+        frame.data[i] = static_cast<uint8_t>(element.data[i] & 0xFF);
     return true;
 }
 

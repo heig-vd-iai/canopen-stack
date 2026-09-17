@@ -25,6 +25,13 @@ using namespace CANopen;
 namespace {
 constexpr uint32_t FSM_MAX_POLLS = 1000000;
 constexpr uint32_t OBJECT_IMAGE_SIZE = sizeof(uint64_t);
+
+// The flash pump is shared with CPU1: hold it only while the FSM runs, or
+// CPU1 and the bootloader block forever on their own claim.
+struct PumpSemaphore {
+    PumpSemaphore() { Flash_claimPumpSemaphore(FLASH_CM_WRAPPER); }
+    ~PumpSemaphore() { Flash_releasePumpSemaphore(); }
+};
 }  // namespace
 
 // Sector 13 is left to the bootloader (application metadata at 0x0027FF80).
@@ -50,6 +57,7 @@ void C2000Persistence::init() {
     Flash_claimPumpSemaphore(FLASH_CM_WRAPPER);
     Fapi_initializeAPI(F021_CPU0_BASE_ADDRESS, CM_CLK_FREQ / 1000000U);
     Fapi_setActiveFlashBank(Fapi_FlashBank0);
+    Flash_releasePumpSemaphore();
 }
 
 RAMFUNC
@@ -87,7 +95,9 @@ bool C2000Persistence::program(uint32_t address, const uint64_t &value) {
 
 bool C2000Persistence::saveGroup(uint8_t parameterGroup) {
     const Sector *sector = sectorOf(parameterGroup);
-    if (sector == nullptr || !eraseSector(*sector)) return false;
+    if (sector == nullptr) return false;
+    PumpSemaphore pump;
+    if (!eraseSector(*sector)) return false;
     uint32_t address = sector->origin;
     for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
@@ -127,6 +137,7 @@ bool C2000Persistence::loadGroup(uint8_t parameterGroup) {
 }
 
 bool C2000Persistence::saveSignature(uint64_t signature) {
+    PumpSemaphore pump;
     if (!eraseSector(signatureSector)) return false;
     return program(signatureSector.origin, signature);
 }
