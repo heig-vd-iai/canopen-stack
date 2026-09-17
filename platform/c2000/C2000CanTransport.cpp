@@ -14,6 +14,13 @@ namespace {
 
 constexpr uint32_t RXFIFO_LEN = 16;
 constexpr uint32_t TXFIFO_LEN = 16;
+constexpr uint32_t MCAN_CLK_FREQ = 25000000;
+constexpr uint32_t CAN_BITRATE = 500000;
+constexpr uint32_t CAN_TSEG1 = 7;
+constexpr uint32_t CAN_TSEG2 = 2;
+constexpr uint32_t CAN_SJW = 2;
+constexpr uint32_t CAN_TQ_PER_BIT = 1 + CAN_TSEG1 + CAN_TSEG2;
+constexpr uint32_t CAN_PRESCALER = MCAN_CLK_FREQ / (CAN_BITRATE * CAN_TQ_PER_BIT);
 constexpr uint16_t broadcastCobIds[] = {0x000, 0x080, 0x100};
 constexpr uint16_t nodeCobIdBases[] = {0x080, 0x180, 0x200, 0x280,
                                        0x300, 0x380, 0x400, 0x480,
@@ -54,11 +61,10 @@ void C2000CanTransport::initCan() {
 
     MCAN_BitTimingParams bitTimes;
     memset(&bitTimes, 0, sizeof(bitTimes));
-    // Prescaler = 25 MHz aux clock / DIV5 / 125 kHz bitrate => 40
-    bitTimes.nomRatePrescalar = bitTimes.dataRatePrescalar = 9;
-    bitTimes.nomTimeSeg1 = bitTimes.dataTimeSeg1 = 1;
-    bitTimes.nomTimeSeg2 = bitTimes.dataTimeSeg2 = 1;
-    bitTimes.nomSynchJumpWidth = bitTimes.dataSynchJumpWidth = 0;
+    bitTimes.nomRatePrescalar = bitTimes.dataRatePrescalar = CAN_PRESCALER - 1;
+    bitTimes.nomTimeSeg1 = bitTimes.dataTimeSeg1 = CAN_TSEG1 - 1;
+    bitTimes.nomTimeSeg2 = bitTimes.dataTimeSeg2 = CAN_TSEG2 - 1;
+    bitTimes.nomSynchJumpWidth = bitTimes.dataSynchJumpWidth = CAN_SJW - 1;
 
     MCAN_MsgRAMConfigParams msgRam;
     memset(&msgRam, 0, sizeof(msgRam));

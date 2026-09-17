@@ -8,9 +8,10 @@
  */
 MEMORY
 {
-   CMBANK0_RESETISR : origin = 0x00200000, length = 0x00000008
-   CMBANK0_SECTOR0  : origin = 0x00200008, length = 0x00003FF8
-   CMBANK0_SECTOR1  : origin = 0x00204000, length = 0x00004000
+   //CMBANK0_RESETISR : origin = 0x00200000, length = 0x00000008
+   //CMBANK0_SECTOR0  : origin = 0x00200008, length = 0x00003FF8
+   CMBANK0_RESETISR : origin = 0x00204000, length = 0x00000008
+   CMBANK0_SECTOR1  : origin = 0x00204008, length = 0x00003FF8
    CMBANK0_SECTOR2  : origin = 0x00208000, length = 0x00004000
    CMBANK0_SECTOR3  : origin = 0x0020C000, length = 0x00004000
    CMBANK0_SECTOR4  : origin = 0x00210000, length = 0x00010000
@@ -22,7 +23,7 @@ MEMORY
    CMBANK0_SECTOR10 : origin = 0x00270000, length = 0x00004000
    CMBANK0_SECTOR11 : origin = 0x00274000, length = 0x00004000
    CMBANK0_SECTOR12 : origin = 0x00278000, length = 0x00004000
-   CMBANK0_SECTOR13 : origin = 0x0027C000, length = 0x00004000
+   //CMBANK0_SECTOR13 : origin = 0x0027C000, length = 0x00004000
 
    C1RAM            : origin = 0x1FFFC000, length = 0x00002000
    C0RAM            : origin = 0x1FFFE000, length = 0x00002000
@@ -46,12 +47,12 @@ MEMORY
 SECTIONS
 {
    .resetisr        : > CMBANK0_RESETISR, ALIGN(16)
-   .vftable         : > CMBANK0_SECTOR0, ALIGN(16)
+   .vftable         : > CMBANK0_SECTOR1, ALIGN(16)
    .vtable          : > S0RAM
-   .text            : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5 | CMBANK0_SECTOR6 | CMBANK0_SECTOR7 | CMBANK0_SECTOR8, ALIGN(16)
-   .cinit           : > CMBANK0_SECTOR0, ALIGN(16)
+   .text            : >> CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5 | CMBANK0_SECTOR6 | CMBANK0_SECTOR7 | CMBANK0_SECTOR8, ALIGN(16)
+   .cinit           : > CMBANK0_SECTOR1, ALIGN(16)
    .pinit           : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3, ALIGN(16)
-   .init_array      : > CMBANK0_SECTOR0, ALIGN(16)
+   .init_array      : > CMBANK0_SECTOR1, ALIGN(16)
    .switch          : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3, ALIGN(16)
    .const           : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5, ALIGN(16)
    .econst          : >> CMBANK0_SECTOR1 | CMBANK0_SECTOR2 | CMBANK0_SECTOR3 | CMBANK0_SECTOR4 | CMBANK0_SECTOR5, ALIGN(16)
@@ -72,7 +73,7 @@ SECTIONS
        * (.text:Fapi_*)
        * (.text:_Fapi_*)
    }
-       LOAD = CMBANK0_SECTOR0,
+       LOAD = CMBANK0_SECTOR1,
        RUN = S1RAM,
        LOAD_START(RamfuncsLoadStart),
        LOAD_SIZE(RamfuncsLoadSize),
