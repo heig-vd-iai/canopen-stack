@@ -1,0 +1,118 @@
+[project]
+site_name = "CANopen Stack"
+site_description = "Pile esclave CANopen en C++14 avec générateur de dictionnaire d'objets"
+site_author = "HEIG-VD"
+
+repo_url = "https://github.com/heig-vd-iai/canopen-stack"
+repo_name = "heig-vd-iai/canopen-stack"
+
+docs_dir = "docs"
+
+nav = [
+  { "Accueil" = "index.md" },
+  { "Démarrage" = [
+    { "Installation" = "demarrage/installation.md" },
+    { "Premier nœud" = "demarrage/premier-noeud.md" },
+  ] },
+  { "Architecture" = [
+    { "Vue d'ensemble" = "architecture/vue-ensemble.md" },
+    { "Dictionnaire d'objets" = "architecture/dictionnaire.md" },
+    { "Interfaces matérielles" = "architecture/hal.md" },
+  ] },
+  { "Services" = [
+    { "NMT" = "services/nmt.md" },
+    { "SDO" = "services/sdo.md" },
+    { "PDO" = "services/pdo.md" },
+    { "SYNC" = "services/sync.md" },
+    { "EMCY" = "services/emcy.md" },
+    { "Heartbeat" = "services/heartbeat.md" },
+  ] },
+  { "Générateur" = [
+    { "Utilisation" = "generateur/utilisation.md" },
+    { "Schéma YAML" = "generateur/schema-yaml.md" },
+    { "Objets distants" = "generateur/objets-distants.md" },
+  ] },
+  { "Plateformes" = [
+    { "Linux" = "plateformes/linux.md" },
+    { "C2000" = "plateformes/c2000.md" },
+    { "Porter la pile" = "plateformes/porter.md" },
+  ] },
+  { "Développement" = [
+    { "Tests" = "developpement/tests.md" },
+    { "Limitations" = "developpement/limitations.md" },
+  ] },
+  { "Refactor" = [
+    { "Rapport du refactor" = "rapport-refactor.md" },
+    { "Migration de sw-motion" = "migration-sw-motion.md" },
+  ] },
+]
+
+[project.theme]
+language = "fr"
+features = [
+  "announce.dismiss",
+  "content.code.annotate",
+  "content.code.copy",
+  "content.code.select",
+  "content.footnote.tooltips",
+  "content.tabs.link",
+  "content.tooltips",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.path",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "toc.follow",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Passer au thème clair"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Passer au thème sombre"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Suivre le réglage du système"
+
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+toc.permalink = true
+pymdownx.arithmatex.generic = true
+pymdownx.betterem = {}
+pymdownx.caret = {}
+pymdownx.details = {}
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.keys = {}
+pymdownx.magiclink = {}
+pymdownx.mark = {}
+pymdownx.smartsymbols = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.tabbed.alternate_style = true
+pymdownx.tabbed.combine_header_slug = true
+pymdownx.tasklist.custom_checkbox = true
+pymdownx.tilde = {}

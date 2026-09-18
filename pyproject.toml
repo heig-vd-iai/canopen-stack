@@ -35,6 +35,7 @@ dev = [
     "black>=25.0.0,<26",
     "ruff>=0.9.9,<0.10",
     "canopen>=2.4.1",
+    "zensical>=0.0.62",
 ]
 
 [build-system]

@@ -72,14 +72,14 @@ make lib-minimal test-minimal   # NMT + SDO + heartbeat only, bootloader diction
 
 ## Documentation
 
-To generate the Doxygen documentation:
+The documentation site lives in `docs/` and is built with [Zensical](https://zensical.org) from `zensical.toml`. It is written in French and covers the architecture, the services, the generator and the supported platforms.
 
 ```bash
-sudo apt install doxygen graphviz
-doxygen Doxyfile
+make docs-serve   # serve the site locally
+make docs         # build it into site/
 ```
 
-The generated dictionary also comes with a Markdown page per module (`docs/` target of the generator).
+The C++ API reference is generated separately with `sudo apt install doxygen graphviz && doxygen Doxyfile`. The generated dictionary also comes with a Markdown page per module (`docs/` target of the generator).
 
 ## Object Dictionary
 

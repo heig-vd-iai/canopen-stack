@@ -96,6 +96,12 @@ build/example-obj/%.o: %.cpp
 generate:
 	uv run python -m generator generate $(CONFIG) -f --all dist
 
+docs:
+	uv run zensical build --clean
+
+docs-serve:
+	uv run zensical serve
+
 FORMAT_SRCS = $(wildcard src/*.cpp src/*.hpp src/*/*.cpp src/*/*.hpp) \
               $(wildcard platform/*/*.cpp platform/*/*.hpp) \
               $(wildcard platform/c2000/example/*.cpp example/linux/*.cpp) \
@@ -115,4 +121,4 @@ clean:
          $(MINIMAL_OBJS:.o=.d) $(MINIMAL_OD_OBJS:.o=.d) $(MINIMAL_TEST_OBJS:.o=.d)
 
 .PHONY: all lib lib-minimal test test-minimal example generate format \
-        format-check clean
+        format-check docs docs-serve clean
