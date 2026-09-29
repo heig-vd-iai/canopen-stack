@@ -25,7 +25,7 @@ using namespace CANopen;
 namespace {
 constexpr uint32_t FSM_MAX_POLLS = 1000000;
 constexpr uint32_t OBJECT_IMAGE_SIZE = sizeof(uint64_t);
-constexpr uint64_t IMAGE_LAYOUT_KEY = 0x5752495441424C45u;
+constexpr uint64_t IMAGE_LAYOUT_KEY = 0x5752495441424C46u;
 
 // The flash pump is shared with CPU1: hold it only while the FSM runs, or
 // CPU1 and the bootloader block forever on their own claim.
@@ -34,10 +34,22 @@ struct PumpSemaphore {
     ~PumpSemaphore() { Flash_releasePumpSemaphore(); }
 };
 
+// Write-only objects are commands (tare, pendulum zero): replaying them at
+// boot would execute them, so they are neither saved nor loaded.
 bool isStored(int32_t id, uint8_t parameterGroup) {
+    const Access access = ObjectDictionnary::objectMetadataTable[id].access;
     return inParameterGroup(CANopenOD::objectIndexTable[id].first,
                             parameterGroup) &&
-           ObjectDictionnary::objectMetadataTable[id].access.bits.writeable;
+           access.bits.readable && access.bits.writeable;
+}
+
+// CPU1 converts every 0x6xxx value at write time with the SI units
+// (0x60A8-0x60AB), gear ratio (0x6091) and feed constant (0x6092) in force.
+// Those scaling objects must therefore be loaded before the others.
+bool isScaling(int32_t id) {
+    const uint16_t index = CANopenOD::objectIndexTable[id].first;
+    return (index >= 0x6091 && index <= 0x6092) ||
+           (index >= 0x60A8 && index <= 0x60AB);
 }
 }  // namespace
 
@@ -128,15 +140,23 @@ bool C2000Persistence::loadGroup(uint8_t parameterGroup) {
     const Sector *sector = sectorOf(parameterGroup);
     if (sector == nullptr) return false;
     if (isBlank(sector->origin, OBJECT_IMAGE_SIZE / 4)) return false;
-    uint32_t address = sector->origin;
+    return loadPass(*sector, parameterGroup, true) &&
+           loadPass(*sector, parameterGroup, false);
+}
+
+bool C2000Persistence::loadPass(const Sector &sector, uint8_t parameterGroup,
+                                bool scalingObjects) {
+    uint32_t address = sector.origin;
     for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
         if (!isStored(id, parameterGroup)) continue;
-        if (address + OBJECT_IMAGE_SIZE > sector->origin + sector->length)
+        if (address + OBJECT_IMAGE_SIZE > sector.origin + sector.length)
             return false;
-        Data value;
-        memcpy(&value.u64, reinterpret_cast<const void *>(address),
-               OBJECT_IMAGE_SIZE);
+        const uint32_t objectAddress = address;
         address += OBJECT_IMAGE_SIZE;
+        if (isScaling(id) != scalingObjects) continue;
+        Data value;
+        memcpy(&value.u64, reinterpret_cast<const void *>(objectAddress),
+               OBJECT_IMAGE_SIZE);
         SDOAbortCodes abortCode;
         writeDataWait(value, id, abortCode);
     }

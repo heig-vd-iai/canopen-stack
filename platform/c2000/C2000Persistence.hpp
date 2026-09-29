@@ -30,6 +30,8 @@ class C2000Persistence : public Persistence {
     static const Sector signatureSector;
 
     static const Sector *sectorOf(uint8_t parameterGroup);
+    static bool loadPass(const Sector &sector, uint8_t parameterGroup,
+                         bool scalingObjects);
     static bool waitFsmReady();
     static bool eraseSector(const Sector &sector);
     static bool isBlank(uint32_t address, uint32_t words);
