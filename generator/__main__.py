@@ -31,9 +31,8 @@ def generate_local(renderer: Renderer, outdir: Path, force: bool) -> None:
 def generate_remote(renderer: Renderer, outdir: Path, force: bool) -> None:
     _write(outdir / "od_remote.hpp", renderer.to_remote(), force)
     _write(outdir / "od_enum.hpp", renderer.to_enum(), force)
-    modes = renderer.to_modes()
-    if modes is not None:
-        _write(outdir / "od_modes.hpp", modes, force)
+    for name, content in renderer.to_custom().items():
+        _write(outdir / name, content, force)
 
 
 def generate_eds(renderer: Renderer, outdir: Path, force: bool) -> None:
@@ -92,7 +91,13 @@ OUTDIR = click.Path(file_okay=False, dir_okay=True, path_type=Path)
 )
 @click.option("--eds", "-e", type=OUTDIR, help="EDS file")
 @click.option("--doc", "-d", type=OUTDIR, help="Markdown documentation")
-def generate(config, profiles, force, everything, local, remote, eds, doc):
+@click.option(
+    "--templates",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Directory of project templates; *.j2 files not part of the generator "
+    "are rendered under --remote",
+)
+def generate(config, profiles, force, everything, local, remote, eds, doc, templates):
     """Generate files from CONFIG (schema v2)."""
     if everything is not None:
         local = local or everything / "cm"
@@ -106,7 +111,8 @@ def generate(config, profiles, force, everything, local, remote, eds, doc):
 
     file_name = config.name.split(".")[0]
     try:
-        renderer = Renderer(build_context(load(config, profiles), file_name))
+        context = build_context(load(config, profiles), file_name)
+        renderer = Renderer(context, overrides=templates)
         if local:
             generate_local(renderer, local, force)
         if remote:

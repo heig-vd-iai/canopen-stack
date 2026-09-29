@@ -46,9 +46,26 @@ uv run python -m generator generate config.yaml --all dist
 | Files | Target | Content |
 |---|---|---|
 | `cm/od.hpp`, `cm/od.cpp`, `cm/od_lookup.{hpp,cpp}` | node core | dictionary tables, `OD_OBJECT_<index>_SUB<n>` ids, perfect hash lookup |
-| `cpu1/od_remote.hpp`, `cpu1/od_enum.hpp`, `cpu1/od_modes.hpp` | remote core | getters and setters of the `remote` objects, enumerations, modes of operation |
+| `cpu1/od_remote.hpp`, `cpu1/od_enum.hpp` | remote core | getters and setters of the `remote` objects, enumerations |
 | `od.eds` | master tools | EDS file |
 | `docs/*.md` | documentation | one Markdown page per module |
+
+`--templates DIR` adds project templates. Each `*.j2` file of `DIR` whose name is not a generator template is rendered under `--remote`, without the `.j2` suffix. A file named like a generator template (`enum.j2`, `hpp.j2`...) replaces it.
+
+```bash
+uv run python -m generator generate config.yaml --remote cpu1 --templates templates
+```
+
+For example, `templates/od_modes.hpp.j2` produces `cpu1/od_modes.hpp`:
+
+```jinja
+{% for item in modes_of_operation.enum.values %}
+{% set name = item.split("__", 1)[1] %}
+#include "modes/mode_{{ name|camel }}.hpp"
+{% endfor %}
+```
+
+Templates see `objects`, `node_id`, `nrOfRXPDO`, `nrOfTXPDO`, `subindex_count`, `type_count`, `mandatoryObjects`, `optionalObjects`, `modules`, `modes_of_operation` (the "Modes of operation" object with an enum, or none), `time`, `date` and `signature`. The filters `camel` and `pascal` convert `PROFILE_POSITION` to `profilePosition` and `ProfilePosition`.
 
 A configuration written for the previous schema is converted with:
 

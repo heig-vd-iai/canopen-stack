@@ -14,6 +14,7 @@ import mdformat
 from .. import tree
 from ..phf import PHF, BuildNotFound
 from .context import RenderContext
+from .filters import camel, pascal
 
 TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
 
@@ -29,12 +30,29 @@ REMOTE_TYPES = {
 
 
 class Renderer:
-    def __init__(self, context: RenderContext, template_dir: Path = TEMPLATE_DIR):
+    def __init__(
+        self,
+        context: RenderContext,
+        template_dir: Path = TEMPLATE_DIR,
+        overrides: Optional[Path] = None,
+    ):
         self.ctx = context
+        self.template_dir = template_dir
+        self.overrides = overrides
         self.env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(template_dir),
+            loader=self._loader(),
             trim_blocks=True,
             lstrip_blocks=True,
+        )
+        self.env.filters["camel"] = camel
+        self.env.filters["pascal"] = pascal
+
+    def _loader(self) -> jinja2.BaseLoader:
+        generator_loader = jinja2.FileSystemLoader(self.template_dir)
+        if self.overrides is None:
+            return generator_loader
+        return jinja2.ChoiceLoader(
+            [jinja2.FileSystemLoader(self.overrides), generator_loader]
         )
 
     def _render(self, template: str, **extra) -> str:
@@ -49,6 +67,7 @@ class Renderer:
             "mandatoryObjects": self.ctx.mandatoryObjects,
             "optionalObjects": self.ctx.optionalObjects,
             "modules": self.ctx.modules,
+            "modes_of_operation": self.ctx.modes_of_operation,
             "time": now.strftime("%H:%M"),
             "date": now.strftime("%Y-%m-%d"),
             "signature": now.strftime("%Y%m%d%H%M"),
@@ -123,20 +142,15 @@ class Renderer:
             )
         return content
 
-    def to_modes(self) -> Optional[str]:
-        modes_object = self.ctx.modes_of_operation
-        if modes_object is None or modes_object.enum is None:
-            return None
-        headers = []
-        modes = []
-        for item in modes_object.enum.values:
-            _, right = item.split("__", 1)
-            first, *rest = right.split("_")
-            suffix = first.lower() + "".join(word.capitalize() for word in rest)
-            mode_suffix = "".join(word.capitalize() for word in right.split("_"))
-            headers.append(f"mode_{suffix}.hpp")
-            modes.append((f"Mode{mode_suffix}", suffix, item))
-        return self.env.get_template("modes.j2").render(headers=headers, modes=modes)
+    def to_custom(self) -> Dict[str, str]:
+        """Project templates rendered by file name, without the .j2 suffix."""
+        if self.overrides is None:
+            return {}
+        return {
+            path.stem: self._render(path.name)
+            for path in sorted(self.overrides.glob("*.j2"))
+            if not (self.template_dir / path.name).exists()
+        }
 
     @staticmethod
     def _build_phf(keys: list, values: list):
