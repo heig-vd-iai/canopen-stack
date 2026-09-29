@@ -20,7 +20,8 @@ constexpr uint32_t CAN_TSEG1 = 7;
 constexpr uint32_t CAN_TSEG2 = 2;
 constexpr uint32_t CAN_SJW = 2;
 constexpr uint32_t CAN_TQ_PER_BIT = 1 + CAN_TSEG1 + CAN_TSEG2;
-constexpr uint32_t CAN_PRESCALER = MCAN_CLK_FREQ / (CAN_BITRATE * CAN_TQ_PER_BIT);
+constexpr uint32_t CAN_PRESCALER =
+    MCAN_CLK_FREQ / (CAN_BITRATE * CAN_TQ_PER_BIT);
 constexpr uint16_t broadcastCobIds[] = {0x000, 0x080, 0x100};
 constexpr uint16_t nodeCobIdBases[] = {0x080, 0x180, 0x200, 0x280,
                                        0x300, 0x380, 0x400, 0x480,
