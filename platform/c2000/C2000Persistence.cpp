@@ -25,6 +25,7 @@ using namespace CANopen;
 namespace {
 constexpr uint32_t FSM_MAX_POLLS = 1000000;
 constexpr uint32_t OBJECT_IMAGE_SIZE = sizeof(uint64_t);
+constexpr uint64_t IMAGE_LAYOUT_KEY = 0x5752495441424C45u;
 
 // The flash pump is shared with CPU1: hold it only while the FSM runs, or
 // CPU1 and the bootloader block forever on their own claim.
@@ -32,6 +33,12 @@ struct PumpSemaphore {
     PumpSemaphore() { Flash_claimPumpSemaphore(FLASH_CM_WRAPPER); }
     ~PumpSemaphore() { Flash_releasePumpSemaphore(); }
 };
+
+bool isStored(int32_t id, uint8_t parameterGroup) {
+    return inParameterGroup(CANopenOD::objectIndexTable[id].first,
+                            parameterGroup) &&
+           ObjectDictionnary::objectMetadataTable[id].access.bits.writeable;
+}
 }  // namespace
 
 // Sector 13 is left to the bootloader (application metadata at 0x0027FF80).
@@ -99,9 +106,7 @@ bool C2000Persistence::saveGroup(uint8_t parameterGroup) {
     static uint64_t image[OD_LENGTH];
     uint32_t count = 0;
     for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
-        if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
-                              parameterGroup))
-            continue;
+        if (!isStored(id, parameterGroup)) continue;
         if ((count + 1) * OBJECT_IMAGE_SIZE > sector->length) return false;
         Data value;
         value.u64 = 0;
@@ -125,9 +130,7 @@ bool C2000Persistence::loadGroup(uint8_t parameterGroup) {
     if (isBlank(sector->origin, OBJECT_IMAGE_SIZE / 4)) return false;
     uint32_t address = sector->origin;
     for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
-        if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
-                              parameterGroup))
-            continue;
+        if (!isStored(id, parameterGroup)) continue;
         if (address + OBJECT_IMAGE_SIZE > sector->origin + sector->length)
             return false;
         Data value;
@@ -143,12 +146,13 @@ bool C2000Persistence::loadGroup(uint8_t parameterGroup) {
 bool C2000Persistence::saveSignature(uint64_t signature) {
     PumpSemaphore pump;
     if (!eraseSector(signatureSector)) return false;
-    return program(signatureSector.origin, signature);
+    return program(signatureSector.origin, signature ^ IMAGE_LAYOUT_KEY);
 }
 
 bool C2000Persistence::loadSignature(uint64_t &signature) {
     if (isBlank(signatureSector.origin, OBJECT_IMAGE_SIZE / 4)) return false;
     memcpy(&signature, reinterpret_cast<const void *>(signatureSector.origin),
            OBJECT_IMAGE_SIZE);
+    signature ^= IMAGE_LAYOUT_KEY;
     return true;
 }
