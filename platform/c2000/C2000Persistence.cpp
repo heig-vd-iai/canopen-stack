@@ -96,20 +96,24 @@ bool C2000Persistence::program(uint32_t address, const uint64_t &value) {
 bool C2000Persistence::saveGroup(uint8_t parameterGroup) {
     const Sector *sector = sectorOf(parameterGroup);
     if (sector == nullptr) return false;
-    PumpSemaphore pump;
-    if (!eraseSector(*sector)) return false;
-    uint32_t address = sector->origin;
+    static uint64_t image[OD_LENGTH];
+    uint32_t count = 0;
     for (int32_t id = 0; id < static_cast<int32_t>(OD_LENGTH); id++) {
         if (!inParameterGroup(CANopenOD::objectIndexTable[id].first,
                               parameterGroup))
             continue;
-        if (address + OBJECT_IMAGE_SIZE > sector->origin + sector->length)
-            return false;
+        if ((count + 1) * OBJECT_IMAGE_SIZE > sector->length) return false;
         Data value;
         value.u64 = 0;
         SDOAbortCodes abortCode;
-        readDataWait(value, id, abortCode);
-        if (!program(address, value.u64)) return false;
+        if (readDataWait(value, id, abortCode) != 0) return false;
+        image[count++] = value.u64;
+    }
+    PumpSemaphore pump;
+    if (!eraseSector(*sector)) return false;
+    uint32_t address = sector->origin;
+    for (uint32_t i = 0; i < count; i++) {
+        if (!program(address, image[i])) return false;
         address += OBJECT_IMAGE_SIZE;
     }
     return true;
