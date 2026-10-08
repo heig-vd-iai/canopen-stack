@@ -71,8 +71,11 @@ void SDO::update(uint32_t now_us) {
                 abort(accessor.error(), now_us);
             break;
         }
+        case State::AwaitDomainUpload:
+            pollDomainUpload(now_us);
+            break;
         case State::BlockUploadSending:
-            sendBlockUploadSegment(now_us);
+            if (transport.txReady()) sendBlockUploadSegment(now_us);
             break;
         case State::BlockDownloading:
             if (!blockTimeoutAcked &&
@@ -190,6 +193,29 @@ void SDO::awaitOD(bool write, Continuation next, uint32_t now_us) {
     }
 }
 
+void SDO::awaitDomainUpload(Continuation next, uint32_t now_us) {
+    continuation = next;
+    const SDOAbortCodes code = accessor.domain()->beginUpload(accessor.id());
+    if (code != SDOAbortCode_OK) {
+        abort(code, now_us);
+        return;
+    }
+    state = State::AwaitDomainUpload;
+    lastActivity_us = now_us;
+    pollDomainUpload(now_us);
+}
+
+void SDO::pollDomainUpload(uint32_t now_us) {
+    SDOAbortCodes code = SDOAbortCode_OK;
+    if (accessor.domain()->pollUpload(accessor.id(), code) != 0) return;
+    state = State::Idle;
+    if (code != SDOAbortCode_OK) {
+        abort(code, now_us);
+        return;
+    }
+    resume(now_us);
+}
+
 void SDO::resume(uint32_t now_us) {
     const Continuation next = continuation;
     continuation = Continuation::None;
@@ -231,6 +257,8 @@ void SDO::abort(uint16_t index, uint8_t subindex, SDOAbortCodes code,
 }
 
 void SDO::reset() {
+    if (state == State::AwaitDomainUpload)
+        accessor.domain()->abortUpload(accessor.id());
     if (transfer.domainOpen) accessor.domain()->abortDownload(accessor.id());
     transfer.domainOpen = false;
     accessor.clear();

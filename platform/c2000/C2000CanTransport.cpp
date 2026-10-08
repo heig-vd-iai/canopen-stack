@@ -130,8 +130,15 @@ void C2000CanTransport::sendFrame(const Frame &frame) {
     for (uint8_t i = 0; i < frame.dlc; i++) element.data[i] = frame.data[i];
     MCAN_TxFIFOStatus status;
     MCAN_getTxFIFOQueStatus(MCAN0_BASE, &status);
+    if (status.fifoFull) return;
     MCAN_writeMsgRam(MCAN0_BASE, MCAN_MEM_TYPE_FIFO, status.putIdx, &element);
     MCAN_txBufAddReq(MCAN0_BASE, status.putIdx);
+}
+
+bool C2000CanTransport::txReady() {
+    MCAN_TxFIFOStatus status;
+    MCAN_getTxFIFOQueStatus(MCAN0_BASE, &status);
+    return status.freeLvl > 0;
 }
 
 bool C2000CanTransport::receiveFrame(Frame &frame) {

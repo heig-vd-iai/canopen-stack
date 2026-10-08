@@ -22,6 +22,9 @@ Règles :
 - `receiveFrame()` ne bloque jamais. Elle rend `false` quand aucune trame n'attend.
 - `getTime_us()` est monotone et reboucle à `0xFFFFFFFF`.
 - `init()` configure le contrôleur CAN et l'horloge.
+- `txReady()` rend `false` quand la file d'émission est pleine. Le serveur SDO
+  attend alors avant d'envoyer le segment suivant d'un block upload. Sans elle,
+  `sendFrame()` doit absorber une rafale de 127 segments.
 
 Filtrez la réception sur les COB-ID du nœud quand le contrôleur le permet. Cela réduit
 le travail de `Node::update()`.

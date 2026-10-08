@@ -16,6 +16,7 @@ class C2000CanTransport : public CanTransport {
 
     void init() override;
     void sendFrame(const Frame &frame) override;
+    bool txReady() override;
     bool receiveFrame(Frame &frame) override;
     uint32_t getTime_us() override;
 

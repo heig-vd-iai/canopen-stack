@@ -71,6 +71,9 @@ class DomainHandler {
                                         const uint8_t *bytes, uint32_t length) = 0;
     virtual SDOAbortCodes endDownload(int32_t id, uint32_t size) = 0;
     virtual void abortDownload(int32_t id) = 0;
+    virtual SDOAbortCodes beginUpload(int32_t id);
+    virtual int8_t pollUpload(int32_t id, SDOAbortCodes &abortCode);
+    virtual void abortUpload(int32_t id);
     virtual uint32_t uploadSize(int32_t id) = 0;
     virtual SDOAbortCodes uploadChunk(int32_t id, uint32_t offset,
                                       uint8_t *bytes, uint32_t length) = 0;
@@ -86,6 +89,18 @@ canopen.node.odAccessor().setDomainHandler(&domain);
 `beginDownload()` reçoit la taille annoncée par le maître, ou `0` quand elle est
 inconnue. `example/linux/main.cpp` garde l'objet `0x2002` dans un tampon. Un bootloader
 écrit les morceaux en mémoire flash.
+
+Un upload de DOMAIN peut attendre ses données. À l'initiation, segmentée ou par bloc, le
+serveur appelle `beginUpload()`. Il appelle ensuite `pollUpload()` à chaque `update()`.
+
+- `pollUpload()` rend `1` : le serveur reste dans l'état `AwaitDomainUpload`.
+- `pollUpload()` rend `0` : le serveur appelle `uploadSize()` et répond à l'initiation.
+- `abortCode` différent de `SDOAbortCode_OK` : le serveur envoie cet abort.
+- Abort du client ou délai de `CANOPEN_SDO_TIMEOUT_US` dépassé : le serveur appelle
+  `abortUpload()`.
+
+Les implémentations par défaut répondent tout de suite. Un gestionnaire synchrone n'a rien
+à changer.
 
 ## Configuration
 

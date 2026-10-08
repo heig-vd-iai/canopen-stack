@@ -16,6 +16,12 @@ class CanTransport {
     virtual void init() = 0;
     virtual void sendFrame(const Frame &frame) = 0;
     /**
+     * Whether sendFrame() can queue a frame right now.
+     * The SDO server paces a block upload on it; the default never
+     * throttles.
+     */
+    virtual bool txReady() { return true; }
+    /**
      * Pop one pending frame from the receive queue.
      * @return True when a frame was written to `frame`, false when the queue
      * is empty.

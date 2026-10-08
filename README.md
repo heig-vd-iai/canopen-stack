@@ -140,6 +140,8 @@ The supported data types and their C type:
 
 A DOMAIN object has no storage in the dictionary. The SDO server hands its data to the `DomainHandler` registered on the node, chunk by chunk, in both directions.
 
+An upload can wait for its data. On initiation the server calls `beginUpload()`, then `pollUpload()` from `update()` until it returns 0, and only then `uploadSize()`. A non-OK abort code aborts the transfer. A client abort or a timeout while waiting calls `abortUpload()`. The default implementations answer at once.
+
 The standard objects the stack serves itself:
 
 | Index | Name | Service |
@@ -168,7 +170,7 @@ The library is device-agnostic. The application implements three small interface
 
 | Interface | Header | Role |
 |---|---|---|
-| `CanTransport` | `hal/can-transport.hpp` | `init`, `sendFrame`, non-blocking `receiveFrame`, microsecond clock `getTime_us` (wraps at 0xFFFFFFFF) |
+| `CanTransport` | `hal/can-transport.hpp` | `init`, `sendFrame`, optional `txReady` (paces block uploads on the TX queue), non-blocking `receiveFrame`, microsecond clock `getTime_us` (wraps at 0xFFFFFFFF) |
 | `Persistence` | `hal/persistence.hpp` | `saveGroup`/`loadGroup` per parameter group, `saveSignature`/`loadSignature` |
 | `RemoteObjects` | `hal/remote-objects.hpp` | Objects served by another core: `getRemoteData`/`setRemoteData` (return 1 while pending), PDO hooks, `resetRemote`, `updateError`. `NullRemote` for single-core targets |
 

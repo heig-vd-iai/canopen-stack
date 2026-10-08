@@ -25,8 +25,7 @@ void SDO::onBlockUploadInitiate(const Frame &frame, uint32_t now_us) {
     transfer.crcEnabled = request.crcSupported();
     transfer.blockSize = blockSize;
     if (transfer.domain) {
-        continuation = Continuation::BlockUploadInitiate;
-        resume(now_us);
+        awaitDomainUpload(Continuation::BlockUploadInitiate, now_us);
         return;
     }
     awaitOD(false, Continuation::BlockUploadInitiate, now_us);

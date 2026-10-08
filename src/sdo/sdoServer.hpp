@@ -4,6 +4,7 @@
  *
  * Remote objects answer asynchronously: the server parks in AwaitOD and
  * resumes from update() once the object dictionary access completes.
+ * A DOMAIN upload parks in AwaitDomainUpload while its handler fetches data.
  * DOMAIN objects are streamed through a DomainHandler, never buffered whole.
  */
 #pragma once
@@ -42,6 +43,7 @@ class SDO : public Service {
     enum class State {
         Idle,
         AwaitOD,
+        AwaitDomainUpload,
         UploadSegmented,
         DownloadSegmented,
         BlockUploadReady,
@@ -97,6 +99,8 @@ class SDO : public Service {
     void finishDownload(Continuation continuation, uint32_t now_us);
 
     void awaitOD(bool write, Continuation continuation, uint32_t now_us);
+    void awaitDomainUpload(Continuation continuation, uint32_t now_us);
+    void pollDomainUpload(uint32_t now_us);
     void resume(uint32_t now_us);
     void sendUploadInitiate(uint32_t now_us);
     void sendDownloadInitiate(uint32_t now_us);

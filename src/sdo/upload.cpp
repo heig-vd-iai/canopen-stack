@@ -13,8 +13,7 @@ void SDO::onInitiateUpload(const Frame &frame, uint32_t now_us) {
         return;
     }
     if (transfer.domain) {
-        continuation = Continuation::UploadInitiate;
-        resume(now_us);
+        awaitDomainUpload(Continuation::UploadInitiate, now_us);
         return;
     }
     awaitOD(false, Continuation::UploadInitiate, now_us);

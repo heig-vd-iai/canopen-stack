@@ -83,6 +83,24 @@ struct MemoryDomain : public DomainHandler {
     }
 };
 
+struct SlowDomain : public MemoryDomain {
+    int pendingPolls = 0;
+    int begunUploads = 0;
+    int abortedUploads = 0;
+
+    SDOAbortCodes beginUpload(int32_t) override {
+        begunUploads++;
+        return SDOAbortCode_OK;
+    }
+    int8_t pollUpload(int32_t, SDOAbortCodes &abortCode) override {
+        abortCode = SDOAbortCode_OK;
+        if (pendingPolls == 0) return 0;
+        pendingPolls--;
+        return 1;
+    }
+    void abortUpload(int32_t) override { abortedUploads++; }
+};
+
 struct Step {
     Bytes in;
     std::vector<Bytes> out;
@@ -523,6 +541,38 @@ TEST_CASE("block upload of a DOMAIN") {
         {{0xa2, 0x03, 0x7f}, {{0xc5, 0x00, 0x00}}, 0},
         {{0xa1}, {}, 0},
     });
+    CHECK(b.sdo.isIdle());
+}
+
+TEST_CASE("DOMAIN upload waits for the handler to fetch its data") {
+    Bench b;
+    SlowDomain slow;
+    for (uint8_t i = 1; i <= 10; i++) slow.source.push_back(i);
+    slow.pendingPolls = 2;
+    b.accessor.setDomainHandler(&slow);
+    b.replay({
+        {{0x40, 0x02, 0x20, 0x00}, {}, 0},
+        {{}, {}, 1},
+        {{}, {{0x41, 0x02, 0x20, 0x00, 0x0a}}, 1},
+        {{0x60}, {{0x00, 1, 2, 3, 4, 5, 6, 7}}, 0},
+        {{0x70}, {{0x19, 8, 9, 10}}, 0},
+    });
+    CHECK(slow.begunUploads == 1);
+    CHECK(slow.abortedUploads == 0);
+    CHECK(b.sdo.isIdle());
+}
+
+TEST_CASE("client abort during a pending DOMAIN upload notifies the handler") {
+    Bench b;
+    SlowDomain slow;
+    slow.source.resize(10);
+    slow.pendingPolls = 5;
+    b.accessor.setDomainHandler(&slow);
+    b.replay({
+        {{0x40, 0x02, 0x20, 0x00}, {}, 0},
+        {{0x80, 0x02, 0x20, 0x00}, {}, 0},
+    });
+    CHECK(slow.abortedUploads == 1);
     CHECK(b.sdo.isIdle());
 }
 
