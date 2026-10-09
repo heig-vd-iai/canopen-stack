@@ -6,6 +6,8 @@ from typing import Dict, Optional
 
 import yaml
 
+from .loaders.config import normalize_index
+
 ACCESS = {"ro": "r", "rw": "rw", "wo": "w", "const": "r"}
 NONE = "none"
 V1_INDEX_PLACEHOLDER = "?#"
@@ -350,6 +352,28 @@ def migrate_profiles(v1_profiles: dict) -> Dict[int, dict]:
         }
         out[pid] = {"profiles": {pid: {"name": profile["name"], "objects": objects}}}
     return out
+
+
+def readable(value):
+    """Return a copy of a YAML value whose multi-line strings use literal blocks."""
+    if isinstance(value, dict):
+        return {key: readable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [readable(item) for item in value]
+    if isinstance(value, str):
+        return _text(value)
+    return value
+
+
+def dump_config(raw: dict) -> str:
+    """Serialize a raw v2 configuration with hexadecimal object indices."""
+    data = readable(raw)
+    if isinstance(data.get("objects"), dict):
+        data["objects"] = {
+            HexInt(normalize_index(index)): obj
+            for index, obj in data["objects"].items()
+        }
+    return dump(data)
 
 
 def write_yaml(path: Path, data: dict) -> None:

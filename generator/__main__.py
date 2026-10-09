@@ -1,14 +1,16 @@
 """Command line interface of the CANopen object dictionary generator."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence, Tuple
 
 import click
+import inflection
 from pydantic import ValidationError
 
-from .loaders import load_config, read_yaml_file
-from .migrate import migrate_config, migrate_profiles, write_yaml
+from .loaders import load_config_dict, load_raw_config, read_yaml_file
+from .migrate import dump_config, migrate_config, migrate_profiles, write_yaml
 from .render import Renderer, build_context
+from .validation.models.config import SchemaConfig
 
 LOOKUP_HEADER = "od_lookup.hpp"
 
@@ -46,6 +48,16 @@ def generate_documentation(renderer: Renderer, outdir: Path, force: bool) -> Non
     _write(outdir / "sidebar.md", renderer.to_sidebar(), force)
 
 
+def yaml_name(raw: dict) -> str:
+    """Return the merged configuration file name, from the product name."""
+    product = raw.get("device", {}).get("product", {})
+    return f"{inflection.parameterize(str(product.get('name', '')))}.v2.yaml"
+
+
+def generate_yaml(raw: dict, outdir: Path, force: bool) -> None:
+    _write(outdir / yaml_name(raw), dump_config(raw), force)
+
+
 def format_validation_error(error: ValidationError) -> str:
     lines = [f"{error.error_count()} validation error(s):"]
     for item in error.errors():
@@ -57,9 +69,12 @@ def format_validation_error(error: ValidationError) -> str:
     return "\n".join(lines)
 
 
-def load(config: Path, profiles: Optional[Path]):
+def load(
+    config: Path, profiles: Optional[Path], overlays: Sequence[Path] = ()
+) -> Tuple[dict, SchemaConfig]:
     try:
-        return load_config(config, profiles)
+        raw = load_raw_config(config, overlays)
+        return raw, load_config_dict(raw, profiles)
     except ValidationError as error:
         raise click.ClickException(format_validation_error(error)) from error
     except (ValueError, FileNotFoundError) as error:
@@ -81,6 +96,13 @@ OUTDIR = click.Path(file_okay=False, dir_okay=True, path_type=Path)
     type=click.Path(exists=True, file_okay=False, path_type=Path),
     help="Directory holding the CiA profile definitions (<number>.yaml)",
 )
+@click.option(
+    "--overlay",
+    "overlays",
+    multiple=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="Overlay YAML merged into CONFIG before validation; repeatable",
+)
 @click.option("--force", "-f", is_flag=True, help="Overwrite existing files")
 @click.option(
     "--all", "everything", type=OUTDIR, help="Generate everything under this directory"
@@ -92,26 +114,46 @@ OUTDIR = click.Path(file_okay=False, dir_okay=True, path_type=Path)
 @click.option("--eds", "-e", type=OUTDIR, help="EDS file")
 @click.option("--doc", "-d", type=OUTDIR, help="Markdown documentation")
 @click.option(
+    "--yaml",
+    "yaml_dir",
+    type=OUTDIR,
+    help="Merged configuration (CONFIG and overlays) as <product>.v2.yaml",
+)
+@click.option(
     "--templates",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
     help="Directory of project templates; *.j2 files not part of the generator "
     "are rendered under --remote",
 )
-def generate(config, profiles, force, everything, local, remote, eds, doc, templates):
+def generate(
+    config,
+    profiles,
+    overlays,
+    force,
+    everything,
+    local,
+    remote,
+    eds,
+    doc,
+    yaml_dir,
+    templates,
+):
     """Generate files from CONFIG (schema v2)."""
     if everything is not None:
         local = local or everything / "cm"
         remote = remote or everything / "cpu1"
         eds = eds or everything
         doc = doc or everything / "docs"
+        yaml_dir = yaml_dir or everything
 
-    if not any((local, remote, eds, doc)):
+    if not any((local, remote, eds, doc, yaml_dir)):
         click.echo("No target selected, nothing to do")
         return
 
     file_name = config.name.split(".")[0]
     try:
-        context = build_context(load(config, profiles), file_name)
+        raw, schema = load(config, profiles, overlays)
+        context = build_context(schema, file_name)
         renderer = Renderer(context, overrides=templates)
         if local:
             generate_local(renderer, local, force)
@@ -121,6 +163,8 @@ def generate(config, profiles, force, everything, local, remote, eds, doc, templ
             generate_eds(renderer, eds, force)
         if doc:
             generate_documentation(renderer, doc, force)
+        if yaml_dir:
+            generate_yaml(raw, yaml_dir, force)
     except ValueError as error:
         raise click.ClickException(str(error)) from error
 

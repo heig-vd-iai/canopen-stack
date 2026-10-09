@@ -39,6 +39,7 @@ class EnumEntry(BaseModel):
     name: str
     description: Optional[str] = None
     value: int
+    get: Optional[str] = None
 
 
 class Enum(BaseModel):
@@ -62,7 +63,7 @@ class Enum(BaseModel):
             if isinstance(val, int):
                 new_entry = {"name": key, "value": val, "description": None}
             elif isinstance(val, dict):
-                new_entry = val
+                new_entry = {"name": key, **val}
             elif isinstance(val, EnumEntry):
                 new_entry = val.model_dump()
             else:

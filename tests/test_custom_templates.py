@@ -20,13 +20,24 @@ OPERATION_MODE__PROFILE_POSITION profilePosition ProfilePosition
 """
 
 
-def generate_remote(templates: Path, outdir: Path) -> None:
+ENUM_GET_TEMPLATE = """\
+{% for name, entry in enums.FixtureLevel.items() if entry.get %}
+{{ name }} {{ entry.value }} {{ entry.get }}
+{% endfor %}
+"""
+
+ENUM_GET_EXPECTED = """\
+FIXTURE_LEVEL__HIGH 1 remote.levels[1].high
+"""
+
+
+def generate_remote(templates: Path, outdir: Path, config: Path = CONFIG) -> None:
     cmd = [
         sys.executable,
         "-m",
         "generator",
         "generate",
-        str(CONFIG),
+        str(config),
         "-f",
         "--remote",
         str(outdir),
@@ -56,3 +67,21 @@ def test_generator_template_names_are_not_rendered(tmp_path: Path):
     generate_remote(templates, outdir)
 
     assert not (outdir / "enum").exists()
+
+
+def test_project_template_sees_enum_entries_with_get(tmp_path: Path):
+    config = tmp_path / "config.yaml"
+    config.write_text(
+        CONFIG.read_text().replace(
+            "FIXTURE_LEVEL__HIGH: 1",
+            "FIXTURE_LEVEL__HIGH: {value: 1, get: 'remote.levels[1].high'}",
+        )
+    )
+    templates = tmp_path / "templates"
+    templates.mkdir()
+    (templates / "od_traces.hpp.j2").write_text(ENUM_GET_TEMPLATE)
+    outdir = tmp_path / "cpu1"
+
+    generate_remote(templates, outdir, config)
+
+    assert (outdir / "od_traces.hpp").read_text() == ENUM_GET_EXPECTED

@@ -41,7 +41,7 @@ uv sync
 uv run python -m generator generate config.yaml --all dist
 ```
 
-`--all DIR` renders every target under `DIR`. `--local DIR`, `--remote DIR`, `--eds DIR` and `--doc DIR` render one of them:
+`--all DIR` renders every target under `DIR`. `--local DIR`, `--remote DIR`, `--eds DIR`, `--doc DIR` and `--yaml DIR` render one of them:
 
 | Files | Target | Content |
 |---|---|---|
@@ -49,11 +49,18 @@ uv run python -m generator generate config.yaml --all dist
 | `cpu1/od_remote.hpp`, `cpu1/od_enum.hpp` | remote core | getters and setters of the `remote` objects, enumerations |
 | `od.eds` | master tools | EDS file |
 | `docs/*.md` | documentation | one Markdown page per module |
+| `<product>.v2.yaml` | Python client | merged configuration (`CONFIG` and overlays) |
 
 `--templates DIR` adds project templates. Each `*.j2` file of `DIR` whose name is not a generator template is rendered under `--remote`, without the `.j2` suffix. A file named like a generator template (`enum.j2`, `hpp.j2`...) replaces it.
 
 ```bash
 uv run python -m generator generate config.yaml --remote cpu1 --templates templates
+```
+
+`--yaml DIR` writes the configuration after the overlays are merged, before the CiA profiles are applied. The file is `DIR/<product>.v2.yaml`. `<product>` is `device.product.name` in lower case, with every other character replaced by `-` (`Servopresse` gives `servopresse.v2.yaml`). Object indices are written in hexadecimal and the key order is kept. The `profiles` list is kept, so the file loads with `load_config` like any configuration. `--force` applies. With `--all DIR`, the file goes to the root of `DIR`.
+
+```bash
+uv run python -m generator generate config.yaml --overlay mod.yaml --yaml od
 ```
 
 For example, `templates/od_modes.hpp.j2` produces `cpu1/od_modes.hpp`:
@@ -65,13 +72,77 @@ For example, `templates/od_modes.hpp.j2` produces `cpu1/od_modes.hpp`:
 {% endfor %}
 ```
 
-Templates see `objects`, `node_id`, `nrOfRXPDO`, `nrOfTXPDO`, `subindex_count`, `type_count`, `mandatoryObjects`, `optionalObjects`, `modules`, `modes_of_operation` (the "Modes of operation" object with an enum, or none), `time`, `date` and `signature`. The filters `camel` and `pascal` convert `PROFILE_POSITION` to `profilePosition` and `ProfilePosition`.
+Templates see `objects`, `node_id`, `nrOfRXPDO`, `nrOfTXPDO`, `subindex_count`, `type_count`, `mandatoryObjects`, `optionalObjects`, `modules`, `modes_of_operation` (the "Modes of operation" object with an enum, or none), `enums` (every enum of the dictionary by `typedef`, each a dict of entry name to `value`, `description` and `get`), `time`, `date` and `signature`. The filters `camel` and `pascal` convert `PROFILE_POSITION` to `profilePosition` and `ProfilePosition`.
 
 A configuration written for the previous schema is converted with:
 
 ```bash
 uv run python -m generator migrate config old.yaml new.yaml
 ```
+
+### Overlays
+
+An overlay is a YAML file kept outside the configuration, for example in a firmware mod repository. `--overlay FILE` merges it into `CONFIG` before validation. The option is repeatable; overlays are applied in order.
+
+```yaml
+device:
+  product:
+    name: Pendule
+    number: 2
+objects:
+  0x6060:
+    enum:
+      values:
+        OPERATION_MODE__PENDULUM: -5
+  0x3501:
+    name: Pendulum force consign
+    module: pendulum
+    remote: cpu1
+    datatype: float32
+    access: rw
+    pdo: true
+    get: sys.axes[0].operationSM.modes.pendulum.forceConsign
+    set: sys.axes[0].operationSM.modes.pendulum.forceConsign
+```
+
+Merge rules:
+
+- `device` is merged recursively. The overlay values win.
+- An object whose index is not in the configuration is added as is.
+- An object whose index already exists may only add `enum.values`, in one of two forms:
+  - on the object itself: both sides must have an enum, and the overlay object holds nothing but `enum.values`;
+  - on record entries: the overlay object holds nothing but `record`, and each entry holds nothing but `name` and `enum.values` (see below).
+- An added enum entry must use a new name and a new value. Both `NAME: value` and the mapping form are accepted.
+- Any other conflict is an error, also between two overlays. Nothing is overwritten silently.
+
+An enum on a record entry is extended by naming the entry:
+
+```yaml
+objects:
+  0x2850:
+    record:
+    - name: Trace 0 signal
+      enum:
+        values:
+          TRACE_SIGNAL__PENDULUM_ANGLE: {value: 9, get: 'sys.axes[0].operationSM.modes.pendulum.pendulumAngle'}
+    - name: Trace 1 signal
+      enum:
+        values:
+          TRACE_SIGNAL__PENDULUM_ANGLE: {value: 9, get: 'sys.axes[0].operationSM.modes.pendulum.pendulumAngle'}
+```
+
+- `name` must match exactly the `name` of an entry of the `record` list in the configuration. Unknown names are an error.
+- The targeted entry must already have an enum. The values follow the same rules as above.
+- Entries not named in the overlay are left unchanged.
+- Every entry that shares a `typedef` must get the same values, otherwise rendering fails. Extend each of them in the overlay.
+- The match uses the configuration only. A name that comes from a CiA profile, and not from the configuration, cannot be targeted.
+- `array` objects cannot be extended this way.
+
+```bash
+uv run python -m generator generate sw-motion.v2.yaml --overlay mods/pendulum.yaml --all dist
+```
+
+The merged YAML written by `--yaml` is what `motion --od` must load for a product with mods. The base configuration does not hold the objects and modes added by the overlays.
 
 ### Build and test on the host
 
@@ -336,6 +407,16 @@ The fields of a variable:
 | `module` | Markdown page the object is documented on |
 
 A record or array adds `sub0` and a `record` list, one item per sub-index.
+
+An enum entry is either `NAME: value` or a mapping with `value`, an optional `description` and an optional `get`. `get` is a C++ expression copied as is; `od_enum.hpp` ignores it, project templates read it through `enums`. Entries that share a `typedef` must have the same names in every object:
+
+```yaml
+    enum:
+      typedef: TraceSignal
+      values:
+        TRACE_SIGNAL__NONE: 0
+        TRACE_SIGNAL__POSITION_DEMAND: {value: 1, get: sys.axes[0].positionFloat.demand}
+```
 
 An object whose value lives on the other core is declared `remote`. `get` and `set` are C++ expressions evaluated on that core, rendered in `od_remote.hpp`; `@` stands for the written value. A `scale` converts the CANopen value to the internal one:
 

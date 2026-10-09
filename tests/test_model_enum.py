@@ -17,6 +17,7 @@ def test_enum_entry_creation():
     assert entry.name == "Test"
     assert entry.value == 42
     assert entry.description is None
+    assert entry.get is None
 
 
 def test_enum_entry_profile_inherits_and_extends():
@@ -128,3 +129,19 @@ def test_enum_from_dict_with_string():
     assert e.values["FOO"].value == 1
     assert e.values["BAR"].value == 2
     assert e.values["BAR"].description is None
+
+
+def test_enum_from_dict_with_get():
+    e = Enum(
+        **{
+            "typedef": "TraceSignal",
+            "values": {
+                "NONE": 0,
+                "POSITION": {"value": 1, "get": "sys.axes[0].position"},
+            },
+        }
+    )
+    assert e.values["NONE"].get is None
+    assert e.values["POSITION"].name == "POSITION"
+    assert e.values["POSITION"].value == 1
+    assert e.values["POSITION"].get == "sys.axes[0].position"

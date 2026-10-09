@@ -146,8 +146,9 @@ class Renderer:
         """Project templates rendered by file name, without the .j2 suffix."""
         if self.overrides is None:
             return {}
+        enums = {typedef: data["items"] for typedef, data in self._enums().items()}
         return {
-            path.stem: self._render(path.name)
+            path.stem: self._render(path.name, enums=enums)
             for path in sorted(self.overrides.glob("*.j2"))
             if not (self.template_dir / path.name).exists()
         }
