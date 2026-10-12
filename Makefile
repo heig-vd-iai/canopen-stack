@@ -34,6 +34,15 @@ TEST_BIN = build/tests
 TEST_SRCS = $(wildcard tests/cpp/*.cpp)
 TEST_OBJS = $(patsubst tests/cpp/%.cpp,build/tests-obj/%.o,$(TEST_SRCS))
 
+PORTABLE_LIB_OBJS = $(patsubst src/%.cpp,build/portable-lib/%.o,$(LIB_SRCS))
+PORTABLE_OD_SRCS = $(OD_DIR)/od.cpp $(OD_DIR)/od_lookup.cpp
+PORTABLE_OD_OBJS = $(patsubst $(OD_DIR)/%.cpp,build/portable-od/%.o,$(PORTABLE_OD_SRCS))
+
+PORTABLE_TEST_BIN = build/tests-portable
+PORTABLE_TEST_SRCS = $(addprefix tests/cpp/,test_main.cpp test_smoke.cpp test_hb.cpp \
+                     test_emcy.cpp test_sync.cpp test_nmt.cpp)
+PORTABLE_TEST_OBJS = $(patsubst tests/cpp/%.cpp,build/portable-tests/%.o,$(PORTABLE_TEST_SRCS))
+
 EXAMPLE_BIN = build/example
 EXAMPLE_SRCS = example/linux/main.cpp $(wildcard platform/linux/*.cpp)
 EXAMPLE_OBJS = $(patsubst %.cpp,build/example-obj/%.o,$(EXAMPLE_SRCS))
@@ -84,6 +93,23 @@ build/tests-obj/%.o: tests/cpp/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -Itests/cpp -MMD -MP -c -o $@ $<
 
+test-portable: $(PORTABLE_TEST_BIN)
+
+$(PORTABLE_TEST_BIN): $(PORTABLE_LIB_OBJS) $(PORTABLE_OD_OBJS) $(PORTABLE_TEST_OBJS)
+	$(CXX) -o $@ $^
+
+build/portable-lib/%.o: src/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -MMD -MP -c -o $@ $<
+
+build/portable-od/%.o: $(OD_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -MMD -MP -c -o $@ $<
+
+build/portable-tests/%.o: tests/cpp/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -Itests/cpp -MMD -MP -c -o $@ $<
+
 example: $(EXAMPLE_BIN)
 
 $(EXAMPLE_BIN): $(LIB_OBJS) $(OD_OBJS) $(EXAMPLE_OBJS)
@@ -118,7 +144,8 @@ clean:
 	$(RM) -r build dist $(LIB) $(MINIMAL_LIB)
 
 -include $(LIB_OBJS:.o=.d) $(OD_OBJS:.o=.d) $(TEST_OBJS:.o=.d) $(EXAMPLE_OBJS:.o=.d) \
-         $(MINIMAL_OBJS:.o=.d) $(MINIMAL_OD_OBJS:.o=.d) $(MINIMAL_TEST_OBJS:.o=.d)
+         $(MINIMAL_OBJS:.o=.d) $(MINIMAL_OD_OBJS:.o=.d) $(MINIMAL_TEST_OBJS:.o=.d) \
+         $(PORTABLE_LIB_OBJS:.o=.d) $(PORTABLE_OD_OBJS:.o=.d) $(PORTABLE_TEST_OBJS:.o=.d)
 
-.PHONY: all lib lib-minimal test test-minimal example generate format \
-        format-check docs docs-serve clean
+.PHONY: all lib lib-minimal test test-minimal test-portable example generate \
+        format format-check docs docs-serve clean

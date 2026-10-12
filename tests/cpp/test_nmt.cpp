@@ -143,16 +143,19 @@ TEST_CASE("a stale dictionary image is replaced by the defaults") {
     b.hardware.signature = od_signature + 1;
     b.hardware.signatureStored = true;
     b.hardware.loadedGroups.clear();
+    const Metadata *metadata = node.od().getMetadata(0x1017, 0);
+    REQUIRE(metadata != nullptr);
+    const uint16_t defaultPeriod = metadata->getDefaultValue().u16;
     Data period;
     period.u64 = 0;
-    period.u16 = 250;
+    period.u16 = static_cast<uint16_t>(defaultPeriod + 250);
     SDOAbortCodes code = SDOAbortCode_OK;
     REQUIRE(node.od().writeData(period, 0x1017, 0, code) == 0);
 
     b.command(NMTServiceCommand_ResetCommunication);
     CHECK(b.hardware.loadedGroups.empty());
     REQUIRE(node.od().readData(period, 0x1017, 0, code) == 0);
-    CHECK(period.u16 == 1000);
+    CHECK(period.u16 == defaultPeriod);
     period.u16 = 0;
     REQUIRE(node.od().writeData(period, 0x1017, 0, code) == 0);
 }
