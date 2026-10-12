@@ -1,0 +1,95 @@
+device:
+  vendor:
+    name: HEIG-VD
+    number: 0
+  product:
+    name: bootloader
+    number: 2
+  revision: 1
+  order_code: '0'
+  node_id: 1
+  baudrate:
+  - 10
+  - 20
+  - 50
+  - 125
+  - 250
+  - 500
+  - 800
+  - 1000
+  lss_supported: false
+  simple_bootup_slave: true
+  simple_bootup_master: false
+  granularity: 8
+  dynamic_channels_supported: false
+  compact_pdo: false
+  group_messaging: false
+info:
+  description: Bootloader device, program download over SDO block transfer
+  file_version: 1
+  file_revision: 0
+  created_by: canopen-stack
+  created_at: 2026-09-14 10:00:00
+  modified_by: canopen-stack
+profiles:
+- 301
+objects:
+  0x1000: {}
+  0x1001:
+    name: Error register
+    module: cia301
+    get: null
+    datatype: uint8
+    access: r
+    default: 0
+  0x1017:
+    default: 1000
+  0x1018:
+    record:
+    - default: 0
+    - default: 2
+    - default: 1
+    - default: 0
+  0x1F50:
+    name: Program data
+    description: Firmware image, written by SDO block download
+    module: cia302
+    sub0:
+      name: Number of entries
+    record:
+    - name: Program number 1
+      datatype: domain
+      access: w
+  0x1F51:
+    name: Program control
+    description: Start, stop and reset the downloaded program
+    module: cia302
+    sub0:
+      name: Number of entries
+    record:
+    - name: Program number 1
+      datatype: uint8
+      access: rw
+      default: 0
+  0x1F56:
+    name: Program software identification
+    description: Checksum of the downloaded program
+    module: cia302
+    sub0:
+      name: Number of entries
+    record:
+    - name: Program number 1
+      datatype: uint32
+      access: r
+      default: 0
+  0x1F57:
+    name: Flash status identification
+    description: Status of the last flash operation
+    module: cia302
+    sub0:
+      name: Number of entries
+    record:
+    - name: Program number 1
+      datatype: uint32
+      access: r
+      default: 0
