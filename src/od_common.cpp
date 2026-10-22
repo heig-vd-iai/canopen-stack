@@ -337,16 +337,15 @@ int8_t ObjectDictionnary::writeData(const Data &data, int32_t id) {
 bool ObjectDictionnary::saveData(uint8_t parameterGroup) {
     Persistence &persistence = *store;
     if (parameterGroup == ParameterGroup_All) {
-        uint64_t signature = 0;
-        if (!persistence.loadSignature(signature) ||
-            signature != od_signature) {
-            persistence.saveSignature(od_signature);
-        }
         bool result = true;
         result &= persistence.saveGroup(ParameterGroup_Communication);
         result &= persistence.saveGroup(ParameterGroup_Application);
         result &= persistence.saveGroup(ParameterGroup_ManufacturerA);
-        return result;
+        if (!result) return false;
+        uint64_t signature = 0;
+        if (persistence.loadSignature(signature) && signature == od_signature)
+            return true;
+        return persistence.saveSignature(od_signature);
     }
     return persistence.saveGroup(parameterGroup);
 }

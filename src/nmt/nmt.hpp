@@ -25,6 +25,11 @@ class NMT {
      * reset. */
     void (*onReset)() = nullptr;
 
+    /** Reload the stored parameters on a reset node. Clear it when onReset
+     * restarts the whole device: the boot reloads them, and a live replay
+     * would reconfigure the running application for nothing. */
+    bool reloadOnResetNode = true;
+
     /**
      * Run the Initialisation state and enter Pre-Operational.
      * Called once by Node::init().
@@ -47,7 +52,7 @@ class NMT {
     NMTStates getState() const { return currentState; }
 
    private:
-    void reset(uint8_t parameterGroup);
+    void reset(uint8_t parameterGroup, bool reloadParameters);
     void enter(NMTStates state);
 
     ObjectDictionnary &od;

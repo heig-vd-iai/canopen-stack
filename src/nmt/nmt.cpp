@@ -42,11 +42,12 @@ NMT::NMT(ObjectDictionnary &od, RemoteObjects &remote, ServiceBus &bus,
          uint8_t nodeId)
     : od(od), remote(remote), bus(bus), nodeId(nodeId) {}
 
-void NMT::initSM() { reset(ParameterGroup_All); }
+void NMT::initSM() { reset(ParameterGroup_All, true); }
 
-void NMT::reset(uint8_t parameterGroup) {
+void NMT::reset(uint8_t parameterGroup, bool reloadParameters) {
     enter(NMTState_Initialisation);
-    if (!od.loadData(parameterGroup)) od.restoreData(parameterGroup);
+    if (reloadParameters && !od.loadData(parameterGroup))
+        od.restoreData(parameterGroup);
     if (parameterGroup == ParameterGroup_All) {
         remote.resetRemote();
         if (onReset != nullptr) onReset();
@@ -65,9 +66,10 @@ void NMT::setTransition(NMTServiceCommands command) {
         if (transition.command != command || transition.from != currentState)
             continue;
         if (transition.to == NMTState_Initialisation) {
-            reset(command == NMTServiceCommand_ResetCommunication
-                      ? ParameterGroup_Communication
-                      : ParameterGroup_All);
+            if (command == NMTServiceCommand_ResetCommunication)
+                reset(ParameterGroup_Communication, true);
+            else
+                reset(ParameterGroup_All, reloadOnResetNode);
         } else {
             enter(transition.to);
         }
